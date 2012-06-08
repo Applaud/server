@@ -17,7 +17,7 @@ Installation Instructions
     sudo mkdir /srv/applaud
 
     # USERNAME is a variable you must replace
-    sudo chown /srv/applaud USERNAME
+    sudo chown USERNAME /srv/applaud
 
     cd /srv/applaud
     virtualenv --no-site-packages venv
