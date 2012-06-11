@@ -1,0 +1,56 @@
+API http://www.wufoo.com/docs/api/v3/
+Python Wrapper https://github.com/wufoo/pyfoo
+
+Limits:
+Are there any API restrictions?We currently restrict your API usage to 5000 requests per day.
+
+SAMPLE
+------
+fill in Account and Key
+NOTE:  the samples are from Nick Barendt's Cleveland GiveCamp account, your results will be different
+
+
+>>> import pyfoo
+>>> api = pyfoo.PyfooAPI('<WUFOO ACCOUNT>','<WUFOO API KEY>')
+>>> for f in api.forms:
+...   print f.Name
+...
+Applaud Sample Form
+COPY FOR PRINTING Cleveland GiveCamp 2011
+Cleveland GiveCamp 2011 Non-Profit Application
+Cleveland GiveCamp 2012 Non-Profit Application
+
+
+
+>>> applaud_form = api.forms[0]
+>>> applaud_form.Name
+u'Applaud Sample Form'
+
+
+
+>>> for field in applaud_form.fields:
+...   print field.ID, field.Title, field.Type, field.Choices
+...
+EntryId Entry Id text []
+Field1 Name
+text []
+Field2 How was your service? select [<pyfoo.WufooObject object at 0x101342dd0>, <pyfoo.WufooObject object at 0x101342e10>, <pyfoo.WufooObject object at 0x101342e50>, <pyfoo.WufooObject object at 0x101342e90>]
+DateCreated Date Created date []
+CreatedBy Created By text []
+LastUpdated Last Updated date []
+UpdatedBy Updated By text []
+
+
+>>> e = pyfoo.Entry()
+>>> e['Field1'] = 'Nick'
+>>> e['Field2'] = 'Good'
+
+>>> applaud_form.add_entry(e)
+<pyfoo.WufooObject object at 0x101342f50>
+
+>>> for entry in applaud_form.get_entries():
+...   print entry
+...
+{u'Status': None, u'PurchaseTotal': None, u'LastPage': u'1', u'Field2': u'Good', u'IP': u'166.137.80.74', u'Field1': u'Nick', 'LastUpdated': None, u'DateCreated': u'2012-06-08 14:24:01', u'Currency': None, 'LastUpdatedBy': None, u'EntryId': u'1', u'CreatedBy': u'public', u'UpdatedBy': None, u'TransactionId': None, u'CompleteSubmission': u'1', u'MerchantType': None, u'DateUpdated': ''}
+>>> 
+
