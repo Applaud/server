@@ -6,7 +6,7 @@ def home(request):
 	return render_to_response('home.html')
 
 def example(request):
-	res = { "nearby_businesses": [] )
+	res = { "nearby_businesses": [] }
 	return HttpResponse(json.dumps(res))
 
 def example2(request):
