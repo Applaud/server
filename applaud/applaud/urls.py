@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+import views
 
 urlpatterns = patterns('',
     # Examples:
@@ -39,6 +40,8 @@ urlpatterns = patterns('',
 #    url(r'^submit/',)
 
 
-    url(r'^/','views.home' )
-
+    url(r'^/',views.home),
+    url(r'^example/$',views.example),
+    url(r'^example2/$',views.example2),
+    url(r'^example3/$',views.example3),
 )
