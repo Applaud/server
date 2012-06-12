@@ -42,20 +42,28 @@ def example3(request):
 
 
 def checkin(request, lat, lon):
-	try:
-	    lat = float(lat)
-	    lon = float(lon)
-	except:
+#	try:
+#	    lat = float(lat)
+#	    lon = float(lon)
+#	except:
 	    #
-	    pass
+#	    pass
 
 	goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
 
 	from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=500&sensor=false&key="+goog_api_key)
 
-	to_parse = json.loads(from_goog)
+	to_parse = json.loads(from_goog.read())
+	#return HttpResponse(to_parse)
 
-	
+	ret = {"nearby_businesses":[],}
 
-	#return HttpResponse(json.dumps(f))
-	
+	for entry in to_parse["results"]:
+		new_biz={"name":entry["name"],
+			 "type":entry["types"][0],
+			 "goog_id":entry["id"],
+			 "latitude":entry["geometry"]["location"]["lat"],
+			 "longitude":entry["geometry"]["location"]["lng"]}
+		ret["nearby_businesses"].append(new_biz)
+	ret = json.dumps(ret)
+	return HttpResponse(ret)
