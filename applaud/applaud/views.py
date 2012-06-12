@@ -50,8 +50,8 @@ def checkin(request, lat, lon):
 #	    pass
 
 	goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
-
-	from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=500&sensor=false&key="+goog_api_key)
+	radius="100"
+	from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=false&key="+goog_api_key)
 
 	to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
