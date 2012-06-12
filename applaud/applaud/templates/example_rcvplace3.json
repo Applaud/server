@@ -1,0 +1,10 @@
+{ "nearby_businesses":
+  [
+      {"name":"Foo Burgers",
+       "type":"Burgers",
+       "goog_id":"677679492a58049a7eae079e0890897eb953d79b"},
+      {"name":"Seymour House of Smiles",
+       "type":"Orthodontist",
+       "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19"}
+  ]
+}
