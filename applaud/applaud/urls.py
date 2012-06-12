@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     #google places API call
     #close businesses
     #return json to client
-#    url(r'^checkin/',)
+    url(r'^checkin/(?P<lat>\d+\.\d+)/(?P<lon>\d+\.\d+)/',views.checkin),
     
     #GET w/ GID
     #validate GID
