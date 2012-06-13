@@ -41,16 +41,17 @@ def example3(request):
 	#return render_to_response('example_rcvplace3.json', mimetype='application/json')
 
 
-def checkin(request, lat, lon):
-#	try:
-#	    lat = float(lat)
-#	    lon = float(lon)
-#	except:
-	    #
-#	    pass
+def checkin(request):
+	if not "latitude" in request.GET or not  "longitude" in request.GET:
+	    error = "Latitude & longitude confusion...."
+	    return render_to_response('error.html',{"error":error})   
+
+	lat = request.GET["latitude"]
+	lon = request.GET["longitude"]	
 
 	goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
 	radius="100"
+
 	from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=false&key="+goog_api_key)
 
 	to_parse = json.loads(from_goog.read())
