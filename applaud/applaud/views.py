@@ -4,6 +4,8 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from django.template import RequestContext, Template
+from django.views.decorators.csrf import csrf_protect
 
 def home(request):
 	return render_to_response('home.html')
@@ -71,6 +73,7 @@ def checkin(request):
 	ret = json.dumps(ret)
 	return HttpResponse(ret)
 
+@csrf_protect
 def formtest(request):
 	if request.method == 'POST':
 	    n = models.NewsFeedItem(request.POST)
@@ -79,5 +82,11 @@ def formtest(request):
 	f = forms.NewsFeedItemForm()
 	newsfeed = models.NewsFeedItem.objects.all()
 	
-	return render_to_response('basic_newsfeed.html', {'form':f, 'list':newsfeed})
+	c = RequestContext(request, {'form':f, 'list':newsfeed})
+	t = Template('basic_newsfeed.html')
+
+	return HttpResponse(t.render(c))
+
+#	return render_to_response('basic_newsfeed.html', {'form':f, 'list':newsfeed}, context_instance=RequestContext(request))
 	
+

@@ -5,8 +5,9 @@ class NewsFeedItem(models.Model):
 	sub_title = models.TextField(max_length=100)
 	body = models.TextField(max_length=500)
 	
-	def __init__(self, vals):
+	def __init__(self, **kwargs):
+	    if len(kwargs)>0:
 		self.title=vals["title"]
 		self.sub_title=vals["sub_title"]
 		self.body=vals["body"]
-
+	   
