@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     #return json to client
     url(r'^checkin/',views.checkin),
     url(r'^formtest/',views.formtest),
+    url(r'^newsfeed/',views.nfdata),                       
     
     #GET w/ GID
     #validate GID

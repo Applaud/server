@@ -6,6 +6,8 @@ from applaud import forms
 from applaud import models
 from django.template import RequestContext, Template
 from django.views.decorators.csrf import csrf_protect
+from datetime import datetime
+import sys
 
 def home(request):
 	return render_to_response('home.html')
@@ -73,20 +75,36 @@ def checkin(request):
 	ret = json.dumps(ret)
 	return HttpResponse(ret)
 
+# This allows a user to save and view newsfeed posts
 @csrf_protect
 def formtest(request):
 	if request.method == 'POST':
-	    n = models.NewsFeedItem(request.POST)
-	    n.save()
+	    n = forms.NewsFeedItemForm(request.POST)
+	    newsitem = n.save(commit=False)
+	    newsitem.date = datetime.now()
+	    newsitem.save()
 	    
 	f = forms.NewsFeedItemForm()
 	newsfeed = models.NewsFeedItem.objects.all()
 	
-	c = RequestContext(request, {'form':f, 'list':newsfeed})
-	t = Template('basic_newsfeed.html')
-
-	return HttpResponse(t.render(c))
-
-#	return render_to_response('basic_newsfeed.html', {'form':f, 'list':newsfeed}, context_instance=RequestContext(request))
+	return render_to_response('basic_newsfeed.html',
+				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
 	
+def nfdata(request):
+	# TODO: access newsfeed for a particular business
+	# 
+	# if ( request.GET ):
+	# 	business_id = request.GET['business_id']
 
+	nfitems = models.NewsFeedItem.objects.all()
+	nfitem_list = []
+	for nfitem in nfitems :
+		nfitem_list.append({'title':nfitem.title,
+				    'subtitle':nfitem.subtitle,
+				    'body':nfitem.body,
+				    'date':str(nfitem.date)})
+
+	ret = { 'newsfeed_items':nfitem_list }
+
+	return HttpResponse(json.dumps(ret))
