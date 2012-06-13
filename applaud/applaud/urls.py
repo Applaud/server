@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     #close businesses
     #return json to client
     url(r'^checkin/',views.checkin),
+    url(r'^formtest/',views.formtest),
     
     #GET w/ GID
     #validate GID

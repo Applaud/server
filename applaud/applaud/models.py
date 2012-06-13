@@ -1,16 +1,12 @@
-from django.models import Model
+from django.db import models
 
-class Business:
-	google_places_id = TextField(required=True, blank=False)
-	business_type = TextField()
-	name = TextField(required=True, blank=False)
+class NewsFeedItem(models.Model):
+	title = models.CharField(max_length=100)
+	sub_title = models.TextField(max_length=100)
+	body = models.TextField(max_length=500)
+	
+	def __init__(self, vals):
+		self.title=vals["title"]
+		self.sub_title=vals["sub_title"]
+		self.body=vals["body"]
 
-class Survey:
-	title = TextField(required=True, blank=False)
-	description = TextField()
-
-class Question:
-	survey = models.ForeignKey('Survey')
-	prompt = TextField(required=True,blank=False)
-	question_type = TextField(required=True, blank=False)
-	options = TextField(max_chars=500, required=True, blank=False)

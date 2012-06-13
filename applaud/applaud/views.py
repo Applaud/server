@@ -2,6 +2,8 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import json
 import urllib2
+from applaud import forms
+from applaud import models
 
 def home(request):
 	return render_to_response('home.html')
@@ -68,3 +70,14 @@ def checkin(request):
 		ret["nearby_businesses"].append(new_biz)
 	ret = json.dumps(ret)
 	return HttpResponse(ret)
+
+def formtest(request):
+	if request.method == 'POST':
+	    n = models.NewsFeedItem(request.POST)
+	    n.save()
+	    
+	f = forms.NewsFeedItemForm()
+	newsfeed = models.NewsFeedItem.objects.all()
+	
+	return render_to_response('basic_newsfeed.html', {'form':f, 'list':newsfeed})
+	
