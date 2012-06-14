@@ -26,8 +26,11 @@ urlpatterns = patterns('',
     url(r'^checkin/',views.checkin),
     url(r'^formtest/',views.formtest),
     url(r'^newsfeed/',views.nfdata),                       
-    url(r'^employees/',views.create_employee),
-    
+    url(r'^new_employee/',views.create_employee),
+    url(r'^employees/',views.employee_list),
+    url(r'^create_rating_profile/',views.create_rating_profile),
+    url(r'^ratingprofiles/',views.list_rating_profiles),
+
     #GET w/ GID
     #validate GID
     #get or creat business - (create default form)

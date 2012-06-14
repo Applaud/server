@@ -1,9 +1,10 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import json
 import urllib2
 from applaud import forms
 from applaud import models
+from applaud.models import RatingProfile
 from django.template import RequestContext, Template
 from django.views.decorators.csrf import csrf_protect
 from datetime import datetime
@@ -43,9 +44,6 @@ def example3(request):
 			],
 		}
 	return HttpResponse(json.dumps(res))
-
-	#return render_to_response('example_rcvplace3.json', mimetype='application/json')
-
 
 def checkin(request):
 	if not "latitude" in request.GET or not  "longitude" in request.GET:
@@ -121,3 +119,72 @@ def create_employee(request):
 	return render_to_response('employees.html',
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
+
+class EmployeeEncoder(json.JSONEncoder):
+	def default(self, o):
+		if isinstance(o, models.Employee):
+			res = {'first_name':o.first_name,
+			       'last_name':o.last_name}
+			return res
+		else:
+			return json.JSONEncoder.default(self, o)
+
+def employee_list(request):
+	return HttpResponse(json.dumps({'employees':list(models.Employee.objects.all())},
+				       cls=EmployeeEncoder),
+			    mimetype='application/json')
+
+@csrf_protect
+def create_rating_profile(request):
+    '''Create a rating profile.
+    Takes a variable number of text fields and turns them into dimensions
+    for a rating profile. Also includes the title.
+    '''
+    # if not request.user.is_authenticated():
+    #     return HttpResponseRedirect('/login')
+    if request.method == 'GET':
+        return render_to_response('employeeprofile_create.html',
+                                  {},
+                                  context_instance=RequestContext(request))
+    if request.method == 'POST':
+	sys.stderr.write(str(request.POST))
+        i = 0
+        dimensions = []
+        while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
+            dimensions.append(request.POST['dimension_' + str(i)])
+            i += 1
+        title = ''
+        if 'title' in request.POST and request.POST['title']:
+            title = request.POST['title']
+        errors = {}
+        err = False
+        if not title:
+            errors['title_err'] = "You should enter a title for this rating profile."
+            err = True
+        if not dimensions:
+            errors['dimensions_err'] = "No dimensions?"
+            err = True
+        if err:
+            errors['dimensions'] = dimensions
+            return render_to_response('create_rating_profile.html',
+                                      errors,
+                                      context_instance=RequestContext(request))
+        rp = RatingProfile(title=title, dimensions=dimensions)
+        rp.save()
+	
+        return HttpResponseRedirect('/ratingprofiles')
+
+@csrf_protect
+def list_rating_profiles(request):
+	l = list(RatingProfile.objects.all())
+	ret = []
+	for item in l:
+		ap = {}
+		ap['title']=item.title
+		ap['dimensions']=item.dimensions
+		ret.append(ap)
+	
+	return render_to_response('employeeprofile_create.html',
+				  {'list':ret},
+				  context_instance=RequestContext(request))
+

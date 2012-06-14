@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, forms
 from applaud import models
 
 class NewsFeedItemForm(ModelForm):
@@ -8,3 +8,9 @@ class NewsFeedItemForm(ModelForm):
 class EmployeeForm(ModelForm):
 	class Meta:
 		model = models.Employee
+
+class RatingProfileForm(ModelForm):
+	dimension = forms.Textarea()
+
+	class Meta:
+		model = models.RatingProfile
