@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^checkin/',views.checkin),
     url(r'^formtest/',views.formtest),
     url(r'^newsfeed/',views.nfdata),                       
+    url(r'^employees/',views.create_employee),
     
     #GET w/ GID
     #validate GID

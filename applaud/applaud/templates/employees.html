@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+<title>Welcome to Applaud!</title>
+</head>
+<body>
+
+<h1>EMPLOYEES</h1>
+
+<form action="/employees/" method="post" />
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+
+{% if employee|length > 0 %}
+<ul>
+{% for employee in list %}
+<li>{{employee.last_name}}, {{ employee.first_name }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+</body>
+</html>

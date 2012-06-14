@@ -108,3 +108,16 @@ def nfdata(request):
 	ret = { 'newsfeed_items':nfitem_list }
 
 	return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+def create_employee(request):
+	if ( request.POST ):
+		employee_form = forms.EmployeeForm(request.POST)
+		employee_form.save()
+
+	new_form = forms.EmployeeForm()
+	employees = models.Employee.objects.all()
+
+	return render_to_response('employees.html',
+				  {'form':new_form, 'list':employees},
+				  context_instance=RequestContext(request))
