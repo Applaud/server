@@ -123,14 +123,29 @@ def create_employee(request):
 class EmployeeEncoder(json.JSONEncoder):
 	def default(self, o):
 		if isinstance(o, models.Employee):
+			dimensions = o.rating_profile.dimensions
 			res = {'first_name':o.first_name,
-			       'last_name':o.last_name}
+			       'last_name':o.last_name,
+			       'ratings':
+				       {'rating_title':o.rating_profile.title,
+					'dimensions':dimensions}
+			       }
 			return res
 		else:
 			return json.JSONEncoder.default(self, o)
 
 def employee_list(request):
-	return HttpResponse(json.dumps({'employees':list(models.Employee.objects.all())},
+	'''List the employees by last name and first name.
+	Also give the definition of the rating profile with which they are associated.
+	'''
+	# ret = []
+	# for employee in models.Employee.objects.all():
+	# 	appendee = {}
+	# 	appendee['employee'] = json.dumps(employee, cls=EmployeeEncoder)
+	# 	appendee['ratings'] = json.dumps(employee.rating_profile.dimensions)
+	# 	ret.append(appendee)
+
+	return HttpResponse(json.dumps(list(models.Employee.objects.all()),
 				       cls=EmployeeEncoder),
 			    mimetype='application/json')
 

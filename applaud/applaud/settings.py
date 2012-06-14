@@ -1,5 +1,7 @@
 # Django settings for applaud project.
 
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -9,11 +11,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+CWD=os.path.dirname(__file__)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/srv/applaud/server/applaud/applaud/first.db',                      # Or path to database file if using sqlite3.
-#        'NAME': '/Users/lukelovett/Documents/work/applaud/server/venv/server/applaud/applaud/test.db',
+        'NAME': CWD+'/test.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
