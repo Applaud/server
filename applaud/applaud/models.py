@@ -74,6 +74,9 @@ class RatingProfile(models.Model):
 	title = models.TextField(max_length=100)
 	dimensions = SerializedStringsField()
 
+        def __unicode__(self):
+            return self.title
+
 class NewsFeedItem(models.Model):
 	'''Models an item in the newsfeed.
 	'''
