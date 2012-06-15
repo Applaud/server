@@ -138,13 +138,6 @@ def employee_list(request):
 	'''List the employees by last name and first name.
 	Also give the definition of the rating profile with which they are associated.
 	'''
-	# ret = []
-	# for employee in models.Employee.objects.all():
-	# 	appendee = {}
-	# 	appendee['employee'] = json.dumps(employee, cls=EmployeeEncoder)
-	# 	appendee['ratings'] = json.dumps(employee.rating_profile.dimensions)
-	# 	ret.append(appendee)
-
 	return HttpResponse(json.dumps(list(models.Employee.objects.all()),
 				       cls=EmployeeEncoder),
 			    mimetype='application/json')
@@ -203,3 +196,55 @@ def list_rating_profiles(request):
 				  {'list':ret},
 				  context_instance=RequestContext(request))
 
+@csrf_protect
+def create_survey(request):
+    '''Create a survey.
+    Takes a variable number of text fields and turns them into questions
+    for a survey. Also includes the title and description.
+    '''
+    # if not request.user.is_authenticated():
+    #     return HttpResponseRedirect('/login')
+    if request.method == 'GET':
+        return render_to_response('survey_create.html',
+                                  {},
+                                  context_instance=RequestContext(request))
+    if request.method == 'POST':
+	sys.stderr.write(str(request.POST))
+        i = 0
+        questions = []
+        while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
+            questions.append({'title':request.POST['question_' + str(i)],
+			      'type':request.POST['questiontype_' +str(i)]})
+            i += 1
+        title = description = ''
+        if 'title' in request.POST and request.POST['title']:
+            title = request.POST['title']
+        if 'description' in request.POST and request.POST['description']:
+            description = request.POST['description']
+        errors = {}
+        err = False
+        if not title:
+            errors['title_err'] = "You should enter a title for this survey."
+            err = True
+        if not questions:
+            errors['questions_err'] = "No questions?"
+            err = True
+        if err:
+            errors['questions'] = questions
+            return render_to_response('survey_create.html',
+                                      errors,
+                                      context_instance=RequestContext(request))
+
+	# First, create the Survey
+	s = models.Survey(title=title, description=description)
+	s.save()
+
+	# Create each of the questions on the Survey
+	for question in questions:
+		q = models.Question(label=question['title'],
+				    type=question['type'],
+				    options='["foo"]',
+				    survey=s)
+		q.save()
+
+        return HttpResponseRedirect('/survey_create')	

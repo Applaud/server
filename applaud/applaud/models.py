@@ -93,3 +93,51 @@ class Employee(models.Model):
 
 	# What dimensions are relevant for rating this employee
 	rating_profile = models.ForeignKey(RatingProfile)
+
+
+#################
+# SURVEY MODELS #
+#################
+
+class Survey(models.Model):
+    title = models.TextField(max_length=100)
+    description = models.TextField(max_length=1000,blank=True,null=True)
+
+    def __unicode__(self):
+        return self.title
+
+class Question(models.Model):
+    # Question text
+    label = models.TextField(max_length=200)
+
+    # Types of widgets that are available
+    QUESTION_TYPES = (
+        ('TA', 'textarea'),
+        ('TF', 'textfield'),
+        ('RG', 'radio group'),
+        ('CG', 'checkbox group'),
+    )
+
+    # Type of widget for the question
+    type = models.CharField(max_length=2,choices=QUESTION_TYPES)
+
+    # Labels for multiple-choice type questions
+    options = SerializedStringsField()
+
+    # The survey to which this question belongs
+    survey = models.ForeignKey(Survey)
+
+    # TODO: perhaps have a field for default value?
+
+    def __unicode__(self):
+        return self.label
+
+class QuestionResponse(models.Model):
+    # What question are we responding to?
+    question = models.ForeignKey(Question)
+
+    # The reponse. Should be interpreted about whatever question.type is.
+    response = SerializedStringsField()
+
+    def __unicode__(self):
+        return json.dumps(self.response)

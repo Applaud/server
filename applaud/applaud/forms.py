@@ -17,3 +17,9 @@ class RatingProfileForm(ModelForm):
 	
 	class Meta:
 		model = models.RatingProfile
+
+class SurveyCreateForm(ModelForm):
+	question = forms.Textarea()
+
+	class Meta:
+		model = models.Survey

@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^employees/',views.employee_list),
     url(r'^create_rating_profile/',views.create_rating_profile),
     url(r'^ratingprofiles/',views.list_rating_profiles),
+    url(r'^survey_create/',views.create_survey),
 
     #GET w/ GID
     #validate GID
