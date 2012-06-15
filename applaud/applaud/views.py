@@ -101,7 +101,7 @@ def nfdata(request):
 		nfitem_list.append({'title':nfitem.title,
 				    'subtitle':nfitem.subtitle,
 				    'body':nfitem.body,
-				    'date':str(nfitem.date)})
+				    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
 
 	ret = { 'newsfeed_items':nfitem_list }
 
