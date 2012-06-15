@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+    <title>Create Survey</title>
+    <script type="text/javascript">
+      var i = 0;
+      
+      function addQuestion() {
+	  var form = document.getElementById('survey_form');
+	  var new_text_area = document.createElement('textarea');
+	  new_text_area.setAttribute('name', 'question_' + ++i);
+	  new_text_area.setAttribute('cols', '40');
+	  new_text_area.setAttribute('rows', '8');
+	  
+	  var new_qt_menu = document.createElement('select');
+	  new_qt_menu.setAttribute('name', 'questiontype_'+i);
+	  new_qt_menu.innerHTML="<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>";
+	  
+	  form.insertBefore(new_text_area, document.getElementById('submit_button'));
+	  form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
+	  form.insertBefore(new_qt_menu, document.getElementById('submit_button'));
+	  form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Create Survey</h1>
+    {% if title_err %}
+    <h2>{{ title_err }}</h2>
+    {% endif %}
+    {% if questions_err %}
+    <h2>{{ dimensions_err }}</h2>
+    {% endif %}
+    <form action="/survey_create/" method="post" id="survey_form">
+      {% csrf_token %}
+      
+      Title:
+      <input type="text" name="title"/>
+      <br />
+      {% if questions %}
+      {% for question in questions %}
+      Question label:
+      <input type="text" name="question_{{ forloop.counter }}">{{ q }}<br />
+      Question type:
+      <select name="questiontype_{{ forloop.counter }}">
+	<option value="TA">textarea</option>
+	<option value="TF">textfield</option>
+	<option value="RG">radio group</option>
+	<option value="CG">checkbox group</option>
+      </select>
+      {% endfor %}
+      {% else %}
+      Question label:
+      <input type="text" name="question_0"><br />
+      Question type:
+      <select name="questiontype_0">
+	<option value="TA">textarea</option>
+	<option value="TF">textfield</option>
+	<option value="RG">radio group</option>
+	<option value="CG">checkbox group</option>
+      </select>
+
+      {% endif %}
+      <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
+    </form>
+    <button onclick="addQuestion();">add question</button>
+    <ul>
+
+
+    <!-- {% for item in list %} -->
+    <!-- <li>{{item.title}} -->
+    <!--   <ul> -->
+    <!-- 	{% for d in item.dimensions %} -->
+    <!-- 	<li>{{ d }} -->
+    <!-- 	{% endfor %} -->
+    <!--   </ul>  -->
+    <!-- {% endfor %} -->
+    <!-- </ul> -->
+
+  </body>
+</html>
