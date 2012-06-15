@@ -75,7 +75,7 @@ def checkin(request):
 
 # This allows a user to save and view newsfeed posts
 @csrf_protect
-def formtest(request):
+def newsfeed_create(request):
 	if request.method == 'POST':
 	    n = forms.NewsFeedItemForm(request.POST)
 	    newsitem = n.save(commit=False)

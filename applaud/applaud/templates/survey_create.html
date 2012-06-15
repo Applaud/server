@@ -3,26 +3,57 @@
   <head>
     <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
     <title>Create Survey</title>
-    <script type="text/javascript" href="{{ STATIC_URL }}jquery.js"/>
+    <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
     <script type="text/javascript">
-      var i = 0;
-      
-      function addQuestion() {
-	  var form = document.getElementById('survey_form');
-	  var new_text_area = document.createElement('textarea');
-	  new_text_area.setAttribute('name', 'question_' + ++i);
-	  new_text_area.setAttribute('cols', '40');
-	  new_text_area.setAttribute('rows', '8');
+      $(document).ready(function() {
+	  // Set up buttons
+	  $("#question_0_optionbutton").click(function() {
+	      addOption(0,0);
+	  });
+	  $("#addquestion").click(function() {
+	      addQuestion();
+	  });
 	  
-	  var new_qt_menu = document.createElement('select');
-	  new_qt_menu.setAttribute('name', 'questiontype_'+i);
-	  new_qt_menu.innerHTML="<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>";
+	  // Keeps track of # of questions
+	  var i = 0;
+	  // Start off with question 0 has 1 option
+	  var questionOptions = [1];
 	  
-	  form.insertBefore(new_text_area, document.getElementById('submit_button'));
-	  form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
-	  form.insertBefore(new_qt_menu, document.getElementById('submit_button'));
-	  form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
-      }
+	  function addQuestion() {
+	      var form = document.getElementById('survey_form');
+	      var new_text_area = document.createElement('textarea');
+	      new_text_area.setAttribute('name', 'question_' + ++i);
+	      new_text_area.setAttribute('cols', '40');
+	      new_text_area.setAttribute('rows', '8');
+	      
+	      var new_qt_menu = document.createElement('select');
+	      new_qt_menu.setAttribute('name', 'questiontype_'+i);
+	      new_qt_menu.setAttribute('id', 'questiontype_'+i);
+	      new_qt_menu.innerHTML="<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>";
+	      
+	      form.insertBefore(new_text_area, document.getElementById('submit_button'));
+	      form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
+	      form.insertBefore(new_qt_menu, document.getElementById('submit_button'));
+	      form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
+
+	      // Create a new question bucket for storing # of options
+	      questionOptions.push(0);
+	      $("#questiontype_"+i).after("<button type=\"button\" name=\"question_"+i+"_optionbutton\" id=\"question_"+i+"_optionbutton\">Add Option</button>");
+	      var questionNumber = ""+i;
+	      $("#question_"+i+"_optionbutton").click(function() {
+		  var option = questionOptions[questionNumber];
+		  addOption(questionNumber, option);
+	      });
+	      // Add one option
+	      addOption(i);
+	  }
+
+	  function addOption(qindex) {
+	      $('#question_'+qindex+'_optionbutton').before("Option "+(questionOptions[qindex]+1)+": ");
+	      $('#question_'+qindex+'_optionbutton').before("<input type=\"text\" name=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\" id=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\"/><br />");
+	      questionOptions[qindex]++;
+	  }
+      });
     </script>
   </head>
   <body>
@@ -42,7 +73,7 @@
       {% if questions %}
       {% for question in questions %}
       Question label:
-      <input type="text" name="question_{{ forloop.counter }}">{{ q }}<br />
+      <textarea name="question_{{ forloop.counter }}" cols="40" rows="8">{{ q }}</textarea>
       Question type:
       <select name="questiontype_{{ forloop.counter }}">
 	<option value="TA">textarea</option>
@@ -50,10 +81,22 @@
 	<option value="RG">radio group</option>
 	<option value="CG">checkbox group</option>
       </select>
+      {% if question.options %}
+      {% for option in question.options %}
+      Option {{ forloop.counter }}:
+      <input type="text" name="question_{{ forloop.parentloop.counter }}_option_{{ forloop.counter }}"/><br />
+      {% endfor %}
+      {% else %}
+      Option 1:
+      <input type="text" name="question_{{ forloop.parentloop.counter }}_option_0"/><br />
+      {% endif %}
+      <button type="button" name="question_{{ forloop.counter }}_optionbutton" id="question_{{ forloop.counter }}_optionbutton">Add Option</button>
       {% endfor %}
       {% else %}
       Question label:
-      <input type="text" name="question_0"><br />
+      <br />
+      <textarea name="question_0" cols="40" rows="8"></textarea>
+      <br />
       Question type:
       <select name="questiontype_0">
 	<option value="TA">textarea</option>
@@ -61,11 +104,14 @@
 	<option value="RG">radio group</option>
 	<option value="CG">checkbox group</option>
       </select>
-
+      <br />
+      Option 1:
+      <input type="text" name="question_0_option_0"/><br />
+      <button type="button" name="question_0_optionbutton" id="question_0_optionbutton">Add Option</button>
       {% endif %}
       <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
     </form>
-    <button onclick="addQuestion();">add question</button>
+    <button id="addquestion">add question</button>
     <ul>
 
 

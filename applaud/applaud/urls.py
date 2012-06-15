@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     #close businesses
     #return json to client
     url(r'^checkin/',views.checkin),
-    url(r'^formtest/',views.formtest),
+    url(r'^newsfeed_create/',views.newsfeed_create),
     url(r'^newsfeed/',views.nfdata),                       
     url(r'^new_employee/',views.create_employee),
     url(r'^employees/',views.employee_list),

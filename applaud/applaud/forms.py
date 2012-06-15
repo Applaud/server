@@ -20,6 +20,7 @@ class RatingProfileForm(ModelForm):
 
 class SurveyCreateForm(ModelForm):
 	question = forms.Textarea()
+	option = forms.Textarea()
 
 	class Meta:
 		model = models.Survey
