@@ -1,0 +1,15 @@
+<html>
+
+  <head>
+    <title>Register Now!</title>
+  </head>
+
+  <body>
+    <form action="/register_business/" method="POST">
+      {{ csrf_token }}
+      {{ form.as_p }}
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+
+</html>

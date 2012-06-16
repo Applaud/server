@@ -35,6 +35,9 @@ urlpatterns = patterns('',
     url(r'^create_rating_profile/',views.create_rating_profile),
     url(r'^ratingprofiles/',views.list_rating_profiles),
     url(r'^survey_create/',views.create_survey),
+    url(r'^get_survey/',views.get_survey),
+    url(r'^register_business',views.register_business),
+    url(r'^register_fail',views.failed_registration),
 
     #GET w/ GID
     #validate GID

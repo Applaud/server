@@ -13,14 +13,14 @@ class SerializedStringsField(models.TextField):
                                                                                        
     def to_python(self, value):                                                        
         if not value:                                                                  
-            return                                                                     
+            return []
         if isinstance(value, list):                                                    
             return value                                                               
         return json.loads(value)                                                       
                                                                                        
     def get_prep_value(self, value):                                                   
         if not value:                                                                  
-            return                                                                     
+            return '[]'
         assert(isinstance(value, list) or isinstance(value, tuple))                    
         return json.dumps(value)
 
@@ -141,3 +141,8 @@ class QuestionResponse(models.Model):
 
     def __unicode__(self):
         return json.dumps(self.response)
+
+
+###############
+# USER MODELS #
+###############

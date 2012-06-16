@@ -1,14 +1,15 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
+from applaud.models import RatingProfile
+from django.template import RequestContext, Template
+from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.csrf import csrf_protect
+from datetime import datetime
+import sys
 import json
 import urllib2
 from applaud import forms
 from applaud import models
-from applaud.models import RatingProfile
-from django.template import RequestContext, Template
-from django.views.decorators.csrf import csrf_protect
-from datetime import datetime
-import sys
 
 def home(request):
 	return render_to_response('home.html')
@@ -213,9 +214,19 @@ def create_survey(request):
         i = 0
         questions = []
         while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
-            questions.append({'title':request.POST['question_' + str(i)],
-			      'type':request.POST['questiontype_' +str(i)]})
+	    options = []
+	    j = 0
+	    optionFieldName='question_'+str(i)+"_option_"+str(j)
+	    while optionFieldName in request.POST and request.POST[optionFieldName]:
+		options.append(request.POST[optionFieldName])
+		j += 1
+		optionFieldName='question_'+str(i)+"_option_"+str(j)
+
+	    questions.append({'title':request.POST['question_' + str(i)],
+			      'type':request.POST['question_' +str(i)+"_type"],
+			      'options':json.dumps(options)})
             i += 1
+	    
         title = description = ''
         if 'title' in request.POST and request.POST['title']:
             title = request.POST['title']
@@ -243,8 +254,54 @@ def create_survey(request):
 	for question in questions:
 		q = models.Question(label=question['title'],
 				    type=question['type'],
-				    options='["foo"]',
+				    options= question['options'],
 				    survey=s)
 		q.save()
 
         return HttpResponseRedirect('/survey_create')	
+
+def get_survey(request):
+    '''Gets the survey for a particular business.
+    TODO: get the business ID, and return the right survey for it.
+    '''
+
+    # For testing, just get the first survey
+    survey = models.Survey.objects.get(id=1)
+
+    # All of the questions associated with the survey
+    questions = survey.question_set.all()
+
+    # Making a python object from the query set of questions
+    questionList = []
+    for question in questions:
+	questionList.append({'label':question.label,
+			     'type':question.type,
+			     'options':question.options})
+	
+    # Creating a python object from the survey model + questions
+    surveyDict = {'title':survey.title,
+		  'description':survey.description,
+		  'questions':questionList}
+
+    # Returning that as JSON
+    return HttpResponse(json.dumps(surveyDict))
+    
+def register_business(request):
+    if request.method == 'POST':
+	registrationForm = UserCreationForm(request.POST)
+	if registrationForm.is_valid():
+	    registrationForm.save()
+	    return HttpResponseRedirect('/register_success/')
+	else:
+	    return HttpResponseRedirect('/register_fail/')
+
+    else:
+	form = UserCreationForm()
+	return render_to_response('register.html',{'form':form})
+    
+@csrf_protect
+def failed_registration(request):
+    return render_to_response('fail.html',
+			      {},
+			      context_instance=RequestContext(request))
+

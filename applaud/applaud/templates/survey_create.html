@@ -8,7 +8,7 @@
       $(document).ready(function() {
 	  // Set up buttons
 	  $("#question_0_optionbutton").click(function() {
-	      addOption(0,0);
+	      addOption(0);
 	  });
 	  $("#addquestion").click(function() {
 	      addQuestion();
@@ -16,42 +16,84 @@
 	  
 	  // Keeps track of # of questions
 	  var i = 0;
+
 	  // Start off with question 0 has 1 option
 	  var questionOptions = [1];
 	  
 	  function addQuestion() {
-	      var form = document.getElementById('survey_form');
-	      var new_text_area = document.createElement('textarea');
-	      new_text_area.setAttribute('name', 'question_' + ++i);
-	      new_text_area.setAttribute('cols', '40');
-	      new_text_area.setAttribute('rows', '8');
+	      //Objects to instantiate:
+	      //1.Question label
+	      //2.Question type
+	      //3.Option field (e.g. first entry of a radio button)
+	      //4.Add option button
+	      i++;
+	      var questionDiv = $("<div></div>");
+	      questionDiv.prop({'id':"question_"+i+"_div"});
+	      $("#submit_button").before(questionDiv);
 	      
-	      var new_qt_menu = document.createElement('select');
-	      new_qt_menu.setAttribute('name', 'questiontype_'+i);
-	      new_qt_menu.setAttribute('id', 'questiontype_'+i);
-	      new_qt_menu.innerHTML="<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>";
+	      var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
+	      questionAreaLabel.prop({"for":"question_"+i});
 	      
-	      form.insertBefore(new_text_area, document.getElementById('submit_button'));
-	      form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
-	      form.insertBefore(new_qt_menu, document.getElementById('submit_button'));
-	      form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
+	      var questionArea = $("<textarea></textarea>");
+	      questionArea.prop({'name':"question_"+i,
+				 'id':"question_"+i,
+				 'rows':'8',
+				 'cols':'40'});
 
+	      var questionTypeLabel = $("<label>Question type </label>");
+	      questionTypeLabel.prop({"for":"question_"+i+"_type"});
+
+	      var questionType = $("<select></select>");
+	      questionType.prop({'name':"question_"+i+"_type",
+				 'id':"question_"+i+"_type"});
+
+	      questionType.append("<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>");
+	      
 	      // Create a new question bucket for storing # of options
+	      
 	      questionOptions.push(0);
-	      $("#questiontype_"+i).after("<button type=\"button\" name=\"question_"+i+"_optionbutton\" id=\"question_"+i+"_optionbutton\">Add Option</button>");
-	      var questionNumber = ""+i;
-	      $("#question_"+i+"_optionbutton").click(function() {
-		  var option = questionOptions[questionNumber];
-		  addOption(questionNumber, option);
-	      });
-	      // Add one option
-	      addOption(i);
-	  }
+	      
+	      var optionDiv = $("<div></div>");
+	      optionDiv.prop({'id':"question_"+i+"_options"});
+	      
 
+	      
+	      var questionNumber = ""+i;
+	      var addOptionButton = $("<button>Add Option</button>");
+	      addOptionButton.prop({'type':"button",
+				    'name':"question_"+i+"_optionbutton",
+				    'id':"question_"+i+"_optionbutton"});
+	      
+	      addOptionButton.click(function() {
+		  $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
+	      });
+
+	      questionDiv
+		  .append(questionAreaLabel)
+		  .append(questionArea)
+		  .append($("<br />"))
+		  .append(questionTypeLabel)
+		  .append(questionType)
+		  .append(optionDiv)
+		  .append(addOptionButton)
+		  .append($("<br />"));
+
+	      addOption(i);	      
+
+	  }
+	  
+	  
 	  function addOption(qindex) {
-	      $('#question_'+qindex+'_optionbutton').before("Option "+(questionOptions[qindex]+1)+": ");
-	      $('#question_'+qindex+'_optionbutton').before("<input type=\"text\" name=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\" id=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\"/><br />");
+	      var questionOptionsDiv = $("#question_"+qindex+"_options");
+	      
+	      var optionFieldLabel = $("<label>Option "+(questionOptions[qindex]+1)+"</label>");
+	      optionFieldLabel.prop({"for":"question_"+qindex+"_option_"+questionOptions[qindex]});
+
+	      var optionField = $("<input type=\"text\" name=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\" id=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\"/><br />");
 	      questionOptions[qindex]++;
+	      questionOptionsDiv
+		  .append(optionFieldLabel)
+		  .append(optionField);
 	  }
       });
     </script>
@@ -72,15 +114,16 @@
       <br />
       {% if questions %}
       {% for question in questions %}
-      Question label:
+      question label:
       <textarea name="question_{{ forloop.counter }}" cols="40" rows="8">{{ q }}</textarea>
-      Question type:
-      <select name="questiontype_{{ forloop.counter }}">
-	<option value="TA">textarea</option>
-	<option value="TF">textfield</option>
-	<option value="RG">radio group</option>
-	<option value="CG">checkbox group</option>
+      question type:
+      <select name="question_{{ forloop.counter }}_type">
+	<option value="ta">textarea</option>
+	<option value="tf">textfield</option>
+	<option value="rg">radio group</option>
+	<option value="cg">checkbox group</option>
       </select>
+      <div id="question_0_options">
       {% if question.options %}
       {% for option in question.options %}
       Option {{ forloop.counter }}:
@@ -90,23 +133,26 @@
       Option 1:
       <input type="text" name="question_{{ forloop.parentloop.counter }}_option_0"/><br />
       {% endif %}
+      </div>
       <button type="button" name="question_{{ forloop.counter }}_optionbutton" id="question_{{ forloop.counter }}_optionbutton">Add Option</button>
       {% endfor %}
       {% else %}
-      Question label:
+      Question #1:
       <br />
       <textarea name="question_0" cols="40" rows="8"></textarea>
       <br />
       Question type:
-      <select name="questiontype_0">
+      <select name="question_0_type">
 	<option value="TA">textarea</option>
 	<option value="TF">textfield</option>
 	<option value="RG">radio group</option>
 	<option value="CG">checkbox group</option>
       </select>
       <br />
+      <div id="question_0_options">
       Option 1:
       <input type="text" name="question_0_option_0"/><br />
+      </div>
       <button type="button" name="question_0_optionbutton" id="question_0_optionbutton">Add Option</button>
       {% endif %}
       <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
@@ -124,6 +170,6 @@
     <!--   </ul>  -->
     <!-- {% endfor %} -->
     <!-- </ul> -->
-
+    
   </body>
 </html>
