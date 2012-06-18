@@ -40,7 +40,7 @@ urlpatterns = patterns('',
 
     # Registering end-users. Allowing them to configure their account online
     (r'^accounts/', include('registration.backends.default.urls')),
-    (r'^profiles/', include('profiles.urls')),
+#    (r'^profiles/', include('profiles.urls')),
 
     # Static JSON data that can be used for testing when the internet's down
     url(r'^example/$',views.example),
