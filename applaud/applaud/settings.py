@@ -7,6 +7,8 @@ TEMPLATE_DEBUG = DEBUG
 
 # How long a user has to activate their account
 ACCOUNT_ACTIVATION_DAYS = 7
+# Where to go after login
+LOGIN_REDIRECT_URL = '/'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -135,6 +137,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'applaud',
     'registration',
+    'profiles',
 )
 
 # A sample logging configuration. The only tangible logging

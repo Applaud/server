@@ -12,7 +12,10 @@ from applaud import forms
 from applaud import models
 
 def index(request):
-	return render_to_response('home.html')
+	username = ""
+	if request.user.is_authenticated():
+		username = request.user.username
+	return render_to_response('index.html',{'username':username})
 
 def example(request):
 	res = { "nearby_businesses": [] }
