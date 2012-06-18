@@ -7,10 +7,6 @@ import views
 import settings
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'applaud.views.home', name='home'),
-    # url(r'^applaud/', include('applaud.foo.urls')),
-
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.STATIC_ROOT}),
 
@@ -36,8 +32,10 @@ urlpatterns = patterns('',
     url(r'^ratingprofiles/',views.list_rating_profiles),
     url(r'^survey_create/',views.create_survey),
     url(r'^get_survey/',views.get_survey),
-    url(r'^register_business',views.register_business),
-    url(r'^register_fail',views.failed_registration),
+    # url(r'^register_business',views.register_business),
+    # url(r'^register_fail',views.failed_registration),
+
+    (r'^accounts/', include('registration.backends.default.urls')),
 
     #GET w/ GID
     #validate GID
@@ -54,7 +52,7 @@ urlpatterns = patterns('',
 #    url(r'^submit/',)
 
 
-    url(r'^/',views.home),
+    url(r'^/',views.index),
     url(r'^example/$',views.example),
     url(r'^example2/$',views.example2),
     url(r'^example3/$',views.example3),

@@ -1,27 +1,27 @@
 from django.db import models
 import json
 
-class SerializedStringsField(models.TextField):                                        
-    """Allows us to store a list of strings                                            
-    directly in the database using JSON to                                             
-    serialize/deserialize."""                                                          
-                                                                                       
-    __metaclass__ = models.SubfieldBase                                                
-                                                                                       
-    def __init__(self, *args, **kwargs):                                               
-        super(SerializedStringsField, self).__init__(*args, **kwargs)                  
-                                                                                       
-    def to_python(self, value):                                                        
-        if not value:                                                                  
+class SerializedStringsField(models.TextField):
+    """Allows us to store a list of strings
+    directly in the database using JSON to
+    serialize/deserialize."""
+
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, *args, **kwargs):
+        super(SerializedStringsField, self).__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        if not value:
             return []
-        if isinstance(value, list):                                                    
-            return value                                                               
-        return json.loads(value)                                                       
-                                                                                       
-    def get_prep_value(self, value):                                                   
-        if not value:                                                                  
+        if isinstance(value, list):
+            return value
+        return json.loads(value)
+
+    def get_prep_value(self, value):
+        if not value:
             return '[]'
-        assert(isinstance(value, list) or isinstance(value, tuple))                    
+        assert(isinstance(value, list) or isinstance(value, tuple))
         return json.dumps(value)
 
 class SerializedRatingsField(models.TextField):
@@ -90,6 +90,8 @@ class Employee(models.Model):
 	'''
 	first_name = models.TextField(max_length=100)
 	last_name = models.TextField(max_length=100)
+
+        bio = models.TextField(max_length=1000,blank=True,null=True)
 
 	# What dimensions are relevant for rating this employee
 	rating_profile = models.ForeignKey(RatingProfile)

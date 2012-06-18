@@ -11,7 +11,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 
-def home(request):
+def index(request):
 	return render_to_response('home.html')
 
 def example(request):
@@ -127,6 +127,7 @@ class EmployeeEncoder(json.JSONEncoder):
 			dimensions = o.rating_profile.dimensions
 			res = {'first_name':o.first_name,
 			       'last_name':o.last_name,
+			       'bio':o.bio,
 			       'ratings':
 				       {'rating_title':o.rating_profile.title,
 					'dimensions':dimensions}

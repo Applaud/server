@@ -5,6 +5,9 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# How long a user has to activate their account
+ACCOUNT_ACTIVATION_DAYS = 7
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -112,7 +115,8 @@ WSGI_APPLICATION = 'applaud.wsgi.application'
 TEMPLATE_DIRS = (
     #"/srv/applaud/server/applaud/applaud/templates",
     # This is for luke's macbook:
-    "/Users/lukelovett/Documents/work/applaud/server/venv/server/applaud/applaud/templates",
+    CWD+'/../applaud/templates',
+    CWD+'/../registration/templates/',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -130,6 +134,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'applaud',
+    'registration',
 )
 
 # A sample logging configuration. The only tangible logging
