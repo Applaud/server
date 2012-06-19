@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+a<!DOCTYPE html>
 <head>
 <title>Welcome to Applaud!</title>
 </head>
@@ -18,8 +18,7 @@
 
 <br />
 
-<form action="/edit_newsfeed_item/" method="post" />
-{% csrf_token %}
+<form action="/edit_newsfeed_item/" method="get" />
 <input type="submit" value="{{item.id}}" />
 <input type="submit" value="Edit" />
 </form>
