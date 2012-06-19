@@ -24,6 +24,10 @@ business_group.save()
 customer_group = Group(name='Customer')
 customer_group.save()
 
+# Add the business group.
+business.groups = [business_group]
+business.save()
+
 # Make a RatingProfile.
 profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
 profile1.save()
