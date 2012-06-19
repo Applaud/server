@@ -82,11 +82,12 @@ def checkin(request):
 @csrf_protect
 def newsfeed_create(request):
 	if request.method == 'POST':
-	    n = forms.NewsFeedItemForm(request.POST)
-	    newsitem = n.save(commit=False)
-	    newsitem.date = datetime.now()
-	    newsitem.save()
-	    
+                n = forms.NewsFeedItemForm(request.POST)
+                newsitem = n.save(commit=False)
+                newsitem.date = datetime.now()
+                newsitem.date_edited = datetime.now()
+                newsitem.save()
+                        
 	f = forms.NewsFeedItemForm()
 	newsfeed = models.NewsFeedItem.objects.all()
 	
@@ -97,7 +98,21 @@ def newsfeed_create(request):
 # Delete a newsfeed item
 @csrf_protect
 def delete_newsfeed_item(request):
-	return HttpResponse("Implement this view!")
+        if request.method == 'POST':
+                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+                n.delete()
+                
+                f = forms.NewsFeedItemForm()
+                newsfeed = models.NewsFeedItem.objects.all()
+                
+                return render_to_response('basic_newsfeed.html',
+                                          {'form':f, 'list':newsfeed},
+                                          context_instance=RequestContext(request))
+        else:
+                n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+                return render_to_response('delete_confirmation.html',
+                                          {'item':n, 'id':request.GET['id']},
+                                          context_instance=RequestContext(request))
 
 #Serves the newsfeed to iOS	
 def nfdata(request):
@@ -113,33 +128,42 @@ def nfdata(request):
 				    'subtitle':nfitem.subtitle,
 				    'body':nfitem.body,
 				    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
-
+        
 	ret = { 'newsfeed_items':nfitem_list }
 
 	return HttpResponse(json.dumps(ret))
 
 @csrf_protect
-def edit_newsfeed_item(request):
+def edit_newsfeed(request):
         if request.method == 'POST':
-                n = forms.NewsFeedItemForm(request.POST)
-	        newsitem = n.save(commit=False)
-       	        newsitem.date = datetime.now()
-       	        newsitem.save()
-	    	        	
-	else:
-		try:
-			n = NewsFeedItem.objects.get(id=request.GET['id'])
-		except:
-        		return render_to_response('fail', {}, context_instance=RequestContext(request)
+                
+                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+                d = {'title':request.POST['title'],
+                     'subtitle':request.POST['subtitle'],
+                     'body':request.POST['body']}
+                
+                n.change_parameters(d)
+                n = n.save()
 
-                dict = dict((key, value) for key, value in n.__dict__.iteritems() 
-                        if not callable(value) and not key.startswith('__'))
-	    
-                f = forms.NewsFeedItemForm(initial=dict)
-        	newsfeed = models.NewsFeedItem.objects.all()
-       	
+                f = forms.NewsFeedItemForm()
+                newsfeed = models.NewsFeedItem.objects.all()
                 return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
+
+	else:
+		try:                        
+			n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+		except:
+                        return render_to_response('fail', {}, context_instance=RequestContext(request))               
+
+                #this might be a tad sloppy
+                d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
+	    
+                f = forms.NewsFeedItemForm(initial=d)
+       	
+                return render_to_response('edit_newsfeed.html',
+				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
 @csrf_protect

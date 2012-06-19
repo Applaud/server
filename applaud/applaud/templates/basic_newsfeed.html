@@ -1,4 +1,4 @@
-a<!DOCTYPE html>
+<!DOCTYPE html>
 <head>
 <title>Welcome to Applaud!</title>
 </head>
@@ -6,7 +6,7 @@ a<!DOCTYPE html>
 
 <h1>NEWSFEED</h1>
 
-<form action="/formtest/" method="post" />
+<form action="/newsfeed_create/" method="post" />
 {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Submit" />
@@ -18,16 +18,15 @@ a<!DOCTYPE html>
 
 <br />
 
-<form action="/edit_newsfeed_item/" method="get" />
-<input type="submit" value="{{item.id}}" />
+<form action="/edit_newsfeed/" method="get" />
+<input type="hidden" name="id" value="{{item.id}}" />
 <input type="submit" value="Edit" />
 </form>
 
 <br />
 
-<form action="/delete_newsfeed_item/" method="post" />
-{% csrf_token %}
-<input type="submit" value="{{item.id}}" />
+<form action="/delete_newsfeed_item/" method="get" />
+<input type="hidden" value="{{item.id}}" name="id" />
 <input type="submit" value="Delete" />
 </form>
 
