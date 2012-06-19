@@ -50,18 +50,22 @@ nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
                            subtitle='proceed to code',
                            body='After an insane amout of driving, we finally got there.',
                            date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
                            business=business)
+
 nfi1.save()
 nfi2 = models.NewsFeedItem(title='Foo!',
                            subtitle='Bar?',
                            body='Baz.',
                            date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
                            business=business)
 nfi2.save()
 nfi3 = models.NewsFeedItem(title='Try our new parrots!',
                            subtitle='Delicious, nutritious.',
                            body='These parrots are selling for a dollar.',
                            date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
                            business=business)
 nfi3.save()
 

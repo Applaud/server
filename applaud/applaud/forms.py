@@ -5,7 +5,8 @@ from sets import Set
 class NewsFeedItemForm(ModelForm):
 	class Meta:
 		model = models.NewsFeedItem
-
+                
+                
 class EmployeeForm(ModelForm):
 	
 	class Meta:
