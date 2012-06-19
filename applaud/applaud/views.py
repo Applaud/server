@@ -318,3 +318,27 @@ def failed_registration(request):
 			      {},
 			      context_instance=RequestContext(request))
 
+def general_feedback(request):
+	if request.method != 'POST':
+		return render_to_response('fail.html',
+					  {},
+					  context_instance=RequestContext(request))
+	feedback = models.GeneralFeedback(json.load(request.POST)['answer'])
+	feedback.save()
+	return HttpResponse('foo')
+
+@csrf_protect
+def evaluate(request):
+	if request.method != 'POST':
+		return render_to_response('fail.html',{}. context_instance=RequestCOntext(request))
+	else:
+		rating_data = json.load(request.POST)
+		if 'employee' in request.POST:
+			try:
+				e = Employee.objects.get(rating_data['employee']['id'])
+			except:
+				pass
+			for key, value in rating_data['ratings']:
+				r = Rating(title=key, rating_value=float(value),employee=e)
+				r.save()
+	return HttpResponse('foo')
