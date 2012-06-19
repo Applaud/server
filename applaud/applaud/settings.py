@@ -137,7 +137,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'applaud',
     'registration',
-    'profiles',
+#    'profiles',
 )
 
 # A sample logging configuration. The only tangible logging
