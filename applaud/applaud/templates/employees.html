@@ -15,7 +15,17 @@
 {% if employee|length > 0 %}
 <ul>
 {% for employee in list %}
-<li>{{employee.last_name}}, {{ employee.first_name }}</li>
+<li>{{employee.last_name}}, {{ employee.first_name }}
+
+<br />
+
+<form action="/delete_employee/" method="get" />
+<input type="hidden" value="{{item.id}}" name="id" />
+<input type="submit" value="Delete" />
+</form>>
+
+<br />
+
 {% endfor %}
 </ul>
 {% endif %}

@@ -186,21 +186,23 @@ def create_employee(request):
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
 
-@csrf_protect
-def edit_employee(request):
-	if request.method == 'POST':
-		employee_form = forms.EmployeeForm(request.POST)
-
-	return render_to_response()
 		
 @csrf_protect
 def delete_employee(request):
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
+	if request.method == 'POST':
+                emp = models.Employee.objects.get(pk=request.POST['id'])
+                emp.delete()
+		
+		new_form = forms.EmployeeForm()
+		employees = models.Employee.objects.all()
+
+		return render_to_response('employees.html', {'form':new_form, 'list':newsfeed}. context_instance=REquestContext(request))
+
 	else:
-		employee_deleted = models.Employee.objects.delete(request.POST)
-	# need to check for two employees with the same name.
-		return render_to_response('employees.html', {'list':employees}, context_instance=RequestContext(request))
+                emp = models.Employee.objects.get(pk=request.POST['id'])
+		return render_to_response('delete__confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
+
+	
 
 
 
