@@ -330,7 +330,7 @@ def general_feedback(request):
 @csrf_protect
 def evaluate(request):
 	if request.method != 'POST':
-		return render_to_response('fail.html',{}. context_instance=RequestCOntext(request))
+		return render_to_response('fail.html',{}. context_instance=RequestContext(request))
 	else:
 		rating_data = json.load(request.POST)
 		if 'employee' in request.POST:
