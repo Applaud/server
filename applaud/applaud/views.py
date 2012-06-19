@@ -315,7 +315,7 @@ def general_feedback(request):
 		return render_to_response('fail.html',
 					  {},
 					  context_instance=RequestContext(request))
-	feedback = models.GeneralFeedback(json.load(request.POST)['answer'])
+	feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
 	feedback.save()
 	return HttpResponse('foo')
 
@@ -326,7 +326,7 @@ def evaluate(request):
 					  {},
 					  context_instance=RequestContext(request))
 	else:
-		rating_data = json.load(request.POST)
+		rating_data = json.load(request)
 		if 'employee' in request.POST:
 			try:
 				e = Employee.objects.get(rating_data['employee']['id'])
