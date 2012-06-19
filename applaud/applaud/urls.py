@@ -35,7 +35,7 @@ urlpatterns = patterns('',
                        url(r'^ratingprofiles/',views.list_rating_profiles),
 
                        # Getting and posting employee data from iOS
-                       url(r'^evaluate/', views.evaluate)
+                       url(r'^evaluate/', views.evaluate),
                        url(r'^employees/',views.employee_list),
                        
                        # Creating/editing/viewing surveys
