@@ -130,11 +130,11 @@ def edit_newsfeed_item(request):
 		try:
 			n = NewsFeedItem.objects.get(id=request.GET['id'])
 		except:
-        		return render_to_response('fail', {}, context_instance=RequestContext(request)
-
+        		return render_to_response('fail', {}, context_instance=RequestContext(request))
+						  
                 dict = dict((key, value) for key, value in n.__dict__.iteritems() 
-                        if not callable(value) and not key.startswith('__'))
-	    
+			    if not callable(value) and not key.startswith('__'))
+		
                 f = forms.NewsFeedItemForm(initial=dict)
         	newsfeed = models.NewsFeedItem.objects.all()
        	

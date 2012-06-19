@@ -9,10 +9,9 @@ import applaud.settings
 from applaud import models
 import datetime
 
-#
-# TODO: Question
-#       QuestionResponse
-#
+# Make a Business.
+business = models.Business(name='Foo Burgers')
+business.save()
 
 # Make a RatingProfile.
 profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
@@ -23,9 +22,17 @@ profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', '
 profile3.save()
 
 # Make a few Employees.
-master = models.Employee(first_name='Master', last_name='Trash', rating_profile=profile1)
+master = models.Employee(first_name='Master',
+                         last_name='Trash',
+                         rating_profile=profile1,
+                         business=business,
+                         bio='The master of trash.')
 master.save()
-mystical = models.Employee(first_name='Mystical', last_name='Beast', rating_profile=profile1)
+mystical = models.Employee(first_name='Mystical',
+                           last_name='Beast',
+                           rating_profile=profile1,
+                           business=business,
+                           bio='foo')
 mystical.save()
 
 # Make some Ratings.
@@ -42,23 +49,26 @@ rating4.save()
 nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
                            subtitle='proceed to code',
                            body='After an insane amout of driving, we finally got there.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           business=business)
 nfi1.save()
 nfi2 = models.NewsFeedItem(title='Foo!',
                            subtitle='Bar?',
                            body='Baz.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           business=business)
 nfi2.save()
 nfi3 = models.NewsFeedItem(title='Try our new parrots!',
                            subtitle='Delicious, nutritious.',
                            body='These parrots are selling for a dollar.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           business=business)
 nfi3.save()
 
 # Make Surveys.
-s1 = models.Survey(title='Emacs?', description='Text editor of the gods.')
+s1 = models.Survey(title='Emacs?', description='Text editor of the gods.', business=business)
 s1.save()
-s2 = models.Survey(title='Foo?', description='Metasyntactic variable of the gods.')
+s2 = models.Survey(title='Foo?', description='Metasyntactic variable of the gods.', business=business)
 s2.save()
 
 # Make Questions.
