@@ -53,4 +53,7 @@ urlpatterns = patterns('',
                        
                        # General feedback.
                        url(r'^general_feedback/$', views.general_feedback),
+
+                       # Getting the CSRF token for mobile devices
+                       url(r'^csrf/$', views.get_csrf),
                        )

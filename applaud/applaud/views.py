@@ -4,7 +4,7 @@ from applaud.models import RatingProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
-from django.core.context_processors import csrf
+from django.middleware.csrf import get_token
 from datetime import datetime
 import sys
 import json
@@ -338,5 +338,6 @@ def evaluate(request):
 				r.save()
 	return HttpResponse('foo')
 
+# This will provide the CSRF token
 def get_csrf(request):
-	return HttpResponse(csrf(request))
+	return HttpResponse(get_token(request))
