@@ -121,3 +121,18 @@ class RegistrationFormNoFreeEmail(RegistrationForm):
         if email_domain in self.bad_domains:
             raise forms.ValidationError(_("Registration using free email addresses is prohibited. Please supply a different email address."))
         return self.cleaned_data['email']
+
+
+class BusinessRegistrationForm(RegistrationForm):
+    phone = forms.RegexField(regex=r'^\d?[ -.]?\d{3}[ -.]?\d{3}[ -.]\d{4}',
+                             widget=forms.TextInput(attrs=attrs_dict),
+                             error_messages={'invalid':"Please enter a valid phone number, including the area code."})
+
+    
+    latitude = forms.FloatField(widget=forms.TextInput(attrs=attrs_dict))
+    longitude = forms.FloatField(widget=forms.TextInput(attrs=attrs_dict))
+
+    username = forms.CharField(max_length=100,label="Business Name")
+
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)

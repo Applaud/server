@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 import json
 
@@ -86,7 +87,9 @@ class NewsFeedItem(models.Model):
 	subtitle = models.TextField(max_length=100)
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
-        business = models.ForeignKey('Business')
+
+        business = models.ForeignKey('BusinessProfile')
+
         date_edited = models.DateTimeField(editable=False)
 
         def change_parameters(self, d):
@@ -106,13 +109,13 @@ class Employee(models.Model):
 	rating_profile = models.ForeignKey(RatingProfile)
         
         # Where does this employee work?
-        business = models.ForeignKey('Business')
+        business = models.ForeignKey('BusinessProfile')
 
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
     feedback = models.TextField(max_length=10000)
-    business = models.ForeignKey('Business')
+    business = models.ForeignKey('BusinessProfile')
 
 #################
 # SURVEY MODELS #
@@ -121,7 +124,7 @@ class GeneralFeedback(models.Model):
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
-    business = models.ForeignKey('Business')
+    business = models.ForeignKey('BusinessProfile')
 
     def __unicode__(self):
         return self.title
@@ -167,9 +170,16 @@ class QuestionResponse(models.Model):
 # USER MODELS #
 ###############
 
-class Business(models.Model):
+class BusinessProfile(models.Model):
+    # N.B. The business name is stored as 'username' in the corresponding
+    # User object.
     
-    name = models.CharField(max_length=200)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     
+    phone = models.CharField(max_length=14)
+
+    user = models.OneToOneField(User)
+
     def __unicode__(self):
-        return self.name
+        return "%s (%s)"%(self.user.username,self.phone)

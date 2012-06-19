@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic.simple import direct_to_template
+from django.http import HttpResponseRedirect
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -7,6 +8,7 @@ admin.autodiscover()
 
 import views
 import settings
+from registration import views as business_views
 
 urlpatterns = patterns('',
 
@@ -19,10 +21,10 @@ urlpatterns = patterns('',
                        url(r'^$', views.index),
 
                        # Uncomment the admin/doc line below to enable admin documentation:
-                           url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+                       url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
                        # Uncomment the next line to enable the admin:
-                           url(r'^admin/', include(admin.site.urls)),
+                       url(r'^admin/', include(admin.site.urls)),
 
                        # IOS notifies us of where device is. We return business locations
                        url(r'^checkin/',views.checkin),
@@ -51,7 +53,6 @@ urlpatterns = patterns('',
                        
                        # Registering end-users. Allowing them to configure their account online
                        (r'^accounts/', include('registration.backends.default.urls')),
-                       #    (r'^profiles/', include('profiles.urls')),
 
                        # Static JSON data that can be used for testing when the internet's down
                        url(r'^example/$',views.example),
