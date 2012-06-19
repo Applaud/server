@@ -26,11 +26,11 @@ consult a specific backend's documentation for details.
 from django.conf.urls.defaults import *
 
 from django.contrib.auth import views as auth_views
-
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = patterns('',
                        url(r'^login/$',
-                           auth_views.login,
+                           csrf_exempt(auth_views.login),
                            {'template_name': 'registration/login.html'},
                            name='auth_login'),
                        url(r'^logout/$',

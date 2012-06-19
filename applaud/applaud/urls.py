@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     # Creating/editing/viewing employees
     url(r'^new_employee/',views.create_employee),
     url(r'^employees/',views.employee_list),
+    url(r'^rate_employee/',views.rate_employee),
     url(r'^create_rating_profile/',views.create_rating_profile),
     url(r'^ratingprofiles/',views.list_rating_profiles),
 

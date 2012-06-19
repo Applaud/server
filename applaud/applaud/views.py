@@ -124,6 +124,15 @@ def create_employee(request):
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
 
+def rate_employee(request):
+	# if not 'employee' in request.GET or not 'ratings' in request.GET:
+	#     error = "Must supply employee and ratings to rate an employee."
+	#     return render_to_response('error.html',{"error":error})   
+	
+	# employee = request.GET['employee']
+	# ratings = request.GET['ratings']
+	return HttpResponse("Coming soon!")
+
 class EmployeeEncoder(json.JSONEncoder):
 	def default(self, o):
 		if isinstance(o, models.Employee):
