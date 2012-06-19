@@ -120,13 +120,27 @@ def nfdata(request):
 
 @csrf_protect
 def edit_newsfeed_item(request):
-	if request.method == 'POST':
+        if request.method == 'POST':
+                n = forms.NewsFeedItemForm(request.POST)
+	        newsitem = n.save(commit=False)
+       	        newsitem.date = datetime.now()
+       	        newsitem.save()
+	    	        	
+	else:
 		try:
-			n = NewsFeedItem.objects.get(id=request.POST['id'])
+			n = NewsFeedItem.objects.get(id=request.GET['id'])
 		except:
-			pass
+        		return render_to_response('fail', {}, context_instance=RequestContext(request))
+						  
+                dict = dict((key, value) for key, value in n.__dict__.iteritems() 
+			    if not callable(value) and not key.startswith('__'))
 		
-		
+                f = forms.NewsFeedItemForm(initial=dict)
+        	newsfeed = models.NewsFeedItem.objects.all()
+       	
+                return render_to_response('basic_newsfeed.html',
+				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
 
 @csrf_protect
 def create_employee(request):
@@ -347,16 +361,26 @@ def general_feedback(request):
 def evaluate(request):
 	if request.method != 'POST':
 		return HttpResponse(get_token(request))
-	else:
-		rating_data = json.load(request)
-		if 'employee' in request.POST:
-			try:
-				e = Employee.objects.get(rating_data['employee']['id'])
-			except:
-				pass
-			for key, value in rating_data['ratings']:
-				r = Rating(title=key, rating_value=float(value),employee=e)
-				r.save()
+	rating_data = json.load(request)
+	if 'employee' in request.POST:
+		try:
+			e = Employee.objects.get(rating_data['employee']['id'])
+		except:
+			pass
+		for key, value in rating_data['ratings']:
+			r = Rating(title=key, rating_value=float(value),employee=e)
+			r.save()
+	return HttpResponse('foo')
+
+@csrf_protect
+def survey_respond(request):
+	if request.method != 'POST':
+		return HttpResponse(get_token(request))
+	for answer in json.load(request)['answers']:
+		question = models.Question.objects.get(label=answer['label'])
+		response = answer['response']
+		qr = models.QuestionResponse(question=question, response=response)
+		qr.save()
 	return HttpResponse('foo')
 
 # This will provide the CSRF token
