@@ -101,7 +101,7 @@ class Employee(models.Model):
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
-    feedback = models.TextField()
+    feedback = models.TextField(max_length=10000)
 
 #################
 # SURVEY MODELS #

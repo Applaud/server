@@ -4,6 +4,7 @@ from applaud.models import RatingProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 from datetime import datetime
 import sys
 import json
@@ -318,21 +319,24 @@ def failed_registration(request):
 			      {},
 			      context_instance=RequestContext(request))
 
+@csrf_protect
 def general_feedback(request):
 	if request.method != 'POST':
 		return render_to_response('fail.html',
 					  {},
 					  context_instance=RequestContext(request))
-	feedback = models.GeneralFeedback(json.load(request.POST)['answer'])
+	feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
 	feedback.save()
 	return HttpResponse('foo')
 
 @csrf_protect
 def evaluate(request):
 	if request.method != 'POST':
-		return render_to_response('fail.html',{}, context_instance=RequestContext(request))
+		return render_to_response('fail.html',
+					  {},
+					  context_instance=RequestContext(request))
 	else:
-		rating_data = json.load(request.POST)
+		rating_data = json.load(request)
 		if 'employee' in request.POST:
 			try:
 				e = Employee.objects.get(rating_data['employee']['id'])
@@ -342,3 +346,7 @@ def evaluate(request):
 				r = Rating(title=key, rating_value=float(value),employee=e)
 				r.save()
 	return HttpResponse('foo')
+
+# This will provide the CSRF token
+def get_csrf(request):
+	return HttpResponse(get_token(request))
