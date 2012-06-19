@@ -8,11 +8,25 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 import applaud.settings
 from applaud import models
 import datetime
+from django.contrib.auth.models import User, Group
 
-#
-# TODO: Question
-#       QuestionResponse
-#
+# Make a User.
+user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
+enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
+
+# Make a BusinessProfile.
+business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423)
+business.save()
+
+# Business and Customer groups.
+business_group = Group(name='Business')
+business_group.save()
+customer_group = Group(name='Customer')
+customer_group.save()
+
+# Add the business group.
+business.groups = [business_group]
+business.save()
 
 # Make a RatingProfile.
 profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
@@ -23,9 +37,17 @@ profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', '
 profile3.save()
 
 # Make a few Employees.
-master = models.Employee(first_name='Master', last_name='Trash', rating_profile=profile1)
+master = models.Employee(first_name='Master',
+                         last_name='Trash',
+                         rating_profile=profile1,
+                         business=business,
+                         bio='The master of trash.')
 master.save()
-mystical = models.Employee(first_name='Mystical', last_name='Beast', rating_profile=profile1)
+mystical = models.Employee(first_name='Mystical',
+                           last_name='Beast',
+                           rating_profile=profile1,
+                           business=business,
+                           bio='foo')
 mystical.save()
 
 # Make some Ratings.
@@ -42,23 +64,30 @@ rating4.save()
 nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
                            subtitle='proceed to code',
                            body='After an insane amout of driving, we finally got there.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
+                           business=business)
+
 nfi1.save()
 nfi2 = models.NewsFeedItem(title='Foo!',
                            subtitle='Bar?',
                            body='Baz.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
+                           business=business)
 nfi2.save()
 nfi3 = models.NewsFeedItem(title='Try our new parrots!',
                            subtitle='Delicious, nutritious.',
                            body='These parrots are selling for a dollar.',
-                           date=datetime.datetime.now())
+                           date=datetime.datetime.now(),
+                           date_edited=datetime.datetime.now(),
+                           business=business)
 nfi3.save()
 
 # Make Surveys.
-s1 = models.Survey(title='Emacs?', description='Text editor of the gods.')
+s1 = models.Survey(title='Emacs?', description='Text editor of the gods.', business=business)
 s1.save()
-s2 = models.Survey(title='Foo?', description='Metasyntactic variable of the gods.')
+s2 = models.Survey(title='Foo?', description='Metasyntactic variable of the gods.', business=business)
 s2.save()
 
 # Make Questions.

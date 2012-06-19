@@ -1,11 +1,12 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
-from applaud.models import RatingProfile
+from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
+from django.contrib.auth.models import Group, User
 import sys
 import json
 import urllib2
@@ -14,9 +15,15 @@ from applaud import models
 
 def index(request):
 	username = ""
+	profile = ""
 	if request.user.is_authenticated():
+		# Are we a business?
+		try:
+			profile = request.user.businessprofile
+		except BusinessProfile.DoesNotExist:
+			pass
 		username = request.user.username
-	return render_to_response('index.html',{'username':username})
+	return render_to_response('index.html',{'username':username,'profile':profile})
 
 def example(request):
 	res = { "nearby_businesses": [] }
@@ -82,11 +89,12 @@ def checkin(request):
 @csrf_protect
 def newsfeed_create(request):
 	if request.method == 'POST':
-	    n = forms.NewsFeedItemForm(request.POST)
-	    newsitem = n.save(commit=False)
-	    newsitem.date = datetime.now()
-	    newsitem.save()
-	    
+                n = forms.NewsFeedItemForm(request.POST)
+                newsitem = n.save(commit=False)
+                newsitem.date = datetime.now()
+                newsitem.date_edited = datetime.now()
+                newsitem.save()
+                        
 	f = forms.NewsFeedItemForm()
 	newsfeed = models.NewsFeedItem.objects.all()
 	
@@ -97,7 +105,21 @@ def newsfeed_create(request):
 # Delete a newsfeed item
 @csrf_protect
 def delete_newsfeed_item(request):
-	return HttpResponse("Implement this view!")
+        if request.method == 'POST':
+                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+                n.delete()
+                
+                f = forms.NewsFeedItemForm()
+                newsfeed = models.NewsFeedItem.objects.all()
+                
+                return render_to_response('basic_newsfeed.html',
+                                          {'form':f, 'list':newsfeed},
+                                          context_instance=RequestContext(request))
+        else:
+                n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+                return render_to_response('delete_confirmation.html',
+                                          {'item':n, 'id':request.GET['id']},
+                                          context_instance=RequestContext(request))
 
 #Serves the newsfeed to iOS	
 def nfdata(request):
@@ -113,20 +135,43 @@ def nfdata(request):
 				    'subtitle':nfitem.subtitle,
 				    'body':nfitem.body,
 				    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
-
+        
 	ret = { 'newsfeed_items':nfitem_list }
 
 	return HttpResponse(json.dumps(ret))
 
 @csrf_protect
-def edit_newsfeed_item(request):
-	if request.method == 'POST':
-		try:
-			n = NewsFeedItem.objects.get(id=request.POST['id'])
+def edit_newsfeed(request):
+        if request.method == 'POST':
+                
+                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+                d = {'title':request.POST['title'],
+                     'subtitle':request.POST['subtitle'],
+                     'body':request.POST['body']}
+                
+                n.change_parameters(d)
+                n = n.save()
+
+                f = forms.NewsFeedItemForm()
+                newsfeed = models.NewsFeedItem.objects.all()
+                return render_to_response('basic_newsfeed.html',
+				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
+
+	else:
+		try:                        
+			n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
 		except:
-			pass
-		
-		
+                        return render_to_response('fail', {}, context_instance=RequestContext(request))               
+
+                #this might be a tad sloppy
+                d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
+	    
+                f = forms.NewsFeedItemForm(initial=d)
+       	
+                return render_to_response('edit_newsfeed.html',
+				  {'form':f, 'id':request.GET['id']},
+				  context_instance=RequestContext(request))
 
 @csrf_protect
 def create_employee(request):
@@ -365,16 +410,26 @@ def general_feedback(request):
 def evaluate(request):
 	if request.method != 'POST':
 		return HttpResponse(get_token(request))
-	else:
-		rating_data = json.load(request)
-		if 'employee' in request.POST:
-			try:
-				e = Employee.objects.get(rating_data['employee']['id'])
-			except:
-				pass
-			for key, value in rating_data['ratings']:
-				r = Rating(title=key, rating_value=float(value),employee=e)
-				r.save()
+	rating_data = json.load(request)
+	if 'employee' in request.POST:
+		try:
+			e = Employee.objects.get(rating_data['employee']['id'])
+		except:
+			pass
+		for key, value in rating_data['ratings']:
+			r = Rating(title=key, rating_value=float(value),employee=e)
+			r.save()
+	return HttpResponse('foo')
+
+@csrf_protect
+def survey_respond(request):
+	if request.method != 'POST':
+		return HttpResponse(get_token(request))
+	for answer in json.load(request)['answers']:
+		question = models.Question.objects.get(label=answer['label'])
+		response = answer['response']
+		qr = models.QuestionResponse(question=question, response=response)
+		qr.save()
 	return HttpResponse('foo')
 
 # This will provide the CSRF token

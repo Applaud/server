@@ -10,6 +10,9 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 
 from registration.backends import get_backend
+import forms
+from applaud.models import BusinessProfile
+import sys
 
 @csrf_protect
 def activate(request, backend,
@@ -182,10 +185,25 @@ def register(request, backend, success_url=None, form_class=None,
     if form_class is None:
         form_class = backend.get_form_class(request)
 
+    sys.stderr.write("got backend in register()")
+
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
+
+        sys.stderr.write("validating form...")
         if form.is_valid():
+            sys.stderr.write("form validated. is valid.")
             new_user = backend.register(request, **form.cleaned_data)
+
+            # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
+            if 'latitude' in request.POST and 'longitude' in request.POST:
+                # We know we're registering a business
+                profile = BusinessProfile(latitude=request.POST['latitude'],
+                                          longitude=request.POST['longitude'],
+                                          phone=request.POST['phone'],
+                                          user=new_user)
+                profile.save()
+
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
                 return redirect(to, *args, **kwargs)
@@ -203,3 +221,10 @@ def register(request, backend, success_url=None, form_class=None,
     return render_to_response(template_name,
                               {'form': form},
                               context_instance=context)
+
+def register_business(request, backend, success_url=None, form_class=forms.BusinessRegistrationForm,
+                      disallowed_url='registration_disallowed',
+                      template_name='registration/business_registration_form.html',
+                      extra_context=None):
+    sys.stderr.write("Made it to register_business")
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, None)

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 import json
 
@@ -87,6 +88,15 @@ class NewsFeedItem(models.Model):
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
 
+        business = models.ForeignKey('BusinessProfile')
+
+        date_edited = models.DateTimeField(editable=False)
+
+        def change_parameters(self, d):
+            for key, value in d.iteritems():
+                if key != 'id':
+                    setattr(self, key, value)
+
 class Employee(models.Model):
 	'''Models an employee.
 	'''
@@ -97,11 +107,15 @@ class Employee(models.Model):
 
 	# What dimensions are relevant for rating this employee
 	rating_profile = models.ForeignKey(RatingProfile)
+        
+        # Where does this employee work?
+        business = models.ForeignKey('BusinessProfile')
 
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
     feedback = models.TextField(max_length=10000)
+    business = models.ForeignKey('BusinessProfile')
 
 #################
 # SURVEY MODELS #
@@ -110,6 +124,7 @@ class GeneralFeedback(models.Model):
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
+    business = models.ForeignKey('BusinessProfile')
 
     def __unicode__(self):
         return self.title
@@ -144,7 +159,7 @@ class QuestionResponse(models.Model):
     # What question are we responding to?
     question = models.ForeignKey(Question)
 
-    # The reponse. Should be interpreted about whatever question.type is.
+    # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
 
     def __unicode__(self):
@@ -154,3 +169,17 @@ class QuestionResponse(models.Model):
 ###############
 # USER MODELS #
 ###############
+
+class BusinessProfile(models.Model):
+    # N.B. The business name is stored as 'username' in the corresponding
+    # User object.
+    
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    
+    phone = models.CharField(max_length=14)
+
+    user = models.OneToOneField(User)
+
+    def __unicode__(self):
+        return "%s (%s)"%(self.user.username,self.phone)

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+<title>Welcome to Applaud!</title>
+</head>
+<body>
+
+<h1>DELETE</h1>
+
+<p>Are you sure you want to delete: <br />
+[{{item.date}}] {{ item.title }}: {{item.subtitle}} -- {{item.body}}
+</p>
+<form action="/delete_newsfeed_item/" method="post" />
+{% csrf_token %}
+<input type="hidden" value="{{id}}" name="id" />
+<input type="submit" value="Delete" />
+</form>
+
+</body>
+</html>

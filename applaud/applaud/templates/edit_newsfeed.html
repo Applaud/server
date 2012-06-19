@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<title>Welcome to Applaud!</title>
+</head>
+<body>
+
+<h1>EDIT NEWSFEED</h1>
+
+<form action="/edit_newsfeed/" method="post" />
+{% csrf_token %}
+{{ form.as_p }}
+<input type="hidden" name="id" value="{{ id }}" />
+<input type="submit" value="Submit" />
+</form>
+
+</body>
+</html>
