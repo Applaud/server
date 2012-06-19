@@ -8,10 +8,21 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 import applaud.settings
 from applaud import models
 import datetime
+from django.contrib.auth.models import User, Group
 
-# Make a Business.
-business = models.Business(name='Foo Burgers')
+# Make a User.
+user = User(username='Boo Furgers', password='applaud')
+user.save()
+
+# Make a BusinessProfile.
+business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423)
 business.save()
+
+# Business and Customer groups.
+business_group = Group(name='Business')
+business_group.save()
+customer_group = Group(name='Customer')
+customer_group.save()
 
 # Make a RatingProfile.
 profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
