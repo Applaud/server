@@ -57,10 +57,12 @@ class Rating(models.Model):
 	# The title of the question or dimension of the rating,
 	# e.g., 'smelliness' or 'How quick was your food?'
 	# If a question, answer should be quantifiable.
+        # TODO: 
+        # This seems a bit sloppy, make a foreign key to RatingProfile?
 	title = models.TextField(max_length=100)
 
 	# Numeric value (response) for the question or dimension
-	rating_value = models.IntegerField()
+	rating_value = models.FloatField()
 
 	# Employee to which this Rating corresponds
 	employee = models.ForeignKey('Employee')
@@ -96,6 +98,10 @@ class Employee(models.Model):
 	# What dimensions are relevant for rating this employee
 	rating_profile = models.ForeignKey(RatingProfile)
 
+class GeneralFeedback(models.Model):
+    '''Gives general feedback on a location.
+    '''
+    feedback = models.TextField()
 
 #################
 # SURVEY MODELS #
