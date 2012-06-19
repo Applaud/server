@@ -30,7 +30,9 @@ urlpatterns = patterns('',
                        # Creating/editing newsfeed, looking at the newsfeed
                        url(r'^newsfeed_create/',views.newsfeed_create),
                        url(r'^newsfeed/',views.nfdata),
-
+                       url(r'^edit_newsfeed_item/', views.edit_newsfeed_item),
+                       url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
+                       
                        # Creating/editing/viewing employees
                        url(r'^new_employee/',views.create_employee),
                        url(r'^create_rating_profile/',views.create_rating_profile),

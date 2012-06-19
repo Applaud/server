@@ -93,7 +93,13 @@ def newsfeed_create(request):
 	return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
-	
+
+# Delete a newsfeed item
+@csrf_protect
+def delete_newsfeed_item(request):
+	return HttpResponse("Implement this view!")
+
+#Serves the newsfeed to iOS	
 def nfdata(request):
 	# TODO: access newsfeed for a particular business
 	# 
@@ -113,8 +119,18 @@ def nfdata(request):
 	return HttpResponse(json.dumps(ret))
 
 @csrf_protect
+def edit_newsfeed_item(request):
+	if request.method == 'POST':
+		try:
+			n = NewsFeedItem.objects.get(id=request.POST['id'])
+		except:
+			pass
+		
+		
+
+@csrf_protect
 def create_employee(request):
-	if ( request.POST ):
+	if  request.method == 'POST':
 		employee_form = forms.EmployeeForm(request.POST)
 		employee_form.save()
 
@@ -322,9 +338,7 @@ def failed_registration(request):
 @csrf_protect
 def general_feedback(request):
 	if request.method != 'POST':
-		return render_to_response('fail.html',
-					  {},
-					  context_instance=RequestContext(request))
+		return HttpResponse(get_token(request))
 	feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
 	feedback.save()
 	return HttpResponse('foo')
@@ -332,9 +346,7 @@ def general_feedback(request):
 @csrf_protect
 def evaluate(request):
 	if request.method != 'POST':
-		return render_to_response('fail.html',
-					  {},
-					  context_instance=RequestContext(request))
+		return HttpResponse(get_token(request))
 	else:
 		rating_data = json.load(request)
 		if 'employee' in request.POST:

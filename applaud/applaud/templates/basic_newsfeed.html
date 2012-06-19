@@ -14,7 +14,25 @@
 
 <ul>
 {% for item in list %}
-<li>[{{item.date}}] {{ item.title }}: {{item.subtitle}} -- {{item.body}}</li>
+<li>[{{item.date}}] {{ item.title }}: {{item.subtitle}} -- {{item.body}}
+
+<br />
+
+<form action="/edit_newsfeed_item/" method="post" />
+{% csrf_token %}
+<input type="submit" value="{{item.id}}" />
+<input type="submit" value="Edit" />
+</form>
+
+<br />
+
+<form action="/delete_newsfeed_item/" method="post" />
+{% csrf_token %}
+<input type="submit" value="{{item.id}}" />
+<input type="submit" value="Delete" />
+</form>
+
+</li>
 {% endfor %}
 </ul>
 
