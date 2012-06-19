@@ -4,6 +4,7 @@ from applaud.models import RatingProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
+from django.core.context_processors import csrf
 from datetime import datetime
 import sys
 import json
@@ -336,3 +337,6 @@ def evaluate(request):
 				r = Rating(title=key, rating_value=float(value),employee=e)
 				r.save()
 	return HttpResponse('foo')
+
+def get_csrf(request):
+	return HttpResponse(csrf(request))
