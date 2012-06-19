@@ -86,13 +86,13 @@ class NewsFeedItem(models.Model):
 	subtitle = models.TextField(max_length=100)
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
+        business = models.ForeignKey('Business')
         date_edited = models.DateTimeField(editable=False)
 
         def change_parameters(self, d):
             for key, value in d.iteritems():
                 if key != 'id':
                     setattr(self, key, value)
-
 
 class Employee(models.Model):
 	'''Models an employee.
@@ -104,11 +104,15 @@ class Employee(models.Model):
 
 	# What dimensions are relevant for rating this employee
 	rating_profile = models.ForeignKey(RatingProfile)
+        
+        # Where does this employee work?
+        business = models.ForeignKey('Business')
 
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
     feedback = models.TextField(max_length=10000)
+    business = models.ForeignKey('Business')
 
 #################
 # SURVEY MODELS #
@@ -117,6 +121,7 @@ class GeneralFeedback(models.Model):
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
+    business = models.ForeignKey('Business')
 
     def __unicode__(self):
         return self.title
@@ -151,7 +156,7 @@ class QuestionResponse(models.Model):
     # What question are we responding to?
     question = models.ForeignKey(Question)
 
-    # The reponse. Should be interpreted about whatever question.type is.
+    # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
 
     def __unicode__(self):
@@ -161,3 +166,10 @@ class QuestionResponse(models.Model):
 ###############
 # USER MODELS #
 ###############
+
+class Business(models.Model):
+    
+    name = models.CharField(max_length=200)
+    
+    def __unicode__(self):
+        return self.name

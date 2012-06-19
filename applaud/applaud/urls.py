@@ -45,7 +45,10 @@ urlpatterns = patterns('',
                        # Creating/editing/viewing surveys
                        url(r'^survey_create/',views.create_survey),
                        url(r'^get_survey/',views.get_survey),
-
+                       
+                       # Posting survey response
+                       url(r'^survey_respond/', views.survey_respond),
+                       
                        # Registering end-users. Allowing them to configure their account online
                        (r'^accounts/', include('registration.backends.default.urls')),
                        #    (r'^profiles/', include('profiles.urls')),
