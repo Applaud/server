@@ -141,6 +141,24 @@ def create_employee(request):
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
 
+@csrf_protect
+def edit_employee(request):
+	if request.method == 'POST':
+		employee_form = forms.EmployeeForm(request.POST)
+
+	return render_to_response()
+		
+@csrf_protect
+def delete_employee(request):
+	if request.method != 'POST':
+		return HttpResponse(get_token(request))
+	else:
+		employee_deleted = models.Employee.objects.delete(request.POST)
+	# need to check for two employees with the same name.
+		return render_to_response('employees.html', {'list':employees}, context_instance=RequestContext(request))
+
+
+
 def rate_employee(request):
 	# if not 'employee' in request.GET or not 'ratings' in request.GET:
 	#     error = "Must supply employee and ratings to rate an employee."
