@@ -144,7 +144,7 @@ class QuestionResponse(models.Model):
     # What question are we responding to?
     question = models.ForeignKey(Question)
 
-    # The reponse. Should be interpreted about whatever question.type is.
+    # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
 
     def __unicode__(self):
