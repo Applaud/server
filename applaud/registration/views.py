@@ -6,8 +6,10 @@ Views which allow users to create and activate accounts.
 
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import auth
 
 from registration.backends import get_backend
 import forms
@@ -228,3 +230,15 @@ def register_business(request, backend, success_url=None, form_class=forms.Busin
                       extra_context=None):
     sys.stderr.write("Made it to register_business")
     return register(request, backend, success_url, form_class, disallowed_url, template_name, None)
+
+
+def login(request):
+    if request.method == 'POST':
+        user = auth.authenticate( username=request.POST['username'],
+                                  password=request.POST['password'] )
+        if user:
+            auth.login( request, user )
+            return HttpResponse(request.session.session_key)
+        else:
+            return HttpResponseForbidden("Bad login.")
+    return HttpResponseBadRequest("Your shit dont make no sense.")

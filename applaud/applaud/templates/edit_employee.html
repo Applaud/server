@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+{% block content %}
+
+<h1>EDIT EMPLOYEE</h1>
+
+<form action="/edit_employee/" method="post" />
+{% csrf_token %}
+{{ form.as_p }}
+<input type="hidden" name="id" value="{{ id }}" />
+<input type="submit" value="Submit" />
+</form>
+
+</body>
+</html>
+{% endblock %}
