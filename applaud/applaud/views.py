@@ -221,7 +221,8 @@ def edit_newsfeed(request):
 def create_employee(request):
     if  request.method == 'POST':
 	employee_form = forms.EmployeeForm(request.POST)
-	employee_form.save()
+	e=employee_form.save(commit="False")
+    
 
     new_form = forms.EmployeeForm()
     employees = models.Employee.objects.all()
