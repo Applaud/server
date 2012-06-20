@@ -177,9 +177,14 @@ class BusinessProfile(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     
-    phone = models.CharField(max_length=14)
+    phone = models.CharField(max_length=14,blank=True,null=True)
 
     user = models.OneToOneField(User)
+
+    # This is used to store the unique ID from Google Places.
+    # This is ONLY used to see if we have a location from GP in the Applaud database.
+    # After that, the ID of BusinessProfile is used to uniquely identify a business.
+    goog_id = models.CharField(max_length=200)
 
     def __unicode__(self):
         return "%s (%s)"%(self.user.username,self.phone)
