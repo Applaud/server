@@ -473,14 +473,7 @@ def general_feedback(request):
    # return HttpResponse('foo')
 
 
-    if request.method != 'POST':
-        return HttpResponse(get_token(request))
-    answer_data = json.load(request)
-    feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-                                      business=models.BusinessProfile.objects.get(
-            id=answer_data['business_id']))
-    feedback.save()
-    return HttpResponse('foo')
+
 
 
 @csrf_protect
