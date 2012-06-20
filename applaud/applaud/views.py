@@ -77,18 +77,21 @@ def whereami(request):
     to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
 
-    ret = {"nearby_businesses":[],}
+    business_list = []
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-
-		 "type":entry["types"][0],
-		 "goog_id":entry["id"],
-		 "latitude":entry["geometry"]["location"]["lat"],
-		 "longitude":entry["geometry"]["location"]["lng"]}
-	ret["nearby_businesses"].append(new_biz)
-	ret = json.dumps(ret)
-	return HttpResponse(ret)
+        business_list.append(
+            {
+                "name":entry["name"],
+                "type":entry["types"][0],
+                "goog_id":entry["id"],
+                "latitude":entry["geometry"]["location"]["lat"],
+                "longitude":entry["geometry"]["location"]["lng"]
+                })
+            
+    ret = json.dumps({'nearby_businesses':business_list})
+    return HttpResponse(ret)
 
 @csrf_protect
 def checkin(request):
