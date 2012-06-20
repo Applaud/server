@@ -109,7 +109,8 @@ def checkin(request):
 
 	return HttpResponse(json.dumps(business),
 			    context_instance=RequestContext(request))
-				       
+    else:
+        return HttpResponse(get_token(request))
 
 # This allows a user to save and view newsfeed posts
 @csrf_protect
