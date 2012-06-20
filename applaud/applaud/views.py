@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
-from applaud.models import RatingProfile
+from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
@@ -12,15 +12,15 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
-from django.core.exceptions import DoesNotExist
 
 def index(request):
 	username = ""
+	profile = ""
 	if request.user.is_authenticated():
 		# Are we a business?
 		try:
 			profile = request.user.businessprofile
-		except DoesNotExist:
+		except BusinessProfile.DoesNotExist:
 			pass
 		username = request.user.username
 	return render_to_response('index.html',{'username':username,'profile':profile})
