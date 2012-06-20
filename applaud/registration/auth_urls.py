@@ -26,6 +26,7 @@ consult a specific backend's documentation for details.
 from django.conf.urls.defaults import *
 
 from django.contrib.auth import views as auth_views
+import views
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = patterns('',
@@ -33,6 +34,8 @@ urlpatterns = patterns('',
                            csrf_exempt(auth_views.login),
                            {'template_name': 'registration/login.html'},
                            name='auth_login'),
+                       url(r'^mobilelogin/$',
+                           csrf_exempt(views.login)),
                        url(r'^logout/$',
                            auth_views.logout,
                            {'template_name': 'registration/logout.html'},

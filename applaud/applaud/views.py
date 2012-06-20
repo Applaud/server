@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
@@ -59,7 +59,6 @@ def example3(request):
     return HttpResponse(json.dumps(res))
 
 def whereami(request):
-    #TODO: Check to see if the user is authenticated
     if not "latitude" in request.GET or not  "longitude" in request.GET:
 	error = "Latitude & longitude confusion...."
 	return render_to_response('error.html',{"error":error})   
@@ -90,7 +89,8 @@ def whereami(request):
 
 @csrf_protect
 def checkin(request):
-    #TODO: See if user is authenticated
+    # if not request.user.is_authenticated():
+    #     return HttpResponseForbidden("")
     if request.method == POST:
 	try:
 	    business = BusinessProfile.objects.get(request.POST['goog_id'])
