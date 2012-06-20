@@ -389,31 +389,33 @@ def create_survey(request):
 
         return HttpResponseRedirect('/survey_create')	
 
+class SurveyEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Survey):
+            question_list = list(o.question_set.all())
+            questions = []
+            for q in question_list:
+                questions.append({'label': q.label,
+                                  'type': q.type,
+                                  'options': q.options})
+            res = {'title': o.title,
+                   'description': o.description,
+                   'questions': questions}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
+
+@csrf_protect
 def get_survey(request):
-    '''Gets the survey for a particular business.
-    TODO: get the business ID, and return the right survey for it.
+    '''Gets the survey for a particular business, the ID of
+    which is passed in as JSON.
     '''
-
-    # For testing, just get the first survey
-    survey = models.Survey.objects.get(id=1)
-
-    # All of the questions associated with the survey
-    questions = survey.question_set.all()
-
-    # Making a python object from the query set of questions
-    questionList = []
-    for question in questions:
-	questionList.append({'label':question.label,
-			     'type':question.type,
-			     'options':question.options})
-	
-    # Creating a python object from the survey model + questions
-    surveyDict = {'title':survey.title,
-		  'description':survey.description,
-		  'questions':questionList}
-
-    # Returning that as JSON
-    return HttpResponse(json.dumps(surveyDict))
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    return HttpResponse(json.dumps(list(business.survey_set.all()),
+                                   cls=SurveyEncoder))
 
 def register_business(request):
     if request.method == 'POST':
