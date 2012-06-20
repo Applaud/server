@@ -430,22 +430,14 @@ def failed_registration(request):
 
 @csrf_protect
 def general_feedback(request):
-<<<<<<< HEAD
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
-	answer_data = json.load(request)
-	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-					  business=models.BusinessProfile.objects.get(
-			id=answer_data['business_id']))
-	feedback.save()
-	return HttpResponse('foo')
-=======
     if request.method != 'POST':
-	return HttpResponse(get_token(request))
-    feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+        return HttpResponse(get_token(request))
+    answer_data = json.load(request)
+    feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+                                      business=models.BusinessProfile.objects.get(
+            id=answer_data['business_id']))
     feedback.save()
     return HttpResponse('foo')
->>>>>>> 481f55719f176a571c160f56161dfdb7ab48c6ac
 
 @csrf_protect
 def evaluate(request):
