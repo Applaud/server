@@ -11,8 +11,7 @@ import datetime
 from django.contrib.auth.models import User, Group
 
 # Make a User.
-user = User(username='Boo Furgers', password='applaud')
-user.save()
+user = User.objects.create_user('Boo Furgers', 'llovett@oberlin.edu', 'applaud')
 
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423)

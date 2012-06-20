@@ -11,6 +11,10 @@
     {% else %}
     <p style="color:rgb(255,0,0); font-weight:bold;">You are not logged in.</p>
     {% endif %}
+    <br />
+    {% if profile %}
+    Your phone number is {{ profile.phone }}.
+    {% endif %}
   </body>
 
 </html>

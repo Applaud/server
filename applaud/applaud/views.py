@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
+from django.contrib.auth.models import Group
 import sys
 import json
 import urllib2
@@ -15,8 +16,12 @@ from applaud import models
 def index(request):
 	username = ""
 	if request.user.is_authenticated():
+		# Are we a business?
+		bus_profs = request.user.businessprofile
+		if len(bus_profs) > 0:
+			profile = bus_profs[0]
 		username = request.user.username
-	return render_to_response('index.html',{'username':username})
+	return render_to_response('index.html',{'username':username,'profile':profile})
 
 def example(request):
 	res = { "nearby_businesses": [] }
