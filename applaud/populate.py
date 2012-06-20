@@ -15,7 +15,7 @@ user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
 
 # Make a BusinessProfile.
-business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423)
+business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423, goog_id="677679492a58049a7eae079e0890897eb953d79b")
 business.save()
 
 # Business and Customer groups.
