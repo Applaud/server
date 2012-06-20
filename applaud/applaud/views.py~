@@ -200,7 +200,7 @@ def delete_employee(request):
 
 	else:
                 emp = models.Employee.objects.get(pk=request.POST['id'])
-		return render_to_response('delete_confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
+		return render_to_response('delete__confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
 
 	
 

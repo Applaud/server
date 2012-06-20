@@ -1,8 +1,8 @@
-{% extends "base.html" %}
-{% block title %}Welcome to Applaud!{% endblock %}
-{% block links %}{% endblock %}
-{% block scripts %}{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<head>
+<title>Welcome to Applaud!</title>
+</head>
+<body>
 
 <h1>EMPLOYEES</h1>
 
@@ -26,10 +26,9 @@
 
 <br />
 
-<h2> Is this real life? </h2>
-
 {% endfor %}
 </ul>
 {% endif %}
 
-{% endblock %}
+</body>
+</html>
