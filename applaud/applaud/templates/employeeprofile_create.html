@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
-    <title>Create Rating Profile</title>
+{% extends "base.html" %}
+{% block title %}Create Rating Profile{% endblock %}
+{% block links %}
+<link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block scripts %}
     <script type="text/javascript">
       var i = 0;
       
@@ -16,8 +17,8 @@
       form.insertBefore(document.createElement('br'), document.getElementById('submit_button'));
       }
     </script>
-  </head>
-  <body>
+{% endblock %}
+{% block content %}
     <h1>Create Rating Profile</h1>
     {% if title_err %}
     <h2>{{ title_err }}</h2>
@@ -53,6 +54,4 @@
       </ul> 
     {% endfor %}
     </ul>
-
-  </body>
-</html>
+{% endblock %}

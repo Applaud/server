@@ -1,9 +1,8 @@
-<html>
-  <head>
-    <title>apatapa</title>
-  </head>
-
-  <body>
+{% extends "base.html" %}
+{% block title %}APATAPA{% endblock %}
+{% block links %}{% endblock %}
+{% block scripts %}{% endblock %}
+{% block content %}
     <h2>APATAPA</h2>
     <p>We're hapatappy to havatava you at apatapa!</p>
     {% if username %}
@@ -15,6 +14,4 @@
     {% if profile %}
     Your phone number is {{ profile.phone }}.
     {% endif %}
-  </body>
-
-</html>
+{% endblock %}

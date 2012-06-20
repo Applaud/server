@@ -1,15 +1,11 @@
-<html>
-
-  <head>
-    <title>Register Now!</title>
-  </head>
-
-  <body>
+{% extends "base.html" %}
+{% block title %}Register Now!{% endblock %}
+{% block links %}{% endblock %}
+{% block scripts %}{% endblock }
+{% block content %}
     <form action="/register_business/" method="POST">
       {{ csrf_token }}
       {{ form.as_p }}
       <input type="submit" value="Submit" />
     </form>
-  </body>
-
-</html>
+{% endblock %}

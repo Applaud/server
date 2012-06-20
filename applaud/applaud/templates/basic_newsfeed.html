@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<head>
-<title>Welcome to Applaud!</title>
-</head>
-<body>
-
+{% extends "base.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+{% block content %}
 <h1>NEWSFEED</h1>
 
 <form action="/newsfeed_create/" method="post" />
@@ -34,5 +31,4 @@
 {% endfor %}
 </ul>
 
-</body>
-</html>
+{% endblock %}

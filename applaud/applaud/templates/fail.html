@@ -1,9 +1,8 @@
-<html>
-  <head>
-    <title>FAIL</title>
-  </head>
-  <body>
-    {% csrf_token %}
-    FAIL
-  </body>
-</html>
+{% extends "base.html" %}
+{% block title %}FAIL{% endblock %}
+{% block links %}{% endblock %}
+{% block scripts %}{% endblock }
+{% block content %}
+{% csrf_token %}
+FAIL
+{% endblock %}

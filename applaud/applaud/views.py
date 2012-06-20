@@ -14,127 +14,154 @@ from applaud import forms
 from applaud import models
 
 def index(request):
-	username = ""
-	profile = ""
-	if request.user.is_authenticated():
-		# Are we a business?
-		try:
-			profile = request.user.businessprofile
-		except BusinessProfile.DoesNotExist:
-			pass
-		username = request.user.username
-	return render_to_response('index.html',{'username':username,'profile':profile})
+    username = ""
+    profile = ""
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    pass
+	username = request.user.username
+    
+    return render_to_response('index.html',{'username':username,'profile':profile})
 
 def example(request):
-	res = { "nearby_businesses": [] }
-	return HttpResponse(json.dumps(res))
+    res = { "nearby_businesses": [] }
+    return HttpResponse(json.dumps(res))
 
 def example2(request):
-	res = { "nearby_businesses": [
-			{"name":"Foo Burgers",
-			 "type":"Burgers",
-			 "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
-			 "latitude":39.981634,
-			 "longitude":-83.004617},
-			]
-		}
-	return HttpResponse(json.dumps(res))
+    res = { "nearby_businesses": [
+	    {"name":"Foo Burgers",
+	     "type":"Burgers",
+	     "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
+	     "latitude":39.981634,
+	     "longitude":-83.004617},
+	    ]
+	    }
+    return HttpResponse(json.dumps(res))
 
 def example3(request):
-	res = { "nearby_businesses":
-			[
-			{"name":"Foo Burgers",
-			 "type":"Burgers",
-			 "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
-			 "latitude":39.981634,
-			 "longitude":-83.004617},
-			{"name":"Seymour House of Smiles",
-			 "type":"Orthodontist",
-			 "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
-			 "latitude":39.981934,
-			 "longitude":-83.004676},
-			],
-		}
-	return HttpResponse(json.dumps(res))
+    res = { "nearby_businesses":
+		[
+	    {"name":"Foo Burgers",
+	     "type":"Burgers",
+	     "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
+	     "latitude":39.981634,
+	     "longitude":-83.004617},
+	    {"name":"Seymour House of Smiles",
+	     "type":"Orthodontist",
+	     "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
+	     "latitude":39.981934,
+	     "longitude":-83.004676},
+	    ],
+	    }
+    return HttpResponse(json.dumps(res))
 
-def checkin(request):
-	if not "latitude" in request.GET or not  "longitude" in request.GET:
-	    error = "Latitude & longitude confusion...."
-	    return render_to_response('error.html',{"error":error})   
+def whereami(request):
+    #TODO: Check to see if the user is authenticated
+    if not "latitude" in request.GET or not  "longitude" in request.GET:
+	error = "Latitude & longitude confusion...."
+	return render_to_response('error.html',{"error":error})   
 
-	lat = request.GET["latitude"]
-	lon = request.GET["longitude"]	
+    lat = request.GET["latitude"]
+    lon = request.GET["longitude"]	
 
-	goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
-	radius="100"
+    goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
+    radius="100"
 
-	from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=false&key="+goog_api_key)
+    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=false&key="+goog_api_key)
 
-	to_parse = json.loads(from_goog.read())
+    to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
 
-	ret = {"nearby_businesses":[],}
+    ret = {"nearby_businesses":[],}
 
-	for entry in to_parse["results"]:
-		new_biz={"name":entry["name"],
-			 "type":entry["types"][0],
-			 "goog_id":entry["id"],
-			 "latitude":entry["geometry"]["location"]["lat"],
-			 "longitude":entry["geometry"]["location"]["lng"]}
-		ret["nearby_businesses"].append(new_biz)
+    for entry in to_parse["results"]:
+	# Create an inactive Applaud account for any businesses we don't recognize here.
+	new_biz={"name":entry["name"],
+		 "type":entry["types"][0],
+		 "goog_id":entry["id"],
+		 "latitude":entry["geometry"]["location"]["lat"],
+		 "longitude":entry["geometry"]["location"]["lng"]}
+	ret["nearby_businesses"].append(new_biz)
 	ret = json.dumps(ret)
 	return HttpResponse(ret)
+
+@csrf_protect
+def checkin(request):
+    #TODO: See if user is authenticated
+    if request.method == POST:
+	try:
+	    business = BusinessProfile.objects.get(request.POST['goog_id'])
+	except BusinessProfile.DoesNotExist:
+	    business = BusinessProfile(goog_id=request.POST['goog_id'],
+				       latitude=float(request.POST['latitude']),
+				       longitude=float(request.POST['longitude']))
+	    business_user = User.objects.create_user(username=request.POST['name'],
+						     password='password',
+						     is_active=False)
+	    business_user.save()
+	    business_user = business_user
+	    business_user.save()
+
+	return HttpResponse(json.dumps(business),
+			    context_instance=RequestContext(request))
+				       
 
 # This allows a user to save and view newsfeed posts
 @csrf_protect
 def newsfeed_create(request):
-	if request.method == 'POST':
-                n = forms.NewsFeedItemForm(request.POST)
-                newsitem = n.save(commit=False)
-                newsitem.date = datetime.now()
-                newsitem.date_edited = datetime.now()
-                newsitem.save()
-                        
+    #TODO: See if business is authenticated. Associate newsfeed with business
+    if request.method == 'POST':
+	n = forms.NewsFeedItemForm(request.POST)
+	newsitem = n.save(commit=False)
+	newsitem.date = datetime.now()
+	newsitem.date_edited = datetime.now()
+	newsitem.save()
+    
+    f = forms.NewsFeedItemForm()
+    newsfeed = models.NewsFeedItem.objects.all()
+	
+    return render_to_response('basic_newsfeed.html',
+				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
+    
+
+# Delete a newsfeed item
+@csrf_protect
+def delete_newsfeed_item(request):
+    #TODO: See if business is authenticated. Associate newsfeed with business
+    if request.method == 'POST':
+	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+	n.delete()
+	
 	f = forms.NewsFeedItemForm()
 	newsfeed = models.NewsFeedItem.objects.all()
 	
 	return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
-
-# Delete a newsfeed item
-@csrf_protect
-def delete_newsfeed_item(request):
-        if request.method == 'POST':
-                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-                n.delete()
-                
-                f = forms.NewsFeedItemForm()
-                newsfeed = models.NewsFeedItem.objects.all()
-                
-                return render_to_response('basic_newsfeed.html',
-                                          {'form':f, 'list':newsfeed},
-                                          context_instance=RequestContext(request))
-        else:
-                n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-                return render_to_response('delete_confirmation.html',
-                                          {'item':n, 'id':request.GET['id']},
-                                          context_instance=RequestContext(request))
+    else:
+	n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+	return render_to_response('delete_confirmation.html',
+				  {'item':n, 'id':request.GET['id']},
+				  context_instance=RequestContext(request))
 
 #Serves the newsfeed to iOS	
 def nfdata(request):
-	# TODO: access newsfeed for a particular business
-	# 
-	# if ( request.GET ):
-	# 	business_id = request.GET['business_id']
+    # TODO: access newsfeed for a particular business
+    # 
+    # if ( request.GET ):
+    # 	business_id = request.GET['business_id']
 
-	nfitems = models.NewsFeedItem.objects.all()
-	nfitem_list = []
-	for nfitem in nfitems :
-		nfitem_list.append({'title':nfitem.title,
-				    'subtitle':nfitem.subtitle,
-				    'body':nfitem.body,
-				    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
+    nfitems = models.NewsFeedItem.objects.all()
+    nfitem_list = []
+    for nfitem in nfitems :
+	nfitem_list.append({'title':nfitem.title,
+			    'subtitle':nfitem.subtitle,
+			    'body':nfitem.body,
+			    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
         
 	ret = { 'newsfeed_items':nfitem_list }
 
@@ -142,42 +169,42 @@ def nfdata(request):
 
 @csrf_protect
 def edit_newsfeed(request):
-        if request.method == 'POST':
-                
-                n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-                d = {'title':request.POST['title'],
-                     'subtitle':request.POST['subtitle'],
-                     'body':request.POST['body']}
-                
-                n.change_parameters(d)
-                n = n.save()
+    if request.method == 'POST':
+	
+	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+	d = {'title':request.POST['title'],
+	     'subtitle':request.POST['subtitle'],
+	     'body':request.POST['body']}
+	
+	n.change_parameters(d)
+	n = n.save()
 
-                f = forms.NewsFeedItemForm()
-                newsfeed = models.NewsFeedItem.objects.all()
-                return render_to_response('basic_newsfeed.html',
+	f = forms.NewsFeedItemForm()
+	newsfeed = models.NewsFeedItem.objects.all()
+	return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
 
-	else:
-		try:                        
-			n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-		except:
-                        return render_to_response('fail', {}, context_instance=RequestContext(request))               
+    else:
+	try:                        
+	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+	except:
+	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
 
                 #this might be a tad sloppy
-                d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	    
-                f = forms.NewsFeedItemForm(initial=d)
+	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
+	
+	f = forms.NewsFeedItemForm(initial=d)
        	
-                return render_to_response('edit_newsfeed.html',
+	return render_to_response('edit_newsfeed.html',
 				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
 @csrf_protect
 def create_employee(request):
-	if  request.method == 'POST':
-		employee_form = forms.EmployeeForm(request.POST)
-		employee_form.save()
+    if  request.method == 'POST':
+	employee_form = forms.EmployeeForm(request.POST)
+	employee_form.save()
 
 	new_form = forms.EmployeeForm()
 	employees = models.Employee.objects.all()
@@ -199,7 +226,6 @@ def delete_employee(request):
 		return render_to_response('employees.html',
 					  {'form': new_form, 'list': newsfeed},
 					  context_instance=RequestContext(request))
-
 	else:
                 emp = models.Employee.objects.get(pk=request.POST['id'])
 		return render_to_response('delete_confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
@@ -209,36 +235,36 @@ def delete_employee(request):
 
 
 def rate_employee(request):
-	# if not 'employee' in request.GET or not 'ratings' in request.GET:
-	#     error = "Must supply employee and ratings to rate an employee."
-	#     return render_to_response('error.html',{"error":error})   
-	
-	# employee = request.GET['employee']
-	# ratings = request.GET['ratings']
-	return HttpResponse("Coming soon!")
+    # if not 'employee' in request.GET or not 'ratings' in request.GET:
+    #     error = "Must supply employee and ratings to rate an employee."
+    #     return render_to_response('error.html',{"error":error})   
+    
+    # employee = request.GET['employee']
+    # ratings = request.GET['ratings']
+    return HttpResponse("Coming soon!")
 
 class EmployeeEncoder(json.JSONEncoder):
-	def default(self, o):
-		if isinstance(o, models.Employee):
-			dimensions = o.rating_profile.dimensions
-			res = {'first_name':o.first_name,
-			       'last_name':o.last_name,
-			       'bio':o.bio,
-			       'ratings':
-				       {'rating_title':o.rating_profile.title,
-					'dimensions':dimensions}
-			       }
-			return res
-		else:
-			return json.JSONEncoder.default(self, o)
+    def default(self, o):
+	if isinstance(o, models.Employee):
+	    dimensions = o.rating_profile.dimensions
+	    res = {'first_name':o.first_name,
+		   'last_name':o.last_name,
+		   'bio':o.bio,
+		   'ratings':
+		       {'rating_title':o.rating_profile.title,
+			'dimensions':dimensions}
+		   }
+	    return res
+	else:
+	    return json.JSONEncoder.default(self, o)
 
 def employee_list(request):
-	'''List the employees by last name and first name.
-	Also give the definition of the rating profile with which they are associated.
-	'''
-	return HttpResponse(json.dumps(list(models.Employee.objects.all()),
-				       cls=EmployeeEncoder),
-			    mimetype='application/json')
+    '''List the employees by last name and first name.
+    Also give the definition of the rating profile with which they are associated.
+    '''
+    return HttpResponse(json.dumps(list(models.Employee.objects.all()),
+				   cls=EmployeeEncoder),
+			mimetype='application/json')
 
 @csrf_protect
 def create_rating_profile(request):
@@ -282,13 +308,13 @@ def create_rating_profile(request):
 
 @csrf_protect
 def list_rating_profiles(request):
-	l = list(RatingProfile.objects.all())
-	ret = []
-	for item in l:
-		ap = {}
-		ap['title']=item.title
-		ap['dimensions']=item.dimensions
-		ret.append(ap)
+    l = list(RatingProfile.objects.all())
+    ret = []
+    for item in l:
+	ap = {}
+	ap['title']=item.title
+	ap['dimensions']=item.dimensions
+	ret.append(ap)
 	
 	return render_to_response('employeeprofile_create.html',
 				  {'list':ret},
@@ -349,11 +375,11 @@ def create_survey(request):
 
 	# Create each of the questions on the Survey
 	for question in questions:
-		q = models.Question(label=question['title'],
-				    type=question['type'],
-				    options= question['options'],
-				    survey=s)
-		q.save()
+	    q = models.Question(label=question['title'],
+				type=question['type'],
+				options= question['options'],
+				survey=s)
+	    q.save()
 
         return HttpResponseRedirect('/survey_create')	
 
@@ -382,7 +408,7 @@ def get_survey(request):
 
     # Returning that as JSON
     return HttpResponse(json.dumps(surveyDict))
-    
+
 def register_business(request):
     if request.method == 'POST':
 	registrationForm = UserCreationForm(request.POST)
@@ -404,6 +430,7 @@ def failed_registration(request):
 
 @csrf_protect
 def general_feedback(request):
+<<<<<<< HEAD
 	if request.method != 'POST':
 		return HttpResponse(get_token(request))
 	answer_data = json.load(request)
@@ -412,33 +439,40 @@ def general_feedback(request):
 			id=answer_data['business_id']))
 	feedback.save()
 	return HttpResponse('foo')
+=======
+    if request.method != 'POST':
+	return HttpResponse(get_token(request))
+    feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+    feedback.save()
+    return HttpResponse('foo')
+>>>>>>> 481f55719f176a571c160f56161dfdb7ab48c6ac
 
 @csrf_protect
 def evaluate(request):
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
-	rating_data = json.load(request)
-	if 'employee' in request.POST:
-		try:
-			e = Employee.objects.get(rating_data['employee']['id'])
-		except:
-			pass
-		for key, value in rating_data['ratings']:
-			r = Rating(title=key, rating_value=float(value),employee=e)
-			r.save()
+    if request.method != 'POST':
+	return HttpResponse(get_token(request))
+    rating_data = json.load(request)
+    if 'employee' in request.POST:
+	try:
+	    e = Employee.objects.get(rating_data['employee']['id'])
+	except:
+	    pass
+	for key, value in rating_data['ratings']:
+	    r = Rating(title=key, rating_value=float(value),employee=e)
+	    r.save()
 	return HttpResponse('foo')
 
 @csrf_protect
 def survey_respond(request):
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
-	for answer in json.load(request)['answers']:
-		question = models.Question.objects.get(label=answer['label'])
-		response = answer['response']
-		qr = models.QuestionResponse(question=question, response=response)
-		qr.save()
+    if request.method != 'POST':
+	return HttpResponse(get_token(request))
+    for answer in json.load(request)['answers']:
+	question = models.Question.objects.get(label=answer['label'])
+	response = answer['response']
+	qr = models.QuestionResponse(question=question, response=response)
+	qr.save()
 	return HttpResponse('foo')
 
 # This will provide the CSRF token
 def get_csrf(request):
-	return HttpResponse(get_token(request))
+    return HttpResponse(get_token(request))
