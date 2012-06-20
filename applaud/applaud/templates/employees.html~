@@ -26,8 +26,6 @@
 
 <br />
 
-<h2> Is this real life? </h2>
-
 {% endfor %}
 </ul>
 {% endif %}
