@@ -40,6 +40,7 @@ urlpatterns = patterns('',
                        url(r'^new_employee/',views.create_employee),
                        url(r'^create_rating_profile/',views.create_rating_profile),
                        url(r'^ratingprofiles/',views.list_rating_profiles),
+                       url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
 
                        # Getting and posting employee data from iOS

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+{% block content %}
+
+<h1>DELETE</h1>
+
+<p>Are you sure you want to delete: <br />
+{{employee.first_name}} {{employee.last_name}}
+</p>
+<form action="/delete_employee/" method="post" />
+{% csrf_token %}
+<input type="hidden" value="{{id}}" name="id" />
+<input type="submit" value="Delete" />
+</form>
+
+</body>
+</html>
+{% endblock %}

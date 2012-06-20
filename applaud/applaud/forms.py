@@ -5,12 +5,13 @@ from sets import Set
 class NewsFeedItemForm(ModelForm):
 	class Meta:
 		model = models.NewsFeedItem
-                
+                exclude = ('business',)
                 
 class EmployeeForm(ModelForm):
 	
 	class Meta:
 		model = models.Employee
+		exclude = ('business',)
 
 class RatingProfileForm(ModelForm):
 	

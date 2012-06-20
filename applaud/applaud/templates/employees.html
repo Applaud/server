@@ -4,8 +4,7 @@
 {% block scripts %}{% endblock %}
 {% block content %}
 
-<h1>EMPLOYEES</h1>
-
+<h1>EMPLOYEES</h>
 <form action="/new_employee/" method="post" />
 {% csrf_token %}
 {{ form.as_p }}
@@ -19,14 +18,20 @@
 
 <br />
 
+
 <form action="/delete_employee/" method="get" />
-<input type="hidden" value="{{item.id}}" name="id" />
+<input type="hidden" value="{{employee.id}}" name="id" />
 <input type="submit" value="Delete" />
-</form>>
+</form>
 
 <br />
 
-<h2> Is this real life? </h2>
+
+<form action="/edit_employee/" method="get" />
+<input type="hidden" value="{{employee.id}}" name="id" />
+<input type="submit" value="Edit" />
+</form>
+
 
 {% endfor %}
 </ul>

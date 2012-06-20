@@ -54,7 +54,7 @@ def example3(request):
 	     "type":"Orthodontist",
 	     "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
 	     "latitude":39.981934,
-	     "longitude":-83.004676,
+             "longitude":-83.004676,
              "id": 1}, # ids are the same for testing purposes...
 	    ],
 	    }
@@ -81,7 +81,7 @@ def whereami(request):
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-	new_biz={"name":entry["name"],
+
 		 "type":entry["types"][0],
 		 "goog_id":entry["id"],
 		 "latitude":entry["geometry"]["location"]["lat"],
@@ -223,8 +223,10 @@ def edit_newsfeed(request):
 def create_employee(request):
     if  request.method == 'POST':
 	employee_form = forms.EmployeeForm(request.POST)
-	employee_form.save()
-
+	e=employee_form.save(commit="False")
+        e.business= models.BusinessProfile.objects.get(id=1)
+        e.save()
+        
     new_form = forms.EmployeeForm()
     employees = models.Employee.objects.all()
 
@@ -243,11 +245,20 @@ def delete_employee(request):
 		employees = models.Employee.objects.all()
 
 		return render_to_response('employees.html',
-					  {'form': new_form, 'list': newsfeed},
+					  {'form': new_form, 'list': employees},
 					  context_instance=RequestContext(request))
 	else:
-                emp = models.Employee.objects.get(pk=request.POST['id'])
-		return render_to_response('delete_confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
+                emp = models.Employee.objects.get(pk=request.GET['id'])
+		return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
+
+
+	
+@csrf_protect
+def edit_employee(request):
+    return request.POST['id']
+
+
+
 
 def rate_employee(request):
     # if not 'employee' in request.GET or not 'ratings' in request.GET:
@@ -465,14 +476,23 @@ def failed_registration(request):
 
 @csrf_protect
 def general_feedback(request):
-    if request.method != 'POST':
-        return HttpResponse(get_token(request))
-    answer_data = json.load(request)
-    feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-                                      business=models.BusinessProfile.objects.get(
-            id=answer_data['business_id']))
-    feedback.save()
-    return HttpResponse('foo')
+	if request.method != 'POST':
+		return HttpResponse(get_token(request))
+	answer_data = json.load(request)
+	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+					  business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
+	feedback.save()
+	return HttpResponse('foo')
+
+#    if request.method != 'POST':
+#	return HttpResponse(get_token(request))
+ #   feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+  #  feedback.save()
+   # return HttpResponse('foo')
+
+
+
+
 
 @csrf_protect
 def evaluate(request):
