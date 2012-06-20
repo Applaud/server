@@ -133,17 +133,31 @@ def newsfeed_create(request):
 # Delete a newsfeed item
 @csrf_protect
 def delete_newsfeed_item(request):
-    #TODO: See if business is authenticated. Associate newsfeed with business
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    pass
+        
+    else:
+        return HttpResponseRedirect('/login')       
+
+    #Business is authenticated
+
+    #Request is POST - Business has selected and confirmed news feed item deletion
     if request.method == 'POST':
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
 	n.delete()
 	
-	f = forms.NewsFeedItemForm()
-	newsfeed = models.NewsFeedItem.objects.all()
+        f = forms.NewsFeedItemForm()
+        newsfeed = profile.newsfeeditem_set.all()
 	
-	return render_to_response('basic_newsfeed.html',
+        return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
+
+    #Request is GET - Send to confirmation page
     else:
 	n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
 	return render_to_response('delete_confirmation.html',
@@ -208,10 +222,10 @@ def create_employee(request):
 	employee_form = forms.EmployeeForm(request.POST)
 	employee_form.save()
 
-	new_form = forms.EmployeeForm()
-	employees = models.Employee.objects.all()
+    new_form = forms.EmployeeForm()
+    employees = models.Employee.objects.all()
 
-	return render_to_response('employees.html',
+    return render_to_response('employees.html',
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
 
@@ -231,10 +245,6 @@ def delete_employee(request):
 	else:
                 emp = models.Employee.objects.get(pk=request.POST['id'])
 		return render_to_response('delete_confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
-
-	
-
-
 
 def rate_employee(request):
     # if not 'employee' in request.GET or not 'ratings' in request.GET:
