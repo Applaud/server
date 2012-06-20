@@ -23,7 +23,8 @@ def index(request):
 	except BusinessProfile.DoesNotExist:
 	    pass
 	username = request.user.username
-	return render_to_response('index.html',{'username':username,'profile':profile})
+    
+    return render_to_response('index.html',{'username':username,'profile':profile})
 
 def example(request):
     res = { "nearby_businesses": [] }
@@ -118,13 +119,14 @@ def newsfeed_create(request):
 	newsitem.date = datetime.now()
 	newsitem.date_edited = datetime.now()
 	newsitem.save()
+    
+    f = forms.NewsFeedItemForm()
+    newsfeed = models.NewsFeedItem.objects.all()
 	
-	f = forms.NewsFeedItemForm()
-	newsfeed = models.NewsFeedItem.objects.all()
-	
-	return render_to_response('basic_newsfeed.html',
+    return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
+    
 
 # Delete a newsfeed item
 @csrf_protect
