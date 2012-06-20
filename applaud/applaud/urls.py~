@@ -27,7 +27,7 @@ urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
 
                        # IOS notifies us of where device is. We return business locations
-                       url(r'^whereami/',views.whereami),
+                       url(r'^checkin/',views.checkin),
 
                        # Creating/editing newsfeed, looking at the newsfeed
                        url(r'^newsfeed_create/',views.newsfeed_create),
