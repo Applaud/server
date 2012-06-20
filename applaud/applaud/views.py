@@ -206,10 +206,10 @@ def create_employee(request):
 	employee_form = forms.EmployeeForm(request.POST)
 	employee_form.save()
 
-	new_form = forms.EmployeeForm()
-	employees = models.Employee.objects.all()
+    new_form = forms.EmployeeForm()
+    employees = models.Employee.objects.all()
 
-	return render_to_response('employees.html',
+    return render_to_response('employees.html',
 				  {'form':new_form, 'list':employees},
 				  context_instance=RequestContext(request))
 
@@ -218,20 +218,23 @@ def create_employee(request):
 def delete_employee(request):
 	if request.method == 'POST':
                 emp = models.Employee.objects.get(pk=request.POST['id'])
+                print(request.method.POST['id'])
                 emp.delete()
 		
 		new_form = forms.EmployeeForm()
 		employees = models.Employee.objects.all()
 
 		return render_to_response('employees.html',
-					  {'form': new_form, 'list': newsfeed},
+					  {'form': new_form, 'list': employees},
 					  context_instance=RequestContext(request))
 	else:
-                emp = models.Employee.objects.get(pk=request.POST['id'])
-		return render_to_response('delete_confirmation.html', {'item':n, 'id':request.GET['id']}, context_instance=RequestContext(request))
+                emp = models.Employee.objects.get(pk=request.GET['id'])
+		return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
 
 	
-
+@csrf_protect
+def edit_employee(request):
+    return request.POST['id']
 
 
 def rate_employee(request):
@@ -430,22 +433,20 @@ def failed_registration(request):
 
 @csrf_protect
 def general_feedback(request):
-<<<<<<< HEAD
 	if request.method != 'POST':
 		return HttpResponse(get_token(request))
 	answer_data = json.load(request)
 	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-					  business=models.BusinessProfile.objects.get(
-			id=answer_data['business_id']))
+					  business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
 	feedback.save()
 	return HttpResponse('foo')
-=======
-    if request.method != 'POST':
-	return HttpResponse(get_token(request))
-    feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
-    feedback.save()
-    return HttpResponse('foo')
->>>>>>> 481f55719f176a571c160f56161dfdb7ab48c6ac
+
+#    if request.method != 'POST':
+#	return HttpResponse(get_token(request))
+ #   feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+  #  feedback.save()
+   # return HttpResponse('foo')
+
 
 @csrf_protect
 def evaluate(request):
