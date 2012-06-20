@@ -221,7 +221,9 @@ def delete_employee(request):
 		new_form = forms.EmployeeForm()
 		employees = models.Employee.objects.all()
 
-		return render_to_response('employees.html', {'form':new_form, 'list':newsfeed}. context_instance=REquestContext(request))
+		return render_to_response('employees.html',
+                                          {'form':new_form, 'list':newsfeed},
+                                          context_instance=RequestContext(request))
 
 	else:
                 emp = models.Employee.objects.get(pk=request.POST['id'])
