@@ -48,12 +48,14 @@ def example3(request):
 	     "type":"Burgers",
 	     "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
 	     "latitude":39.981634,
-	     "longitude":-83.004617},
+	     "longitude":-83.004617,
+             "id": 1},
 	    {"name":"Seymour House of Smiles",
 	     "type":"Orthodontist",
 	     "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
 	     "latitude":39.981934,
-	     "longitude":-83.004676},
+	     "longitude":-83.004676,
+             "id": 1}, # ids are the same for testing purposes...
 	    ],
 	    }
     return HttpResponse(json.dumps(res))
@@ -148,14 +150,14 @@ def delete_newsfeed_item(request):
 				  {'item':n, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
-#Serves the newsfeed to iOS	
+#Serves the newsfeed to iOS
+@csrf_protect
 def nfdata(request):
-    # TODO: access newsfeed for a particular business
-    # 
-    # if ( request.GET ):
-    # 	business_id = request.GET['business_id']
-
-    nfitems = models.NewsFeedItem.objects.all()
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    nfitems = business.newsfeeditem_set.all()
     nfitem_list = []
     for nfitem in nfitems :
 	nfitem_list.append({'title':nfitem.title,
@@ -165,7 +167,7 @@ def nfdata(request):
         
 	ret = { 'newsfeed_items':nfitem_list }
 
-	return HttpResponse(json.dumps(ret))
+    return HttpResponse(json.dumps(ret))
 
 @csrf_protect
 def edit_newsfeed(request):
@@ -258,13 +260,17 @@ class EmployeeEncoder(json.JSONEncoder):
 	else:
 	    return json.JSONEncoder.default(self, o)
 
+@csrf_protect
 def employee_list(request):
-    '''List the employees by last name and first name.
-    Also give the definition of the rating profile with which they are associated.
+    '''List the employees by last name and first name, according
+    to the business id which is passed as JSON.
     '''
-    return HttpResponse(json.dumps(list(models.Employee.objects.all()),
-				   cls=EmployeeEncoder),
-			mimetype='application/json')
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    return HttpResponse(json.dumps(list(business.employee_set.all()),
+                                        cls=EmployeeEncoder))
 
 @csrf_protect
 def create_rating_profile(request):
