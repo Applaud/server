@@ -196,7 +196,9 @@ def delete_employee(request):
 		new_form = forms.EmployeeForm()
 		employees = models.Employee.objects.all()
 
-		return render_to_response('employees.html', {'form':new_form, 'list':newsfeed}. context_instance=REquestContext(request))
+		return render_to_response('employees.html',
+					  {'form': new_form, 'list': newsfeed},
+					  context_instance=RequestContext(request))
 
 	else:
                 emp = models.Employee.objects.get(pk=request.POST['id'])
@@ -404,7 +406,10 @@ def failed_registration(request):
 def general_feedback(request):
 	if request.method != 'POST':
 		return HttpResponse(get_token(request))
-	feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+	answer_data = json.load(request)
+	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+					  business=models.BusinessProfile.objects.get(
+			id=answer_data['business_id']))
 	feedback.save()
 	return HttpResponse('foo')
 
