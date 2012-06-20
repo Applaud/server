@@ -54,7 +54,7 @@ def example3(request):
 	     "type":"Orthodontist",
 	     "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
 	     "latitude":39.981934,
-	     "longitude":-83.004676,
+             "longitude":-83.004676,
              "id": 1}, # ids are the same for testing purposes...
 	    ],
 	    }
@@ -80,7 +80,7 @@ def whereami(request):
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-	new_biz={"name":entry["name"],
+
 		 "type":entry["types"][0],
 		 "goog_id":entry["id"],
 		 "latitude":entry["geometry"]["location"]["lat"],
@@ -222,8 +222,9 @@ def create_employee(request):
     if  request.method == 'POST':
 	employee_form = forms.EmployeeForm(request.POST)
 	e=employee_form.save(commit="False")
-    
-
+        e.business= models.BusinessProfile.objects.get(id=1)
+        e.save()
+        
     new_form = forms.EmployeeForm()
     employees = models.Employee.objects.all()
 
