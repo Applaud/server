@@ -1,0 +1,8 @@
+[{
+    "pk":1,
+    "model":"sites.site",
+    "fields":{
+        "name":"ec2-107-22-6-55.compute-1.amazonaws.com",
+        "domain":""ec2-107-22-6-55.compute-1.amazonaws.com"
+    }
+}]
