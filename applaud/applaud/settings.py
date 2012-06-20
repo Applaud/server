@@ -109,6 +109,9 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+# Cache session cookies. If we don't find the cookie we're looking for, read from database.
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 ROOT_URLCONF = 'applaud.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
