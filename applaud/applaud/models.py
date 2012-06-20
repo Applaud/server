@@ -96,6 +96,9 @@ class NewsFeedItem(models.Model):
             for key, value in d.iteritems():
                 if key != 'id':
                     setattr(self, key, value)
+        
+        def __unicode__(self):
+            return '%s at %s' % (self.title, self.business)
 
 class Employee(models.Model):
 	'''Models an employee.
@@ -110,6 +113,9 @@ class Employee(models.Model):
         
         # Where does this employee work?
         business = models.ForeignKey('BusinessProfile')
+        
+        def __unicode__(self):
+            return '%s %s' % (self.first_name, self.last_name)
 
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
