@@ -12,11 +12,14 @@ from django.contrib.auth.models import User, Group
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
+user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
 enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
 
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423, goog_id="677679492a58049a7eae079e0890897eb953d79b")
 business.save()
+business2 = models.BusinessProfile(user=user2, phone='0-987-654-3210', latitude=9.2342, longitude=6272.43814, goog_id='asdf987sdf765asdf875asdf685487we65r9867')
+business2.save()
 
 # Business and Customer groups.
 business_group = Group(name='Business')
@@ -27,6 +30,8 @@ customer_group.save()
 # Add the business group.
 business.groups = [business_group]
 business.save()
+business2.groups = [business_group]
+business2.save()
 
 # Make a RatingProfile.
 profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
@@ -49,6 +54,12 @@ mystical = models.Employee(first_name='Mystical',
                            business=business,
                            bio='foo')
 mystical.save()
+luke = models.Employee(first_name='Infinite',
+                       last_name='Luke',
+                       rating_profile=profile2,
+                       business=business2,
+                       bio='StackOverflowError at populate.py, line 60')
+luke.save()
 
 # Make some Ratings.
 rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1)
@@ -87,6 +98,8 @@ nfi3.save()
 # Make Surveys.
 s1 = models.Survey(title='Emacs?', description='Text editor of the gods.', business=business)
 s1.save()
+s2 = models.Survey(title='Apatapa?', description='Apps providing apatapa through apps providing apatapa', business=business2)
+s2.save()
 
 # Make Questions.
 q1 = models.Question(label='Yes or no?', type='RG', options=['yes', 'no'], survey=s1)

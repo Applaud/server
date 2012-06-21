@@ -474,7 +474,8 @@ class SurveyEncoder(json.JSONEncoder):
             for q in question_list:
                 questions.append({'label': q.label,
                                   'type': q.type,
-                                  'options': q.options})
+                                  'options': q.options,
+                                  'id': q.id})
             res = {'title': o.title,
                    'description': o.description,
                    'questions': questions}
@@ -492,7 +493,7 @@ def get_survey(request):
             return HttpResponse(get_token(request))
         business_id = json.load(request)['business_id']
         business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.survey_set.all()),
+        return HttpResponse(json.dumps(list(business.survey_set.all())[0],
                                        cls=SurveyEncoder))
     return HttpResponseForbidden("end-user not authenticated")
 
@@ -540,7 +541,7 @@ def survey_respond(request):
         if request.method != 'POST':
             return HttpResponse(get_token(request))
         for answer in json.load(request)['answers']:
-            question = models.Question.objects.get(label=answer['label'])
+            question = models.Question.objects.get(id=answer['id'])
             response = answer['response']
             qr = models.QuestionResponse(question=question, response=response)
             qr.save()
