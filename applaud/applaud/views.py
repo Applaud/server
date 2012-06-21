@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from applaud.models import RatingProfile, BusinessProfile
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
@@ -396,6 +396,8 @@ class BusinessProfileEncoder(json.JSONEncoder):
 def employee_list(request):
     '''List the employees by last name and first name, according
     to the business id which is passed as JSON.
+
+    This is used by mobile devices to view all the employees for a business.
     '''
     if request.user.is_authenticated():
         if request.method == 'GET':
@@ -405,6 +407,36 @@ def employee_list(request):
         return HttpResponse(json.dumps(list(business.employee_set.all()),
                                             cls=EmployeeEncoder))
     return HttpResponseForbidden("end-user not authenticated")
+
+def employee_stats(request):
+    '''Gives statistics for a particular employee (given in request). This
+    is accessed through the apatapa website when an employee is logged in.
+    '''
+    if request.user.is_authenticated():
+        profile = ""
+	try:
+	    profile = request.user.employeeprofile
+	except EmployeeProfile.DoesNotExist:
+            # Not logged in, go log in!
+	    return HttpResponseRedirect("/accounts/login")
+
+        rating_profile = request.user.rating_profile
+        ratings = request.user.rating_set()
+
+        # Parse out the ratings by dimension
+        dimensions = json.loads(rating_profile.dimensions)
+
+        # success_map_list:
+        # [ {'title':"thriftiness", 'values':[<rating>,<rating>]}, { ... }, ... ]
+        success_map_list = []
+        for dimension in dimensions:
+            success_map['dimension'] = dimension
+            success_map['values'] = ratings.objects.get(title=dimension)
+            success_map_list.append(success_map)
+
+        # For now, just return the success map.
+        return render_to_response('employee_stats.html', locals())
+        
 
 @csrf_protect
 def create_rating_profile(request):
