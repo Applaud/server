@@ -424,9 +424,12 @@ def create_survey(request):
     '''
     # TODO: Make sure business is authenticated
     if request.method == 'GET':
-        return render_to_response('survey_create.html',
-                                  {},
-                                  context_instance=RequestContext(request))
+        if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+            return render_to_response('survey_create.html',
+                                      {},
+                                      context_instance=RequestContext(request))
+        else:
+            return render_to_response('fail.html')
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
         if request.user.is_authenticated():
