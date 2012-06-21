@@ -80,7 +80,7 @@ def whereami(request):
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-
+        new_biz={"name":entry["name"],
 		 "type":entry["types"][0],
 		 "goog_id":entry["id"],
 		 "latitude":entry["geometry"]["location"]["lat"],
@@ -186,12 +186,12 @@ def nfdata(request):
 
 @csrf_protect
 def edit_newsfeed(request):
-    if request.method == 'POST':
-	
+    if request.method == 'POST':	
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
 	d = {'title':request.POST['title'],
 	     'subtitle':request.POST['subtitle'],
-	     'body':request.POST['body']}
+	     'body':request.POST['body'],
+             'date_edited':datetime.now()}
 	
 	n.change_parameters(d)
 	n = n.save()
@@ -221,7 +221,7 @@ def edit_newsfeed(request):
 def create_employee(request):
     if  request.method == 'POST':
 	employee_form = forms.EmployeeForm(request.POST)
-	e=employee_form.save(commit="False")
+	e=employee_form.save(commit=False)
         e.business= models.BusinessProfile.objects.get(id=1)
         e.save()
         
@@ -253,10 +253,35 @@ def delete_employee(request):
 	
 @csrf_protect
 def edit_employee(request):
-    return request.POST['id']
+    if request.method == 'POST':	
+        n = models.Employee.objects.get(pk=request.POST['id'])
+	d = {'first_name':request.POST['first_name'],
+	     'last_name':request.POST['last_name'],
+	     'bio':request.POST['bio']}
+	
+	n.change_parameters(d)
+	n = n.save()
 
+	f = forms.EmployeeForm()
+	emp = models.Employee.objects.all()
+	return render_to_response('employees.html',
+				  {'form':f, 'list':emp},
+				  context_instance=RequestContext(request))
 
+    else:
+	try:                        
+            n = models.Employee.objects.get(pk=request.GET['id'])
+	except:
+	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
 
+                #this might be a tad sloppy
+	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
+	
+	f = forms.EmployeeForm(initial=d)
+       	
+	return render_to_response('edit_employee.html',
+				  {'form':f, 'id':request.GET['id']},
+				  context_instance=RequestContext(request))
 
 def rate_employee(request):
     # if not 'employee' in request.GET or not 'ratings' in request.GET:

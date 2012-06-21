@@ -117,6 +117,12 @@ class Employee(models.Model):
         def __unicode__(self):
             return '%s %s' % (self.first_name, self.last_name)
 
+        def change_parameters(self, d):
+            for key, value in d.iteritems():
+                if key != 'id':
+                    setattr(self, key, value)
+
+
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
