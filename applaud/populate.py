@@ -72,14 +72,15 @@ luke = models.EmployeeProfile(business=business2,
                               bio='biology')
 luke.save()
 
-# Make some Ratings.
+# Make some Ratings. Only "master" has ratings.
+# 'master' can be rated on 'awesomeness' and 'slickness'
 rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1)
 rating1.save()
-rating2 = models.Rating(title='Slickness', rating_value=5, employee=mystical)
+rating2 = models.Rating(title='Slickness', rating_value=5, employee=master)
 rating2.save()
-rating3 = models.Rating(title='Efficiency', rating_value=1, employee=mystical)
+rating3 = models.Rating(title='Slickness', rating_value=4, employee=master)
 rating3.save()
-rating4 = models.Rating(title='Surliness', rating_value=4, employee=master)
+rating4 = models.Rating(title='Slickness', rating_value=4, employee=master)
 rating4.save()
 
 # Make a couple of NewsFeedItems.

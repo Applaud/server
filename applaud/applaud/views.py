@@ -420,18 +420,19 @@ def employee_stats(request):
             # Not logged in, go log in!
 	    return HttpResponseRedirect("/accounts/login")
 
-        rating_profile = request.user.rating_profile
-        ratings = request.user.rating_set()
+        rating_profile = profile.rating_profile
+        ratings = profile.rating_set
 
         # Parse out the ratings by dimension
-        dimensions = json.loads(rating_profile.dimensions)
+        dimensions = rating_profile.dimensions
 
         # success_map_list:
         # [ {'title':"thriftiness", 'values':[<rating>,<rating>]}, { ... }, ... ]
         success_map_list = []
         for dimension in dimensions:
+            success_map = {}
             success_map['dimension'] = dimension
-            success_map['values'] = ratings.objects.get(title=dimension)
+            success_map['values'] = ratings.filter(title=dimension)
             success_map_list.append(success_map)
 
         # For now, just return the success map.
