@@ -34,11 +34,11 @@ business2.groups = [business_group]
 business2.save()
 
 # Make a RatingProfile.
-profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'])
+profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'], business=business)
 profile1.save()
-profile2 = models.RatingProfile(title='Profile 2', dimensions=['Efficiency', 'Enthusiasm', 'Sarcasm'])
+profile2 = models.RatingProfile(title='Profile 2', dimensions=['Efficiency', 'Enthusiasm', 'Sarcasm'], business=business2)
 profile2.save()
-profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', 'Surliness'])
+profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', 'Surliness'], business=business)
 profile3.save()
 
 # Make a User.

@@ -76,6 +76,7 @@ class RatingProfile(models.Model):
 	'''
 	title = models.TextField(max_length=100)
 	dimensions = SerializedStringsField()
+        business = models.ForeignKey('BusinessProfile')
 
         def __unicode__(self):
             return self.title
