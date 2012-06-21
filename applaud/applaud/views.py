@@ -1,4 +1,4 @@
-0;95;cfrom django.shortcuts import render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
