@@ -12,6 +12,7 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from registration import forms as registration_forms
 
 def index(request):
     username = ""
@@ -89,7 +90,7 @@ def whereami(request):
                 "latitude":entry["geometry"]["location"]["lat"],
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
-            
+        
     ret = json.dumps({'nearby_businesses':business_list})
     return HttpResponse(ret)
 
@@ -138,8 +139,8 @@ def newsfeed_create(request):
 	newsitem = n.save(commit=False)
 	newsitem.date = datetime.now()
 	newsitem.date_edited = datetime.now()
-	newsitem.business = profile
-        newsitem.save()
+        newsitem.business = profile
+	newsitem.save()
     
     f = forms.NewsFeedItemForm()
     newsfeed = profile.newsfeeditem_set.all()
@@ -148,7 +149,6 @@ def newsfeed_create(request):
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
     
-
 # Delete a newsfeed item
 @csrf_protect
 def delete_newsfeed_item(request):
@@ -160,7 +160,7 @@ def delete_newsfeed_item(request):
 	    pass
         
     else:
-        return HttpResponseRedirect('/login')       
+        return HttpResponseRedirect('/accounts/login')  
 
     #Business is authenticated
 
@@ -207,6 +207,17 @@ def nfdata(request):
 
 @csrf_protect
 def edit_newsfeed(request):
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/fail/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
     if request.method == 'POST':	
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
 	d = {'title':request.POST['title'],
@@ -218,7 +229,7 @@ def edit_newsfeed(request):
 	n = n.save()
 
 	f = forms.NewsFeedItemForm()
-	newsfeed = models.NewsFeedItem.objects.all()
+	newsfeed = profile.newsfeeditem_set.all()
 	return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
@@ -240,43 +251,73 @@ def edit_newsfeed(request):
 
 @csrf_protect
 def create_employee(request):
-    if  request.method == 'POST':
-	employee_form = forms.EmployeeForm(request.POST)
-	e=employee_form.save(commit=False)
-        e.business= models.BusinessProfile.objects.get(id=1)
-        e.save()
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/accounts/login/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
+    # if  request.method == 'POST':
+    #     employee_form = forms.EmployeeForm(request.POST)
+    #     e=employee_form.save(commit=False)
+    #     e.business= profile
+    #     e.save()
         
-    new_form = forms.EmployeeForm()
-    employees = models.Employee.objects.all()
+    employees = profile.employeeprofile_set.all()
 
     return render_to_response('employees.html',
-				  {'form':new_form, 'list':employees},
-				  context_instance=RequestContext(request))
+                              {'list':employees},
+                              context_instance=RequestContext(request))
 
-		
+
 @csrf_protect
 def delete_employee(request):
-	if request.method == 'POST':
-                emp = models.Employee.objects.get(pk=request.POST['id'])
-                emp.delete()
-		
-		new_form = forms.EmployeeForm()
-		employees = models.Employee.objects.all()
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
 
-		return render_to_response('employees.html',
-					  {'form': new_form, 'list': employees},
-					  context_instance=RequestContext(request))
-	else:
-                emp = models.Employee.objects.get(pk=request.GET['id'])
-		return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/accounts/login/")
+
+    if request.method == 'POST':
+        emp = models.Employee.objects.get(pk=request.POST['id'])
+        emp.delete()
+        
+        new_form = forms.EmployeeForm()
+        employees = profile.employee_set.all()
+
+        return render_to_response('employees.html',
+                                  {'form': new_form, 'list': employees},
+                                  context_instance=RequestContext(request))
+    else:
+        emp = models.Employee.objects.get(pk=request.GET['id'])
+        return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
 
 
-	
+    
 @csrf_protect
 def edit_employee(request):
-    if not request.user.is_authenticated():
-        return render_to_response('fail.html')
-    if request.method == 'POST':
+    if request.user.is_authenticated():
+    #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/accounts/login/")
+
+    if request.method == 'POST':	
         n = models.Employee.objects.get(pk=request.POST['id'])
 	d = {'first_name':request.POST['first_name'],
 	     'last_name':request.POST['last_name'],
@@ -286,7 +327,7 @@ def edit_employee(request):
 	n = n.save()
 
 	f = forms.EmployeeForm()
-	emp = models.Employee.objects.all()
+	emp = profile.employee_set.all()
 	return render_to_response('employees.html',
 				  {'form':f, 'list':emp},
 				  context_instance=RequestContext(request))
@@ -300,7 +341,7 @@ def edit_employee(request):
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
 	
-	f = forms.EmployeeForm(initial=d)
+	f = registration_forms.EmployeeRegistrationForm(initial=d)
        	
 	return render_to_response('edit_employee.html',
 				  {'form':f, 'id':request.GET['id']},
@@ -323,13 +364,13 @@ def rate_employee(request):
 # Encodes an Employee into JSON format
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
-	if isinstance(o, models.Employee):
+	if isinstance(o, models.EmployeeProfile):
 	    dimensions = o.rating_profile.dimensions
-	    res = {'first_name':o.first_name,
-		   'last_name':o.last_name,
+	    res = {'first_name':o.user.first_name,
+		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
-		       {'rating_title':o.rating_profile.title,
+		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimensions}
 		   }
 	    return res

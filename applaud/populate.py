@@ -41,24 +41,22 @@ profile2.save()
 profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', 'Surliness'], business=business)
 profile3.save()
 
+# Make a User.
+emp_user = User.objects.create_user('joe', 'joes@aol.com', 'apatapa')
+emp_user2 = User.objects.create_user('jill', 'jill@gmail.com', 'apatapa')
+emp_enduser = User.objects.create_user('josh', 'josh@gmail.com', 'apatapa')
+
+
+
 # Make a few Employees.
-master = models.Employee(first_name='Master',
-                         last_name='Trash',
-                         rating_profile=profile1,
-                         business=business,
-                         bio='The master of trash.')
+master = models.EmployeeProfile(business=business,
+                         user=emp_user)
 master.save()
-mystical = models.Employee(first_name='Mystical',
-                           last_name='Beast',
-                           rating_profile=profile1,
-                           business=business,
-                           bio='foo')
+mystical = models.EmployeeProfile(business=business2,
+                                  user=emp_user2)
 mystical.save()
-luke = models.Employee(first_name='Infinite',
-                       last_name='Luke',
-                       rating_profile=profile2,
-                       business=business2,
-                       bio='StackOverflowError at populate.py, line 60')
+luke = models.EmployeeProfile(business=business2,
+                              user=emp_enduser)
 luke.save()
 
 # Make some Ratings.
