@@ -5,6 +5,9 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Make sure the user gets logged out when the browser closes.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 # How long a user has to activate their account
 ACCOUNT_ACTIVATION_DAYS = 7
 # Where to go after login
