@@ -463,7 +463,8 @@ class SurveyEncoder(json.JSONEncoder):
             for q in question_list:
                 questions.append({'label': q.label,
                                   'type': q.type,
-                                  'options': q.options})
+                                  'options': q.options,
+                                  'id': q.id})
             res = {'title': o.title,
                    'description': o.description,
                    'questions': questions}
@@ -542,7 +543,7 @@ def survey_respond(request):
     if request.method != 'POST':
 	return HttpResponse(get_token(request))
     for answer in json.load(request)['answers']:
-	question = models.Question.objects.get(label=answer['label'])
+	question = models.Question.objects.get(id=answer['id'])
 	response = answer['response']
 	qr = models.QuestionResponse(question=question, response=response)
 	qr.save()
