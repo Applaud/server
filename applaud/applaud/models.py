@@ -188,6 +188,7 @@ class BusinessProfile(models.Model):
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
     # After that, the ID of BusinessProfile is used to uniquely identify a business.
+    # Except when signing employees up
     goog_id = models.CharField(max_length=200)
 
     first_time = models.BooleanField(default=1)

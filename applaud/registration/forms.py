@@ -142,14 +142,16 @@ class EmployeeRegistrationForm(RegistrationForm):
     #Eventually we should use a password field, for now an employee will just select the business by name
     #business_password = forms.CharField(max_length=100, widget=forms.PasswordInput, label="Business Password")
 
-    business_name = forms.CharField(max_length=100, label="Business Name")
-
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
 
 class EmployeeProfileForm(forms.ModelForm):
     
     acceptable_image_types = ('jpg','png',)
+    # business = forms.ModelChoiceField(editable=False)
+    # user = forms.ModelChoiceField(editable=False)
+    # first_time = forms.BooleanField(editable=False)
+    # rating_profile = forms.ModelChoiceField(editable=False)
 
     def clean_profile_picture(self):
         image = self.cleaned_data['profile_picture']
@@ -162,4 +164,4 @@ class EmployeeProfileForm(forms.ModelForm):
 
     class Meta:
         model = EmployeeProfile
-        exclude = ('rating_profile','business','user','first_time',)
+        fields = ('bio','profile_picture',)

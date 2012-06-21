@@ -19,7 +19,7 @@ urlpatterns = patterns('',
                        # url(r'^employee_stats/', views.employee_stats),
                        url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
-                       url(r'^$', direct_to_template, {'template':'business.html'}),
+                       url(r'/home/^$', direct_to_template, {'template':'business.html'}),
                        
                        # Survey stuff
                        url(r'^survey_create/',views.create_survey),
@@ -33,7 +33,9 @@ urlpatterns = patterns('',
                        url(r'^newsfeed/',views.nfdata),
                        url(r'^edit_newsfeed/', views.edit_newsfeed),
                        url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
-
+                       
+                       # Checking analytics.
+                       url(r'^analytics/', views.analytics),
                        )
 
 
