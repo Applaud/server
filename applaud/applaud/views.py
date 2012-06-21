@@ -371,13 +371,23 @@ def create_rating_profile(request):
     Takes a variable number of text fields and turns them into dimensions
     for a rating profile. Also includes the title.
     '''
-    # TODO: make sure that business is authenticated. 
     if request.method == 'GET':
-        return render_to_response('employeeprofile_create.html',
-                                  {},
-                                  context_instance=RequestContext(request))
+        # Be sure we're logged in and that we're a business.
+        if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+            return render_to_response('create_rating_profile.html',
+                                      {},
+                                      context_instance=RequestContext(request))
+        else:
+            return render_to_response('fail.html')
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
+        if request.user.is_authenticated():
+            try:
+                profile = request.user.businessprofile
+            except BusinessProfile.DoesNotExist:
+                return render_to_response('fail.html')
+        else:
+            return render_to_response('fail.html')
         i = 0
         dimensions = []
         while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
@@ -399,22 +409,24 @@ def create_rating_profile(request):
             return render_to_response('create_rating_profile.html',
                                       errors,
                                       context_instance=RequestContext(request))
-        rp = RatingProfile(title=title, dimensions=dimensions)
+        rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
         rp.save()
 	
         return HttpResponseRedirect('/ratingprofiles')
 
 @csrf_protect
 def list_rating_profiles(request):
-    l = list(RatingProfile.objects.all())
+    if not (request.user.is_authenticated() and 'businessprofile' in dir(request.user)):
+        return render_to_response('fail.html')
+    business = request.user.businessprofile
+    l = list(business.ratingprofile_set.all())
     ret = []
     for item in l:
 	ap = {}
 	ap['title']=item.title
 	ap['dimensions']=item.dimensions
 	ret.append(ap)
-	
-	return render_to_response('employeeprofile_create.html',
+    return render_to_response('employeeprofile_create.html',
 				  {'list':ret},
 				  context_instance=RequestContext(request))
 
@@ -424,8 +436,8 @@ def create_survey(request):
     Takes a variable number of text fields and turns them into questions
     for a survey. Also includes the title and description.
     '''
-    # TODO: Make sure business is authenticated
     if request.method == 'GET':
+        # Be sure we're logged in and that we're a business.
         if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
             return render_to_response('survey_create.html',
                                       {},
@@ -438,7 +450,7 @@ def create_survey(request):
             try:
                 profile = request.user.businessprofile
             except BusinessProfile.DoesNotExist:
-                return HttpResponseRedirect('/fail/')
+                return render_to_response('fail.html')
         else:
             return HttpResponseRedirect('/accounts/business/')
         i = 0
