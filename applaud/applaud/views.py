@@ -227,7 +227,7 @@ def edit_newsfeed(request):
 	try:                        
 	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
 	except:
-	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
+	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
@@ -274,7 +274,9 @@ def delete_employee(request):
 	
 @csrf_protect
 def edit_employee(request):
-    if request.method == 'POST':	
+    if not request.user.is_authenticated():
+        return render_to_response('fail.html')
+    if request.method == 'POST':
         n = models.Employee.objects.get(pk=request.POST['id'])
 	d = {'first_name':request.POST['first_name'],
 	     'last_name':request.POST['last_name'],
@@ -288,12 +290,12 @@ def edit_employee(request):
 	return render_to_response('employees.html',
 				  {'form':f, 'list':emp},
 				  context_instance=RequestContext(request))
-
+    # request method is GET
     else:
 	try:                        
             n = models.Employee.objects.get(pk=request.GET['id'])
 	except:
-	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
+	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
@@ -369,13 +371,23 @@ def create_rating_profile(request):
     Takes a variable number of text fields and turns them into dimensions
     for a rating profile. Also includes the title.
     '''
-    # TODO: make sure that business is authenticated. 
     if request.method == 'GET':
-        return render_to_response('employeeprofile_create.html',
-                                  {},
-                                  context_instance=RequestContext(request))
+        # Be sure we're logged in and that we're a business.
+        if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+            return render_to_response('create_rating_profile.html',
+                                      {},
+                                      context_instance=RequestContext(request))
+        else:
+            return render_to_response('fail.html')
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
+        if request.user.is_authenticated():
+            try:
+                profile = request.user.businessprofile
+            except BusinessProfile.DoesNotExist:
+                return render_to_response('fail.html')
+        else:
+            return render_to_response('fail.html')
         i = 0
         dimensions = []
         while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
@@ -397,22 +409,24 @@ def create_rating_profile(request):
             return render_to_response('create_rating_profile.html',
                                       errors,
                                       context_instance=RequestContext(request))
-        rp = RatingProfile(title=title, dimensions=dimensions)
+        rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
         rp.save()
 	
         return HttpResponseRedirect('/ratingprofiles')
 
 @csrf_protect
 def list_rating_profiles(request):
-    l = list(RatingProfile.objects.all())
+    if not (request.user.is_authenticated() and 'businessprofile' in dir(request.user)):
+        return render_to_response('fail.html')
+    business = request.user.businessprofile
+    l = list(business.ratingprofile_set.all())
     ret = []
     for item in l:
 	ap = {}
 	ap['title']=item.title
 	ap['dimensions']=item.dimensions
 	ret.append(ap)
-	
-	return render_to_response('employeeprofile_create.html',
+    return render_to_response('employeeprofile_create.html',
 				  {'list':ret},
 				  context_instance=RequestContext(request))
 
@@ -422,13 +436,23 @@ def create_survey(request):
     Takes a variable number of text fields and turns them into questions
     for a survey. Also includes the title and description.
     '''
-    # TODO: Make sure business is authenticated
     if request.method == 'GET':
-        return render_to_response('survey_create.html',
-                                  {},
-                                  context_instance=RequestContext(request))
+        # Be sure we're logged in and that we're a business.
+        if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+            return render_to_response('survey_create.html',
+                                      {},
+                                      context_instance=RequestContext(request))
+        else:
+            return render_to_response('fail.html')
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
+        if request.user.is_authenticated():
+            try:
+                profile = request.user.businessprofile
+            except BusinessProfile.DoesNotExist:
+                return render_to_response('fail.html')
+        else:
+            return HttpResponseRedirect('/accounts/business/')
         i = 0
         questions = []
         while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
@@ -463,9 +487,10 @@ def create_survey(request):
             return render_to_response('survey_create.html',
                                       errors,
                                       context_instance=RequestContext(request))
-
+        # Which business are we?
+        business = BusinessProfile.objects.get(user=request.user)
 	# First, create the Survey
-	s = models.Survey(title=title, description=description)
+	s = models.Survey(title=title, description=description, business=business)
 	s.save()
 
 	# Create each of the questions on the Survey
@@ -541,7 +566,7 @@ def evaluate(request):
             for key, value in rating_data['ratings']:
                 r = Rating(title=key, rating_value=float(value),employee=e)
                 r.save()
-            return HttpResponse('foo')
+    return HttpResponse('foo')
 
 @csrf_protect
 def survey_respond(request):
@@ -558,7 +583,7 @@ def survey_respond(request):
             response = answer['response']
             qr = models.QuestionResponse(question=question, response=response)
             qr.save()
-            return HttpResponse('foo')
+    return HttpResponse('foo')
 
 # This will provide the CSRF token
 def get_csrf(request):
