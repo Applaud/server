@@ -13,8 +13,8 @@ from django.contrib import auth
 
 from registration.backends import get_backend
 import forms
-from applaud.models import BusinessProfile
-#from applaud.models import Employee
+from applaud import models as applaud_models
+
 import sys
 
 @csrf_protect
@@ -193,19 +193,36 @@ def register(request, backend, success_url=None, form_class=None,
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
 
+
         sys.stderr.write("validating form...")
         if form.is_valid():
             sys.stderr.write("form validated. is valid.")
             new_user = backend.register(request, **form.cleaned_data)
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
-            if 'latitude' in request.POST and 'longitude' in request.POST:
-                # We know we're registering a business
-                profile = BusinessProfile(latitude=request.POST['latitude'],
-                                          longitude=request.POST['longitude'],
-                                          phone=request.POST['phone'],
-                                          user=new_user)
-                profile.save()
+            # This section modified again by Jack and Shahab on Thu June 21
+            if 'profile_type' in extra_context:
+                # We know we're registering a custom user (business or employee)
+                if extra_context['profile_type']=='business':
+                    profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
+                                              longitude=request.POST['longitude'],
+                                              phone=request.POST['phone'],
+                                              user=new_user)
+                    profile.save()
+
+
+                if extra_context['profile_type']=='employee':
+                    #We know that we're registering an employee
+                    
+                    #First, determine which business this employee works for
+                    business_user = auth.models.User.objects.get(username=request.POST['business_name'])
+                    
+                    business = applaud_models.BusinessProfile.objects.get(user=business_user)
+
+                    profile = applaud_models.EmployeeProfile(business = business,
+                                                             user=new_user)
+                    profile.save()
+
 
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
@@ -219,6 +236,7 @@ def register(request, backend, success_url=None, form_class=None,
         extra_context = {}
     context = RequestContext(request)
     for key, value in extra_context.items():
+
         context[key] = callable(value) and value() or value
 
     return render_to_response(template_name,
@@ -230,7 +248,17 @@ def register_business(request, backend, success_url=None, form_class=forms.Busin
                       template_name='registration/business_registration_form.html',
                       extra_context=None):
     sys.stderr.write("Made it to register_business")
-    return register(request, backend, success_url, form_class, disallowed_url, template_name, None)
+    d = {"profile_type":"business"}
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
+
+
+def register_employee(request, backend, success_url=None, form_class=forms.EmployeeRegistrationForm,
+                      disallowed_url='registration_disallowed',
+                      template_name='registration/employee_registration_form.html',
+                      extra_context=None):
+    sys.stderr.write("Made it to register_employee")
+    d = {"profile_type":"employee"}
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
 
 
 def login(request):

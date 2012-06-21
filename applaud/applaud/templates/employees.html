@@ -14,7 +14,7 @@
 {% if employee|length > 0 %}
 <ul>
 {% for employee in list %}
-<li>{{employee.last_name}}, {{ employee.first_name }}
+<li>{{employee.user.username}}, {{ employee.user.first_name }}
 
 <br />
 

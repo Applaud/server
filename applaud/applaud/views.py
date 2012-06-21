@@ -12,6 +12,7 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from registration import forms as registration_forms
 
 def index(request):
     username = ""
@@ -257,17 +258,16 @@ def create_employee(request):
     else:
         return HttpResponseRedirect("/")
 
-    if  request.method == 'POST':
-	employee_form = forms.EmployeeForm(request.POST)
-	e=employee_form.save(commit=False)
-        e.business= profile
-        e.save()
+    # if  request.method == 'POST':
+    #     employee_form = forms.EmployeeForm(request.POST)
+    #     e=employee_form.save(commit=False)
+    #     e.business= profile
+    #     e.save()
         
-    new_form = forms.EmployeeForm()
-    employees = profile.employee_set.all()
+    employees = profile.employeeprofile_set.all()
 
     return render_to_response('employees.html',
-                              {'form':new_form, 'list':employees},
+                              {'list':employees},
                               context_instance=RequestContext(request))
 
 
@@ -337,7 +337,7 @@ def edit_employee(request):
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
 	
-	f = forms.EmployeeForm(initial=d)
+	f = registration_forms.EmployeeRegistrationForm(initial=d)
        	
 	return render_to_response('edit_employee.html',
 				  {'form':f, 'id':request.GET['id']},
@@ -354,13 +354,13 @@ def rate_employee(request):
 
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
-	if isinstance(o, models.Employee):
+	if isinstance(o, models.EmployeeProfile):
 	    dimensions = o.rating_profile.dimensions
-	    res = {'first_name':o.first_name,
-		   'last_name':o.last_name,
+	    res = {'first_name':o.user.first_name,
+		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
-		       {'rating_title':o.rating_profile.title,
+		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimensions}
 		   }
 	    return res
@@ -584,7 +584,7 @@ def evaluate(request):
     rating_data = json.load(request)
     if 'employee' in request.POST:
 	try:
-	    e = Employee.objects.get(rating_data['employee']['id'])
+	    e = models.EmployeeProfile.objects.get(rating_data['employee']['id'])
 	except:
 	    pass
 	for key, value in rating_data['ratings']:

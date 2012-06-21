@@ -136,3 +136,14 @@ class BusinessRegistrationForm(RegistrationForm):
 
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
+
+class EmployeeRegistrationForm(RegistrationForm):	
+    
+    username = forms.CharField(max_length=100,label="Username")
+    #Eventually we should use a password field, for now an employee will just select the business by name
+    #business_password = forms.CharField(max_length=100, widget=forms.PasswordInput, label="Business Password")
+
+    business_name = forms.CharField(max_length=100, label="Business Name")
+
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)

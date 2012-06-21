@@ -1,3 +1,4 @@
+
 """
 URLconf for registration and activation, using django-registration's
 default backend.
@@ -24,7 +25,7 @@ from django.views.generic.simple import direct_to_template
 from registration.views import activate
 from registration.views import register
 from registration.views import register_business
-
+from registration.views import register_employee
 
 urlpatterns = patterns('',
                        url(r'^activate/complete/$',
@@ -47,10 +48,10 @@ urlpatterns = patterns('',
                            register_business,
                            {'backend': 'registration.backends.default.DefaultBackend'},
                            name='registration_register_business'),
-                       # url(r'^employee/$',
-                       #     registerbusiness,
-                       #     {'backend': 'registration.backends.default.DefaultBackend'},
-                       #     name='registration_register_business'),
+                       url(r'^employee/$',
+                           register_employee,
+                           {'backend': 'registration.backends.default.DefaultBackend'},
+                           name='registration_register_employee'),
                        url(r'^register/complete/$',
                            direct_to_template,
                            {'template': 'registration/registration_complete.html'},
