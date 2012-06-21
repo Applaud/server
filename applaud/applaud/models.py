@@ -100,28 +100,6 @@ class NewsFeedItem(models.Model):
         def __unicode__(self):
             return '%s at %s' % (self.title, self.business)
 
-class Employee(models.Model):
-	'''Models an employee.
-	'''
-	first_name = models.TextField(max_length=100)
-	last_name = models.TextField(max_length=100)
-
-        bio = models.TextField(max_length=1000,blank=True,null=True)
-
-	# What dimensions are relevant for rating this employee
-	rating_profile = models.ForeignKey(RatingProfile)
-        
-        # Where does this employee work?
-        business = models.ForeignKey('BusinessProfile')
-        
-        def __unicode__(self):
-            return '%s %s' % (self.first_name, self.last_name)
-
-        def change_parameters(self, d):
-            for key, value in d.iteritems():
-                if key != 'id':
-                    setattr(self, key, value)
-
 
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
@@ -200,3 +178,29 @@ class BusinessProfile(models.Model):
 
     def __unicode__(self):
         return "%s (%s)"%(self.user.username,self.phone)
+
+class Employee(models.Model):
+    '''Models an employee.
+    '''
+    first_name = models.TextField(max_length=100)
+    last_name = models.TextField(max_length=100)
+
+    bio = models.TextField(max_length=1000,blank=True,null=True)
+
+    # What dimensions are relevant for rating this employee
+    rating_profile = models.ForeignKey(RatingProfile)
+    
+    # Where does this employee work?
+    business = models.ForeignKey('BusinessProfile')
+    
+#    user = models.OneToOneField(User)
+
+    def __unicode__(self):
+        return '%s %s' % (self.first_name, self.last_name)
+
+    def change_parameters(self, d):
+        for key, value in d.iteritems():
+            if key != 'id':
+                setattr(self, key, value)
+
+

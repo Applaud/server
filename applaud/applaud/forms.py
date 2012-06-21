@@ -7,8 +7,7 @@ class NewsFeedItemForm(ModelForm):
 		model = models.NewsFeedItem
                 exclude = ('business',)
                 
-class EmployeeForm(ModelForm):
-	
+class EmployeeForm(ModelForm):	
 	class Meta:
 		model = models.Employee
 		exclude = ('business',)

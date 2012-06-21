@@ -89,7 +89,7 @@ def whereami(request):
                 "latitude":entry["geometry"]["location"]["lat"],
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
-            
+        
     ret = json.dumps({'nearby_businesses':business_list})
     return HttpResponse(ret)
 
@@ -120,21 +120,32 @@ def checkin(request):
 # This allows a user to save and view newsfeed posts
 @csrf_protect
 def newsfeed_create(request):
-    #TODO: See if business is authenticated. Associate newsfeed with business
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/accounts/login/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
 	newsitem = n.save(commit=False)
 	newsitem.date = datetime.now()
 	newsitem.date_edited = datetime.now()
+        newsitem.business = profile
 	newsitem.save()
     
     f = forms.NewsFeedItemForm()
-    newsfeed = models.NewsFeedItem.objects.all()
-	
-    return render_to_response('basic_newsfeed.html',
-				  {'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
+    newsfeed = profile.newsfeeditem_set.all()
     
+    return render_to_response('basic_newsfeed.html',
+                              {'form':f, 'list':newsfeed},
+                              context_instance=RequestContext(request))
+
 
 # Delete a newsfeed item
 @csrf_protect
@@ -147,7 +158,7 @@ def delete_newsfeed_item(request):
 	    pass
         
     else:
-        return HttpResponseRedirect('/login')       
+        return HttpResponseRedirect('/accounts/login')  
 
     #Business is authenticated
 
@@ -191,6 +202,17 @@ def nfdata(request):
 
 @csrf_protect
 def edit_newsfeed(request):
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/fail/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
     if request.method == 'POST':	
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
 	d = {'title':request.POST['title'],
@@ -202,7 +224,7 @@ def edit_newsfeed(request):
 	n = n.save()
 
 	f = forms.NewsFeedItemForm()
-	newsfeed = models.NewsFeedItem.objects.all()
+	newsfeed = profile.newsfeeditem_set.all()
 	return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
 				  context_instance=RequestContext(request))
@@ -224,40 +246,73 @@ def edit_newsfeed(request):
 
 @csrf_protect
 def create_employee(request):
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/accounts/login/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
     if  request.method == 'POST':
 	employee_form = forms.EmployeeForm(request.POST)
 	e=employee_form.save(commit=False)
-        e.business= models.BusinessProfile.objects.get(id=1)
+        e.business= profile
         e.save()
         
     new_form = forms.EmployeeForm()
-    employees = models.Employee.objects.all()
+    employees = profile.employee_set.all()
 
     return render_to_response('employees.html',
-				  {'form':new_form, 'list':employees},
-				  context_instance=RequestContext(request))
+                              {'form':new_form, 'list':employees},
+                              context_instance=RequestContext(request))
 
-		
+
 @csrf_protect
 def delete_employee(request):
-	if request.method == 'POST':
-                emp = models.Employee.objects.get(pk=request.POST['id'])
-                emp.delete()
-		
-		new_form = forms.EmployeeForm()
-		employees = models.Employee.objects.all()
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
 
-		return render_to_response('employees.html',
-					  {'form': new_form, 'list': employees},
-					  context_instance=RequestContext(request))
-	else:
-                emp = models.Employee.objects.get(pk=request.GET['id'])
-		return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/accounts/login/")
+
+    if request.method == 'POST':
+        emp = models.Employee.objects.get(pk=request.POST['id'])
+        emp.delete()
+        
+        new_form = forms.EmployeeForm()
+        employees = profile.employee_set.all()
+
+        return render_to_response('employees.html',
+                                  {'form': new_form, 'list': employees},
+                                  context_instance=RequestContext(request))
+    else:
+        emp = models.Employee.objects.get(pk=request.GET['id'])
+        return render_to_response('delete_employee_confirmation.html', {'employee':emp, 'id':request.GET['id']}, context_instance=RequestContext(request))
 
 
-	
+    
 @csrf_protect
 def edit_employee(request):
+    if request.user.is_authenticated():
+    #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/accounts/login/")
+
     if request.method == 'POST':	
         n = models.Employee.objects.get(pk=request.POST['id'])
 	d = {'first_name':request.POST['first_name'],
@@ -268,7 +323,7 @@ def edit_employee(request):
 	n = n.save()
 
 	f = forms.EmployeeForm()
-	emp = models.Employee.objects.all()
+	emp = profile.employee_set.all()
 	return render_to_response('employees.html',
 				  {'form':f, 'list':emp},
 				  context_instance=RequestContext(request))
@@ -336,7 +391,7 @@ def employee_list(request):
     business_id = json.load(request)['business_id']
     business = models.BusinessProfile(id=business_id)
     return HttpResponse(json.dumps(list(business.employee_set.all()),
-                                        cls=EmployeeEncoder))
+                                   cls=EmployeeEncoder))
 
 @csrf_protect
 def create_rating_profile(request):
@@ -504,19 +559,19 @@ def failed_registration(request):
 
 @csrf_protect
 def general_feedback(request):
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
-	answer_data = json.load(request)
-	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-					  business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
-	feedback.save()
-	return HttpResponse('foo')
+    if request.method != 'POST':
+        return HttpResponse(get_token(request))
+    answer_data = json.load(request)
+    feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+                                      business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
+    feedback.save()
+    return HttpResponse('foo')
 
 #    if request.method != 'POST':
 #	return HttpResponse(get_token(request))
- #   feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
-  #  feedback.save()
-   # return HttpResponse('foo')
+#   feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
+#  feedback.save()
+# return HttpResponse('foo')
 
 
 
