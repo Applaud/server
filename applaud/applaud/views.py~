@@ -81,16 +81,6 @@ def whereami(request):
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-<<<<<<< HEAD
-        new_biz={"name":entry["name"],
-		 "type":entry["types"][0],
-		 "goog_id":entry["id"],
-		 "latitude":entry["geometry"]["location"]["lat"],
-		 "longitude":entry["geometry"]["location"]["lng"]}
-	ret["nearby_businesses"].append(new_biz)
-	ret = json.dumps(ret)
-	return HttpResponse(ret)
-=======
         business_list.append(
             {
                 "name":entry["name"],
@@ -102,7 +92,6 @@ def whereami(request):
             
     ret = json.dumps({'nearby_businesses':business_list})
     return HttpResponse(ret)
->>>>>>> 0a317c59d9b5b9ae84d37c11ea09c8143c62f140
 
 @csrf_protect
 def checkin(request):
@@ -196,7 +185,7 @@ def nfdata(request):
 			    'body':nfitem.body,
 			    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
         
-	ret = { 'newsfeed_items':nfitem_list }
+    ret = { 'newsfeed_items':nfitem_list }
 
     return HttpResponse(json.dumps(ret))
 

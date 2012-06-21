@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+gfrom django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
@@ -120,16 +120,29 @@ def checkin(request):
 # This allows a user to save and view newsfeed posts
 @csrf_protect
 def newsfeed_create(request):
-    #TODO: See if business is authenticated. Associate newsfeed with business
+    #What happens if an employee or end-user visits this page?
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    return HttpResponseRedirect('/fail/')
+
+	username = request.user.username
+
+    else:
+        return HttpResponseRedirect('/accounts/business/')
+
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
 	newsitem = n.save(commit=False)
 	newsitem.date = datetime.now()
 	newsitem.date_edited = datetime.now()
-	newsitem.save()
+	newsitem.business = profile
+        newsitem.save()
     
     f = forms.NewsFeedItemForm()
-    newsfeed = models.NewsFeedItem.objects.all()
+    newsfeed = profile.newsfeeditem_set.all()
 	
     return render_to_response('basic_newsfeed.html',
 				  {'form':f, 'list':newsfeed},
