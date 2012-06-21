@@ -227,7 +227,7 @@ def edit_newsfeed(request):
 	try:                        
 	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
 	except:
-	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
+	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
@@ -274,7 +274,9 @@ def delete_employee(request):
 	
 @csrf_protect
 def edit_employee(request):
-    if request.method == 'POST':	
+    if not request.user.is_authenticated():
+        return render_to_response('fail.html')
+    if request.method == 'POST':
         n = models.Employee.objects.get(pk=request.POST['id'])
 	d = {'first_name':request.POST['first_name'],
 	     'last_name':request.POST['last_name'],
@@ -288,12 +290,12 @@ def edit_employee(request):
 	return render_to_response('employees.html',
 				  {'form':f, 'list':emp},
 				  context_instance=RequestContext(request))
-
+    # request method is GET
     else:
 	try:                        
             n = models.Employee.objects.get(pk=request.GET['id'])
 	except:
-	    return render_to_response('fail', {}, context_instance=RequestContext(request))               
+	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
