@@ -489,6 +489,7 @@ def create_rating_profile(request):
 
 @csrf_protect
 def list_rating_profiles(request):
+    # Make sure we're a business.
     if not (request.user.is_authenticated() and 'businessprofile' in dir(request.user)):
         return render_to_response('fail.html')
     business = request.user.businessprofile
