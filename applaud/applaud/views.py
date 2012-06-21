@@ -429,6 +429,13 @@ def create_survey(request):
                                   context_instance=RequestContext(request))
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
+        if request.user.is_authenticated():
+            try:
+                profile = request.user.businessprofile
+            except BusinessProfile.DoesNotExist:
+                return HttpResponseRedirect('/fail/')
+        else:
+            return HttpResponseRedirect('/accounts/business/')
         i = 0
         questions = []
         while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
@@ -463,9 +470,10 @@ def create_survey(request):
             return render_to_response('survey_create.html',
                                       errors,
                                       context_instance=RequestContext(request))
-
+        # Which business are we?
+        business = BusinessProfile.objects.get(user=request.user)
 	# First, create the Survey
-	s = models.Survey(title=title, description=description)
+	s = models.Survey(title=title, description=description, business=business)
 	s.save()
 
 	# Create each of the questions on the Survey
@@ -558,7 +566,7 @@ def survey_respond(request):
             response = answer['response']
             qr = models.QuestionResponse(question=question, response=response)
             qr.save()
-            return HttpResponse('foo')
+    return HttpResponse('foo')
 
 # This will provide the CSRF token
 def get_csrf(request):
