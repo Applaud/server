@@ -480,7 +480,7 @@ def get_survey(request):
         return HttpResponse(get_token(request))
     business_id = json.load(request)['business_id']
     business = models.BusinessProfile(id=business_id)
-    return HttpResponse(json.dumps(list(business.survey_set.all()),
+    return HttpResponse(json.dumps(list(business.survey_set.all())[0],
                                    cls=SurveyEncoder))
 
 def register_business(request):
