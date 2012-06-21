@@ -1,12 +1,11 @@
 """
 Views which allow users to create and activate accounts.
-
 """
 
 
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
@@ -207,7 +206,8 @@ def register(request, backend, success_url=None, form_class=None,
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
                                               longitude=request.POST['longitude'],
                                               phone=request.POST['phone'],
-                                              user=new_user)
+                                              user=new_user,
+                                              has_logged_in=False)
                     profile.save()
 
 
@@ -220,7 +220,8 @@ def register(request, backend, success_url=None, form_class=None,
                     business = applaud_models.BusinessProfile.objects.get(user=business_user)
 
                     profile = applaud_models.EmployeeProfile(business = business,
-                                                             user=new_user)
+                                                             user=new_user,
+                                                             has_logged_in=False)
                     profile.save()
 
 
@@ -261,7 +262,7 @@ def register_employee(request, backend, success_url=None, form_class=forms.Emplo
     return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
 
 
-def login(request):
+def mobile_login(request):
     if request.method == 'POST':
         user = auth.authenticate( username=request.POST['username'],
                                   password=request.POST['password'] )
@@ -271,3 +272,37 @@ def login(request):
         else:
             return HttpResponseForbidden("Bad login.")
     return HttpResponseBadRequest("Your shit dont make no sense.")
+
+def login(request):
+    if request.method == 'POST':
+        user = auth.authenticate( username=request.POST['username'],
+                                  password=request.POST['password'] )
+        if user:
+            auth.login( request, user )
+        else:
+            return HttpResponseForbidden('/accounts/login')
+
+        profile = ""
+        prefix = ""
+        # Are we a business?
+	try:
+	    profile = request.user.businessprofile
+            prefix = "business"
+	except BusinessProfile.DoesNotExist:
+            # Are we an employee?
+	    try:
+                profile = request.user.employeeprofile
+                prefix = "employee"
+            except EmployeeProfile.DoesNotExist:
+                return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
+            #TODO: implement an end-user profile and check for it here.
+            # Redirect appropriately.
+
+        if profile.first_time:
+            profile.first_time = False
+            profile.save()
+            return HttpResponseRedirect("/%s/welcome/"%prefix)
+        else:
+            return HttpResponseRedirect('/')
+    else:
+        return render_to_response(template_name, locals())

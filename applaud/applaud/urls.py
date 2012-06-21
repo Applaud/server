@@ -18,6 +18,10 @@ urlpatterns = patterns('',
                        # Home, sweet home
                        url(r'^$', views.index),
 
+                       # Welcome pages. "wizards" for setting up accounts can go here.
+                       url(r'^business/welcome', direct_to_template, {'template':'business_welcome.html'}),
+                       url(r'^employee/welcome', direct_to_template, {'template':'employee_welcome.html'}),
+
                        # Uncomment the admin/doc line below to enable admin documentation:
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
