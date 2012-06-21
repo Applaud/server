@@ -62,8 +62,9 @@ def example3(request):
 
 def whereami(request):
     if not "latitude" in request.GET or not  "longitude" in request.GET:
-	error = "Latitude & longitude confusion...."
-	return render_to_response('error.html',{"error":error})   
+	# error = "Latitude & longitude confusion...."
+	# return render_to_response('error.html',{"error":error})
+        return HttpResponse(get_token(request))
 
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
@@ -76,40 +77,44 @@ def whereami(request):
     to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
 
-    ret = {"nearby_businesses":[],}
+    business_list = []
 
     for entry in to_parse["results"]:
 	# Create an inactive Applaud account for any businesses we don't recognize here.
-        new_biz={"name":entry["name"],
-		 "type":entry["types"][0],
-		 "goog_id":entry["id"],
-		 "latitude":entry["geometry"]["location"]["lat"],
-		 "longitude":entry["geometry"]["location"]["lng"]}
-	ret["nearby_businesses"].append(new_biz)
-	ret = json.dumps(ret)
-	return HttpResponse(ret)
+        business_list.append(
+            {
+                "name":entry["name"],
+                "type":entry["types"][0],
+                "goog_id":entry["id"],
+                "latitude":entry["geometry"]["location"]["lat"],
+                "longitude":entry["geometry"]["location"]["lng"]
+                })
+            
+    ret = json.dumps({'nearby_businesses':business_list})
+    return HttpResponse(ret)
 
 @csrf_protect
 def checkin(request):
     # if not request.user.is_authenticated():
     #     return HttpResponseForbidden("")
-    if request.method == POST:
+    if request.method == 'POST':
+        checkin_location = json.load(request)
 	try:
-	    business = BusinessProfile.objects.get(request.POST['goog_id'])
+	    business = BusinessProfile.objects.get(goog_id=checkin_location['goog_id'])
 	except BusinessProfile.DoesNotExist:
-	    business = BusinessProfile(goog_id=request.POST['goog_id'],
-				       latitude=float(request.POST['latitude']),
-				       longitude=float(request.POST['longitude']))
-	    business_user = User.objects.create_user(username=request.POST['name'],
-						     password='password',
-						     is_active=False)
+	    business = BusinessProfile(goog_id=checkin_location['goog_id'],
+				       latitude=float(checkin_location['latitude']),
+				       longitude=float(checkin_location['longitude']))
+	    business_user = User.objects.create_user(username=checkin_location['name'],
+						     password='password')
+            business_user.is_active = False
 	    business_user.save()
-	    business_user = business_user
-	    business_user.save()
+	    business.user = business_user
+	    business.save()
 
-	return HttpResponse(json.dumps(business),
-			    context_instance=RequestContext(request))
+	return HttpResponse(json.dumps(business, cls=BusinessProfileEncoder))
     else:
+        sys.stderr.write("---------------------------------------- giving csrf")
         return HttpResponse(get_token(request))
 
 # This allows a user to save and view newsfeed posts
@@ -306,6 +311,20 @@ class EmployeeEncoder(json.JSONEncoder):
 	    return res
 	else:
 	    return json.JSONEncoder.default(self, o)
+
+class BusinessProfileEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.BusinessProfile):
+            bus_user = o.user
+            res = {'name':bus_user.username,
+                   'goog_id':o.goog_id,
+                   'business_id':o.id,
+                   'latitude':o.latitude,
+                   'longitude':o.longitude,
+                   'phone':o.phone}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
 
 @csrf_protect
 def employee_list(request):
