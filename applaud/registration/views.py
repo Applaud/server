@@ -288,12 +288,12 @@ def login(request):
 	try:
 	    profile = request.user.businessprofile
             prefix = "business"
-	except BusinessProfile.DoesNotExist:
+	except applaud_models.BusinessProfile.DoesNotExist:
             # Are we an employee?
 	    try:
                 profile = request.user.employeeprofile
                 prefix = "employee"
-            except EmployeeProfile.DoesNotExist:
+            except applaud_models.EmployeeProfile.DoesNotExist:
                 return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
             #TODO: implement an end-user profile and check for it here.
             # Redirect appropriately.

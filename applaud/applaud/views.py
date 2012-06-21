@@ -436,6 +436,7 @@ def employee_stats(request):
 
         # For now, just return the success map.
         return render_to_response('employee_stats.html', locals())
+    return HttpResponseForbidden("employee not logged in")
         
 
 @csrf_protect
