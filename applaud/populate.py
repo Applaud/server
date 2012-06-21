@@ -87,8 +87,6 @@ nfi3.save()
 # Make Surveys.
 s1 = models.Survey(title='Emacs?', description='Text editor of the gods.', business=business)
 s1.save()
-s2 = models.Survey(title='Foo?', description='Metasyntactic variable of the gods.', business=business)
-s2.save()
 
 # Make Questions.
 q1 = models.Question(label='Yes or no?', type='RG', options=['yes', 'no'], survey=s1)
