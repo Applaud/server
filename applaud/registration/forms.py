@@ -106,10 +106,7 @@ class RegistrationFormNoFreeEmail(RegistrationForm):
     override the attribute ``bad_domains``.
     
     """
-    bad_domains = ['aim.com', 'aol.com', 'email.com', 'gmail.com',
-                   'googlemail.com', 'hotmail.com', 'hushmail.com',
-                   'msn.com', 'mail.ru', 'mailinator.com', 'live.com',
-                   'yahoo.com']
+    bad_domains = ['trashmail.com', 'mailinator.com']
     
     def clean_email(self):
         """
@@ -119,12 +116,12 @@ class RegistrationFormNoFreeEmail(RegistrationForm):
         """
         email_domain = self.cleaned_data['email'].split('@')[1]
         if email_domain in self.bad_domains:
-            raise forms.ValidationError(_("Registration using free email addresses is prohibited. Please supply a different email address."))
+            raise forms.ValidationError(_("Registration using temporary email addresses is prohibited. Please supply a different email address."))
         return self.cleaned_data['email']
 
 
 class BusinessRegistrationForm(RegistrationForm):
-    phone = forms.RegexField(regex=r'^\d?[ -.]?\d{3}[ -.]?\d{3}[ -.]\d{4}',
+    phone = forms.RegexField(regex=r'^\d?[ -.]?\d{3}[ -.]?\d{3}[ -.]?\d{4}',
                              widget=forms.TextInput(attrs=attrs_dict),
                              error_messages={'invalid':"Please enter a valid phone number, including the area code."})
 
