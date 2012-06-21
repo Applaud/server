@@ -185,7 +185,7 @@ def nfdata(request):
 			    'body':nfitem.body,
 			    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
         
-	ret = { 'newsfeed_items':nfitem_list }
+    ret = { 'newsfeed_items':nfitem_list }
 
     return HttpResponse(json.dumps(ret))
 
