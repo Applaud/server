@@ -4,15 +4,13 @@ from django.http import HttpResponseRedirect
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-admin.autodiscover()
-
 import views
 import settings
 from registration import views as business_views
 
+admin.autodiscover()
+
 urlpatterns = patterns('',
-
-
                        # What to do with static files. Always served from /static
                        url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
                            {'document_root': settings.STATIC_ROOT}),

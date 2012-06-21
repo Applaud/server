@@ -188,19 +188,22 @@ def delete_newsfeed_item(request):
 def nfdata(request):
     if request.method == 'GET':
         return HttpResponse(get_token(request))
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
-    nfitems = business.newsfeeditem_set.all()
-    nfitem_list = []
-    for nfitem in nfitems :
-	nfitem_list.append({'title':nfitem.title,
-			    'subtitle':nfitem.subtitle,
-			    'body':nfitem.body,
-			    'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
-        
-    ret = { 'newsfeed_items':nfitem_list }
+    if request.user.is_authenticated():
+        business_id = json.load(request)['business_id']
+        business = models.BusinessProfile(id=business_id)
+        nfitems = business.newsfeeditem_set.all()
+        nfitem_list = []
+        for nfitem in nfitems :
+            nfitem_list.append({'title':nfitem.title,
+                                'subtitle':nfitem.subtitle,
+                                'body':nfitem.body,
+                                'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
 
-    return HttpResponse(json.dumps(ret))
+        ret = { 'newsfeed_items':nfitem_list }
+
+        return HttpResponse(json.dumps(ret))
+    
+    return HttpResponseForbidden("end-user not authenticated")
 
 @csrf_protect
 def edit_newsfeed(request):
@@ -308,8 +311,14 @@ def rate_employee(request):
     
     # employee = request.GET['employee']
     # ratings = request.GET['ratings']
-    return HttpResponse("Coming soon!")
 
+    if request.user.is_authenticated():
+        return HttpResponse("Coming soon!")
+
+    return HttpResponseForbidden("end-user not authenticated")
+
+
+# Encodes an Employee into JSON format
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.Employee):
@@ -325,6 +334,7 @@ class EmployeeEncoder(json.JSONEncoder):
 	else:
 	    return json.JSONEncoder.default(self, o)
 
+# Encodes a BusinessProfile into JSON format
 class BusinessProfileEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.BusinessProfile):
@@ -344,12 +354,14 @@ def employee_list(request):
     '''List the employees by last name and first name, according
     to the business id which is passed as JSON.
     '''
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
-    return HttpResponse(json.dumps(list(business.employee_set.all()),
-                                        cls=EmployeeEncoder))
+    if request.user.is_authenticated():
+        if request.method == 'GET':
+            return HttpResponse(get_token(request))
+        business_id = json.load(request)['business_id']
+        business = models.BusinessProfile(id=business_id)
+        return HttpResponse(json.dumps(list(business.employee_set.all()),
+                                            cls=EmployeeEncoder))
+    return HttpResponseForbidden("end-user not authenticated")
 
 @csrf_protect
 def create_rating_profile(request):
@@ -357,8 +369,7 @@ def create_rating_profile(request):
     Takes a variable number of text fields and turns them into dimensions
     for a rating profile. Also includes the title.
     '''
-    # if not request.user.is_authenticated():
-    #     return HttpResponseRedirect('/login')
+    # TODO: make sure that business is authenticated. 
     if request.method == 'GET':
         return render_to_response('employeeprofile_create.html',
                                   {},
@@ -411,8 +422,7 @@ def create_survey(request):
     Takes a variable number of text fields and turns them into questions
     for a survey. Also includes the title and description.
     '''
-    # if not request.user.is_authenticated():
-    #     return HttpResponseRedirect('/login')
+    # TODO: Make sure business is authenticated
     if request.method == 'GET':
         return render_to_response('survey_create.html',
                                   {},
@@ -468,6 +478,7 @@ def create_survey(request):
 
         return HttpResponseRedirect('/survey_create')	
 
+# Encodes a Survey into JSON format
 class SurveyEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.Survey):
@@ -476,7 +487,8 @@ class SurveyEncoder(json.JSONEncoder):
             for q in question_list:
                 questions.append({'label': q.label,
                                   'type': q.type,
-                                  'options': q.options})
+                                  'options': q.options,
+                                  'id': q.id})
             res = {'title': o.title,
                    'description': o.description,
                    'questions': questions}
@@ -489,77 +501,64 @@ def get_survey(request):
     '''Gets the survey for a particular business, the ID of
     which is passed in as JSON.
     '''
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
-    return HttpResponse(json.dumps(list(business.survey_set.all()),
-                                   cls=SurveyEncoder))
-
-def register_business(request):
-    if request.method == 'POST':
-	registrationForm = UserCreationForm(request.POST)
-	if registrationForm.is_valid():
-	    registrationForm.save()
-	    return HttpResponseRedirect('/register_success/')
-	else:
-	    return HttpResponseRedirect('/register_fail/')
-
-    else:
-	form = UserCreationForm()
-	return render_to_response('register.html',{'form':form})
-    
-@csrf_protect
-def failed_registration(request):
-    return render_to_response('fail.html',
-			      {},
-			      context_instance=RequestContext(request))
+    if request.user.is_authenticated():
+        if request.method == 'GET':
+            return HttpResponse(get_token(request))
+        business_id = json.load(request)['business_id']
+        business = models.BusinessProfile(id=business_id)
+        return HttpResponse(json.dumps(list(business.survey_set.all())[0],
+                                       cls=SurveyEncoder))
+    return HttpResponseForbidden("end-user not authenticated")
 
 @csrf_protect
 def general_feedback(request):
-	if request.method != 'POST':
-		return HttpResponse(get_token(request))
-	answer_data = json.load(request)
-	feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-					  business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
-	feedback.save()
-	return HttpResponse('foo')
-
-#    if request.method != 'POST':
-#	return HttpResponse(get_token(request))
- #   feedback = models.GeneralFeedback(feedback=json.load(request)['answer'])
-  #  feedback.save()
-   # return HttpResponse('foo')
-
-
-
-
+    if request.user.is_authenticated():
+        if request.method != 'POST':
+                return HttpResponse(get_token(request))
+        answer_data = json.load(request)
+        feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+                                          business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
+        feedback.save()
+        return HttpResponse('foo')
+    return HttpResponseForbidden("end-user not authenticated")
 
 @csrf_protect
 def evaluate(request):
-    if request.method != 'POST':
-	return HttpResponse(get_token(request))
-    rating_data = json.load(request)
-    if 'employee' in request.POST:
-	try:
-	    e = Employee.objects.get(rating_data['employee']['id'])
-	except:
-	    pass
-	for key, value in rating_data['ratings']:
-	    r = Rating(title=key, rating_value=float(value),employee=e)
-	    r.save()
-	return HttpResponse('foo')
+    '''evaluate
+
+    This is the view that accepts rating data from end-users and
+    rates an employee of a business per that employee's RatingProfile.
+    '''
+    if request.user.is_authenticated():
+        if request.method != 'POST':
+            return HttpResponse(get_token(request))
+        rating_data = json.load(request)
+        if 'employee' in request.POST:
+            try:
+                e = Employee.objects.get(rating_data['employee']['id'])
+            except:
+                pass
+            for key, value in rating_data['ratings']:
+                r = Rating(title=key, rating_value=float(value),employee=e)
+                r.save()
+            return HttpResponse('foo')
 
 @csrf_protect
 def survey_respond(request):
-    if request.method != 'POST':
-	return HttpResponse(get_token(request))
-    for answer in json.load(request)['answers']:
-	question = models.Question.objects.get(label=answer['label'])
-	response = answer['response']
-	qr = models.QuestionResponse(question=question, response=response)
-	qr.save()
-	return HttpResponse('foo')
+    '''survey_respond
+
+    This is the view that accepts a response to a survey for a particular
+    business from the end-user.
+    '''
+    if request.user.is_authenticated():
+        if request.method != 'POST':
+            return HttpResponse(get_token(request))
+        for answer in json.load(request)['answers']:
+            question = models.Question.objects.get(id=answer['id'])
+            response = answer['response']
+            qr = models.QuestionResponse(question=question, response=response)
+            qr.save()
+            return HttpResponse('foo')
 
 # This will provide the CSRF token
 def get_csrf(request):
