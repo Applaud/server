@@ -1,4 +1,4 @@
-gfrom django.shortcuts import render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile
 from django.template import RequestContext, Template
@@ -541,7 +541,7 @@ def evaluate(request):
             for key, value in rating_data['ratings']:
                 r = Rating(title=key, rating_value=float(value),employee=e)
                 r.save()
-            return HttpResponse('foo')
+    return HttpResponse('foo')
 
 @csrf_protect
 def survey_respond(request):
