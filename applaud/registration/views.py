@@ -214,7 +214,7 @@ def register(request, backend, success_url=None, form_class=None,
                 elif extra_context['profile_type']=='employee':
                     #We know that we're registering an employee
                     #First, determine which business this employee works for
-                    business_profile = applaud_models.businessprofile.objects.get(goog_id=extra_context['goog_id'])
+                    business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
                                                              has_logged_in=False)
