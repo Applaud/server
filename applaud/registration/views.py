@@ -207,9 +207,14 @@ def register(request, backend, success_url=None, form_class=None,
                                               longitude=request.POST['longitude'],
                                               phone=request.POST['phone'],
                                               user=new_user,
-                                              first_time=False)
+                                              first_time=True)
                     profile.save()
 
+                    # Create a generic rating profile
+                    rp = applaud_models.RatingProfile(title="Employee",
+                                                      dimensions=['rating'],
+                                                      business=profile)
+                    rp.save()
 
                 elif extra_context['profile_type']=='employee':
                     #We know that we're registering an employee
@@ -217,7 +222,7 @@ def register(request, backend, success_url=None, form_class=None,
                     business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
-                                                             first_time=False)
+                                                             first_time=True)
                     profile.save()
 
 
