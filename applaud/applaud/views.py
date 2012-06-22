@@ -347,20 +347,6 @@ def edit_employee(request):
 				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
-def rate_employee(request):
-    # if not 'employee' in request.GET or not 'ratings' in request.GET:
-    #     error = "Must supply employee and ratings to rate an employee."
-    #     return render_to_response('error.html',{"error":error})   
-    
-    # employee = request.GET['employee']
-    # ratings = request.GET['ratings']
-
-    if request.user.is_authenticated():
-        return HttpResponse("Coming soon!")
-
-    return HttpResponseForbidden("end-user not authenticated")
-
-
 # Encodes an Employee into JSON format
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
@@ -620,7 +606,8 @@ def general_feedback(request):
                 return HttpResponse(get_token(request))
         answer_data = json.load(request)
         feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-                                          business=models.BusinessProfile.objects.get(id=answer_data['business_id']))
+                                          business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
+                                          date_created=datetime.now())
         feedback.save()
         return HttpResponse('foo')
     return HttpResponseForbidden("end-user not authenticated")
@@ -638,11 +625,11 @@ def evaluate(request):
         rating_data = json.load(request)
         if 'employee' in request.POST:
             try:
-                e = Employee.objects.get(rating_data['employee']['id'])
-            except:
+                e = EmployeeProfile.objects.get(rating_data['employee']['id'])
+            except EmployeeProfile.DoesNotExist:
                 pass
             for key, value in rating_data['ratings']:
-                r = Rating(title=key, rating_value=float(value),employee=e)
+                r = Rating(title=key, rating_value=float(value),employee=e,date_created=datetime.now())
                 r.save()
     return HttpResponse('foo')
 
@@ -659,7 +646,7 @@ def survey_respond(request):
         for answer in json.load(request)['answers']:
             question = models.Question.objects.get(id=answer['id'])
             response = answer['response']
-            qr = models.QuestionResponse(question=question, response=response)
+            qr = models.QuestionResponse(question=question, response=response, date_created=datetime.now())
             qr.save()
     return HttpResponse('foo')
 
