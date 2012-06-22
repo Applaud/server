@@ -390,7 +390,7 @@ def employee_list(request):
             return HttpResponse(get_token(request))
         business_id = json.load(request)['business_id']
         business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.employee_set.all()),
+        return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                             cls=EmployeeEncoder))
     return HttpResponseForbidden("end-user not authenticated")
 
