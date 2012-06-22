@@ -1,12 +1,13 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
-from django.template import RequestContext, Template
+from django.template import RequestContext, Template, Context
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
 from django.contrib.auth.models import Group, User
+from django.core.mail import send_mail
 import sys
 import json
 import urllib2
@@ -14,6 +15,7 @@ from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder
+import re
 
 # Employee stuff.
 
@@ -370,3 +372,40 @@ def delete_newsfeed_item(request):
 	return render_to_response('delete_confirmation.html',
 				  {'item':n, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
+        
+# A function to recieve a comma-separated email list, strip them
+# and check them for validity
+def strip_and_validate_emails(emails):
+    email_list = [i.strip(' ') for i in emails.split(',')]
+    email_list=filter(lambda a: re.match(r"[^@]+@[^@]+\.[^@]+", a), email_list)
+    return email_list
+
+''' View that is called only the first time that a business logged in
+'''
+def business_welcome(request):
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    pass
+        
+    else:
+        return HttpResponseRedirect('/accounts/login')  
+
+    #Business is authenticated
+    if request.method == "POST":
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        email_template=Template('email_employee.txt')
+        context = Context({'business':request.user.username})
+        message = email_template.render(context)
+        for email in email_list:
+             subject = 'Register at apatapa.com!'
+             from_email='register@apatapa.com',
+             try:
+                 send_mail(subject, message, from_email, email)
+             except BadHeaderError:
+                 return HttpResponse('Invalid header found')
+             
+             
