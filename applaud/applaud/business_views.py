@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
 from django.template import RequestContext, Template, Context
+from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
@@ -388,27 +389,34 @@ def business_welcome(request):
 	try:
 	    profile = request.user.businessprofile
 	except BusinessProfile.DoesNotExist:
-	    pass
+	    # Authernticated but not a business
+            return HttpResponseRedirect('/accounts/login')
         
     else:
         return HttpResponseRedirect('/accounts/login')  
+    
     if request.method != "POST":
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
     #Business is authenticated
     if request.method == "POST":
-        sys.stderr.write('posting')
+        # Get emails from POST
         emails = request.POST['emails']
         email_list=strip_and_validate_emails(emails)
-        email_template=Template('email_employee.txt')
-        context = Context({'business':request.user.username})
-        message = email_template.render(context)
+
+        # Render the contents of the email
+        context = {'business':request.user.username,
+                   'goog_id':request.user.businessprofile.goog_id}
+        message = render_to_string('email_employee.txt',
+                                   context)
         subject = 'Register at apatapa.com!'
         from_email='register@apatapa.com'
+
         try:
             send_mail(subject, message, from_email, email_list)
         except BadHeaderError:
             return HttpResponse('Invalid header found')
-        return HttpResponseRedirect('/joker/')     
+
+        return HttpResponseRedirect('/home/')     
     
