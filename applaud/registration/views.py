@@ -214,9 +214,8 @@ def register(request, backend, success_url=None, form_class=None,
                 elif extra_context['profile_type']=='employee':
                     #We know that we're registering an employee
                     #First, determine which business this employee works for
-                    business_user = auth.models.User.objects.get(username=request.POST['business_name'])
-                    business = applaud_models.BusinessProfile.objects.get(user=business_user)
-                    profile = applaud_models.EmployeeProfile(business = business,
+                    business_profile = applaud_models.businessprofile.objects.get(goog_id=extra_context['goog_id'])
+                    profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
                                                              has_logged_in=False)
                     profile.save()
@@ -250,12 +249,12 @@ def register_business(request, backend, success_url=None, form_class=forms.Busin
     return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
 
 
-def register_employee(request, backend, success_url=None, form_class=forms.EmployeeRegistrationForm,
+def register_employee(request, backend, goog_id, success_url=None, form_class=forms.EmployeeRegistrationForm,
                       disallowed_url='registration_disallowed',
                       template_name='registration/employee_registration_form.html',
                       extra_context=None):
     sys.stderr.write("Made it to register_employee")
-    d = {"profile_type":"employee"}
+    d = {"profile_type":"employee", "goog_id":goog_id}
     return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
 
 
