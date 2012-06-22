@@ -10,8 +10,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        url(r'^welcome/', direct_to_template, {'template':'employee_welcome.html'}),
-                       url(r'^stats/', business_views.employee_stats,
-                           name='employee_stats'),
+                       # TODO: employee stats
+                       # url(r'^stats/', business_views.employee_stats,
+                       #    name='employee_stats'),
                        url(r'^$', redirect_to, {'url':'stats'},
                            name='employee_home'),
                        )

@@ -9,6 +9,7 @@ Your name is {{ business.user.username }}
 Please enter a comma-separated list of your employees' email addresses below:
 
 <form method="post" action=".">
+{% csrf_token %}
 <label for="emails">Emails </labels>
 <input type="text" name="emails" >
 </form>

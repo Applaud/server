@@ -200,7 +200,7 @@ def register(request, backend, success_url=None, form_class=None,
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21
-            if 'profile_type' in extra_context:
+            if extra_context and 'profile_type' in extra_context:
                 # We know we're registering a custom user (business or employee)
                 if extra_context['profile_type']=='business':
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],

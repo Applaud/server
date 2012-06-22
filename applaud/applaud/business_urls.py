@@ -9,12 +9,14 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                        # First time visiting the site
-                       url(r'^welcome/', direct_to_template, {'template':'business_welcome.html'}),
+                       url(r'^welcome/', views.business_welcome),
                        
                        # Employee stuff
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
-                       url(r'^employee_stats/', views.employee_stats),
+
+                       # TODO: employee stats.
+                       # url(r'^employee_stats/', views.employee_stats),
                        url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
                        url(r'^$', direct_to_template, {'template':'business.html'}),
@@ -23,6 +25,7 @@ urlpatterns = patterns('',
                        url(r'^survey_create/',views.create_survey),
                        url(r'^get_survey/',views.get_survey),
                        #url(r'^general_feedback/',views.feedback),
+
                        url(r'^create_rating_profile/',views.create_rating_profile),
                           
                        # Creating/editing newsfeed, looking at the newsfeed

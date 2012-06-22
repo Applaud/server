@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
 from django.contrib.auth.models import Group, User
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
 import urllib2
@@ -392,20 +392,23 @@ def business_welcome(request):
         
     else:
         return HttpResponseRedirect('/accounts/login')  
-
+    if request.method != "POST":
+        return render_to_response('business_welcome.html',
+                                  {'business':profile},
+                                  context_instance=RequestContext(request))
     #Business is authenticated
     if request.method == "POST":
+        sys.stderr.write('posting')
         emails = request.POST['emails']
         email_list=strip_and_validate_emails(emails)
         email_template=Template('email_employee.txt')
         context = Context({'business':request.user.username})
         message = email_template.render(context)
-        for email in email_list:
-             subject = 'Register at apatapa.com!'
-             from_email='register@apatapa.com',
-             try:
-                 send_mail(subject, message, from_email, email)
-             except BadHeaderError:
-                 return HttpResponse('Invalid header found')
-             
-             
+        subject = 'Register at apatapa.com!'
+        from_email='register@apatapa.com'
+        try:
+            send_mail(subject, message, from_email, email_list)
+        except BadHeaderError:
+            return HttpResponse('Invalid header found')
+        return HttpResponseRedirect('/joker/')     
+    
