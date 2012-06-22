@@ -43,30 +43,44 @@ profile3.save()
 
 # Make a User.
 emp_user = User.objects.create_user('joe', 'joes@aol.com', 'apatapa')
+emp_user.first_name = 'joe'
+emp_user.last_name = 'jake'
+emp_user.save()
 emp_user2 = User.objects.create_user('jill', 'jill@gmail.com', 'apatapa')
+emp_user2.first_name = 'jill'
+emp_user2.last_name = 'joan'
+emp_user2.save()
 emp_enduser = User.objects.create_user('josh', 'josh@gmail.com', 'apatapa')
-
-
+emp_enduser.first_name = 'josh'
+emp_enduser.last_name = 'jeff'
+emp_enduser.save()
 
 # Make a few Employees.
 master = models.EmployeeProfile(business=business,
-                         user=emp_user)
+                                user=emp_user,
+                                rating_profile=profile1,
+                                bio='foo')
 master.save()
 mystical = models.EmployeeProfile(business=business2,
-                                  user=emp_user2)
+                                  user=emp_user2,
+                                  rating_profile=profile2,
+                                  bio='bio')
 mystical.save()
 luke = models.EmployeeProfile(business=business2,
-                              user=emp_enduser)
+                              user=emp_enduser,
+                              rating_profile=profile3,
+                              bio='biology')
 luke.save()
 
-# Make some Ratings.
+# Make some Ratings. Only "master" has ratings.
+# 'master' can be rated on 'awesomeness' and 'slickness'
 rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1)
 rating1.save()
-rating2 = models.Rating(title='Slickness', rating_value=5, employee=mystical)
+rating2 = models.Rating(title='Slickness', rating_value=5, employee=master)
 rating2.save()
-rating3 = models.Rating(title='Efficiency', rating_value=1, employee=mystical)
+rating3 = models.Rating(title='Slickness', rating_value=4, employee=master)
 rating3.save()
-rating4 = models.Rating(title='Surliness', rating_value=4, employee=master)
+rating4 = models.Rating(title='Slickness', rating_value=4, employee=master)
 rating4.save()
 
 # Make a couple of NewsFeedItems.

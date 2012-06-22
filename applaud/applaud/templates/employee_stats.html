@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Your Statistics{% endblock %}
+{% block content %}
+<p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
+<!-- list employee statistics by dimension -->
+{% for success_map in success_map_list %}
+<strong>{{ success_map.dimension }}</strong> ( {{ success_map.values|length }} ratings }} )
+{% if success_map.values|length > 0 %}
+<!-- list ratings for a given dimension -->
+<ul>
+{% for rating in success_map.values %}
+<li>{{ rating.rating_value }}</li>
+{% endfor %}
+</ul>
+<!-- end list ratings for a given dimension -->
+{% else %}
+No statistics yet!
+{% endif %}
+
+{% endfor %}
+<!-- end of employee statistics by dimension -->
+
+{% endblock %}
