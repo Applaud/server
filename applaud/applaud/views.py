@@ -445,7 +445,7 @@ def create_rating_profile(request):
     if request.method == 'GET':
         # Be sure we're logged in and that we're a business.
         if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
-            return render_to_response('/business/create_rating_profile.html',
+            return render_to_response('create_rating_profile.html',
                                       {},
                                       context_instance=RequestContext(request))
         else:
