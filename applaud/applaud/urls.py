@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
 from django.views.generic.simple import direct_to_template
 from django.http import HttpResponseRedirect
 
@@ -21,7 +22,8 @@ urlpatterns = patterns('',
                        # What to do with static files. Always served from /static
                        url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
                            {'document_root': settings.STATIC_ROOT}),
-
+                       url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+                           {'document_root': settings.MEDIA_ROOT}),
                        url(r'^$', views.index),
                        (r'^business/', include(business_urls)),
                        (r'^mobile/', include(mobile_urls)),

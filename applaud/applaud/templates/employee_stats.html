@@ -26,9 +26,9 @@ function drawVisualization() {
 {% endblock %}
 {% block content %}
 
-{% if message %}
-<strong>{{ message }}</strong>
-{% endif %}
+<div id="employee_img">
+  <img src="{{ image }}" />
+</div>
 
 <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 <!-- list employee statistics by dimension -->
