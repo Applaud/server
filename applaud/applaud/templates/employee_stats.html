@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Your Statistics{% endblock %}
 {% block content %}
-
+<p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 <!-- list employee statistics by dimension -->
 {% for success_map in success_map_list %}
-<strong>{{ success_map.dimension }}</strong>
+<strong>{{ success_map.dimension }}</strong> ( {{ success_map.values|length }} ratings }} )
 {% if success_map.values|length > 0 %}
 <!-- list ratings for a given dimension -->
 <ul>

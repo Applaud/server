@@ -414,8 +414,10 @@ def employee_stats(request):
     '''
     if request.user.is_authenticated():
         profile = ""
+        employee = ""
 	try:
-	    profile = request.user.employeeprofile
+            employee = request.user
+	    profile = employee.employeeprofile
 	except EmployeeProfile.DoesNotExist:
             # Not logged in, go log in!
 	    return HttpResponseRedirect("/accounts/login")
