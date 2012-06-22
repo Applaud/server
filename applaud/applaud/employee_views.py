@@ -22,8 +22,11 @@ def employee_stats(request):
 	    profile = employee.employeeprofile
 	except EmployeeProfile.DoesNotExist:
 	    return HttpResponseNotFound("Could not find the requested page.")
-
+        
         rating_profile = profile.rating_profile
+        if not rating_profile:
+            # Employer hasn't created a ratingprofile
+            return HttpResponseRedirect("/")
         ratings = profile.rating_set
 
         # List of valid dimensions for rating
