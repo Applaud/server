@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -8,6 +8,7 @@ import os
 import json
 import settings
 import sys
+from applaud.models import EmployeeProfile
 
 def employee_stats(request):
     '''Gives statistics for a particular employee (given in request). This
