@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 import json
+from applaud import settings
 
 class SerializedStringsField(models.TextField):
     """Allows us to store a list of strings
@@ -68,6 +69,8 @@ class Rating(models.Model):
 	# Employee to which this Rating corresponds
 	employee = models.ForeignKey('EmployeeProfile')
 
+        date_created = models.DateTimeField()
+
 	def __unicode__(self):
 		return "%s:%s"%(self.title,self.rating_value)
 
@@ -77,7 +80,7 @@ class RatingProfile(models.Model):
 	title = models.TextField(max_length=100)
 	dimensions = SerializedStringsField()
         business = models.ForeignKey('BusinessProfile')
-
+        
         def __unicode__(self):
             return self.title
 
@@ -107,7 +110,7 @@ class GeneralFeedback(models.Model):
     '''
     feedback = models.TextField(max_length=10000)
     business = models.ForeignKey('BusinessProfile')
-
+    date_created=models.DateTimeField()
 #################
 # SURVEY MODELS #
 #################
@@ -153,6 +156,7 @@ class QuestionResponse(models.Model):
     # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
 
+    date_created=models.DateTimeField()
     def __unicode__(self):
         return json.dumps(self.response)
 
@@ -192,6 +196,8 @@ class EmployeeProfile(models.Model):
     user = models.OneToOneField(User)
 
     first_time = models.BooleanField(default=1)
+
+    profile_picture = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
 
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
