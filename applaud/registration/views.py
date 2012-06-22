@@ -211,14 +211,11 @@ def register(request, backend, success_url=None, form_class=None,
                     profile.save()
 
 
-                if extra_context['profile_type']=='employee':
+                elif extra_context['profile_type']=='employee':
                     #We know that we're registering an employee
-                    
                     #First, determine which business this employee works for
                     business_user = auth.models.User.objects.get(username=request.POST['business_name'])
-                    
                     business = applaud_models.BusinessProfile.objects.get(user=business_user)
-
                     profile = applaud_models.EmployeeProfile(business = business,
                                                              user=new_user,
                                                              has_logged_in=False)
