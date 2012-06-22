@@ -2,15 +2,14 @@ from django.conf.urls import patterns, include, url
 from django.views.generic.simple import direct_to_template
 from django.http import HttpResponseRedirect
 from django.contrib import admin
-import views
+import business_views as views
 import settings
-from registration import views as business_views
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
                        # First time visiting the site
-                       url(r'^/welcome/', direct_to_template, {'template':'business_welcome.html'}),
+                       url(r'^welcome/', direct_to_template, {'template':'business_welcome.html'}),
                        
                        # Employee stuff
                        url(r'^edit_employee/', views.edit_employee),
@@ -18,7 +17,7 @@ urlpatterns = patterns('',
                        url(r'^employee_stats/', views.employee_stats),
                        url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
-                       url(r'^/$', direct_to_template, {'template':'business.html'}),
+                       url(r'^$', direct_to_template, {'template':'business.html'}),
                        
                        # Survey stuff
                        url(r'^survey_create/',views.create_survey),
