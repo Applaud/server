@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from datetime import datetime
+
 import os
 import sys
 
@@ -7,7 +9,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 
 import applaud.settings
 from applaud import models
-import datetime
 from django.contrib.auth.models import User, Group
 
 # Make a User.
@@ -74,36 +75,36 @@ luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
-rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1)
+rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1, date_created=datetime.now())
 rating1.save()
-rating2 = models.Rating(title='Slickness', rating_value=5, employee=master)
+rating2 = models.Rating(title='Slickness', rating_value=5, employee=master, date_created=datetime.now())
 rating2.save()
-rating3 = models.Rating(title='Slickness', rating_value=4, employee=master)
+rating3 = models.Rating(title='Slickness', rating_value=4, employee=master, date_created=datetime.now())
 rating3.save()
-rating4 = models.Rating(title='Slickness', rating_value=4, employee=master)
+rating4 = models.Rating(title='Slickness', rating_value=4, employee=master, date_created=datetime.now())
 rating4.save()
 
 # Make a couple of NewsFeedItems.
 nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
                            subtitle='proceed to code',
                            body='After an insane amout of driving, we finally got there.',
-                           date=datetime.datetime.now(),
-                           date_edited=datetime.datetime.now(),
+                           date=datetime.now(),
+                           date_edited=datetime.now(),
                            business=business)
 
 nfi1.save()
 nfi2 = models.NewsFeedItem(title='Foo!',
                            subtitle='Bar?',
                            body='Baz.',
-                           date=datetime.datetime.now(),
-                           date_edited=datetime.datetime.now(),
+                           date=datetime.now(),
+                           date_edited=datetime.now(),
                            business=business)
 nfi2.save()
 nfi3 = models.NewsFeedItem(title='Try our new parrots!',
                            subtitle='Delicious, nutritious.',
                            body='These parrots are selling for a dollar.',
-                           date=datetime.datetime.now(),
-                           date_edited=datetime.datetime.now(),
+                           date=datetime.now(),
+                           date_edited=datetime.now(),
                            business=business)
 nfi3.save()
 
@@ -124,13 +125,14 @@ q4 = models.Question(label='Tell us your life story', type='TA', survey=s1)
 q4.save()
 
 # Write responses.
-qr1 = models.QuestionResponse(question=q1, response=['yes'])
+qr1 = models.QuestionResponse(question=q1, response=['yes'], date_created=datetime.now())
 qr1.save()
-qr2 = models.QuestionResponse(question=q2, response=['no'])
+qr2 = models.QuestionResponse(question=q2, response=['no'], date_created=datetime.now())
 qr2.save()
-qr3 = models.QuestionResponse(question=q3, response=['aaargh!'])
+qr3 = models.QuestionResponse(question=q3, response=['aaargh!'], date_created=datetime.now())
 qr3.save()
-qr4 = models.QuestionResponse(question=q4, response=['Life story HERE.'])
+qr4 = models.QuestionResponse(question=q4, response=['Life story HERE.'], date_created=datetime.now())
 qr4.save()
+
 
 print 'apatapa!'
