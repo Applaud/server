@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 import registration.forms as registration_forms
+import os
 import json
 import settings
 
@@ -54,13 +55,16 @@ def edit_profile(request):
                 # Set the image name based upon employeeprofile id and business id
                 # imagename = businessname.businessid/employeefn_employeeln.employeeid.fileext
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
-                imagename = "%s.%d/%s_%s.%d.%s"%(profile.business.user.username.replace(" ","_"),
-                                                 profile.business.id,
-                                                 profile.user.first_name,
-                                                 profile.user.last_name,
-                                                 profile.id,
-                                                 fileext)
-                with open( settings.MEDIA_ROOT+imagename, "wb+" ) as destination:
+                imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
+                                      profile.business.user.username.replace(" ","_"),
+                                      profile.business.id)
+                if not os.path.exists(imagedir):
+                    os.makedirs(imagedir)
+                imagename = "%s_%s.%d.%s"%(profile.user.first_name,
+                                           profile.user.last_name,
+                                           profile.id,
+                                           fileext)
+                with open( "%s/%s"%(imagedir,imagename), "wb+" ) as destination:
                     for chunk in request.FILES['profile_picture']:
                         destination.write(chunk)
                 destination.close()
