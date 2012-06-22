@@ -4,4 +4,13 @@
 
 You are a new business.
 
+Your name is {{ business.user.username }}
+
+Please enter the email addresses of your employees below:
+
+<form method="psot" action=".">
+<input type="textfield" >
+<input type="hidden" name="id" value="{{ business.id }}">
+</form>
+
 {% endblock %}

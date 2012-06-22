@@ -22,10 +22,11 @@ urlpatterns = patterns('',
                            {'document_root': settings.STATIC_ROOT}),
 
                        url(r'^$', views.index),
-                       (r'^business/', include(business_urls.py)),
-                       (r'^mobile/', include(mobile_urls.py)),
-                       (r'^employee/', include(employee_urls.py)),
-                       (r'^user/', include(user_urls.py)),
+                       (r'^business/', include(business_urls)),
+                       (r'^mobile/', include(mobile_urls)),
+                       (r'^employee/', include(employee_urls)),
+                       (r'^user/', include(user_urls)),
                        (r'^accounts/', include('registration.backends.default.urls')),
                        )
+
 
