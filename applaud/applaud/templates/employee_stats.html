@@ -27,7 +27,7 @@ function drawVisualization() {
 {% block content %}
 
 <div id="employee_img">
-  <img src="{{ image }}" />
+  <img src="{{ MEDIA_URL }}{{ image }}" />
 </div>
 
 <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>

@@ -40,9 +40,8 @@ def employee_stats(request):
             row.extend(rating_vals)
             success_chart.append(row)
 
-        imagepath = "%s%s.%d"%(settings.MEDIA_ROOT,
-                               profile.business.user.username.replace(" ","_"),
-                               profile.business.id)
+        imagepath = "%s.%d"%(profile.business.user.username.replace(" ","_"),
+                             profile.business.id)
 
         imagename = "%s_%s.%d.%s"%(employee.first_name,
                                    employee.last_name,
@@ -56,7 +55,8 @@ def employee_stats(request):
         return render_to_response('employee_stats.html',
                                   {'chartdata':json.dumps( success_chart ),
                                    'employee':employee,
-                                   'image':"%s/%s"%(imagepath,imagename)})
+                                   'image':"%s/%s"%(imagepath,imagename)},
+                                  context_instance=RequestContext(request))
 
     return HttpResponseForbidden("employee not logged in")
 
