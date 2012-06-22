@@ -14,7 +14,6 @@ urlpatterns = patterns('',
                        # Employee stuff
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
-                       url(r'^employee_stats/', views.employee_stats),
                        url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
                        url(r'^$', direct_to_template, {'template':'business.html'}),
