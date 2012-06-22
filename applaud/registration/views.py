@@ -207,7 +207,7 @@ def register(request, backend, success_url=None, form_class=None,
                                               longitude=request.POST['longitude'],
                                               phone=request.POST['phone'],
                                               user=new_user,
-                                              has_logged_in=False)
+                                              first_time=False)
                     profile.save()
 
 
@@ -217,7 +217,7 @@ def register(request, backend, success_url=None, form_class=None,
                     business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
-                                                             has_logged_in=False)
+                                                             first_time=False)
                     profile.save()
 
 
