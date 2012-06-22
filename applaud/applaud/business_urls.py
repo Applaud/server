@@ -33,7 +33,9 @@ urlpatterns = patterns('',
                        url(r'^newsfeed/',views.nfdata),
                        url(r'^edit_newsfeed/', views.edit_newsfeed),
                        url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
-
+                       
+                       # Checking analytics.
+                       url(r'^analytics/', views.analytics),
                        )
 
 

@@ -399,7 +399,7 @@ def business_welcome(request):
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
-    #Business is authenticated
+    # Business is authenticated
     if request.method == "POST":
         # Get emails from POST
         emails = request.POST['emails']
@@ -420,3 +420,50 @@ def business_welcome(request):
 
         return HttpResponseRedirect('/home/')     
     
+# Checking analytics.
+def analytics(request):
+    if request.user.is_authenticated():
+        try:
+            profile = request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return render_to_response('fail.html',
+                                      {'debug': "You're no business!"},
+                                      context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect('/')
+    # For each employee, get all their ratings and gather them into a dictionary.
+    employees = []
+    for employee in list(profile.employeeprofile_set.all()):
+        employee_dict = {}
+        ratings = {}
+        employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
+        for dimension in employee.rating_profile.dimensions: # Make sure we have a dictionary entry for each dimension
+            ratings[dimension] = []
+        for rating in list(employee.rating_set.all()): # Make a list of all the ratings for each dimension
+            ratings[rating.title].append(rating.rating_value)
+        for rating in ratings.keys(): # Now calculate the average of that list
+            ratings[rating] = sum(ratings[rating])/len(ratings[rating])
+        print ratings
+        employee_dict['ratings'] = ratings
+        employees.append(employee_dict)
+    # Get all the surveys for this business.
+    survey = profile.survey_set.all()[0] # Just in case we've got more than one
+    survey_dict = {'title': survey.title,
+                   'description': survey.description,
+                   'questions': []}
+    # Gather all the question responses in a dict.
+    for question in list(survey.question_set.all()):
+        question_dict = {'label': question.label,
+                         'responses': []}
+        for response in question.questionresponse_set.all():
+            question_dict['responses'].append(response.response)
+        survey_dict['questions'].append(question_dict)
+    # Get all the general feedback.
+    feedback = models.GeneralFeedback.objects.filter(business=profile)
+    return render_to_response('business_analytics.html',
+                              {'employees': employees,
+                               'survey': survey_dict,
+                               'feedback': feedback,
+                               'business': '%s' % (profile.user.username,)},
+                              context_instance=RequestContext(request))
+                              
