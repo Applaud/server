@@ -30,19 +30,24 @@ import views
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = patterns('',
+                       # Login form URL
                        url(r'^login/$',
                            csrf_exempt(auth_views.login),
                            {'template_name': 'registration/login.html'},
                            name='auth_login'),
+                       # Where login form is submitted
                        url(r'^banana/$',
                            csrf_exempt(views.login),
                            name='banana_login'),
+                       # Login URL for mobile devices
                        url(r'^mobilelogin/$',
                            csrf_exempt(views.mobile_login)),
+                       # Logging out
                        url(r'^logout/$',
                            auth_views.logout,
                            {'template_name': 'registration/logout.html'},
                            name='auth_logout'),
+                       # Password utility URLs
                        url(r'^password/change/$',
                            auth_views.password_change,
                            name='auth_password_change'),

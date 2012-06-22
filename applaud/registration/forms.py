@@ -7,7 +7,9 @@ Forms and validation code for user registration.
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from applaud.models import EmployeeProfile
 
+import sys
 
 # I put this on all required fields, because it's easier to pick up
 # on them with CSS or JavaScript if they have a class of "required"
@@ -144,3 +146,24 @@ class EmployeeRegistrationForm(RegistrationForm):
 
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
+
+class EmployeeProfileForm(forms.ModelForm):
+    
+    acceptable_image_types = ('jpg','png',)
+    # business = forms.ModelChoiceField(editable=False)
+    # user = forms.ModelChoiceField(editable=False)
+    # first_time = forms.BooleanField(editable=False)
+    # rating_profile = forms.ModelChoiceField(editable=False)
+
+    def clean_profile_picture(self):
+        image = self.cleaned_data['profile_picture']
+        # Only pngs and jpgs are allowed here.
+        fileext = image.name.split('.')[-1]
+        sys.stderr.write("FILE EXTENSION: "+fileext)
+        if not fileext in self.acceptable_image_types:
+            raise forms.ValidationError("Only jpg and png images are allowed.")
+        return image
+
+    class Meta:
+        model = EmployeeProfile
+        fields = ('bio','profile_picture',)

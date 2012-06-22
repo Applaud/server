@@ -25,6 +25,11 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
+
+<div id="employee_img">
+  <img src="{{ MEDIA_URL }}{{ image }}" />
+</div>
+
 <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 <!-- list employee statistics by dimension -->
 {% for success_map in success_map_list %}
