@@ -410,5 +410,5 @@ def business_welcome(request):
             send_mail(subject, message, from_email, email_list)
         except BadHeaderError:
             return HttpResponse('Invalid header found')
-        return HttpResponseRedirect('/joker/')     
+        return HttpResponseRedirect('/home/')     
     
