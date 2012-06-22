@@ -127,12 +127,12 @@ def newsfeed_create(request):
 	try:
 	    profile = request.user.businessprofile
 	except BusinessProfile.DoesNotExist:
-	    return HttpResponseRedirect('/fail/')
+	    return HttpResponseNotFound('Could not find requested page.')
 
 	username = request.user.username
 
     else:
-        return HttpResponseRedirect('/accounts/business/')
+        return HttpResponseRedirect('/accounts/login/')
 
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
@@ -212,11 +212,11 @@ def edit_newsfeed(request):
         try:
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/fail/")
+            return HttpResponseNotFound("Could not find the requested page.")
 
         username=request.user.username
     else:
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/accounts/login/")
 
     if request.method == 'POST':	
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
@@ -260,7 +260,7 @@ def create_employee(request):
 
         username=request.user.username
     else:
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/accounts/login/")
 
     # if  request.method == 'POST':
     #     employee_form = forms.EmployeeForm(request.POST)
@@ -282,7 +282,7 @@ def delete_employee(request):
         try:
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
+            return HttpResponseNotFound("Could not find the requested page.")
 
         username=request.user.username
     else:
@@ -311,7 +311,7 @@ def edit_employee(request):
         try:
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
+            return HttpResponseNotFound("Could not find the requested page.")
 
         username=request.user.username
     else:
@@ -390,7 +390,7 @@ def employee_list(request):
             return HttpResponse(get_token(request))
         business_id = json.load(request)['business_id']
         business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.employee_set.all()),
+        return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                             cls=EmployeeEncoder))
     return HttpResponseForbidden("end-user not authenticated")
 
@@ -405,26 +405,34 @@ def employee_stats(request):
             employee = request.user
 	    profile = employee.employeeprofile
 	except EmployeeProfile.DoesNotExist:
-            # Not logged in, go log in!
-	    return HttpResponseRedirect("/accounts/login")
+	    return HttpResponseNotFound("Could not find the requested page.")
 
         rating_profile = profile.rating_profile
         ratings = profile.rating_set
 
-        # Parse out the ratings by dimension
+        # List of valid dimensions for rating
         dimensions = rating_profile.dimensions
 
-        # success_map_list:
-        # [ {'title':"thriftiness", 'values':[<rating>,<rating>]}, { ... }, ... ]
-        success_map_list = []
-        for dimension in dimensions:
-            success_map = {}
-            success_map['dimension'] = dimension
-            success_map['values'] = ratings.filter(title=dimension)
-            success_map_list.append(success_map)
+        success_chart = []
+        axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
+        success_chart.append(axis)
+        for i in range(len(dimensions)):
+            row = [ dimensions[i] ]
+            rating_vals = []
+            for j in range(5):
+                rating_vals.append(len(ratings.filter(title=dimensions[i],
+                                                      rating_value=j+1)))
+            row.extend(rating_vals)
+            success_chart.append(row)
 
-        # For now, just return the success map.
-        return render_to_response('employee_stats.html', locals())
+        sys.stderr.write(str(success_chart))
+
+        # Return string for rendering in google charts
+        return render_to_response('employee_stats.html',
+                                  {'chartdata':json.dumps( success_chart ),
+                                   'employee':employee})
+
+                                   
     return HttpResponseForbidden("employee not logged in")
         
 
@@ -437,20 +445,25 @@ def create_rating_profile(request):
     if request.method == 'GET':
         # Be sure we're logged in and that we're a business.
         if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
-            return render_to_response('create_rating_profile.html',
+            return render_to_response('/business/create_rating_profile.html',
                                       {},
                                       context_instance=RequestContext(request))
         else:
-            return render_to_response('fail.html')
+            return HttpResponseNotFound("Could not find the requested page.",
+                                        context_instance=RequestContext(request))
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
         if request.user.is_authenticated():
             try:
                 profile = request.user.businessprofile
             except BusinessProfile.DoesNotExist:
-                return render_to_response('fail.html')
+                return HttpResponseNotFound("Could not find the requested page.",
+                                            context_instance=RequestContext(request))
+
         else:
-            return render_to_response('fail.html')
+            return HttpResponseNotFound("Could not find the requested page.",
+                                        context_instance=RequestContext(request))
+
         i = 0
         dimensions = []
         while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
@@ -469,13 +482,13 @@ def create_rating_profile(request):
             err = True
         if err:
             errors['dimensions'] = dimensions
-            return render_to_response('create_rating_profile.html',
+            return render_to_response('/business/create_rating_profile.html',
                                       errors,
                                       context_instance=RequestContext(request))
         rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
         rp.save()
 	
-        return HttpResponseRedirect('/ratingprofiles')
+        return HttpResponseRedirect('/business/ratingprofiles')
 
 @csrf_protect
 def list_rating_profiles(request):
@@ -565,7 +578,7 @@ def create_survey(request):
 				survey=s)
 	    q.save()
 
-        return HttpResponseRedirect('/survey_create')	
+        return HttpResponseRedirect('/business/survey_create')	
 
 # Encodes a Survey into JSON format
 class SurveyEncoder(json.JSONEncoder):

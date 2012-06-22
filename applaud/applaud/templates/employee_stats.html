@@ -1,5 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Your Statistics{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawVisualization);
+
+
+function drawVisualization() {
+  // Create and populate the data table.
+  var data = google.visualization.arrayToDataTable(
+    {{ chartdata|safe }} 
+  );
+
+  // Create and draw the visualization.
+  new google.visualization.BarChart(document.getElementById('visualization')).
+      draw(data,
+           {title:"Evaluations by Dimension",
+            width:600, height:400,
+            vAxis: {title: "Dimension"},
+            hAxis: {title: "Number of Ratings"}}
+      );
+}
+</script>
+{% endblock %}
 {% block content %}
 <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 <!-- list employee statistics by dimension -->
@@ -18,6 +42,7 @@ No statistics yet!
 {% endif %}
 
 {% endfor %}
+<div id="visualization" style="width: 900px; height: 500px;"></div>
 <!-- end of employee statistics by dimension -->
 
 {% endblock %}

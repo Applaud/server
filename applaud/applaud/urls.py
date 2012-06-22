@@ -8,6 +8,12 @@ import views
 import settings
 from registration import views as business_views
 
+# Import other urlconfs
+import business_urls
+import mobile_urls
+import employee_urls
+import user_urls
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -21,6 +27,5 @@ urlpatterns = patterns('',
                        (r'^employee/', include(employee_urls.py)),
                        (r'^user/', include(user_urls.py)),
                        (r'^accounts/', include('registration.backends.default.urls')),
-
                        )
 

@@ -280,7 +280,7 @@ def login(request):
         if user:
             auth.login( request, user )
         else:
-            return HttpResponseForbidden('/accounts/login')
+            return HttpResponseRedirect('/accounts/login/')
 
         profile = ""
         prefix = ""
@@ -303,6 +303,8 @@ def login(request):
             profile.save()
             return HttpResponseRedirect("/%s/welcome/"%prefix)
         else:
-            return HttpResponseRedirect('/')
+            # /x/ should be the homepage for an entity (business, employee, etc.)
+            # of type x
+            return HttpResponseRedirect('/%s/'%prefix)
     else:
         return render_to_response(template_name, locals())
