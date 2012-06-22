@@ -195,11 +195,9 @@ class EmployeeProfile(models.Model):
     user = models.OneToOneField(User)
 
     def __unicode__(self):
-        return '%s %s' % (self.user.first_name, self.user.last_name)
+        return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
 
     def change_parameters(self, d):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
-
-

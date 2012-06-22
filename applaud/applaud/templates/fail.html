@@ -5,4 +5,7 @@
 {% block content %}
 {% csrf_token %}
 FAIL
+{% if debug %}
+{{ debug }}
+{% endif %}
 {% endblock %}
