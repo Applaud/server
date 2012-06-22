@@ -38,7 +38,7 @@ def create_employee(request):
 
         username=request.user.username
     else:
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/accounts/login/")
 
     # if  request.method == 'POST':
     #     employee_form = forms.EmployeeForm(request.POST)

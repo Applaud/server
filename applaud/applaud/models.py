@@ -3,6 +3,9 @@ from django.db import models
 import json
 from applaud import settings
 
+# 
+# CUSTOM MODEL FIELDS
+# 
 class SerializedStringsField(models.TextField):
     """Allows us to store a list of strings
     directly in the database using JSON to
@@ -49,6 +52,9 @@ class SerializedRatingsField(models.TextField):
         assert(isinstance(value, list) or isinstance(value, tuple))
         return json.dumps(value)
 
+#
+# EMPLOYEE RATINGS
+#
 class Rating(models.Model):
 	'''Models a rating. That is, a numeric value for a ratable
 	dimension, and the name of that dimension. This is the result
@@ -84,6 +90,9 @@ class RatingProfile(models.Model):
         def __unicode__(self):
             return self.title
 
+#
+# NEWSFEED
+#
 class NewsFeedItem(models.Model):
 	'''Models an item in the newsfeed.
 	'''
@@ -104,17 +113,20 @@ class NewsFeedItem(models.Model):
         def __unicode__(self):
             return '%s at %s' % (self.title, self.business)
 
-
+#
+# GENERAL FEEDBACK
+#
 class GeneralFeedback(models.Model):
     '''Gives general feedback on a location.
     '''
     feedback = models.TextField(max_length=10000)
     business = models.ForeignKey('BusinessProfile')
     date_created=models.DateTimeField()
-#################
-# SURVEY MODELS #
-#################
 
+
+#
+# SURVEY MODELS
+#
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
@@ -161,10 +173,9 @@ class QuestionResponse(models.Model):
         return json.dumps(self.response)
 
 
-###############
-# USER MODELS #
-###############
-
+#
+# PROFILES
+#
 class BusinessProfile(models.Model):
     # N.B. The business name is stored as 'username' in the corresponding
     # User object.
