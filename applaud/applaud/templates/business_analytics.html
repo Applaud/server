@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}
+{% block scripts %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawVisualization);
+
+
+function drawVisualization() {
+  // Create and populate the data table.
+  var data = google.visualization.arrayToDataTable(
+    {{ chartdata|safe }} 
+  );
+
+  // Create and draw the visualization.
+  new google.visualization.BarChart(document.getElementById('visualization')).
+      draw(data,
+           {title:"Evaluations by Dimension",
+            width:600, height:400,
+            vAxis: {title: "Dimension"},
+            hAxis: {title: "Number of Ratings"}}
+      );
+}
+</script>
+{% endblock %}
+Employee Information
+{% endblock %}
+{% block content %}
+<h1>Employees of {{ business }}</h1>
+{% for employee in employees %}
+<div class="employee">
+  <h2>{{ employee.name }}</h2>
+  {% for dimension, rating in employee.ratings.items %}
+  <h3>{{ dimension }}</h3>
+  <p>Average rating: {{ rating }}</p>
+  {% endfor %}
+{% endfor %}
+</div>
+<div class="survey">
+  <h1>Surveys</h1>
+  <h2>{{ survey.title }}</h2>
+  <p>{{ survey.description }}</p>
+  {% for question in survey.questions %}
+  <h3>{{ question.label }}</h3>
+  <ul>
+    {% for response in question.responses %}
+    <li>
+      {% for response_part in response %}
+      {{ response_part }}
+      {% endfor %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</div>
+<div class="feedback">
+  <h1>Feedback</h1>
+  <ul>
+    {% for feedback_item in feedback %}
+    <li>
+      {{ feedback_item.feedback }} ({{ feedback_item.date_created }})
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

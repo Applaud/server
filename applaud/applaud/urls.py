@@ -29,5 +29,3 @@ urlpatterns = patterns('',
                        (r'^user/', include(user_urls)),
                        (r'^accounts/', include('registration.backends.default.urls')),
                        )
-
-
