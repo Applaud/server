@@ -30,6 +30,7 @@
 	      i++;
 	      var questionDiv = $("<div></div>");
 	      questionDiv.prop({'id':"question_"+i+"_div"});
+	      questionDiv.prop({'class':"question"});
 	      $("#submit_button").before(questionDiv);
 	      
 	      var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
@@ -70,14 +71,16 @@
 	      });
 
 	      questionDiv
-		  .append(questionAreaLabel)
 		  .append(questionArea)
+                  .append("<br />")
+		  .append(questionAreaLabel)
 		  .append($("<br />"))
 		  .append(questionTypeLabel)
 		  .append(questionType)
+		  .append($("<br />"))
 		  .append(optionDiv)
-		  .append(addOptionButton)
-		  .append($("<br />"));
+		  .append($("<br />"))
+		  .append(addOptionButton);
 
 	      addOption(i);	      
 
@@ -125,15 +128,15 @@
 	<option value="cg">checkbox group</option>
       </select>
       <div id="question_0_options">
-      {% if question.options %}
-      {% for option in question.options %}
-      Option {{ forloop.counter }}:
-      <input type="text" name="question_{{ forloop.parentloop.counter }}_option_{{ forloop.counter }}"/><br />
-      {% endfor %}
-      {% else %}
-      Option 1:
-      <input type="text" name="question_{{ forloop.parentloop.counter }}_option_0"/><br />
-      {% endif %}
+	{% if question.options %}
+	{% for option in question.options %}
+	Option {{ forloop.counter }}:
+	<input type="text" name="question_{{ forloop.parentloop.counter }}_option_{{ forloop.counter }}"/><br />
+	{% endfor %}
+	{% else %}
+	Option 1:
+	<input type="text" name="question_{{ forloop.parentloop.counter }}_option_0"/><br />
+	{% endif %}
       </div>
       <button type="button" name="question_{{ forloop.counter }}_optionbutton" id="question_{{ forloop.counter }}_optionbutton">Add Option</button>
       {% endfor %}
