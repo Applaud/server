@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from PIL import Image as PImage
 import registration.forms as registration_forms
 import os
 import json
@@ -52,8 +53,11 @@ def edit_profile(request):
             form = registration_forms.EmployeeProfileForm(request.POST, request.FILES)
             if form.is_valid():
                 profile = request.user.employeeprofile
+
+                # ---------- HANDLE IMAGE UPLOAD ----------
                 # Set the image name based upon employeeprofile id and business id
-                # imagename = businessname.businessid/employeefn_employeeln.employeeid.fileext
+                # imagename = employeefn_employeeln.employeeid.fileext
+                # imagedir = MEDIA_ROOT/businessname.businessid
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
                 imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
                                       profile.business.user.username.replace(" ","_"),
@@ -64,10 +68,17 @@ def edit_profile(request):
                                            profile.user.last_name,
                                            profile.id,
                                            fileext)
-                with open( "%s/%s"%(imagedir,imagename), "wb+" ) as destination:
+                imagepath = "%s/%s"%(imagedir,imagename) 
+                with open( imagepath, "wb+" ) as destination:
                     for chunk in request.FILES['profile_picture']:
                         destination.write(chunk)
                 destination.close()
+
+                # Generate a thumbnail
+                thumb = PImage.open( imagepath )
+                thumb.thumbnail((128,128), PImage.ANTIALIAS)
+                thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
+                
                 return render_to_response('employee_stats.html',
                                           {'message':"Your profile has been saved successfully."},
                                           context_instance=RequestContext(request))
