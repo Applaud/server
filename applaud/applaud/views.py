@@ -425,20 +425,29 @@ def employee_stats(request):
         rating_profile = profile.rating_profile
         ratings = profile.rating_set
 
-        # Parse out the ratings by dimension
+        # List of valid dimensions for rating
         dimensions = rating_profile.dimensions
 
-        # success_map_list:
-        # [ {'title':"thriftiness", 'values':[<rating>,<rating>]}, { ... }, ... ]
-        success_map_list = []
-        for dimension in dimensions:
-            success_map = {}
-            success_map['dimension'] = dimension
-            success_map['values'] = ratings.filter(title=dimension)
-            success_map_list.append(success_map)
+        success_chart = []
+        axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
+        success_chart.append(axis)
+        for i in range(len(dimensions)):
+            row = [ dimensions[i] ]
+            rating_vals = []
+            for j in range(5):
+                rating_vals.append(len(ratings.filter(title=dimensions[i],
+                                                      rating_value=j+1)))
+            row.extend(rating_vals)
+            success_chart.append(row)
 
-        # For now, just return the success map.
-        return render_to_response('employee_stats.html', locals())
+        sys.stderr.write(str(success_chart))
+
+        # Return string for rendering in google charts
+        return render_to_response('employee_stats.html',
+                                  {'chartdata':json.dumps( success_chart ),
+                                   'employee':employee})
+
+                                   
     return HttpResponseForbidden("employee not logged in")
         
 
