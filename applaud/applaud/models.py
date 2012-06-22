@@ -167,15 +167,15 @@ class BusinessProfile(models.Model):
     
     latitude = models.FloatField()
     longitude = models.FloatField()
-    
     phone = models.CharField(max_length=14,blank=True,null=True)
-
     user = models.OneToOneField(User)
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
     # After that, the ID of BusinessProfile is used to uniquely identify a business.
     goog_id = models.CharField(max_length=200)
+
+    first_time = models.BooleanField(default=1)
 
     def __unicode__(self):
         return "%s (%s)"%(self.user.username,self.phone)
@@ -185,14 +185,13 @@ class EmployeeProfile(models.Model):
     '''
     # Just a standard bio for an employee
     bio = models.TextField(max_length=1000,blank=True,null=True)
-
     # What dimensions are relevant for rating this employee
     rating_profile = models.ForeignKey(RatingProfile, blank=True, null=True)
-
     # Where does this employee work?
     business = models.ForeignKey('BusinessProfile')
-    
     user = models.OneToOneField(User)
+
+    first_time = models.BooleanField(default=1)
 
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
