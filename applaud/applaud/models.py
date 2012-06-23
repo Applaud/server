@@ -210,7 +210,7 @@ class EmployeeProfile(models.Model):
 
     first_time = models.BooleanField(default=1)
 
-    # profile_picture = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    profile_picture = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
 
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)

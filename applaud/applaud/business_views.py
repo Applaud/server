@@ -406,27 +406,35 @@ def business_welcome(request):
                                   context_instance=RequestContext(request))
     # Business is authenticated
     if request.method == "POST":
+        # Get emails from POST
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        email_template=Template('email_employee.txt')
+        
         # If they choose to upload a CSV file.
         if request.FILES:
             user = profile.user.username
             r = open('/tmp/%s.txt'%user, 'w+')
             reader = File(r)
-            reader_str = ''
+            emp_list=''
+            reader_str=''
             with reader as destination:
                 for chunk in request.FILES['csv'].chunks():
                     destination.write(chunk)
                     reader_str+=chunk
-                    emp_list = ''
-                for row in reader:
-                    row_list = [i.strip(' ') for i in reader_str.split(',')]
-                    emp_list += row_list[28]
 
-        # Get emails from POST
-        emails = request.POST['emails']
-        email_list=strip_and_validate_emails(emails)
-        email_list.extend(emp_list)
- 
-        email_template=Template('email_employee.txt')
+                for row in reader:
+                    count = 2
+                    row_list = []
+                    for i in reader_str.split(','):
+                        row_list.extend(i+' ')
+
+                    emp_list += row_list[28*count]
+                    count+=1
+            sys.stderr.write(str(reader_str))
+            sys.stderr.write(str(count))
+            emp_list_final = strip_and_validate_emails(emp_list)
+            email_list.extend(emp_list_final)
 
 
         # Render the contents of the email
