@@ -9,7 +9,7 @@ Your name is {{ business.user.username }}
 <br />
 <br />
 
-Please ente a comma-separated list of your employees' email addresses below.
+Please enter a comma-separated list of your employees' email addresses below.
 
 <br />
 If you want, you can also upload a CSV file from your email provider.
@@ -18,14 +18,10 @@ If you want, you can also upload a CSV file from your email provider.
 {% csrf_token %}
 <label for="emails">Emails </labels>
 <input type="text" name="emails" >
-<<<<<<< HEAD
 <br />
 <label for="csv"> Upload .csv File </labels>
 <input type="file" name="csv" >
-<input type="submit" value="Submit" />
-=======
 <input type="submit" value="Submit" >
->>>>>>> 47fafe681683f2f96759975564dac74e68651667
 </form>
 
 {% endblock %}

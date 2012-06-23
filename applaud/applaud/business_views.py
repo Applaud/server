@@ -423,16 +423,15 @@ def business_welcome(request):
                     destination.write(chunk)
                     reader_str+=chunk
 
-                for row in reader:
-                    count = 2
-                    row_list = []
-                    for i in reader_str.split(','):
-                        row_list.extend(i+' ')
+                row_list = []
+                for i in reader_str.split(','):
+                    row_list.append(str(i)+' ')                
 
-                    emp_list += row_list[28*count]
+                count = 0
+                for row in reader:
+                    emp_list += row_list[(32*count)+28]+', '
+                    sys.stderr.write(row_list[(32*count)+28])
                     count+=1
-            sys.stderr.write(str(reader_str))
-            sys.stderr.write(str(count))
             emp_list_final = strip_and_validate_emails(emp_list)
             email_list.extend(emp_list_final)
 
