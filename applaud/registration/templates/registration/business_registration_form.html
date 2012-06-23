@@ -1,10 +1,83 @@
-{% extends "base.html" %}
-{% load i18n %}
+<html>
+  <head>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery.js" ></script>
+<script type="text/javascript">
+    $(document).ready( function() {
+	$('#search').click(function(event) {
+	    result_list = []
+	    var request = $.ajax("http://maps.googleapis.com/maps/api/geocode/json",
+				 {
+				     url: "http://maps.googleapis.com/maps/api/geocode/json",
+				     data: {'address':$('#business_address').attr('value'),
+					    'sensor':'false'},
+				     dataType:'json', 
+				 });
 
-{% block content %}
-<form method="post" action=".">
+	    request.done(function(data) {
+		console.log("We just received: "+data);
+		results = data['results'];
+		for ( result in results ) {
+		    result_list.push( {'address':result['formatted_address'],
+				       'latitude':result['geometry']['location']['lat'],
+				       'longitude':result['geometry']['location']['lng']})
+		}
+	    });
+
+
+
+
+	    // $.getJSON("http://maps.googleapis.com/maps/api/geocode/json",
+	    // 	      {'address':$('#business_address').attr('value'),
+	    // 	       'sensor':'false'},
+	    // 	      function(data) {
+	    // 		  console.log("We just received: "+data);
+	    // 		  results = data['results'];
+	    // 		  for ( result in results ) {
+	    // 		      result_list.push( {'address':result['formatted_address'],
+	    // 					 'latitude':result['geometry']['location']['lat'],
+	    // 					 'longitude':result['geometry']['location']['lng']}
+	    // 				      )
+	    // 		  }
+	    // 	      });
+
+	    // Turn result_list into DOM objects
+	    if ( result_list.length > 0 ) {
+		var the_list;
+		the_list = $('<ul></ul>');
+		for ( result in result_list ) {
+		    the_list.append('<li>'+result.address+'</li>');
+		}
+		$('#business_results').append( the_list );
+	    }
+	});
+    });
+
+function updateResults( blist ) {
+    for (var i=0; i<blist.length; i++) {
+	
+    }
+}
+</script>
+  </head>
+  <body>
+<form method="post" action="." id="registration_form">
   {% csrf_token %}
   {{ form.as_p }}
-  <input type="submit" value="{% trans 'Submit' %}" />
+
+  <!-- filled in by ajax component -->
+  <input type="hidden" value="" id="latitude" name="latitude" />
+  <input type="hidden" value="" id="longitude" name="longitude" />
+
+  <input type="submit" value="Submit" />
 </form>
-{% endblock %}
+
+<div id="business_search">
+  <input type="text" id="business_address">
+  <div id="business_results">
+    <!-- google results go here -->
+  </div>
+  <button type="button" id="search">Search</button>
+</div>
+
+</body>
+</html>

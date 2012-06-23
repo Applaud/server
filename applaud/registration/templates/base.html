@@ -6,6 +6,10 @@
 <head>
     <link rel="stylesheet" href="/style.css" />
     <title>{% block title %}User test{% endblock %}</title>
+
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.js" />
+    {% block scripts %}
+    {% endblock %}
 </head>
 
 <body>

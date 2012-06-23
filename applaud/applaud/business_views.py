@@ -418,7 +418,7 @@ def business_welcome(request):
         except BadHeaderError:
             return HttpResponse('Invalid header found')
 
-        return HttpResponseRedirect('/business/home/')
+        return HttpResponseRedirect('/business/')
     
 def business_home(request):
     return render_to_response('business.html')

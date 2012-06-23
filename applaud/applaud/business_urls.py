@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic.simple import direct_to_template
+from django.views.generic.simple import direct_to_template, redirect_to
 from django.http import HttpResponseRedirect
 from django.contrib import admin
 import business_views as views
@@ -19,7 +19,10 @@ urlpatterns = patterns('',
                        # url(r'^employee_stats/', views.employee_stats),
                        url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
-                       url(r'^home/$', views.business_home ),
+                       url(r'^$',
+                           redirect_to,
+                           {'url':'analytics'},
+                           name="business_home"),
                        
                        # Survey stuff
                        url(r'^survey_create/',views.create_survey),

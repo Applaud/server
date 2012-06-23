@@ -28,7 +28,7 @@ def whereami(request):
     goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
     radius="100"
 
-    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=false&key="+goog_api_key)
+    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=true&key="+goog_api_key)
 
     to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
