@@ -8,6 +8,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
 from django.contrib.auth.models import Group, User
+# TODO: clean up the next 3
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.core.files import File
 from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
@@ -17,6 +21,7 @@ from applaud import models
 from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder
 import re
+import csv
 
 # Employee stuff.
 
@@ -401,15 +406,35 @@ def business_welcome(request):
                                   context_instance=RequestContext(request))
     # Business is authenticated
     if request.method == "POST":
+        # If they choose to upload a CSV file.
+        if request.FILES:
+            user = profile.user.username
+            r = open('/tmp/%s.txt'%user, 'w+')
+            reader = File(r)
+            reader_str = ''
+            with reader as destination:
+                for chunk in request.FILES['csv'].chunks():
+                    destination.write(chunk)
+                    reader_str+=chunk
+                    emp_list = ''
+                for row in reader:
+                    row_list = [i.strip(' ') for i in reader_str.split(',')]
+                    emp_list += row_list[28]
+
         # Get emails from POST
         emails = request.POST['emails']
         email_list=strip_and_validate_emails(emails)
+        email_list.extend(emp_list)
+ 
+        email_template=Template('email_employee.txt')
+
 
         # Render the contents of the email
         context = {'business':request.user.username,
                    'goog_id':request.user.businessprofile.goog_id}
         message = render_to_string('email_employee.txt',
                                    context)
+
         subject = 'Register at apatapa.com!'
         from_email='register@apatapa.com'
 
