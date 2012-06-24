@@ -190,7 +190,7 @@ class BusinessProfile(models.Model):
     # After that, the ID of BusinessProfile is used to uniquely identify a business.
     # Except when signing employees up
     goog_id = models.CharField(max_length=200)
-
+    address = models.CharField(max_length=500)
     first_time = models.BooleanField(default=1)
 
     def __unicode__(self):
@@ -209,7 +209,7 @@ class EmployeeProfile(models.Model):
 
     first_time = models.BooleanField(default=1)
 
-    # profile_picture = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    profile_picture = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
 
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)

@@ -1,10 +1,35 @@
-{% extends "base.html" %}
+{% extends "base_registration.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block scripts %}
+<script type="text/javascript" src="{{ STATIC_URL }}address_search.js"></script>
+{% endblock %}
+
+{% block.super links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_registration.css" />
+{% endblock %}
+
+{% block title %}Register{% endblock %}
+
+{% super.block content %}
 <form method="post" action=".">
   {% csrf_token %}
   {{ form.as_p }}
+  <input type="hidden" name="latitude" id="latitude" />
+  <input type="hidden" name="latitude" id="latitude" />
+  <input type="hidden" name="address" id="address" />
   <input type="submit" value="{% trans 'Submit' %}" />
 </form>
+
+<div id="business_search">
+  <p>In order to provide the most accurate location-based services for your customers, please search for your address here and select the location that most applies to you.</p>
+  <label for="business_address">Your Address</label>
+  <input type="text" id="business_address" name="business_address">
+  <button type="button" id="search">Search</button>
+  <div id="business_results">
+    <!-- google results go here -->
+  </div>
+</div>
+
+<p id="address_result"></p>
 {% endblock %}

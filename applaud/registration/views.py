@@ -204,10 +204,11 @@ def register(request, backend, success_url=None, form_class=None,
                 # We know we're registering a custom user (business or employee)
                 if extra_context['profile_type']=='business':
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
-                                              longitude=request.POST['longitude'],
-                                              phone=request.POST['phone'],
-                                              user=new_user,
-                                              first_time=True)
+                                                             longitude=request.POST['longitude'],
+                                                             address=request.POST['address'],
+                                                             phone=request.POST['phone'],
+                                                             user=new_user,
+                                                             first_time=True)
                     profile.save()
 
                     # Create a generic rating profile
