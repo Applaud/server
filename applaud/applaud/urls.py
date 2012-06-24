@@ -22,7 +22,7 @@ urlpatterns = patterns('',
                        # What to do with static files. Always served from /static
                        url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
                            {'document_root': settings.STATIC_ROOT}),
-                       url(r'^$', views.index),
+                       url(r'^$', views.index, name="home"),
                        (r'^business/', include(business_urls)),
                        (r'^mobile/', include(mobile_urls)),
                        (r'^employee/', include(employee_urls)),

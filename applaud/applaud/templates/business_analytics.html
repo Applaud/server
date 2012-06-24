@@ -27,7 +27,7 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
-<h1>Employees of {{ business }}</h1>
+<h1>Employees of {{ business.business_name }}</h1>
 {% for employee in employees %}
 <div class="employee">
   <h2>{{ employee.name }}</h2>

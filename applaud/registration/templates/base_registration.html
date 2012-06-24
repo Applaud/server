@@ -1,23 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}User test{% endblock %}
+{% block title %}Account{% endblock %}
 
 {% block links %}
 <link rel="stylesheet" href="/style.css" />
 {% endblock %}
 
-{% block scripts %}
-{% endblock %}
-
 {% block content %}
-<a href="{% url applaud.views.index %}">{% trans "Home" %}</a> |
-{% if user.is_authenticated %}
-{% trans "Logged in" %}: {{ user.username }}
-(<a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
-<a href="{% url auth_password_change %}">{% trans "Change password" %}</a>)
-{% else %}
-<a href="{% url auth_login %}">{% trans "Log in" %}</a>
-{% endif %}
-<hr />
 {% endblock %}

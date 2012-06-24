@@ -507,5 +507,5 @@ def analytics(request):
                               {'employees': employees,
                                'survey': survey_dict,
                                'feedback': feedback,
-                               'business': '%s' % (profile.user.username,)},
+                               'business': profile.user.businessprofile},
                               context_instance=RequestContext(request))
