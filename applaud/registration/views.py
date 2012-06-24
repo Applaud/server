@@ -281,46 +281,11 @@ def mobile_login(request):
             return HttpResponseForbidden("Bad login.")
     return HttpResponseBadRequest("Your shit dont make no sense.")
 
-def login(request):
-    if request.method == 'POST':
-        user = auth.authenticate( username=request.POST['username'],
-                                  password=request.POST['password'] )
-        if user and user.is_active:
-            auth.login( request, user )
-        else:
-            return HttpResponseRedirect('/accounts/login/')
-
-        profile = ""
-        prefix = ""
-        # Are we a business?
-	try:
-	    profile = request.user.businessprofile
-            prefix = "business"
-	except applaud_models.BusinessProfile.DoesNotExist:
-            # Are we an employee?
-	    try:
-                profile = request.user.employeeprofile
-                prefix = "employee"
-            except applaud_models.EmployeeProfile.DoesNotExist:
-                return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
-            #TODO: implement an end-user profile and check for it here.
-            # Redirect appropriately.
-
-        if profile.first_time:
-            profile.first_time = False
-            profile.save()
-            return HttpResponseRedirect("/%s/welcome/"%prefix)
-        else:
-            # /x/ should be the homepage for an entity (business, employee, etc.)
-            # of type x
-            return HttpResponseRedirect('/%s/'%prefix)
-    else:
-        return render_to_response(template_name, locals())
-
-
-# Find what page to redirect to
 def profile(request):
-    if not user.is_authenticated():
+    '''Redirect the user to the appropriate page after login.
+    '''
+
+    if not request.user.is_authenticated():
         return HttpResponseRedirect('/accounts/login')
     
     profile = ""

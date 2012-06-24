@@ -11,7 +11,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # How long a user has to activate their account
 ACCOUNT_ACTIVATION_DAYS = 7
 # Where to go after login
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/accounts/profile'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
