@@ -1,34 +1,21 @@
 {% extends "base.html" %}
-{% block title %}New Business!{% endblock %}
-{% block content %}
 
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business.css" />
+{% endblock %}
+
+{% block title %}Business{% endblock %}
+
+{% block content %}
 Hello {{ business.user.username }}!
 
-Welcome back to apatapa...
-
-What would you like to do?
-
-<ul>
-<li>Employee Evaluations
-<ul>
-  <li><a href="" >Add an employee</a>
-
-  <li><a href="" >View employee ratings</a>
-</ul>
-
-<li>Newsfeed
-<ul>
-  <li><a href="" >Add an object to the newsfeed</a>
-
-  <li><a href="" >View all events</a>
-</ul>
-<li><a href="" ></a>
-
-<li><a href="" ></a>
-
-<li><a href="" ></a>
-
-<li><a href="" ></a>
-</ul>
-
+<!-- relevant functional links for business -->
+<div id="business_links">
+  <ul>
+    <li><a href="{% url business_analytics %}">View Stats</a></li>
+    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>
+    <li><a href="{% url business_manage_newsfeed %}">Manage News Items</a></li>
+    <li><a href="{% url business_manage_survey %}">Manage Interactions</a></li>
+  </ul>
+</div>
 {% endblock %}

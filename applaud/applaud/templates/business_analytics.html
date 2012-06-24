@@ -1,7 +1,9 @@
-{% extends "base.html" %}
+{% extends "business.html" %}
+
 {% block title %}
 Employee Information
 {% endblock %}
+
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -27,6 +29,7 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
+{{ super.block }}
 <h1>Employees of {{ business.business_name }}</h1>
 {% for employee in employees %}
 <div class="employee">
