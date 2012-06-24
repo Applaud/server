@@ -201,8 +201,22 @@ def register(request, backend, success_url=None, form_class=None,
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21
             if extra_context and 'profile_type' in extra_context:
-                # We know we're registering a custom user (business or employee)
+
+                # We are registering a business
                 if extra_context['profile_type']=='business':
+                    # Find businesses with given address
+                    # formatted_address = request.POST['address'].replace(" ","+")
+                    # from_goog = urllib2.urlopen( % formatted_address)
+                    # from_goog = json.loads( from_goog )
+                    
+                    # business_results = []
+                    # for result in from_goog.results:
+                    #     business_results.append( {'address':result.formatted_address,
+                    #                               'latitude':result.geometry.location.lat,
+                    #                               'longitude':result.geometry.location.lng} )
+                        
+                    
+                    
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
                                                              longitude=request.POST['longitude'],
                                                              address=request.POST['address'],
@@ -217,8 +231,9 @@ def register(request, backend, success_url=None, form_class=None,
                                                       business=profile)
                     rp.save()
 
+                #We know that we're registering an employee
                 elif extra_context['profile_type']=='employee':
-                    #We know that we're registering an employee
+
                     #First, determine which business this employee works for
                     business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
                     rp = business_profile.ratingprofile_set.get(id=1)
@@ -237,16 +252,17 @@ def register(request, backend, success_url=None, form_class=None,
     else:
         form = form_class()
     
-    if extra_context is None:
-        extra_context = {}
-    context = RequestContext(request)
-    for key, value in extra_context.items():
+    # if extra_context is None:
+    #     extra_context = {}
+    # context = RequestContext(request)
+    # for key, value in extra_context.items():
 
-        context[key] = callable(value) and value() or value
+    #     context[key] = callable(value) and value() or value
 
     return render_to_response(template_name,
                               {'form': form},
-                              context_instance=context)
+                              # context
+                              context_instance=RequestContext(request))
 
 def register_business(request, backend, success_url=None, form_class=forms.BusinessRegistrationForm,
                       disallowed_url='registration_disallowed',

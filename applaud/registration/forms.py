@@ -7,7 +7,7 @@ Forms and validation code for user registration.
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from applaud.models import EmployeeProfile
+from applaud.models import EmployeeProfile, BusinessProfile
 
 import sys
 
@@ -126,9 +126,8 @@ class BusinessRegistrationForm(RegistrationForm):
     phone = forms.RegexField(regex=r'^\d?[ -.]?\d{3}[ -.]?\d{3}[ -.]?\d{4}',
                              widget=forms.TextInput(attrs=attrs_dict),
                              error_messages={'invalid':"Please enter a valid phone number, including the area code."})
-    
-    latitude = forms.FloatField(widget=forms.TextInput(attrs=attrs_dict))
-    longitude = forms.FloatField(widget=forms.TextInput(attrs=attrs_dict))
+    latitude = forms.FloatField(widget=forms.HiddenInput)
+    longitude = forms.FloatField(widget=forms.HiddenInput)
 
     username = forms.CharField(max_length=100,label="Business Name")
 
@@ -136,7 +135,8 @@ class BusinessRegistrationForm(RegistrationForm):
     last_name = forms.CharField(max_length=100)
 
     class Meta:
-        exclude = ('latitude','longitude','address',)
+        exclude = ('address',)
+        model = BusinessProfile
 
 class EmployeeRegistrationForm(RegistrationForm):	
     

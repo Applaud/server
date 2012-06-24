@@ -406,27 +406,34 @@ def business_welcome(request):
                                   context_instance=RequestContext(request))
     # Business is authenticated
     if request.method == "POST":
+        # Get emails from POST
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        email_template=Template('email_employee.txt')
+        
         # If they choose to upload a CSV file.
         if request.FILES:
             user = profile.user.username
             r = open('/tmp/%s.txt'%user, 'w+')
             reader = File(r)
-            reader_str = ''
+            emp_list=''
+            reader_str=''
             with reader as destination:
                 for chunk in request.FILES['csv'].chunks():
                     destination.write(chunk)
                     reader_str+=chunk
-                    emp_list = ''
-                for row in reader:
-                    row_list = [i.strip(' ') for i in reader_str.split(',')]
-                    emp_list += row_list[28]
 
-        # Get emails from POST
-        emails = request.POST['emails']
-        email_list=strip_and_validate_emails(emails)
-        email_list.extend(emp_list)
- 
-        email_template=Template('email_employee.txt')
+                row_list = []
+                for i in reader_str.split(','):
+                    row_list.append(str(i)+' ')                
+
+                count = 0
+                for row in reader:
+                    emp_list += row_list[(32*count)+28]+', '
+                    sys.stderr.write(row_list[(32*count)+28])
+                    count+=1
+            emp_list_final = strip_and_validate_emails(emp_list)
+            email_list.extend(emp_list_final)
 
 
         # Render the contents of the email
@@ -443,8 +450,12 @@ def business_welcome(request):
         except BadHeaderError:
             return HttpResponse('Invalid header found')
 
-        return HttpResponseRedirect('/home/')     
+        return HttpResponseRedirect('/business/')
     
+def business_home(request):
+    return render_to_response('business.html')
+
+
 # Checking analytics.
 def analytics(request):
     if request.user.is_authenticated():
@@ -491,4 +502,3 @@ def analytics(request):
                                'feedback': feedback,
                                'business': '%s' % (profile.user.username,)},
                               context_instance=RequestContext(request))
-                              
