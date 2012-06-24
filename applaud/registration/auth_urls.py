@@ -39,6 +39,10 @@ urlpatterns = patterns('',
                        url(r'^banana/$',
                            csrf_exempt(views.login),
                            name='banana_login'),
+                       # Where to redirect to after the user is logged in
+                       url(r'^profile/$',
+                           views.profile,
+                           name="auth_profile"),
                        # Login URL for mobile devices
                        url(r'^mobilelogin/$',
                            csrf_exempt(views.mobile_login)),

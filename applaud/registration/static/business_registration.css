@@ -1,3 +1,17 @@
+#registrationform	{ width:800px;
+			  background-color:#99CCFF;
+			  padding:10px; }
+
+#registrationform div	{ margin:10px; }
+
+#registrationform label	{ font-weight:bold; }
+
+#user_info		{ float:left;
+			  width:300px; }
+
+#business_info		{ width:300px;
+			  overflow:hidden; }
+
 #business_search	{ width:400px;
 			  background-color:rgb(100, 110, 255);
 			  color:rgb(255,255,255);

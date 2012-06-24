@@ -1,3 +1,5 @@
+
+
 from django.contrib.auth.models import User
 from django.db import models
 import json
@@ -179,23 +181,23 @@ class QuestionResponse(models.Model):
 class BusinessProfile(models.Model):
     # N.B. The business name is stored as 'username' in the corresponding
     # User object.
-    
+
+    business_name = models.CharField(max_length=500)
     latitude = models.FloatField()
     longitude = models.FloatField()
     phone = models.CharField(max_length=14,blank=True,null=True)
     user = models.OneToOneField(User)
     address = models.CharField(max_length=500)
+    first_time = models.BooleanField(default=1)
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
     # After that, the ID of BusinessProfile is used to uniquely identify a business.
     # Except when signing employees up
     goog_id = models.CharField(max_length=200)
-    address = models.CharField(max_length=500)
-    first_time = models.BooleanField(default=1)
 
     def __unicode__(self):
-        return "%s (%s)"%(self.user.username,self.phone)
+        return "%s (%s)"%(self.user.username,self.address)
 
 class EmployeeProfile(models.Model):
     '''Models an employee.
@@ -219,3 +221,4 @@ class EmployeeProfile(models.Model):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
+ 

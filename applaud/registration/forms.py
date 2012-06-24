@@ -130,7 +130,7 @@ class BusinessRegistrationForm(RegistrationForm):
     longitude = forms.FloatField(widget=forms.HiddenInput)
     address = forms.CharField(max_length=500, widget=forms.HiddenInput)
 
-    username = forms.CharField(max_length=100,label="Business Name")
+    business_name = forms.CharField(max_length=500, label="Business Name")
 
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)

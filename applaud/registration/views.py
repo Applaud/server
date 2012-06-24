@@ -204,23 +204,11 @@ def register(request, backend, success_url=None, form_class=None,
 
                 # We are registering a business
                 if extra_context['profile_type']=='business':
-                    # Find businesses with given address
-                    # formatted_address = request.POST['address'].replace(" ","+")
-                    # from_goog = urllib2.urlopen( % formatted_address)
-                    # from_goog = json.loads( from_goog )
-                    
-                    # business_results = []
-                    # for result in from_goog.results:
-                    #     business_results.append( {'address':result.formatted_address,
-                    #                               'latitude':result.geometry.location.lat,
-                    #                               'longitude':result.geometry.location.lng} )
-                        
-                    
-                    
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
                                                              longitude=request.POST['longitude'],
                                                              address=request.POST['address'],
                                                              phone=request.POST['phone'],
+                                                             business_name=request.POST['business_name'],
                                                              user=new_user,
                                                              first_time=True)
                     profile.save()
@@ -297,7 +285,7 @@ def login(request):
     if request.method == 'POST':
         user = auth.authenticate( username=request.POST['username'],
                                   password=request.POST['password'] )
-        if user:
+        if user and user.is_active:
             auth.login( request, user )
         else:
             return HttpResponseRedirect('/accounts/login/')
@@ -328,3 +316,34 @@ def login(request):
             return HttpResponseRedirect('/%s/'%prefix)
     else:
         return render_to_response(template_name, locals())
+
+
+# Find what page to redirect to
+def profile(request):
+    if not user.is_authenticated():
+        return HttpResponseRedirect('/accounts/login')
+    
+    profile = ""
+    prefix = ""
+    # Are we a business?
+    try:
+        profile = request.user.businessprofile
+        prefix = "business"
+    except applaud_models.BusinessProfile.DoesNotExist:
+        # Are we an employee?
+        try:
+            profile = request.user.employeeprofile
+            prefix = "employee"
+        except applaud_models.EmployeeProfile.DoesNotExist:
+            return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
+        #TODO: implement an end-user profile and check for it here.
+        # Redirect appropriately.
+
+    if profile.first_time:
+        profile.first_time = False
+        profile.save()
+        return HttpResponseRedirect("/%s/welcome/"%prefix)
+    else:
+        # /x/ should be the homepage for an entity (business, employee, etc.)
+        # of type x
+        return HttpResponseRedirect('/%s/'%prefix)
