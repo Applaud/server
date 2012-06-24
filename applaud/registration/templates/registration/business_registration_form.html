@@ -2,22 +2,22 @@
 {% load i18n %}
 
 {% block scripts %}
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E&sensor=false"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}address_search.js"></script>
 {% endblock %}
 
-{% block.super links %}
+{% block links %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_registration.css" />
 {% endblock %}
 
 {% block title %}Register{% endblock %}
 
-{% super.block content %}
+{% block content %}
+{{ block.super }}
 <form method="post" action=".">
   {% csrf_token %}
   {{ form.as_p }}
-  <input type="hidden" name="latitude" id="latitude" />
-  <input type="hidden" name="latitude" id="latitude" />
-  <input type="hidden" name="address" id="address" />
   <input type="submit" value="{% trans 'Submit' %}" />
 </form>
 

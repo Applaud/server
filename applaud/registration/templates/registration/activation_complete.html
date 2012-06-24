@@ -1,6 +1,7 @@
 {% extends "base_registration.html" %}
 {% load i18n %}
 
-{% super.block content %}
+{% block content %}
+{{ block.super }}
 <p>{% trans "Your account has now been activated." %}</p>
 {% endblock %}

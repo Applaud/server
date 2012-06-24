@@ -128,6 +128,7 @@ class BusinessRegistrationForm(RegistrationForm):
                              error_messages={'invalid':"Please enter a valid phone number, including the area code."})
     latitude = forms.FloatField(widget=forms.HiddenInput)
     longitude = forms.FloatField(widget=forms.HiddenInput)
+    address = forms.CharField(max_length=500, widget=forms.HiddenInput)
 
     username = forms.CharField(max_length=100,label="Business Name")
 

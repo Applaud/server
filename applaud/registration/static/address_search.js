@@ -26,7 +26,14 @@ function buildTable ( addresses ) {
 	list_item.attr( {'id':'address_'+a} );
 	list_item.click(function() {
             var which_address = $(this).attr('id').split('_')[1];
-            $('#address_result').text(addresses[which_address].latitude);
+
+            // $('#address_result').text(addresses[which_address].latitude);
+
+	    // Set hidden form fields of 'id_latitude', 'id_longitude', and
+	    // 'id_address'
+	    $('#id_address').val( addresses[which_address].address );
+	    $('#id_latitude').val( addresses[which_address].latitude );
+	    $('#id_longitude').val( addresses[which_address].longitude );
 	});
 	the_list.append( list_item );
     }

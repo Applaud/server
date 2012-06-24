@@ -123,7 +123,7 @@ WSGI_APPLICATION = 'applaud.wsgi.application'
 TEMPLATE_DIRS = (
     #"/srv/applaud/server/applaud/applaud/templates",
     # This is for luke's macbook:
-    CWD+'/templates/',
+    CWD+'/../templates/',
     CWD+'/../applaud/templates',
     CWD+'/../registration/templates/',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
