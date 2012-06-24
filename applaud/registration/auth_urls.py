@@ -35,10 +35,6 @@ urlpatterns = patterns('',
                            csrf_exempt(auth_views.login),
                            {'template_name': 'registration/login.html'},
                            name='auth_login'),
-                       # Where login form is submitted
-                       url(r'^banana/$',
-                           csrf_exempt(views.login),
-                           name='banana_login'),
                        # Where to redirect to after the user is logged in
                        url(r'^profile/$',
                            views.profile,
