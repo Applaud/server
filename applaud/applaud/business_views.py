@@ -48,21 +48,22 @@ def add_employee(request):
         # return HttpResponse(json.dumps({'message':'Employee could not be added. Please check the email again'}),
         #                      context_instance=RequestContext(request))
         return HttpResponse("Something went wrong.")
-        
-def create_employee(emails, biz_name, biz_goog_id):
-        email_template=Template('email_employee.txt')
-        context = {'business':biz_name,
-                   'goog_id':biz_goog_id}
-        message = render_to_string('email_employee.txt',
-                                   context)
-        subject = 'Register at apatapa.com!'
-        from_email='register@apatapa.com'
 
-        try:
-            send_mail(subject, message, from_email, emails)
-            return True
-        except BadHeaderError:
-            return False
+def create_employee(emails, biz_name, biz_goog_id):
+    sys.stderr.write("%s, %s, %s"%(str(emails), biz_name, biz_goog_id))
+    email_template=Template('email_employee.txt')
+    context = {'business':biz_name,
+               'goog_id':biz_goog_id}
+    message = render_to_string('email_employee.txt',
+                               context)
+    subject = 'Register at apatapa.com!'
+    from_email='register@apatapa.com'
+
+    try:
+        send_mail(subject, message, from_email, emails)
+        return True
+    except BadHeaderError:
+        return False
 
 # View function that lists employees for employees.html
 def list_employees(request):
@@ -74,9 +75,11 @@ def list_employees(request):
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
         return render_to_response('employees.html',
-                                  {'list':_list_employees(profile.id)})
+                                  {'list':_list_employees(profile.id)},
+                                  context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect("/accounts/login")
+
 
 # List the employees for a business
 def _list_employees(businessID):
@@ -499,7 +502,7 @@ def business_welcome(request):
 
         success=create_employee(email_list,
                                 request.user.businessprofile.business_name,
-                                request.user.businessprofile.good_id)
+                                request.user.businessprofile.goog_id)
                                 
         if not success:
             return HttpResponse('Invalid header found')
