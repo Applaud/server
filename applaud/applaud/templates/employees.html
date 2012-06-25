@@ -1,15 +1,11 @@
-{% extends "base.html" %}
+{% extends "business.html" %}
 {% block title %}Welcome to Applaud!{% endblock %}
 {% block links %}{% endblock %}
 {% block scripts %}{% endblock %}
 {% block content %}
-
+{{ block.super }}
 <h1>EMPLOYEES</h>
-<form action="/new_employee/" method="post" />
-{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
+
 
 {% if employee|length > 0 %}
 <ul>
@@ -18,7 +14,6 @@
 
 <br />
 
-
 <form action="/delete_employee/" method="get" />
 <input type="hidden" value="{{employee.id}}" name="id" />
 <input type="submit" value="Delete" />
@@ -26,15 +21,23 @@
 
 <br />
 
-
 <form action="/edit_employee/" method="get" />
 <input type="hidden" value="{{employee.id}}" name="id" />
 <input type="submit" value="Edit" />
 </form>
 
-
 {% endfor %}
 </ul>
+
 {% endif %}
+
+<h2>Add Employees</h2>
+<form action="{% url business_new_employee %}" method="post" />
+{% csrf_token %}
+<label for="emails">Employee emails</label>
+<textarea id="id_emails" name="emails"></textarea>
+<input type="submit" value="Submit" />
+</form>
+
 
 {% endblock %}

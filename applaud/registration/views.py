@@ -9,10 +9,12 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
-
+import urllib2
 from registration.backends import get_backend
 import forms
 from applaud import models as applaud_models
+from applaud import settings
+import json
 
 import sys
 
@@ -211,6 +213,28 @@ def register(request, backend, success_url=None, form_class=None,
                                                              business_name=request.POST['business_name'],
                                                              user=new_user,
                                                              first_time=True)
+
+                    # Grab the GoogleID for the business, given lat/lng
+                    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(request.POST['latitude'])+","+str(request.POST['longitude'])+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+settings.GOOGLE_API_KEY)
+                    
+                    to_parse = json.loads(from_goog.read())
+                    goog_id = ""
+                    # Try to find Google Places API id by EXACT lat/lng
+                    # Will this work?
+                    for entry in to_parse["results"]:
+                        lat = entry['geometry']['location']['lat']
+                        lng = entry['geometry']['location']['lng']
+
+                        if lat == request.POST['latitude'] and lng == request.POST['longitude']:
+                            goog_id = entry['id']
+                            sys.stderr.write("FOUND GOOGLE PLACES ID: "+goog_id)
+                            break
+
+                    # What to do if NO google id was found
+                    if goog_id == "":
+                        sys.stderr.write("COULD NOT GET GOOGLE PLACES ID")
+                        
+                    profile.goog_id = goog_id
                     profile.save()
 
                     # Create a generic rating profile
@@ -300,7 +324,7 @@ def profile(request):
             profile = request.user.employeeprofile
             prefix = "employee"
         except applaud_models.EmployeeProfile.DoesNotExist:
-            return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
+            return HttpResponseRedirect("/")
         #TODO: implement an end-user profile and check for it here.
         # Redirect appropriately.
 

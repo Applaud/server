@@ -29,7 +29,7 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
-{{ super.block }}
+{{ block.super }}
 <h1>Employees of {{ business.business_name }}</h1>
 {% for employee in employees %}
 <div class="employee">
@@ -66,4 +66,4 @@ function drawVisualization() {
     {% endfor %}
   </ul>
 </div>
-{% endblock %}
+{% endblock%}

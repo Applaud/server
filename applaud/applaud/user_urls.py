@@ -9,8 +9,8 @@ from registration import views as business_views
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       # url(r'^welcome/', direct_to_template, {'template':'user.html'}),
-                       # url(r'^/', direct_to_template, {'template':'user.html'}),
+                       url(r'^welcome/', direct_to_template, {'template':'user.html'}),
+                       url(r'^/', direct_to_template, {'template':'user.html'}),
                       
 
                        )
