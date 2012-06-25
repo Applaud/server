@@ -103,7 +103,7 @@ def activate(request, backend,
 def register(request, backend, success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='registration/registration_form.html',
-             extra_context=None):
+             extra_context=None, **kwargs):
     """
     Allow a new user to register an account.
 
@@ -164,7 +164,7 @@ def register(request, backend, success_url=None, form_class=None,
         value which can legally be passed to
         ``django.shortcuts.redirect``. If not supplied, this will be
         retrieved from the registration backend.
-    
+        
     ``template_name``
         A custom template to use. If not supplied, this will default
         to ``registration/registration_form.html``.
@@ -189,52 +189,29 @@ def register(request, backend, success_url=None, form_class=None,
     if form_class is None:
         form_class = backend.get_form_class(request)
 
-    sys.stderr.write("got backend in register()")
-
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
 
 
         sys.stderr.write("validating form...")
         if form.is_valid():
-            sys.stderr.write("form validated. is valid.")
             new_user = backend.register(request, **form.cleaned_data)
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21
-            if extra_context and 'profile_type' in extra_context:
+            if 'profile_type' in kwargs:
 
                 # We are registering a business
-                if extra_context['profile_type']=='business':
+                if kwargs['profile_type'] is 'business':
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
                                                              longitude=request.POST['longitude'],
                                                              address=request.POST['address'],
                                                              phone=request.POST['phone'],
                                                              business_name=request.POST['business_name'],
                                                              user=new_user,
+                                                             goog_id=request.POST['goog_id'],
                                                              first_time=True)
 
-                    # Grab the GoogleID for the business, given lat/lng
-                    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(request.POST['latitude'])+","+str(request.POST['longitude'])+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+settings.GOOGLE_API_KEY)
-                    
-                    to_parse = json.loads(from_goog.read())
-                    goog_id = ""
-                    # Try to find Google Places API id by EXACT lat/lng
-                    # Will this work?
-                    for entry in to_parse["results"]:
-                        lat = entry['geometry']['location']['lat']
-                        lng = entry['geometry']['location']['lng']
-
-                        if lat == request.POST['latitude'] and lng == request.POST['longitude']:
-                            goog_id = entry['id']
-                            sys.stderr.write("FOUND GOOGLE PLACES ID: "+goog_id)
-                            break
-
-                    # What to do if NO google id was found
-                    if goog_id == "":
-                        sys.stderr.write("COULD NOT GET GOOGLE PLACES ID")
-                        
-                    profile.goog_id = goog_id
                     profile.save()
 
                     # Create a generic rating profile
@@ -244,10 +221,10 @@ def register(request, backend, success_url=None, form_class=None,
                     rp.save()
 
                 #We know that we're registering an employee
-                elif extra_context['profile_type']=='employee':
+                elif kwargs['profile_type'] is 'employee':
 
                     #First, determine which business this employee works for
-                    business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
+                    business_profile = applaud_models.BusinessProfile.objects.get(goog_id=kwargs['goog_id'])
                     rp = business_profile.ratingprofile_set.get(id=1)
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
@@ -264,12 +241,12 @@ def register(request, backend, success_url=None, form_class=None,
     else:
         form = form_class()
     
-    # if extra_context is None:
-    #     extra_context = {}
-    # context = RequestContext(request)
-    # for key, value in extra_context.items():
+    if extra_context is None:
+        extra_context = {}
+    context = RequestContext(request)
+    for key, value in extra_context.items():
 
-    #     context[key] = callable(value) and value() or value
+        context[key] = callable(value) and value() or value
 
     return render_to_response(template_name,
                               {'form': form},
@@ -280,18 +257,14 @@ def register_business(request, backend, success_url=None, form_class=forms.Busin
                       disallowed_url='registration_disallowed',
                       template_name='registration/business_registration_form.html',
                       extra_context=None):
-    sys.stderr.write("Made it to register_business")
-    d = {"profile_type":"business"}
-    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='business')
 
 
 def register_employee(request, backend, goog_id, success_url=None, form_class=forms.EmployeeRegistrationForm,
                       disallowed_url='registration_disallowed',
                       template_name='registration/employee_registration_form.html',
                       extra_context=None):
-    sys.stderr.write("Made it to register_employee")
-    d = {"profile_type":"employee", "goog_id":goog_id}
-    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='employee', goog_id=goog_id)
 
 
 def mobile_login(request):

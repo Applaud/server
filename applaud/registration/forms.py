@@ -129,6 +129,7 @@ class BusinessRegistrationForm(RegistrationForm):
     latitude = forms.FloatField(widget=forms.HiddenInput)
     longitude = forms.FloatField(widget=forms.HiddenInput)
     address = forms.CharField(max_length=500, widget=forms.HiddenInput)
+    goog_id = forms.CharField(max_length=1000, widget=forms.HiddenInput)
 
     business_name = forms.CharField(max_length=500, label="Business Name")
 
@@ -136,7 +137,6 @@ class BusinessRegistrationForm(RegistrationForm):
     last_name = forms.CharField(max_length=100)
 
     class Meta:
-        exclude = ('address',)
         model = BusinessProfile
 
 class EmployeeRegistrationForm(RegistrationForm):	
