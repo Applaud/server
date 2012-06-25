@@ -83,7 +83,7 @@
 
 <div id="business_search">
   <p>In order to provide the most accurate location-based services for your customers, please search for your address here and select the location that most applies to you.</p>
-  {% if form.latitude.errors or form.longitude.errors or form.address.errors %}
+  {% if form.latitude.errors or form.longitude.errors or form.address.errors or form.goog_id.errors %}
   <p class="formerror">Please find a valid address for your business.</p>
   {% endif %}
   <div class="searchform_element">
