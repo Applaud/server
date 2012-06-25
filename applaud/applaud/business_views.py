@@ -25,69 +25,6 @@ import csv
 
 # Employee stuff.
 
-
-# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
-@csrf_protect
-def add_employee(request):
-    if request.user.is_authenticated():
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-    if request.method == "POST":
-        # Get emails from POST
-        emails = strip_and_validate_emails(request.POST['emails'])
-        success=create_employee(emails,
-                                request.user.businessprofile.business_name,
-                                request.user.businessprofile.goog_id)
-    if success:
-        # return HttpResponse(json.dumps({'message':'Great Success!'}),
-        #                     context_instance=RequestContext(request))
-        return HttpResponse("All went well!")
-    else:
-        # return HttpResponse(json.dumps({'message':'Employee could not be added. Please check the email again'}),
-        #                      context_instance=RequestContext(request))
-        return HttpResponse("Something went wrong.")
-
-def create_employee(emails, biz_name, biz_goog_id):
-    sys.stderr.write("%s, %s, %s"%(str(emails), biz_name, biz_goog_id))
-    email_template=Template('email_employee.txt')
-    context = {'business':biz_name,
-               'goog_id':biz_goog_id}
-    message = render_to_string('email_employee.txt',
-                               context)
-    subject = 'Register at apatapa.com!'
-    from_email='register@apatapa.com'
-
-    try:
-        send_mail(subject, message, from_email, emails)
-        return True
-    except BadHeaderError:
-        return False
-
-# View function that lists employees for employees.html
-def list_employees(request):
-    if request.user.is_authenticated():
-        profile=""
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-        return render_to_response('employees.html',
-                                  {'list':_list_employees(profile.id)},
-                                  context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect("/accounts/login")
-
-
-# List the employees for a business
-def _list_employees(businessID):
-    business_profile = BusinessProfile.objects.get(id=businessID)
-    employee_list = EmployeeProfile.objects.filter(business=business_profile)
-
-    return employee_list
-
 @csrf_protect
 def edit_employee(request):
     if request.user.is_authenticated():
@@ -106,8 +43,7 @@ def edit_employee(request):
 	d = {'first_name':request.POST['first_name'],
 	     'last_name':request.POST['last_name'],
 	     'bio':request.POST['bio']}
-
-        # Exchanges information (employee <--> POST data)
+	
 	n.change_parameters(d)
 	n = n.save()
 
@@ -314,134 +250,6 @@ def create_rating_profile(request):
 	
         return HttpResponseRedirect('/ratingprofiles')
 
-# Creating/editing newsfeed, looking at the newsfeed.
-@csrf_protect
-def newsfeed_create(request):
-    #What happens if an employee or end-user visits this page?
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    return HttpResponseRedirect('/fail/')
-
-	username = request.user.username
-
-    else:
-        return HttpResponseRedirect('/accounts/business/')
-
-    if request.method == 'POST':
-	n = forms.NewsFeedItemForm(request.POST)
-	newsitem = n.save(commit=False)
-	newsitem.date = datetime.now()
-	newsitem.date_edited = datetime.now()
-        newsitem.business = profile
-	newsitem.save()
-    
-    f = forms.NewsFeedItemForm()
-    newsfeed = profile.newsfeeditem_set.all()
-	
-    return render_to_response('basic_newsfeed.html',
-				  {'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
-
-@csrf_protect
-def nfdata(request):
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
-    if request.user.is_authenticated():
-        business_id = json.load(request)['business_id']
-        business = models.BusinessProfile(id=business_id)
-        nfitems = business.newsfeeditem_set.all()
-        nfitem_list = []
-        for nfitem in nfitems :
-            nfitem_list.append({'title':nfitem.title,
-                                'subtitle':nfitem.subtitle,
-                                'body':nfitem.body,
-                                'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
-
-        ret = { 'newsfeed_items':nfitem_list }
-
-        return HttpResponse(json.dumps(ret))
-    
-    return HttpResponseForbidden("end-user not authenticated")
-
-@csrf_protect
-def edit_newsfeed(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/fail/")
-
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/")
-
-    if request.method == 'POST':	
-	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-	d = {'title':request.POST['title'],
-	     'subtitle':request.POST['subtitle'],
-	     'body':request.POST['body'],
-             'date_edited':datetime.now()}
-	
-	n.change_parameters(d)
-	n = n.save()
-
-	f = forms.NewsFeedItemForm()
-	newsfeed = profile.newsfeeditem_set.all()
-	return render_to_response('basic_newsfeed.html',
-				  {'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
-
-    else:
-	try:                        
-	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	except:
-	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
-
-                #this might be a tad sloppy
-	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	
-	f = forms.NewsFeedItemForm(initial=d)
-       	
-	return render_to_response('edit_newsfeed.html',
-				  {'form':f, 'id':request.GET['id']},
-				  context_instance=RequestContext(request))
-
-@csrf_protect
-def delete_newsfeed_item(request):
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    pass
-        
-    else:
-        return HttpResponseRedirect('/accounts/login')  
-
-    #Business is authenticated
-
-    #Request is POST - Business has selected and confirmed news feed item deletion
-    if request.method == 'POST':
-	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-	n.delete()
-	
-        f = forms.NewsFeedItemForm()
-        newsfeed = profile.newsfeeditem_set.all()
-	
-        return render_to_response('basic_newsfeed.html',
-				  {'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
-
-    #Request is GET - Send to confirmation page
-    else:
-	n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	return render_to_response('delete_confirmation.html',
-				  {'item':n, 'id':request.GET['id']},
-				  context_instance=RequestContext(request))
         
 # A function to recieve a comma-separated email list, strip them
 # and check them for validity
@@ -500,12 +308,20 @@ def business_welcome(request):
             email_list.extend(emp_list_final)
 
 
-        success=create_employee(email_list,
-                                request.user.businessprofile.business_name,
-                                request.user.businessprofile.goog_id)
-                                
-        if not success:
+        # Render the contents of the email
+        context = {'business':request.user.username,
+                   'goog_id':request.user.businessprofile.goog_id}
+        message = render_to_string('email_employee.txt',
+                                   context)
+
+        subject = 'Register at apatapa.com!'
+        from_email='register@apatapa.com'
+
+        try:
+            send_mail(subject, message, from_email, email_list)
+        except BadHeaderError:
             return HttpResponse('Invalid header found')
+
         return HttpResponseRedirect('/business/')
     
 def business_home(request):
@@ -564,4 +380,139 @@ def analytics(request):
                                'survey': survey_dict,
                                'feedback': feedback,
                                'business': profile.user.businessprofile},
+                             context_instance=RequestContext(request))
+
+
+################################################
+# Everything newsfeed related for the business #
+################################################
+@csrf_protect
+def manage_newsfeed(request):
+    #This view will check allow a business to create, edit, and delete items from their newsfeed
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    # Authernticated but not a business
+            return HttpResponseRedirect('/accounts/login')
+        
+    else:
+        return HttpResponseRedirect('/accounts/login')  
+
+    newsfeed = profile.newsfeeditem_set.all()
+    # Business is authenticated
+    return render_to_response('manage_newsfeed.html',
+                              {'business':profile,
+                               'list':newsfeed},
                               context_instance=RequestContext(request))
+
+# Creating/editing newsfeed, looking at the newsfeed.
+@csrf_protect
+def newsfeed_create(request):
+    #What happens if an employee or end-user visits this page?
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    return HttpResponseRedirect('/fail/')
+
+	username = request.user.username
+
+    else:
+        return HttpResponseRedirect('/accounts/business/')
+
+    if request.method == 'POST':
+	n = forms.NewsFeedItemForm(request.POST)
+	newsitem = n.save(commit=False)
+	newsitem.date = datetime.now()
+	newsitem.date_edited = datetime.now()
+        newsitem.business = profile
+	newsitem.save()
+        
+        return HttpResponseRedirect('/business/business_manage_newsfeed/')
+    
+    f = forms.NewsFeedItemForm()
+    	
+    return render_to_response('create_newsfeed.html',
+				  {'form':f},
+				  context_instance=RequestContext(request))
+
+
+@csrf_protect
+def edit_newsfeed(request):
+    if request.user.is_authenticated():
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/fail/")
+
+        username=request.user.username
+    else:
+        return HttpResponseRedirect("/")
+
+    if request.method == 'POST':	
+	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+	d = {'title':request.POST['title'],
+	     'subtitle':request.POST['subtitle'],
+	     'body':request.POST['body'],
+             'date_edited':datetime.now()}
+	
+	n.change_parameters(d)
+	n = n.save()
+
+	f = forms.NewsFeedItemForm()
+	newsfeed = profile.newsfeeditem_set.all()
+	return render_to_response('manage_newsfeed.html',
+				  {'business':profile, 'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
+
+    else:
+	try:                        
+	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+	except:
+	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
+
+                #this might be a tad sloppy
+	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
+	
+	f = forms.NewsFeedItemForm(initial=d)
+       	
+	return render_to_response('edit_newsfeed.html',
+				  {'form':f, 'id':request.GET['id']},
+				  context_instance=RequestContext(request))
+
+@csrf_protect
+def delete_newsfeed_item(request):
+    if request.user.is_authenticated():
+	# Are we a business?
+	try:
+	    profile = request.user.businessprofile
+	except BusinessProfile.DoesNotExist:
+	    pass
+        
+    else:
+        return HttpResponseRedirect('/accounts/login')  
+
+    #Business is authenticated
+
+    #Request is POST - Business has selected and confirmed news feed item deletion
+    if request.method == 'POST':
+	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
+	n.delete()
+	
+        f = forms.NewsFeedItemForm()
+        newsfeed = profile.newsfeeditem_set.all()
+	
+        return render_to_response('manage_newsfeed.html',
+				  {'form':f, 'list':newsfeed},
+				  context_instance=RequestContext(request))
+
+    #Request is GET - Send to confirmation page
+    else:
+	n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
+	return render_to_response('delete_newsfeed.html',
+				  {'item':n, 'id':request.GET['id']},
+				  context_instance=RequestContext(request))

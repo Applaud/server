@@ -179,3 +179,25 @@ def general_feedback(request):
 # Getting the CSRF token for mobile devices
 def get_csrf(request):
     return HttpResponse(get_token(request))
+
+
+@csrf_protect
+def nfdata(request):
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    if request.user.is_authenticated():
+        business_id = json.load(request)['business_id']
+        business = models.BusinessProfile(id=business_id)
+        nfitems = business.newsfeeditem_set.all()
+        nfitem_list = []
+        for nfitem in nfitems :
+            nfitem_list.append({'title':nfitem.title,
+                                'subtitle':nfitem.subtitle,
+                                'body':nfitem.body,
+                                'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
+
+        ret = { 'newsfeed_items':nfitem_list }
+
+        return HttpResponse(json.dumps(ret))
+    
+    return HttpResponseForbidden("end-user not authenticated")

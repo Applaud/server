@@ -18,11 +18,7 @@ urlpatterns = patterns('',
                            views.list_employees,
                            name='business_manage_employees'),
                        
-                       url(r'^business_manage_newsfeed/',
-                           direct_to_template,
-                           {'template':'fail.html'},
-                           name='business_manage_newsfeed'),
-
+                       
                        url(r'^business_manage_survey/',
                            direct_to_template,
                            {'template':'fail.html'},
@@ -31,9 +27,9 @@ urlpatterns = patterns('',
                        
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
-                       url(r'^new_employee/',
-                           views.add_employee,
-                           name="business_new_employee"),
+                       # url(r'^new_employee/',
+                       #     views.add_employee,
+                       #     name="business_new_employee"),
 
                        # TODO: employee stats.
                        # url(r'^employee_stats/', views.employee_stats),
@@ -51,9 +47,9 @@ urlpatterns = patterns('',
 
                        url(r'^create_rating_profile/',views.create_rating_profile),
                           
-                       # Creating/editing newsfeed, looking at the newsfeed
+                       # Everything related to newsfeed
+                       url(r'^business_manage_newsfeed/', views.manage_newsfeed),
                        url(r'^newsfeed_create/',views.newsfeed_create),
-                       url(r'^newsfeed/',views.nfdata),
                        url(r'^edit_newsfeed/', views.edit_newsfeed),
                        url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
                        

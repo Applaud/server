@@ -4,7 +4,7 @@
 
 <h1>EDIT NEWSFEED</h1>
 
-<form action="/edit_newsfeed/" method="post" />
+<form action="/business/edit_newsfeed/" method="post" />
 {% csrf_token %}
 {{ form.as_p }}
 <input type="hidden" name="id" value="{{ id }}" />
