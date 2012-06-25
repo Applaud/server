@@ -25,6 +25,66 @@ import csv
 
 # Employee stuff.
 
+
+# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+@csrf_protect
+def add_employee(request):
+    if request.user.is_authenticated():
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+    if request.method == "POST":
+        # Get emails from POST
+        emails = strip_and_validate_emails(request.POST['emails'])
+        success=create_employee(emails,
+                                request.user.businessprofile.business_name,
+                                request.user.businessprofile.goog_id)
+    if success:
+        # return HttpResponse(json.dumps({'message':'Great Success!'}),
+        #                     context_instance=RequestContext(request))
+        return HttpResponse("All went well!")
+    else:
+        # return HttpResponse(json.dumps({'message':'Employee could not be added. Please check the email again'}),
+        #                      context_instance=RequestContext(request))
+        return HttpResponse("Something went wrong.")
+        
+def create_employee(emails, biz_name, biz_goog_id):
+        email_template=Template('email_employee.txt')
+        context = {'business':biz_name,
+                   'goog_id':biz_goog_id}
+        message = render_to_string('email_employee.txt',
+                                   context)
+        subject = 'Register at apatapa.com!'
+        from_email='register@apatapa.com'
+
+        try:
+            send_mail(subject, message, from_email, emails)
+            return True
+        except BadHeaderError:
+            return False
+
+# View function that lists employees for employees.html
+def list_employees(request):
+    if request.user.is_authenticated():
+        profile=""
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+        return render_to_response('employees.html',
+                                  {'list':_list_employees(profile.id)})
+    else:
+        return HttpResponseRedirect("/accounts/login")
+
+# List the employees for a business
+def _list_employees(businessID):
+    business_profile = BusinessProfile.objects.get(id=businessID)
+    employee_list = EmployeeProfile.objects.filter(business=business_profile)
+
+    return employee_list
+
 @csrf_protect
 def edit_employee(request):
     if request.user.is_authenticated():
@@ -43,7 +103,8 @@ def edit_employee(request):
 	d = {'first_name':request.POST['first_name'],
 	     'last_name':request.POST['last_name'],
 	     'bio':request.POST['bio']}
-	
+
+        # Exchanges information (employee <--> POST data)
 	n.change_parameters(d)
 	n = n.save()
 
@@ -436,20 +497,12 @@ def business_welcome(request):
             email_list.extend(emp_list_final)
 
 
-        # Render the contents of the email
-        context = {'business':request.user.username,
-                   'goog_id':request.user.businessprofile.goog_id}
-        message = render_to_string('email_employee.txt',
-                                   context)
-
-        subject = 'Register at apatapa.com!'
-        from_email='register@apatapa.com'
-
-        try:
-            send_mail(subject, message, from_email, email_list)
-        except BadHeaderError:
+        success=create_employee(email_list,
+                                request.user.businessprofile.business_name,
+                                request.user.businessprofile.good_id)
+                                
+        if not success:
             return HttpResponse('Invalid header found')
-
         return HttpResponseRedirect('/business/')
     
 def business_home(request):
