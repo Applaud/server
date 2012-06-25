@@ -12,11 +12,11 @@ urlpatterns = patterns('',
                        url(r'^welcome/', views.business_welcome),
                        
                        # Employee stuff
-                       url(r'^business_manage_employees/',
-                           # direct_to_template,
-                           # {'template':'manage_employees.html'},
-                           views.list_employees,
-                           name='business_manage_employees'),
+                       # url(r'^business_manage_employees/',
+                       #     # direct_to_template,
+                       #     # {'template':'manage_employees.html'},
+                       #     views.list_employees,
+                       #     name='business_manage_employees'),
                        
                        
                        url(r'^business_manage_survey/',
@@ -48,7 +48,9 @@ urlpatterns = patterns('',
                        url(r'^create_rating_profile/',views.create_rating_profile),
                           
                        # Everything related to newsfeed
-                       url(r'^business_manage_newsfeed/', views.manage_newsfeed),
+                       url(r'^business_manage_newsfeed/',
+                           views.manage_newsfeed,
+                           name="business_manage_newsfeed"),
                        url(r'^newsfeed_create/',views.newsfeed_create),
                        url(r'^edit_newsfeed/', views.edit_newsfeed),
                        url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
