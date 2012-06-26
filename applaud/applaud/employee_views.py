@@ -22,7 +22,6 @@ def employee_stats(request):
 	    profile = employee.employeeprofile
 	except EmployeeProfile.DoesNotExist:
 	    return HttpResponseNotFound("Could not find the requested page.")
-        
         rating_profile = profile.rating_profile
         if not rating_profile:
             # Employer hasn't created a ratingprofile
@@ -66,8 +65,11 @@ def employee_stats(request):
 
 @csrf_protect
 def edit_profile(request):
-    if request.user.is_authenticated() and 'employeeprofile' in dir(request.user):
-        profile = request.user.employeeprofile            
+    if request.user.is_authenticated():
+        try:
+            profile = request.user.employeeprofile
+        except:
+            return HttpResponseRedirect('/')
         if request.method == 'POST':
             form = registration_forms.EmployeeProfileForm(request.POST,
                                                           request.FILES,

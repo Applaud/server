@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
+{% endblock %}
+
+{% block title %}Employee{% endblock %}
+
+{% block content %}
+Hello {{ employee.user.first_name }} {{ employee.user.last_name }}!
+
+<!-- relevant functional links for business -->
+<div id="business_links">
+  <ul>
+    <li><a href="{% url employee_profile %}">Edit Your Profile</a></li>
+    <li><a href="{% url employee_stats %}">View Responses</a></li>
+  </ul>
+</div>
+{% endblock %}

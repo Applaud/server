@@ -101,19 +101,3 @@ class SurveyEncoder(json.JSONEncoder):
             return res
         else:
             return json.JSONEncoder.default(self, o)
-
-# An end-user editing username etc. Should later be switched to user_views for better organization. 
-def edit_user_profile(request):
-    if request.user.is_authenticated():
-        if request.method=='POST':
-            u=request.user
-            # if we have separate user profiles set up we can probably use the change paramenter function here.
-            u.first_name=request.POST['first_name']
-            u.last_name=request.POST['last_name']
-            u.save()
-            return HttpResponse("Profile updated successfully!")
-        else:
-            return render_to_response('user.html', 
-                                      context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect("/fail/")
