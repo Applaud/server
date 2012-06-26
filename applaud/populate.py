@@ -57,6 +57,10 @@ emp_user2 = User.objects.create_user('jill', 'jill@gmail.com', 'apatapa')
 emp_user2.first_name = 'jill'
 emp_user2.last_name = 'joan'
 emp_user2.save()
+emp_user3 = User.objects.create_user('jeremy', 'jeremy@aol.com', 'apatapa')
+emp_user3.first_name = 'jeremy'
+emp_user3.last_name = 'jewelthief'
+emp_user3.save()
 emp_enduser = User.objects.create_user('josh', 'josh@gmail.com', 'apatapa')
 emp_enduser.first_name = 'josh'
 emp_enduser.last_name = 'jeff'
@@ -73,6 +77,11 @@ mystical = models.EmployeeProfile(business=business2,
                                   rating_profile=profile2,
                                   bio='bio')
 mystical.save()
+mystical2 = models.EmployeeProfile(business=business,
+                                  user=emp_user3,
+                                  rating_profile=profile1,
+                                  bio='bio')
+mystical2.save()
 luke = models.EmployeeProfile(business=business2,
                               user=emp_enduser,
                               rating_profile=profile3,

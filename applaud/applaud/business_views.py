@@ -173,7 +173,8 @@ def delete_employee(request):
 
     if 'employee_id' in request.POST:
         _delete_employee(request.POST['employee_id'])
-        return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)}),
+        return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)},
+                                       cls=EmployeeEncoder),
                             mimetype='application/json')
     return HttpResponseRedirect("/business/business_manage_employees")
         
