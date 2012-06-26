@@ -1,7 +1,10 @@
 {% extends "business.html" %}
 {% block title %}Welcome to Applaud!{% endblock %}
-{% block links %}{% endblock %}
-{% block scripts %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
+{% endblock %}
+
 {% block content %}
 {{ block.super }}
 <h1>EMPLOYEES</h>
@@ -14,9 +17,9 @@
 
 <br />
 
-<form action="/business/delete_employee" method="get" />
-<input type="hidden" id="id_employee_id" value="{{employee.id}}" name="employee_id" />
-<input type="submit" value="Delete" />
+<form action="/business/delete_employee/" method="post" />
+{% csrf_token %}
+<input type="submit" id="del_emp_{{employee.id}}" class="del_emp_button" value="Delete" />
 </form>
 
 <br />

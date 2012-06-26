@@ -1,16 +1,4 @@
 /**
- * This is executed after the page has fully loaded.
- */
-$(document).ready(function() {
-    // Bind the 'delete' button for employees to an AJAX call
-    $('#id_employee').each().click(function() {
-	$.getJSON('/business/delete_employee',
-		  {'employee_id':$(self).attr('id').val()},
-		  listEmployees);
-    });
-});
-
-/**
  * listEmployees(data)
  *
  * data - JSON data returned by AJAX call for deleting an employee.
@@ -36,3 +24,17 @@ function listEmployees(data) {
 
     $('#employees_listing').append(listing);
 }
+
+/**
+ * This is executed after the page has fully loaded.
+ */
+$(document).ready(function() {
+    // Bind the 'delete' button for employees to an AJAX call
+    $('#id_employee').each().click(function() {
+	$.ajax({ url:'/business/delete_employee',
+		 data: {'employee_id':$(self).attr('id').val()},
+		 success: listEmployees,
+		 error: function() { alert("Something went wrong."); }
+	       });
+    });
+});
