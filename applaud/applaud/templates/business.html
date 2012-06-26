@@ -7,7 +7,7 @@
 {% block title %}Business{% endblock %}
 
 {% block content %}
-Hello {{ business.user.username }}!
+Hello {{ request.user.username }}!
 
 <!-- relevant functional links for business -->
 <div id="business_links">
