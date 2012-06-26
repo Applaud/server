@@ -22,7 +22,6 @@ def employee_stats(request):
 	    profile = employee.employeeprofile
 	except EmployeeProfile.DoesNotExist:
 	    return HttpResponseNotFound("Could not find the requested page.")
-        
         rating_profile = profile.rating_profile
         if not rating_profile:
             # Employer hasn't created a ratingprofile
@@ -66,8 +65,11 @@ def employee_stats(request):
 
 @csrf_protect
 def edit_profile(request):
-    if request.user.is_authenticated() and 'employeeprofile' in dir(request.user):
-        profile = request.user.employeeprofile            
+    if request.user.is_authenticated():
+        try:
+            profile = request.user.employeeprofile
+        except:
+            return HttpResponseRedirect('/')
         if request.method == 'POST':
             form = registration_forms.EmployeeProfileForm(request.POST,
                                                           request.FILES,
@@ -106,3 +108,19 @@ def edit_profile(request):
         return render_to_response('employee_profile.html',
                                   {'form':form},
                                   context_instance=RequestContext(request))
+
+def welcome(request):
+    '''Welcomes an employee the first time that they log in
+    '''
+    if request.user.is_authenticated():
+        profile = ""
+        employee = ""
+	try:
+            employee = request.user
+	    profile = employee.employeeprofile
+	except EmployeeProfile.DoesNotExist:
+	    return HttpResponseNotFound("Could not find the requested page.")
+        
+        return render_to_response("employee_welcome.html",
+                                  {"employee":profile})
+                               

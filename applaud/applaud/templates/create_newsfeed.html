@@ -1,0 +1,12 @@
+{% extends "business.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+{% block content %}
+<h1>NEWSFEED</h1>
+
+<form action="/business/newsfeed_create/" method="post" />
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+
+{% endblock %}

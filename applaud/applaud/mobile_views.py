@@ -15,6 +15,7 @@ from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder
+from django.utils.timezone import utc
 
 # IOS notifies us of where device is. We return business locations.
 def whereami(request):
@@ -92,7 +93,7 @@ def evaluate(request):
                 r = Rating(title=key,
                            rating_value=float(value),
                            employee=e,
-                           date_created=datetime.now(),
+                           date_created=datetime.utcnow().replace(tzinfo=utc),
                            user=request.user.userprofile)
                 r.save()
     return HttpResponse('foo')
@@ -127,7 +128,9 @@ def survey_respond(request):
         for answer in json.load(request)['answers']:
             question = models.Question.objects.get(id=answer['id'])
             response = answer['response']
-            qr = models.QuestionResponse(question=question, response=response, date_created=datetime.now(), user=request.user.userprofile)
+            qr = models.QuestionResponse(question=question, response=response,
+                                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                                         user=request.user.userprofile)
             qr.save()
     return HttpResponse('foo')
 
@@ -176,7 +179,7 @@ def general_feedback(request):
         feedback = models.GeneralFeedback(feedback=answer_data['answer'],
                                           business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
                                           user=request.user.userprofile,
-                                          date_created=datetime.now())
+                                          date_created=datetime.utcnow().replace(tzinfo=utc))
         feedback.save()
         return HttpResponse('foo')
     return HttpResponseForbidden("end-user not authenticated")

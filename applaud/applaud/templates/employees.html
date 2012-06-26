@@ -6,30 +6,32 @@
 {{ block.super }}
 <h1>EMPLOYEES</h>
 
-
-{% if employee|length > 0 %}
+<div id="employees_listing">
+{% if employee_list|length > 0 %}
 <ul>
-{% for employee in list %}
+{% for employee in employee_list %}
 <li>{{employee.user.first_name}} {{ employee.user.last_name }}
 
 <br />
 
-<form action="/delete_employee/" method="get" />
-<input type="hidden" value="{{employee.id}}" name="id" />
+<form action="/business/delete_employee" method="get" />
+<input type="hidden" id="id_employee_id" value="{{employee.id}}" name="employee_id" />
 <input type="submit" value="Delete" />
 </form>
 
 <br />
 
-<form action="/edit_employee/" method="get" />
-<input type="hidden" value="{{employee.id}}" name="id" />
-<input type="submit" value="Edit" />
-</form>
+<!-- <form action="/edit_employee/" method="get" /> -->
+<!-- <input type="hidden" value="{{employee.id}}" name="id" /> -->
+<!-- <input type="submit" value="Edit" /> -->
+<!-- </form> -->
 
 {% endfor %}
 </ul>
 
 {% endif %}
+</div>
+
 
 <h2>Add Employees</h2>
 <form action="{% url business_new_employee %}" method="post" />

@@ -27,9 +27,9 @@ urlpatterns = patterns('',
                        
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
-                       # url(r'^new_employee/',
-                       #     views.add_employee,
-                       #     name="business_new_employee"),
+                       url(r'^new_employee/',
+                           views.add_employee,
+                           name="business_new_employee"),
 
                        # TODO: employee stats.
                        # url(r'^employee_stats/', views.employee_stats),
