@@ -12,12 +12,12 @@ urlpatterns = patterns('',
                        url(r'^welcome/', views.business_welcome),
                        
                        # Employee stuff
-                       # url(r'^business_manage_employees/',
-                       #     # direct_to_template,
-                       #     # {'template':'manage_employees.html'},
-                       #     views.list_employees,
-                       #     name='business_manage_employees'),
-                       
+
+                       url(r'^business_manage_employees/',
+                           # direct_to_template,
+                           # {'template':'manage_employees.html'},
+                           views.manage_employees,
+                           name='business_manage_employees'),
                        
                        url(r'^business_manage_survey/',
                            direct_to_template,

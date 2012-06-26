@@ -196,6 +196,10 @@ def register(request, backend, success_url=None, form_class=None,
         sys.stderr.write("validating form...")
         if form.is_valid():
             new_user = backend.register(request, **form.cleaned_data)
+            # django-registration does not take care of names. Do it here.
+            new_user.first_name = request.POST['first_name']
+            new_user.last_name = request.POST['last_name']
+            new_user.save()
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21
@@ -225,7 +229,8 @@ def register(request, backend, success_url=None, form_class=None,
 
                     #First, determine which business this employee works for
                     business_profile = applaud_models.BusinessProfile.objects.get(goog_id=kwargs['goog_id'])
-                    rp = business_profile.ratingprofile_set.get(id=1)
+                    # There is only one rating profile at this point.
+                    rp = business_profile.ratingprofile_set.all()[0]
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
                                                              rating_profile=rp,

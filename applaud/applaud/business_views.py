@@ -25,6 +25,69 @@ import csv
 
 # Employee stuff.
 
+# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+@csrf_protect
+def add_employee(request):
+    if request.user.is_authenticated():
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+    if request.method == "POST":
+        # Get emails from POST
+        emails = strip_and_validate_emails(request.POST['emails'])
+        success=_add_employee(emails,
+                              request.user.businessprofile.business_name,
+                              request.user.businessprofile.goog_id)
+    if success:
+        # return HttpResponse(json.dumps({'message':'Great Success!'}),
+        #                     context_instance=RequestContext(request))
+        return HttpResponse("All went well!")
+    else:
+        # return HttpResponse(json.dumps({'message':'Employee could not be added. Please check the email again'}),
+        #                      context_instance=RequestContext(request))
+        return HttpResponse("Something went wrong.")
+
+def _add_employee(emails, biz_name, biz_goog_id):
+    sys.stderr.write("%s, %s, %s"%(str(emails), biz_name, biz_goog_id))
+    email_template=Template('email_employee.txt')
+    context = {'business':biz_name,
+               'goog_id':biz_goog_id}
+    message = render_to_string('email_employee.txt',
+                               context)
+    subject = 'Register at apatapa.com!'
+    from_email='register@apatapa.com'
+
+    try:
+        send_mail(subject, message, from_email, emails)
+        return True
+    except BadHeaderError:
+        return False
+
+# View function that lists employees for employees.html
+def manage_employees(request):
+    if request.user.is_authenticated():
+        profile=""
+        #Are we a business?
+        try:
+            profile=request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
+        return render_to_response('employees.html',
+                                  {'list':_list_employees(profile.id),
+                                   'rating_profiles':_list_rating_profiles(profile.id)},
+                                  context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect("/accounts/login")
+
+
+# List the employees for a business
+def _list_employees(businessID):
+    business_profile = BusinessProfile.objects.get(id=businessID)
+    employee_list = EmployeeProfile.objects.filter(business=business_profile)
+
+    return employee_list
+
 @csrf_protect
 def edit_employee(request):
     if request.user.is_authenticated():
@@ -113,6 +176,12 @@ def list_rating_profiles(request):
     return render_to_response('employeeprofile_create.html',
 				  {'list':ret},
 				  context_instance=RequestContext(request))
+
+# List the rating profiles for a business
+def _list_rating_profiles(businessID):
+    rps = BusinessProfile.objects.get(id=businessID)
+    return [{'title':rp.title,'dimensions':rp.dimensions} for rp in rps.ratingprofile_set.all()]
+    
 # Survey stuff.
 @csrf_protect
 def create_survey(request):
@@ -307,7 +376,6 @@ def business_welcome(request):
             emp_list_final = strip_and_validate_emails(emp_list)
             email_list.extend(emp_list_final)
 
-
         # Render the contents of the email
         context = {'business':request.user.username,
                    'goog_id':request.user.businessprofile.goog_id}
@@ -320,6 +388,12 @@ def business_welcome(request):
         try:
             send_mail(subject, message, from_email, email_list)
         except BadHeaderError:
+
+        success=_add_employee(email_list,
+                              request.user.businessprofile.business_name,
+                              request.user.businessprofile.goog_id)
+                                
+        if not success:
             return HttpResponse('Invalid header found')
 
         return HttpResponseRedirect('/business/')
@@ -353,7 +427,7 @@ def analytics(request):
 
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():
-            ratings[rating] = sum(ratings[rating])/len(ratings[rating])
+            ratings[rating] = 'N/A' if len(ratings[rating]) == 0 else sum(ratings[rating])/len(ratings[rating])
         print ratings
         employee_dict['ratings'] = ratings
         employees.append(employee_dict)

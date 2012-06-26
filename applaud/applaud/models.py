@@ -77,6 +77,9 @@ class Rating(models.Model):
 	# Employee to which this Rating corresponds
 	employee = models.ForeignKey('EmployeeProfile')
 
+        # End user who provided the response
+        user = models.ForeignKey('UserProfile')
+
         date_created = models.DateTimeField()
 
 	def __unicode__(self):
@@ -124,7 +127,7 @@ class GeneralFeedback(models.Model):
     feedback = models.TextField(max_length=10000)
     business = models.ForeignKey('BusinessProfile')
     date_created=models.DateTimeField()
-
+    user = models.ForeignKey('UserProfile')
 
 #
 # SURVEY MODELS
@@ -169,7 +172,9 @@ class QuestionResponse(models.Model):
 
     # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
-
+    
+    # The end user who provided the response
+    user = models.ForeignKey('UserProfile')
     date_created=models.DateTimeField()
     def __unicode__(self):
         return json.dumps(self.response)
@@ -222,3 +227,17 @@ class EmployeeProfile(models.Model):
             if key != 'id':
                 setattr(self, key, value)
  
+# Model for the end user.
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    date_of_birth = models.DateField()
+    first_time = models.BooleanField(default=1)
+    
+
+    def __unicode__(self):
+        return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
+
+    def change_parameters(self, d):
+        for key, value in d.iteritems():
+            if key != 'id':
+                setattr(self, key, value)

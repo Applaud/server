@@ -10,7 +10,7 @@
 {% if employee|length > 0 %}
 <ul>
 {% for employee in list %}
-<li>{{employee.user.username}}, {{ employee.user.first_name }}
+<li>{{employee.user.first_name}} {{ employee.user.last_name }}
 
 <br />
 
@@ -39,5 +39,19 @@
 <input type="submit" value="Submit" />
 </form>
 
+<hr />
+<h2>Rating Profiles</h2>
+{% if rating_profiles|length > 0 %}
+<ul>
+{% for profile in rating_profiles %}
+<li>{{ profile.title }}
+  <ul>
+    {% for dim in profile.dimensions %}
+    <li>{{ dim }}</li><!-- TODO: +/- buttons here, to remove/insert a dimension -->
+    {% endfor %}
+  </ul>
+</li>
+{% endfor %}
+{% endif %}
 
 {% endblock %}
