@@ -22,6 +22,7 @@ from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder
 import re
 import csv
+from django.utils.timezone import utc
 
 # Employee stuff.
 
@@ -532,8 +533,8 @@ def newsfeed_create(request):
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
 	newsitem = n.save(commit=False)
-	newsitem.date = datetime.now()
-	newsitem.date_edited = datetime.now()
+	newsitem.date = datetime.utcnow().replace(tzinfo=utc)
+	newsitem.date_edited = datetime.utcnow().replace(tzinfo=utc)
         newsitem.business = profile
 	newsitem.save()
         
@@ -564,7 +565,7 @@ def edit_newsfeed(request):
 	d = {'title':request.POST['title'],
 	     'subtitle':request.POST['subtitle'],
 	     'body':request.POST['body'],
-             'date_edited':datetime.now()}
+             'date_edited':datetime.utcnow().replace(tzinfo=utc)}
 	
 	n.change_parameters(d)
 	n = n.save()
