@@ -241,7 +241,7 @@ def register(request, backend, success_url=None, form_class=None,
                 # Registering an end-user
                 elif kwargs['profile_type'] is 'user':
 
-                    profile=aplaud_models.EmployeeProfile(user=new_user,
+                    profile=applaud_models.EmployeeProfile(user=new_user,
                                                           first_name=first_name,
                                                           last_name=last_name,
                                                            first_time=True)
