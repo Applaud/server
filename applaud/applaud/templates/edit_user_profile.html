@@ -1,0 +1,27 @@
+{% extends "user.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+{% block content %}
+
+<h1>EDIT USER PROFILE</h1>
+Hello {{ user.username }}!
+
+<form action="/user/edit_user_profile/" method="post" />
+{% csrf_token %}
+<label for="first_name"> First name </label>
+<input type="text" name="first_name" value="{{ user.first_name }}" />
+
+<br />
+
+<label for="last_name"> Last name </label>
+<input type="text" name="last_name" value="{{ user.last_name }}"/>
+
+<br />
+
+Date of Birth: <input type="date" name="date_of_birth" />
+<input type="hidden" name="id" value="{{ id }}" />
+<input type="submit" value="Submit" />
+</form>
+
+</body>
+</html>
+{% endblock %}

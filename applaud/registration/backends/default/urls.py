@@ -26,6 +26,7 @@ from registration.views import activate
 from registration.views import register
 from registration.views import register_business
 from registration.views import register_employee
+from registration.views import register_user
 
 urlpatterns = patterns('',
                        url(r'^activate/complete/$',
@@ -49,7 +50,7 @@ urlpatterns = patterns('',
                        #     {'backend': 'registration.backends.default.DefaultBackend'},
                        #     name='registration_register'),
                        url(r'^member/$',
-                           register,
+                           register_user,
                            {'backend': 'registration.backends.default.DefaultBackend'},
                            name='registration_register_user'),
                        url(r'^business/$',

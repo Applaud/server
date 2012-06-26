@@ -238,6 +238,14 @@ def register(request, backend, success_url=None, form_class=None,
                     profile.save()
 
 
+                # Registering an end-user
+                elif kwargs['profile_type'] is 'user':
+
+                    profile=aplaud_models.EmployeeProfile(user=new_user,
+                                                          first_name=first_name,
+                                                          last_name=last_name,
+                                                           first_time=True)
+                    profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
                 return redirect(to, *args, **kwargs)
@@ -271,6 +279,11 @@ def register_employee(request, backend, goog_id, success_url=None, form_class=fo
                       extra_context=None):
     return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='employee', goog_id=goog_id)
 
+def register_user(request, backend, success_url=None, form_class=forms.UserRegistrationForm,
+                  disallowed_url='registration_disallowed',
+                  template_name='registration/user_registration_form.html',
+                  extra_context=None):
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='user')
 
 def mobile_login(request):
     if request.method == 'POST':
@@ -302,9 +315,13 @@ def profile(request):
             profile = request.user.employeeprofile
             prefix = "employee"
         except applaud_models.EmployeeProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-        #TODO: implement an end-user profile and check for it here.
-        # Redirect appropriately.
+            # Are we an end-user?
+            try:
+                profile = request.user.userprofile
+            except applaud_models.UserProfile.DoesNotExist:
+                return HttpResponseRedirect("/")
+
+
 
     if profile.first_time:
         profile.first_time = False
