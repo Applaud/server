@@ -63,7 +63,8 @@ class EmployeeEncoder(json.JSONEncoder):
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
-			'dimensions':dimensions}
+			'dimensions':dimensions},
+                   'id':o.id
 		   }
 	    return res
 	else:

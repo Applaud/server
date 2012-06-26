@@ -140,7 +140,7 @@ s2.save()
 # Make Questions.
 q1 = models.Question(label='Yes or no?', type='RG', options=['yes', 'no'], survey=s1)
 q1.save()
-q2 = models.Question(label='Yes or no?', type='CG', options=['yes', 'no'], survey=s1)
+q2 = models.Question(label='African swallow or European swallow?', type='CG', options=['yes', 'no'], survey=s1)
 q2.save()
 q3 = models.Question(label='What is your favorite color?', type='TF', options=['blue', 'yellow', 'aaargh!'], survey=s1)
 q3.save()

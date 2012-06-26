@@ -74,7 +74,7 @@ def manage_employees(request):
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
         return render_to_response('employees.html',
-                                  {'list':_list_employees(profile.id),
+                                  {'employee_list':_list_employees(profile.id),
                                    'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
     else:
@@ -84,7 +84,7 @@ def manage_employees(request):
 # List the employees for a business
 def _list_employees(businessID):
     business_profile = BusinessProfile.objects.get(id=businessID)
-    employee_list = EmployeeProfile.objects.filter(business=business_profile)
+    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
 
     return employee_list
 
@@ -163,7 +163,8 @@ def edit_employee(request):
 def delete_employee(request):
     if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
         _delete_employee(request.GET['employee_id'])
-        return json.dumps(_list_employees(request.user.businessprofile.id))
+        return HttpResponse(json.dumps({'employee_list':_list_employees(request.user.businessprofile.id)}),
+                            mimetype='application/json')
     else:
         return HttpReponseRedirect("/accounts/login")
         
