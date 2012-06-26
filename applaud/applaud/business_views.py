@@ -131,34 +131,53 @@ def edit_employee(request):
 				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
-@csrf_protect
-def delete_employee(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
+# @csrf_protect
+# def delete_employee(request):
+#     if request.user.is_authenticated():
+#         #Are we a business?
+#         try:
+#             profile=request.user.businessprofile
+#         except BusinessProfile.DoesNotExist:
+#             return HttpResponseRedirect("/")
 
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/accounts/login/")
+#         username=request.user.username
+#     else:
+#         return HttpResponseRedirect("/accounts/login/")
 
-    if request.method == 'POST':
-        emp = models.Employee.objects.get(pk=request.POST['id'])
-        emp.delete()
+#     if request.method == 'POST':
+#         emp = models.Employee.objects.get(pk=request.POST['id'])
+#         emp.delete()
         
-        new_form = forms.EmployeeForm()
-        employees = profile.employee_set.all()
+#         new_form = forms.EmployeeForm()
+#         employees = profile.employee_set.all()
 
-        return render_to_response('employees.html',
-                                  {'form': new_form, 'list': employees},
-                                  context_instance=RequestContext(request))
+#         return render_to_response('employees.html',
+#                                   {'form': new_form, 'list': employees},
+#                                   context_instance=RequestContext(request))
+#     else:
+#         emp = models.EmployeeProfile.objects.get(pk=request.GET['id'])
+#         return render_to_response('delete_employee_confirmation.html',
+#                                   {'employee':emp, 'id':request.GET['id']},
+#                                   context_instance=RequestContext(request))
+
+def delete_employee(request):
+    if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+        _delete_employee(request.GET['employee_id'])
+        return json.dumps(_list_employees(request.user.businessprofile.id))
     else:
-        emp = models.EmployeeProfile.objects.get(pk=request.GET['id'])
-        return render_to_response('delete_employee_confirmation.html',
-                                  {'employee':emp, 'id':request.GET['id']},
-                                  context_instance=RequestContext(request))
+        return HttpReponseRedirect("/accounts/login")
+        
+# Fully deletes an employee (including employee) from the database
+def _delete_employee(employeeID):
+    try:
+        profile = EmployeeProfile.objects.get(id=employeeID)
+        user = profile.user
+        profile.delete()
+        user.delete()
+        return True
+    except:
+        pass
+    return False
 
 @csrf_protect
 def list_rating_profiles(request):
