@@ -168,3 +168,10 @@ class EmployeeProfileForm(forms.ModelForm):
     class Meta:
         model = EmployeeProfile
         fields = ('bio','profile_picture',)
+
+
+class UserRegistrationForm(RegistrationForm):
+    
+    # The RegistrationForm (at the top of this page) only has the username, email and password.
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)

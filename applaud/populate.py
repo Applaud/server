@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from datetime import datetime
+from django.utils.timezone import utc
 
 import os
 import sys
@@ -18,7 +19,7 @@ enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'see
 
 # Make userprofile (he's really young, I know...)
 userprofile = models.UserProfile(user=enduser,
-                                 date_of_birth=datetime.now(),
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 userprofile.save()
 
@@ -94,25 +95,25 @@ rating1 = models.Rating(title='Awesomeness',
                         rating_value=5,
                         employee=master,
                         id=1,
-                        date_created=datetime.now(),
+                        date_created=datetime.utcnow().replace(tzinfo=utc),
                         user=userprofile)
 rating1.save()
 rating2 = models.Rating(title='Slickness',
                         rating_value=5,
                         employee=master,
-                        date_created=datetime.now(),
+                        date_created=datetime.utcnow().replace(tzinfo=utc),
                         user=userprofile)
 rating2.save()
 rating3 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
-                        date_created=datetime.now(),
+                        date_created=datetime.utcnow().replace(tzinfo=utc),
                         user=userprofile)
 rating3.save()
 rating4 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
-                        date_created=datetime.now(),
+                        date_created=datetime.utcnow().replace(tzinfo=utc),
                         user=userprofile)
 rating4.save()
 
@@ -120,23 +121,23 @@ rating4.save()
 nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
                            subtitle='proceed to code',
                            body='After an insane amout of driving, we finally got there.',
-                           date=datetime.now(),
-                           date_edited=datetime.now(),
+                           date=datetime.utcnow().replace(tzinfo=utc),
+                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                            business=business)
 
 nfi1.save()
 nfi2 = models.NewsFeedItem(title='Foo!',
                            subtitle='Bar?',
                            body='Baz.',
-                           date=datetime.now(),
-                           date_edited=datetime.now(),
+                           date=datetime.utcnow().replace(tzinfo=utc),
+                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                            business=business)
 nfi2.save()
 nfi3 = models.NewsFeedItem(title='Try our new parrots!',
                            subtitle='Delicious, nutritious.',
                            body='These parrots are selling for a dollar.',
-                           date=datetime.now(),
-                           date_edited=datetime.now(),
+                           date=datetime.utcnow().replace(tzinfo=utc),
+                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                            business=business)
 nfi3.save()
 
@@ -159,22 +160,22 @@ q4.save()
 # Write responses.
 qr1 = models.QuestionResponse(question=q1,
                               response=['yes'],
-                              date_created=datetime.now(),
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr1.save()
 qr2 = models.QuestionResponse(question=q2,
                               response=['no'],
-                              date_created=datetime.now(),
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr2.save()
 qr3 = models.QuestionResponse(question=q3,
                               response=['aaargh!'],
-                              date_created=datetime.now(),
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr3.save()
 qr4 = models.QuestionResponse(question=q4,
                               response=['Life story HERE.'],
-                              date_created=datetime.now(),
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr4.save()
 

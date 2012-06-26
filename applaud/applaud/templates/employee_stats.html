@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "employee.html" %}
 {% block title %}Your Statistics{% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -25,6 +25,7 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
+{{ block.super }}
 
 <div id="employee_img">
   <img src="{{ MEDIA_URL }}{{ image }}" />
