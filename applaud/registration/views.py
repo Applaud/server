@@ -299,6 +299,7 @@ def profile(request):
     '''
 
     if not request.user.is_authenticated():
+        sys.stderr.write("shit! you're not authenticated!")
         return HttpResponseRedirect('/accounts/login')
     
     profile = ""
@@ -316,11 +317,12 @@ def profile(request):
             # Are we an end-user?
             try:
                 profile = request.user.userprofile
+                prefix = "user"
             except applaud_models.UserProfile.DoesNotExist:
                 return HttpResponseRedirect("/")
 
 
-
+    # sys.stderr.write('prefix is: %s' % prefix)
     if profile.first_time:
         profile.first_time = False
         profile.save()
