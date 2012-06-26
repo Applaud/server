@@ -37,9 +37,9 @@ def add_employee(request):
     if request.method == "POST":
         # Get emails from POST
         emails = strip_and_validate_emails(request.POST['emails'])
-        success=create_employee(emails,
-                                request.user.businessprofile.business_name,
-                                request.user.businessprofile.goog_id)
+        success=_add_employee(emails,
+                              request.user.businessprofile.business_name,
+                              request.user.businessprofile.goog_id)
     if success:
         # return HttpResponse(json.dumps({'message':'Great Success!'}),
         #                     context_instance=RequestContext(request))
@@ -49,7 +49,7 @@ def add_employee(request):
         #                      context_instance=RequestContext(request))
         return HttpResponse("Something went wrong.")
 
-def create_employee(emails, biz_name, biz_goog_id):
+def _add_employee(emails, biz_name, biz_goog_id):
     sys.stderr.write("%s, %s, %s"%(str(emails), biz_name, biz_goog_id))
     email_template=Template('email_employee.txt')
     context = {'business':biz_name,
@@ -66,7 +66,7 @@ def create_employee(emails, biz_name, biz_goog_id):
         return False
 
 # View function that lists employees for employees.html
-def list_employees(request):
+def manage_employees(request):
     if request.user.is_authenticated():
         profile=""
         #Are we a business?
@@ -75,7 +75,8 @@ def list_employees(request):
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
         return render_to_response('employees.html',
-                                  {'list':_list_employees(profile.id)},
+                                  {'list':_list_employees(profile.id),
+                                   'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect("/accounts/login")
@@ -177,6 +178,12 @@ def list_rating_profiles(request):
     return render_to_response('employeeprofile_create.html',
 				  {'list':ret},
 				  context_instance=RequestContext(request))
+
+# List the rating profiles for a business
+def _list_rating_profiles(businessID):
+    rps = BusinessProfile.objects.get(id=businessID)
+    return [{'title':rp.title,'dimensions':rp.dimensions} for rp in rps.ratingprofile_set.all()]
+    
 # Survey stuff.
 @csrf_protect
 def create_survey(request):
@@ -500,9 +507,9 @@ def business_welcome(request):
             email_list.extend(emp_list_final)
 
 
-        success=create_employee(email_list,
-                                request.user.businessprofile.business_name,
-                                request.user.businessprofile.goog_id)
+        success=_add_employee(email_list,
+                              request.user.businessprofile.business_name,
+                              request.user.businessprofile.goog_id)
                                 
         if not success:
             return HttpResponse('Invalid header found')
@@ -537,7 +544,7 @@ def analytics(request):
 
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():
-            ratings[rating] = sum(ratings[rating])/len(ratings[rating])
+            ratings[rating] = 'N/A' if len(ratings[rating]) == 0 else sum(ratings[rating])/len(ratings[rating])
         print ratings
         employee_dict['ratings'] = ratings
         employees.append(employee_dict)

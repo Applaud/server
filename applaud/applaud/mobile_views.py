@@ -89,7 +89,11 @@ def evaluate(request):
             except EmployeeProfile.DoesNotExist:
                 pass
             for key, value in rating_data['ratings']:
-                r = Rating(title=key, rating_value=float(value),employee=e,date_created=datetime.now())
+                r = Rating(title=key,
+                           rating_value=float(value),
+                           employee=e,
+                           date_created=datetime.now(),
+                           user=request.user.userprofile)
                 r.save()
     return HttpResponse('foo')
 
@@ -123,7 +127,7 @@ def survey_respond(request):
         for answer in json.load(request)['answers']:
             question = models.Question.objects.get(id=answer['id'])
             response = answer['response']
-            qr = models.QuestionResponse(question=question, response=response, date_created=datetime.now())
+            qr = models.QuestionResponse(question=question, response=response, date_created=datetime.now(), user=request.user.userprofile)
             qr.save()
     return HttpResponse('foo')
 
@@ -171,6 +175,7 @@ def general_feedback(request):
         answer_data = json.load(request)
         feedback = models.GeneralFeedback(feedback=answer_data['answer'],
                                           business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
+                                          user=request.user.userprofile,
                                           date_created=datetime.now())
         feedback.save()
         return HttpResponse('foo')

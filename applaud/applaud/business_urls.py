@@ -15,7 +15,7 @@ urlpatterns = patterns('',
                        url(r'^business_manage_employees/',
                            # direct_to_template,
                            # {'template':'manage_employees.html'},
-                           views.list_employees,
+                           views.manage_employees,
                            name='business_manage_employees'),
                        
                        url(r'^business_manage_newsfeed/',
