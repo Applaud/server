@@ -388,6 +388,7 @@ def business_welcome(request):
         try:
             send_mail(subject, message, from_email, email_list)
         except BadHeaderError:
+            pass
 
         success=_add_employee(email_list,
                               request.user.businessprofile.business_name,

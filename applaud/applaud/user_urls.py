@@ -5,7 +5,7 @@ from django.contrib import admin
 import views
 import settings
 from registration import views as business_views
-import user_views as views
+#import user_views as views
 
 admin.autodiscover()
 

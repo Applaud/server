@@ -106,3 +106,19 @@ def edit_profile(request):
         return render_to_response('employee_profile.html',
                                   {'form':form},
                                   context_instance=RequestContext(request))
+
+def welcome(request):
+    '''Welcomes an employee the first time that they log in
+    '''
+    if request.user.is_authenticated():
+        profile = ""
+        employee = ""
+	try:
+            employee = request.user
+	    profile = employee.employeeprofile
+	except EmployeeProfile.DoesNotExist:
+	    return HttpResponseNotFound("Could not find the requested page.")
+        
+        return render_to_response("employee_welcome.html",
+                                  {"employee":profile})
+                               
