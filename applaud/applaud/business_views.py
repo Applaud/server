@@ -160,13 +160,22 @@ def edit_employee(request):
 #                                   {'employee':emp, 'id':request.GET['id']},
 #                                   context_instance=RequestContext(request))
 
+@csrf_protect
 def delete_employee(request):
-    if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
-        _delete_employee(request.GET['employee_id'])
-        return HttpResponse(json.dumps({'employee_list':_list_employees(request.user.businessprofile.id)}),
-                            mimetype='application/json')
+    if request.user.is_authenticated():
+        profile = ""
+        try:
+            profile = request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect("/")
     else:
         return HttpReponseRedirect("/accounts/login")
+
+    if 'employee_id' in request.POST:
+        _delete_employee(request.POST['employee_id'])
+        return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)}),
+                            mimetype='application/json')
+    return HttpResponseRedirect("/business/business_manage_employees")
         
 # Fully deletes an employee (including employee) from the database
 def _delete_employee(employeeID):
