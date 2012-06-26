@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business.css" />
+{% endblock %}
+
+{% block title %}User{% endblock %}
+
+{% block content %}
+Hello {{ user.username }}!
+
+<!-- functional links for end users -->
+<div id="user_links">
+  <ul>
+    <li><a href="{% url edit_user_profile %}">Edit Your Profile</a></li>
+    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>
+  </ul>
+</div>
+
+<h1> My Previous Responses </h1>
+
+<div class="feedback">
+ <h2>General Feedback</h2>
+ {% for feed in feedback %}
+ <p>{{ feed.business }}
+   {{ feed }}</p>
+ {% endfor %}
+</div>
+
+<div class="rating">
+  <h2>My Ratings</h2>
+  {% for r in rating %}
+  <p>{{ r.employee.business }}
+    {{ r.employee }}
+    {{ r }}</p>
+  {% endfor %}
+</div>
+
+<div class="responses">
+  <h2>Responses to Questions</h2>
+  {% for r in responses %}
+  <p>{{ r.question.survey.business %}
+    {{ r.question }}
+    {{ r }}</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
