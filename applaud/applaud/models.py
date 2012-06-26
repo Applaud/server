@@ -230,7 +230,7 @@ class EmployeeProfile(models.Model):
 # Model for the end user.
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(blank=True, null=True)
     first_time = models.BooleanField(default=1)
     
 

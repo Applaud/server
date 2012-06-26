@@ -241,10 +241,8 @@ def register(request, backend, success_url=None, form_class=None,
                 # Registering an end-user
                 elif kwargs['profile_type'] is 'user':
 
-                    profile=applaud_models.EmployeeProfile(user=new_user,
-                                                          first_name=first_name,
-                                                          last_name=last_name,
-                                                           first_time=True)
+                    profile=applaud_models.UserProfile(user=new_user,
+                                                       first_time=True)
                     profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
