@@ -22,6 +22,7 @@ from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder
 import re
 import csv
+from django.utils.timezone import utc
 
 # Employee stuff.
 
@@ -74,7 +75,7 @@ def manage_employees(request):
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
         return render_to_response('employees.html',
-                                  {'list':_list_employees(profile.id),
+                                  {'employee_list':_list_employees(profile.id),
                                    'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
     else:
@@ -84,7 +85,7 @@ def manage_employees(request):
 # List the employees for a business
 def _list_employees(businessID):
     business_profile = BusinessProfile.objects.get(id=businessID)
-    employee_list = EmployeeProfile.objects.filter(business=business_profile)
+    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
 
     return employee_list
 
@@ -131,34 +132,54 @@ def edit_employee(request):
 				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
-@csrf_protect
-def delete_employee(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
+# @csrf_protect
+# def delete_employee(request):
+#     if request.user.is_authenticated():
+#         #Are we a business?
+#         try:
+#             profile=request.user.businessprofile
+#         except BusinessProfile.DoesNotExist:
+#             return HttpResponseRedirect("/")
 
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/accounts/login/")
+#         username=request.user.username
+#     else:
+#         return HttpResponseRedirect("/accounts/login/")
 
-    if request.method == 'POST':
-        emp = models.Employee.objects.get(pk=request.POST['id'])
-        emp.delete()
+#     if request.method == 'POST':
+#         emp = models.Employee.objects.get(pk=request.POST['id'])
+#         emp.delete()
         
-        new_form = forms.EmployeeForm()
-        employees = profile.employee_set.all()
+#         new_form = forms.EmployeeForm()
+#         employees = profile.employee_set.all()
 
-        return render_to_response('employees.html',
-                                  {'form': new_form, 'list': employees},
-                                  context_instance=RequestContext(request))
+#         return render_to_response('employees.html',
+#                                   {'form': new_form, 'list': employees},
+#                                   context_instance=RequestContext(request))
+#     else:
+#         emp = models.EmployeeProfile.objects.get(pk=request.GET['id'])
+#         return render_to_response('delete_employee_confirmation.html',
+#                                   {'employee':emp, 'id':request.GET['id']},
+#                                   context_instance=RequestContext(request))
+
+def delete_employee(request):
+    if request.user.is_authenticated() and 'businessprofile' in dir(request.user):
+        _delete_employee(request.GET['employee_id'])
+        return HttpResponse(json.dumps({'employee_list':_list_employees(request.user.businessprofile.id)}),
+                            mimetype='application/json')
     else:
-        emp = models.EmployeeProfile.objects.get(pk=request.GET['id'])
-        return render_to_response('delete_employee_confirmation.html',
-                                  {'employee':emp, 'id':request.GET['id']},
-                                  context_instance=RequestContext(request))
+        return HttpReponseRedirect("/accounts/login")
+        
+# Fully deletes an employee (including employee) from the database
+def _delete_employee(employeeID):
+    try:
+        profile = EmployeeProfile.objects.get(id=employeeID)
+        user = profile.user
+        profile.delete()
+        user.delete()
+        return True
+    except:
+        pass
+    return False
 
 @csrf_protect
 def list_rating_profiles(request):
@@ -513,8 +534,8 @@ def newsfeed_create(request):
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
 	newsitem = n.save(commit=False)
-	newsitem.date = datetime.now()
-	newsitem.date_edited = datetime.now()
+	newsitem.date = datetime.utcnow().replace(tzinfo=utc)
+	newsitem.date_edited = datetime.utcnow().replace(tzinfo=utc)
         newsitem.business = profile
 	newsitem.save()
         
@@ -545,7 +566,7 @@ def edit_newsfeed(request):
 	d = {'title':request.POST['title'],
 	     'subtitle':request.POST['subtitle'],
 	     'body':request.POST['body'],
-             'date_edited':datetime.now()}
+             'date_edited':datetime.utcnow().replace(tzinfo=utc)}
 	
 	n.change_parameters(d)
 	n = n.save()
