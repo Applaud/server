@@ -16,6 +16,12 @@ user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
 enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
 
+# Make userprofile (he's really young, I know...)
+userprofile = models.UserProfile(user=enduser,
+                                 date_of_birth=datetime.now(),
+                                 first_time=0)
+userprofile.save()
+
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=12.345, longitude=234.23423, goog_id="677679492a58049a7eae079e0890897eb953d79b")
 business.save()
@@ -75,13 +81,30 @@ luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
-rating1 = models.Rating(title='Awesomeness', rating_value=5, employee=master, id=1, date_created=datetime.now())
+rating1 = models.Rating(title='Awesomeness',
+                        rating_value=5,
+                        employee=master,
+                        id=1,
+                        date_created=datetime.now(),
+                        user=userprofile)
 rating1.save()
-rating2 = models.Rating(title='Slickness', rating_value=5, employee=master, date_created=datetime.now())
+rating2 = models.Rating(title='Slickness',
+                        rating_value=5,
+                        employee=master,
+                        date_created=datetime.now(),
+                        user=userprofile)
 rating2.save()
-rating3 = models.Rating(title='Slickness', rating_value=4, employee=master, date_created=datetime.now())
+rating3 = models.Rating(title='Slickness',
+                        rating_value=4,
+                        employee=master,
+                        date_created=datetime.now(),
+                        user=userprofile)
 rating3.save()
-rating4 = models.Rating(title='Slickness', rating_value=4, employee=master, date_created=datetime.now())
+rating4 = models.Rating(title='Slickness',
+                        rating_value=4,
+                        employee=master,
+                        date_created=datetime.now(),
+                        user=userprofile)
 rating4.save()
 
 # Make a couple of NewsFeedItems.
@@ -125,13 +148,25 @@ q4 = models.Question(label='Tell us your life story', type='TA', survey=s1)
 q4.save()
 
 # Write responses.
-qr1 = models.QuestionResponse(question=q1, response=['yes'], date_created=datetime.now())
+qr1 = models.QuestionResponse(question=q1,
+                              response=['yes'],
+                              date_created=datetime.now(),
+                              user=userprofile)
 qr1.save()
-qr2 = models.QuestionResponse(question=q2, response=['no'], date_created=datetime.now())
+qr2 = models.QuestionResponse(question=q2,
+                              response=['no'],
+                              date_created=datetime.now(),
+                              user=userprofile)
 qr2.save()
-qr3 = models.QuestionResponse(question=q3, response=['aaargh!'], date_created=datetime.now())
+qr3 = models.QuestionResponse(question=q3,
+                              response=['aaargh!'],
+                              date_created=datetime.now(),
+                              user=userprofile)
 qr3.save()
-qr4 = models.QuestionResponse(question=q4, response=['Life story HERE.'], date_created=datetime.now())
+qr4 = models.QuestionResponse(question=q4,
+                              response=['Life story HERE.'],
+                              date_created=datetime.now(),
+                              user=userprofile)
 qr4.save()
 
 
