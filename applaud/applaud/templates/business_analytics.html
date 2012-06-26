@@ -29,7 +29,7 @@ function drawVisualization() {
 </script>
 {% endblock %}
 {% block content %}
-{{ super.block }}
+{{ block.super }}
 <h1>Employees of {{ business.business_name }}</h1>
 {% for employee in employees %}
 <div class="employee">
@@ -45,7 +45,7 @@ function drawVisualization() {
   <h2>{{ survey.title }}</h2>
   <p>{{ survey.description }}</p>
   {% for question in survey.questions %}
-  <h3>{{ question.label }}</h3>
+  <h3>{{ question.label }} {% if not question.active %} (inactive) {% endif %}</h3>
   <ul>
     {% for response in question.responses %}
     <li>
@@ -66,4 +66,4 @@ function drawVisualization() {
     {% endfor %}
   </ul>
 </div>
-{% endblock %}
+{% endblock%}

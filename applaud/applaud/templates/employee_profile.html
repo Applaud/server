@@ -1,9 +1,10 @@
-{% extends "base.html" %}
+{% extends "employee.html" %}
 {% load i18n %}
 
 {% block title %}Set up your Profile{% endblock %}
 
 {% block content %}
+{{ block.super }}
 <form method="post" enctype="multipart/form-data" action="/employee/profile/">
   {% csrf_token %}
   {{ form.as_p }}

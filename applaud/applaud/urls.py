@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import admin
 import views
 import settings
-from registration import views as business_views
+#from registration import views as business_views
 import business_urls, mobile_urls, employee_urls, user_urls
 
 # Import other urlconfs

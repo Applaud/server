@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block scripts %}
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E&sensor=false"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E&sensor=false"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}address_search.js"></script>
 {% endblock %}
 
@@ -75,6 +75,7 @@
     <input type="hidden" id="id_address" name="address" />
     <input type="hidden" id="id_latitude" name="latitude" />
     <input type="hidden" id="id_longitude" name="longitude" />
+    <input type="hidden" id="id_goog_id" name="goog_id" />
 
     <input type="submit" value="{% trans 'Submit' %}" />
   </form>
@@ -82,11 +83,34 @@
 
 <div id="business_search">
   <p>In order to provide the most accurate location-based services for your customers, please search for your address here and select the location that most applies to you.</p>
-  {% if form.latitude.errors or form.longitude.errors or form.address.errors %}
+  {% if form.latitude.errors or form.longitude.errors or form.address.errors or form.goog_id.errors %}
   <p class="formerror">Please find a valid address for your business.</p>
   {% endif %}
-  <label for="business_address">Your Address</label>
-  <input type="text" id="business_address" name="business_address">
+  <div class="searchform_element">
+    <label for="business_addr_street">Street Address</label>
+    <input type="text" id="business_addr_street" name="business_addr_street" >
+  </div>
+
+  <div class="searchform_element">
+    <label for="business_addr_state">City</label>
+    <input type="text" id="business_addr_city" name="business_addr_city">
+  </div>
+
+  <div class="searchform_element">
+    <label for="business_addr_state">State/Province</label>
+    <input type="text" id="business_addr_state" name="business_addr_state">
+  </div>
+
+  <div class="searchform_element">
+    <label for="business_addr_country">Country</label>
+    <input type="text" id="business_addr_country" name="business_addr_country">
+  </div>
+
+  <div class="searchform_element">
+    <label for="business_addr_zip">ZIP</label>
+    <input type="text" id="business_addr_zip" name="business_addr_zip">
+  </div>
+
   <button type="button" id="search">Search</button>
   <div id="business_results">
     <!-- google results go here -->
@@ -94,4 +118,6 @@
 </div>
 
 <p id="address_result"></p>
+
+<div id="googlemap" style="width:0px;height:0px;"></div>
 {% endblock %}

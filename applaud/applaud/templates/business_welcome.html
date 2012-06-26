@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "business.html" %}
 {% block title %}New Business!{% endblock %}
 {% block content %}
 
@@ -23,5 +23,7 @@ If you want, you can also upload a CSV file from your email provider.
 <input type="file" name="csv" >
 <input type="submit" value="Submit" >
 </form>
+
+<a href="/business/">Skip this step</a> (You can come back to this later)
 
 {% endblock %}

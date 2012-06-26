@@ -15,17 +15,21 @@ from applaud import models
 from registration import forms as registration_forms
 
 def index(request):
-    username = ""
+    user_type = ''
     profile = ""
     if request.user.is_authenticated():
 	# Are we a business?
 	try:
 	    profile = request.user.businessprofile
+            user_type = 'business'
 	except BusinessProfile.DoesNotExist:
-	    pass
-	username = request.user.username
-    
-    return render_to_response('index.html',{'username':username,'profile':profile})
+	    try:
+                profile = request.user.employeeprofile
+                user_type = 'employee'
+            except EmployeeProfile.DoesNotExist:
+                user_type = 'user'
+    return render_to_response('index.html', {'user': request.user,
+                                             'user_type': user_type})
 
 # Do we need this?
 @csrf_protect
@@ -53,6 +57,18 @@ def create_employee(request):
                               {'list':employees},
                               context_instance=RequestContext(request))
 
+# Encodes a RatingProfile into JSON format
+class RatingProfileEncoder(json.JSONEncoder):
+    def default(self, o):
+	if isinstance(o, models.RatingProfile):
+	    res = {'title':o.title,
+                   'dimensions':o.dimensions,
+                   'business_id':o.business.id,
+                   'id':o.id }
+	    return res
+	else:
+	    return json.JSONEncoder.default(self, o)
+
 # Encodes an Employee into JSON format
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
@@ -63,7 +79,8 @@ class EmployeeEncoder(json.JSONEncoder):
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
-			'dimensions':dimensions}
+			'dimensions':dimensions},
+                   'id':o.id
 		   }
 	    return res
 	else:
@@ -94,6 +111,7 @@ class SurveyEncoder(json.JSONEncoder):
                 questions.append({'label': q.label,
                                   'type': q.type,
                                   'options': q.options,
+                                  'active': q.active,
                                   'id': q.id})
             res = {'title': o.title,
                    'description': o.description,

@@ -1,40 +1,59 @@
-{% extends "base.html" %}
+{% extends "business.html" %}
 {% block title %}Welcome to Applaud!{% endblock %}
-{% block links %}{% endblock %}
-{% block scripts %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}manage_ratingprofiles.js"></script>
+{% endblock %}
+
 {% block content %}
-
+{{ block.super }}
 <h1>EMPLOYEES</h>
-<form action="/new_employee/" method="post" />
-{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
 
-{% if employee|length > 0 %}
+<div id="employees_listing">
+{% if employee_list|length > 0 %}
 <ul>
-{% for employee in list %}
-<li>{{employee.user.username}}, {{ employee.user.first_name }}
+{% for employee in employee_list %}
+<li>{{employee.user.first_name}} {{ employee.user.last_name }}
 
 <br />
 
-
-<form action="/delete_employee/" method="get" />
-<input type="hidden" value="{{employee.id}}" name="id" />
-<input type="submit" value="Delete" />
+<form action="/business/delete_employee/" method="post" />
+{% csrf_token %}
+<input type="submit" id="del_emp_{{employee.id}}" class="del_emp_button" value="Delete" />
 </form>
 
 <br />
 
-
-<form action="/edit_employee/" method="get" />
-<input type="hidden" value="{{employee.id}}" name="id" />
-<input type="submit" value="Edit" />
-</form>
-
+<!-- <form action="/edit_employee/" method="get" /> -->
+<!-- <input type="hidden" value="{{employee.id}}" name="id" /> -->
+<!-- <input type="submit" value="Edit" /> -->
+<!-- </form> -->
 
 {% endfor %}
 </ul>
+
 {% endif %}
+</div>
+
+
+<h2>Add Employees</h2>
+<form action="{% url business_new_employee %}" method="post" />
+{% csrf_token %}
+<label for="emails">Employee emails</label>
+<textarea id="id_emails" name="emails"></textarea>
+<input type="submit" value="Submit" />
+</form>
+
+<hr />
+<h2>Rating Profiles</h2>
+<div id="profiles_listing">
+</div>
+
+<!-- new rating profile form -->
+<button type="button" id="new_ratingprofile_button">Add Profile</button>
+<div id="new_ratingprofile">
+  
+</div>
 
 {% endblock %}

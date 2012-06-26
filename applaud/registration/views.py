@@ -9,10 +9,12 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
-
+import urllib2
 from registration.backends import get_backend
 import forms
 from applaud import models as applaud_models
+from applaud import settings
+import json
 
 import sys
 
@@ -101,7 +103,7 @@ def activate(request, backend,
 def register(request, backend, success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='registration/registration_form.html',
-             extra_context=None):
+             extra_context=None, **kwargs):
     """
     Allow a new user to register an account.
 
@@ -162,7 +164,7 @@ def register(request, backend, success_url=None, form_class=None,
         value which can legally be passed to
         ``django.shortcuts.redirect``. If not supplied, this will be
         retrieved from the registration backend.
-    
+        
     ``template_name``
         A custom template to use. If not supplied, this will default
         to ``registration/registration_form.html``.
@@ -187,30 +189,33 @@ def register(request, backend, success_url=None, form_class=None,
     if form_class is None:
         form_class = backend.get_form_class(request)
 
-    sys.stderr.write("got backend in register()")
-
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
 
 
         sys.stderr.write("validating form...")
         if form.is_valid():
-            sys.stderr.write("form validated. is valid.")
             new_user = backend.register(request, **form.cleaned_data)
+            # django-registration does not take care of names. Do it here.
+            new_user.first_name = request.POST['first_name']
+            new_user.last_name = request.POST['last_name']
+            new_user.save()
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21
-            if extra_context and 'profile_type' in extra_context:
+            if 'profile_type' in kwargs:
 
                 # We are registering a business
-                if extra_context['profile_type']=='business':
+                if kwargs['profile_type'] is 'business':
                     profile = applaud_models.BusinessProfile(latitude=request.POST['latitude'],
                                                              longitude=request.POST['longitude'],
                                                              address=request.POST['address'],
                                                              phone=request.POST['phone'],
                                                              business_name=request.POST['business_name'],
                                                              user=new_user,
+                                                             goog_id=request.POST['goog_id'],
                                                              first_time=True)
+
                     profile.save()
 
                     # Create a generic rating profile
@@ -220,11 +225,12 @@ def register(request, backend, success_url=None, form_class=None,
                     rp.save()
 
                 #We know that we're registering an employee
-                elif extra_context['profile_type']=='employee':
+                elif kwargs['profile_type'] is 'employee':
 
                     #First, determine which business this employee works for
-                    business_profile = applaud_models.BusinessProfile.objects.get(goog_id=extra_context['goog_id'])
-                    rp = business_profile.ratingprofile_set.get(id=1)
+                    business_profile = applaud_models.BusinessProfile.objects.get(goog_id=kwargs['goog_id'])
+                    # There is only one rating profile at this point.
+                    rp = business_profile.ratingprofile_set.all()[0]
                     profile = applaud_models.EmployeeProfile(business = business_profile,
                                                              user=new_user,
                                                              rating_profile=rp,
@@ -232,6 +238,12 @@ def register(request, backend, success_url=None, form_class=None,
                     profile.save()
 
 
+                # Registering an end-user
+                elif kwargs['profile_type'] is 'user':
+
+                    profile=applaud_models.UserProfile(user=new_user,
+                                                       first_time=True)
+                    profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
                 return redirect(to, *args, **kwargs)
@@ -240,12 +252,12 @@ def register(request, backend, success_url=None, form_class=None,
     else:
         form = form_class()
     
-    # if extra_context is None:
-    #     extra_context = {}
-    # context = RequestContext(request)
-    # for key, value in extra_context.items():
+    if extra_context is None:
+        extra_context = {}
+    context = RequestContext(request)
+    for key, value in extra_context.items():
 
-    #     context[key] = callable(value) and value() or value
+        context[key] = callable(value) and value() or value
 
     return render_to_response(template_name,
                               {'form': form},
@@ -256,19 +268,20 @@ def register_business(request, backend, success_url=None, form_class=forms.Busin
                       disallowed_url='registration_disallowed',
                       template_name='registration/business_registration_form.html',
                       extra_context=None):
-    sys.stderr.write("Made it to register_business")
-    d = {"profile_type":"business"}
-    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='business')
 
 
 def register_employee(request, backend, goog_id, success_url=None, form_class=forms.EmployeeRegistrationForm,
                       disallowed_url='registration_disallowed',
                       template_name='registration/employee_registration_form.html',
                       extra_context=None):
-    sys.stderr.write("Made it to register_employee")
-    d = {"profile_type":"employee", "goog_id":goog_id}
-    return register(request, backend, success_url, form_class, disallowed_url, template_name, d)
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='employee', goog_id=goog_id)
 
+def register_user(request, backend, success_url=None, form_class=forms.UserRegistrationForm,
+                  disallowed_url='registration_disallowed',
+                  template_name='registration/user_registration_form.html',
+                  extra_context=None):
+    return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='user')
 
 def mobile_login(request):
     if request.method == 'POST':
@@ -286,6 +299,7 @@ def profile(request):
     '''
 
     if not request.user.is_authenticated():
+        sys.stderr.write("shit! you're not authenticated!")
         return HttpResponseRedirect('/accounts/login')
     
     profile = ""
@@ -300,10 +314,15 @@ def profile(request):
             profile = request.user.employeeprofile
             prefix = "employee"
         except applaud_models.EmployeeProfile.DoesNotExist:
-            return HttpResponseBadRequest("WHAT DID YOU DOOOO???")
-        #TODO: implement an end-user profile and check for it here.
-        # Redirect appropriately.
+            # Are we an end-user?
+            try:
+                profile = request.user.userprofile
+                prefix = "user"
+            except applaud_models.UserProfile.DoesNotExist:
+                return HttpResponseRedirect("/")
 
+
+    # sys.stderr.write('prefix is: %s' % prefix)
     if profile.first_time:
         profile.first_time = False
         profile.save()

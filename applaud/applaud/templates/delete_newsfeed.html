@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "business.html" %}
 {% block title %}Welcome to Applaud!{% endblock %}
 {% block content %}
 
@@ -7,7 +7,8 @@
 <p>Are you sure you want to delete: <br />
 [{{item.date}}] {{ item.title }}: {{item.subtitle}} -- {{item.body}}
 </p>
-<form action="/delete_newsfeed_item/" method="post" />
+
+<form action="/business/delete_newsfeed_item/" method="post" />
 {% csrf_token %}
 <input type="hidden" value="{{id}}" name="id" />
 <input type="submit" value="Delete" />

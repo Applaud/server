@@ -67,9 +67,10 @@ class Rating(models.Model):
 	# The title of the question or dimension of the rating,
 	# e.g., 'smelliness' or 'How quick was your food?'
 	# If a question, answer should be quantifiable.
-        # TODO: 
-        # This seems a bit sloppy, make a foreign key to RatingProfile?
 	title = models.TextField(max_length=100)
+
+        # The profile that this rating is associated with
+        profile = models.ForeignKey('RatingProfile')
 
 	# Numeric value (response) for the question or dimension
 	rating_value = models.FloatField()
@@ -77,21 +78,40 @@ class Rating(models.Model):
 	# Employee to which this Rating corresponds
 	employee = models.ForeignKey('EmployeeProfile')
 
+        # End user who provided the response
+        user = models.ForeignKey('UserProfile')
+
         date_created = models.DateTimeField()
 
 	def __unicode__(self):
 		return "%s:%s"%(self.title,self.rating_value)
 
 class RatingProfile(models.Model):
-	'''Models what dimensions are relevant to a specific employee.
-	'''
-	title = models.TextField(max_length=100)
-	dimensions = SerializedStringsField()
-        business = models.ForeignKey('BusinessProfile')
-        
-        def __unicode__(self):
-            return self.title
+    '''Models what dimensions are relevant to a specific employee.
+    '''
+    title = models.TextField(max_length=100)
+    dimensions = SerializedStringsField()
+    business = models.ForeignKey('BusinessProfile')
 
+    def __init__(self, *args, **kwargs):
+        super(RatingProfile, self).__init__(*args, **kwargs)
+        self.validate()
+
+    def save(self, *args, **kwargs):
+        # Make sure we still have 'Quality' as a dimension
+        self.validate()
+
+        # No empty titles
+        if self.title != "":
+            super(RatingProfile, self).save(*args, **kwargs)
+
+    def validate(self):
+        if 'Quality' not in self.dimensions:
+            self.dimensions.append('Quality')
+        
+    def __unicode__(self):
+        return self.title
+    
 #
 # NEWSFEED
 #
@@ -124,7 +144,7 @@ class GeneralFeedback(models.Model):
     feedback = models.TextField(max_length=10000)
     business = models.ForeignKey('BusinessProfile')
     date_created=models.DateTimeField()
-
+    user = models.ForeignKey('UserProfile')
 
 #
 # SURVEY MODELS
@@ -155,11 +175,12 @@ class Question(models.Model):
     # Labels for multiple-choice type questions
     options = SerializedStringsField()
 
+    # Whether this question is active or not
+    active = models.BooleanField(default=1)
+
     # The survey to which this question belongs
     survey = models.ForeignKey(Survey)
-
-    # TODO: perhaps have a field for default value?
-
+    
     def __unicode__(self):
         return self.label
 
@@ -169,7 +190,9 @@ class QuestionResponse(models.Model):
 
     # The response. Should be interpreted about whatever question.type is.
     response = SerializedStringsField()
-
+    
+    # The end user who provided the response
+    user = models.ForeignKey('UserProfile')
     date_created=models.DateTimeField()
     def __unicode__(self):
         return json.dumps(self.response)
@@ -222,3 +245,17 @@ class EmployeeProfile(models.Model):
             if key != 'id':
                 setattr(self, key, value)
  
+# Model for the end user.
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    date_of_birth = models.DateField(blank=True, null=True)
+    first_time = models.BooleanField(default=1)
+    
+
+    def __unicode__(self):
+        return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
+
+    def change_parameters(self, d):
+        for key, value in d.iteritems():
+            if key != 'id':
+                setattr(self, key, value)

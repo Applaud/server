@@ -29,4 +29,6 @@ urlpatterns = patterns('',
 
                        # Getting the CSRF token for mobile devices
                        url(r'^csrf/$', views.get_csrf),
+                       url(r'^newsfeed/',views.nfdata),
+
                        )                      

@@ -9,50 +9,91 @@ function initialize() {
     geocoder = new google.maps.Geocoder();
 }
 
+function searchError() {
+    $('#business_results').empty();
+    $('#business_results').append("<p>We could\'t find anything matching your business name and address. Please check your information.");
+}
+
 /**
- * buildTable()
+ * handleResults( results, status )
  *
  * Builds the results table using jQuery. Callback to
  * Google Maps API calls this.
+ * 
+ * results = results of the query to Google Places
+ * status = success/fail of the request
  */
-function buildTable ( addresses ) {
+function handleResults ( results, status ) {
     // Clear the current results
     $('#business_results').empty();
 
-    var the_list = $('<ul></ul>');
-    for ( a in addresses ) {
-	address = addresses[a];
-	var list_item = $('<li>'+address.address+'</li>');
-	list_item.attr( {'id':'address_'+a} );
-	list_item.click(function() {
-            var which_address = $(this).attr('id').split('_')[1];
-            $('#address_result').text(addresses[which_address].latitude);
-	});
-	the_list.append( list_item );
+    if ( status == google.maps.places.PlacesServiceStatus.OK ) {
+	// Clear the current results
+	$('#business_results').empty();
+
+	// Set up list of results
+	var the_list = $('<ul></ul>');
+	for ( a in results ) {
+	    result = results[a];
+
+	    var list_item = $('<li>'+result.name+' ('+result.vicinity+')</li>');
+	    list_item.attr( {'id':'address_'+a} );
+	    list_item.click(function() {
+		var which_result = $(this).attr('id').split('_')[1];
+		$('#id_goog_id').val( results[which_result].id );
+	    });
+	    the_list.append( list_item );
+	}
+	$('#business_results').append( the_list );
+
     }
-    $('#business_results').append( the_list );
+    else {
+	searchError();
+    }
 }
 
 /**
  * codeAddress()
  *
  * Gets the address in the address field, and performs a search on it using the
- * Google Maps API. Calls buildTable when the request is complete.
+ * Google Maps API. Calls handleResults when the request is complete.
  */
 function codeAddress() {
-    var address = $('#business_address').attr('value');
+    var address = $('#business_addr_street').val();
+    address += ' '+$('#business_addr_city').val();
+    address += ' '+$('#business_addr_state').val();
+    address += ' '+$('#business_addr_country').val();
+    address += ' '+$('#business_addr_zip').val();
 
     geocoder.geocode( { 'address': address}, function(results, status) {
 	var business_results = [];
 	if (status == google.maps.GeocoderStatus.OK) {
-            for ( r in results ) {
-		result = results[r];
-		business_results.push( {'address': result.formatted_address,
-					'latitude': result.geometry.location.lat(),
-					'longitude': result.geometry.location.lng()} );
-            }
-            buildTable( business_results );
+	    var lat = results[0].geometry.location.lat();
+	    var lng = results[0].geometry.location.lng();
+	    var address = results[0].formatted_address;
+
+	    // Set address and coordinate hidden fields here
+	    $('#id_address').val( address );
+	    $('#id_latitude').val( lat );
+	    $('#id_longitude').val( lng );
+
+	    var loc = new google.maps.LatLng(lat,lng);
+	    var request = {
+		location: loc,
+		radius: '100',
+		name: $('#id_business_name').val()
+	    };
+
+	    var map = new google.maps.Map(document.getElementById('googlemap'),
+					  { mapTypeId: google.maps.MapTypeId.ROADMAP,
+					    center: loc,
+					    zoom: 15 });
+
+	    var gplaces = new google.maps.places.PlacesService( map );
+
+	    gplaces.search( request, handleResults );
 	} else {
+	    searchError();
             console.log("Could not make request to Maps api: "+status);
 	}
     });

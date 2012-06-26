@@ -7,7 +7,7 @@ Forms and validation code for user registration.
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from applaud.models import EmployeeProfile, BusinessProfile
+from applaud.models import EmployeeProfile, BusinessProfile, UserProfile
 
 import sys
 
@@ -129,6 +129,7 @@ class BusinessRegistrationForm(RegistrationForm):
     latitude = forms.FloatField(widget=forms.HiddenInput)
     longitude = forms.FloatField(widget=forms.HiddenInput)
     address = forms.CharField(max_length=500, widget=forms.HiddenInput)
+    goog_id = forms.CharField(max_length=1000, widget=forms.HiddenInput)
 
     business_name = forms.CharField(max_length=500, label="Business Name")
 
@@ -136,7 +137,6 @@ class BusinessRegistrationForm(RegistrationForm):
     last_name = forms.CharField(max_length=100)
 
     class Meta:
-        exclude = ('address',)
         model = BusinessProfile
 
 class EmployeeRegistrationForm(RegistrationForm):	
@@ -168,3 +168,13 @@ class EmployeeProfileForm(forms.ModelForm):
     class Meta:
         model = EmployeeProfile
         fields = ('bio','profile_picture',)
+
+
+class UserRegistrationForm(RegistrationForm):
+    
+    # The RegistrationForm (at the top of this page) only has the username, email and password.
+    first_name = forms.CharField(max_length=100)
+    last_name = forms.CharField(max_length=100)
+    
+    class Meta:
+        model = UserProfile

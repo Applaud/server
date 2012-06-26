@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
 from django.contrib.auth.models import Group, User
+import settings
 import sys
 import json
 import urllib2
@@ -14,6 +15,7 @@ from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder
+from django.utils.timezone import utc
 
 # IOS notifies us of where device is. We return business locations.
 def whereami(request):
@@ -25,10 +27,7 @@ def whereami(request):
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
 
-    goog_api_key="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
-    radius="100"
-
-    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+radius+"&sensor=true&key="+goog_api_key)
+    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+settings.GOOGLE_PLACES_RADIUS+"&sensor=true&key="+settings.GOOGLE_API_KEY)
 
     to_parse = json.loads(from_goog.read())
 	#return HttpResponse(to_parse)
@@ -91,7 +90,12 @@ def evaluate(request):
             except EmployeeProfile.DoesNotExist:
                 pass
             for key, value in rating_data['ratings']:
-                r = Rating(title=key, rating_value=float(value),employee=e,date_created=datetime.now())
+                r = Rating(title=key,
+                           rating_value=float(value),
+                           employee=e,
+                           profile=e.rating_profile,
+                           date_created=datetime.utcnow().replace(tzinfo=utc),
+                           user=request.user.userprofile)
                 r.save()
     return HttpResponse('foo')
 
@@ -125,7 +129,9 @@ def survey_respond(request):
         for answer in json.load(request)['answers']:
             question = models.Question.objects.get(id=answer['id'])
             response = answer['response']
-            qr = models.QuestionResponse(question=question, response=response, date_created=datetime.now())
+            qr = models.QuestionResponse(question=question, response=response,
+                                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                                         user=request.user.userprofile)
             qr.save()
     return HttpResponse('foo')
 
@@ -173,7 +179,8 @@ def general_feedback(request):
         answer_data = json.load(request)
         feedback = models.GeneralFeedback(feedback=answer_data['answer'],
                                           business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
-                                          date_created=datetime.now())
+                                          user=request.user.userprofile,
+                                          date_created=datetime.utcnow().replace(tzinfo=utc))
         feedback.save()
         return HttpResponse('foo')
     return HttpResponseForbidden("end-user not authenticated")
@@ -181,3 +188,25 @@ def general_feedback(request):
 # Getting the CSRF token for mobile devices
 def get_csrf(request):
     return HttpResponse(get_token(request))
+
+
+@csrf_protect
+def nfdata(request):
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    if request.user.is_authenticated():
+        business_id = json.load(request)['business_id']
+        business = models.BusinessProfile(id=business_id)
+        nfitems = business.newsfeeditem_set.all()
+        nfitem_list = []
+        for nfitem in nfitems :
+            nfitem_list.append({'title':nfitem.title,
+                                'subtitle':nfitem.subtitle,
+                                'body':nfitem.body,
+                                'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
+
+        ret = { 'newsfeed_items':nfitem_list }
+
+        return HttpResponse(json.dumps(ret))
+    
+    return HttpResponseForbidden("end-user not authenticated")
