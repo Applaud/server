@@ -7,10 +7,10 @@
 {% block scripts %}{% endblock %}
 {% block content %}
     <h2>APATAPA</h2>
-    <p>We're hapatappy to havatava you at apatapa!</p>
-    {% if username %}
-    <p>You are currently logged in as <strong>{{ username }}</strong></p>
+    {% if user.is_authenticated %}
+    <p>We're hapatappy to havatava you at apatapa, {{ user.first_name }} {{ user.last_name }}!</p>
     {% else %}
+    <p>Welcome to apatapa!</p>
     <p style="color:rgb(255,0,0); font-weight:bold;">You are not logged in.</p>
     {% endif %}
     <br />

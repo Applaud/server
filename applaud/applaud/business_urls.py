@@ -19,10 +19,8 @@ urlpatterns = patterns('',
                            views.manage_employees,
                            name='business_manage_employees'),
                        
-                       url(r'^business_manage_survey/',
-                           direct_to_template,
-                           {'template':'fail.html'},
-                           name='business_manage_survey'),
+                       url(r'^business_manage_survey/', views.manage_survey,
+                           name="business_manage_survey"),
 
                        
                        url(r'^edit_employee/', views.edit_employee),

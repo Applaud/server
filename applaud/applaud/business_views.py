@@ -296,6 +296,26 @@ def create_survey(request):
         return HttpResponseRedirect('/survey_create')	
 
 @csrf_protect
+# Landing page for editing and creating surveys.
+def manage_survey(request):
+    if request.user.is_authenticated():
+        try:
+            profile = request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return HttpResponseRedirect('/')
+    if request.method == 'GET':
+        # Get the business' survey.
+        survey = profile.survey_set.get(pk=1)
+        return render_to_response('manage_survey.html',
+                                  {'survey': survey,
+                                   'num_questions': len(survey.question_set.all())},
+                                  context_instance=RequestContext(request))
+    if request.method == 'POST':
+        survey = profile.survey_set.get(pk=1)
+        questions = survey.question_set.all()
+        
+
+@csrf_protect
 def get_survey(request):
     '''Gets the survey for a particular business, the ID of
     which is passed in as JSON.
@@ -439,7 +459,7 @@ def business_welcome(request):
                                 
         if not success:
             return HttpResponse('Invalid header found')
-
+        request.user.businessprofile.first_time = False
         return HttpResponseRedirect('/business/')
     
 def business_home(request):
@@ -634,3 +654,4 @@ def delete_newsfeed_item(request):
 	return render_to_response('delete_newsfeed.html',
 				  {'item':n, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
+

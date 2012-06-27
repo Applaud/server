@@ -17,11 +17,10 @@ Hello {{ user.username }}!
 
 <br />
 
-Date of Birth: <input type="date" name="date_of_birth" />
+Date of Birth (MM/DD/YYYY): <input type="text" name="date_of_birth" value="{{ dob }}"/>
 <input type="hidden" name="id" value="{{ id }}" />
 <input type="submit" value="Submit" />
 </form>
-
 </body>
 </html>
 {% endblock %}

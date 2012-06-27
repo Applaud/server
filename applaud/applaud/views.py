@@ -15,17 +15,21 @@ from applaud import models
 from registration import forms as registration_forms
 
 def index(request):
-    username = ""
+    user_type = ''
     profile = ""
     if request.user.is_authenticated():
 	# Are we a business?
 	try:
 	    profile = request.user.businessprofile
+            user_type = 'business'
 	except BusinessProfile.DoesNotExist:
-	    pass
-	username = request.user.username
-    
-    return render_to_response('index.html',{'username':username,'profile':profile})
+	    try:
+                profile = request.user.employeeprofile
+                user_type = 'employee'
+            except EmployeeProfile.DoesNotExist:
+                user_type = 'user'
+    return render_to_response('index.html', {'user': request.user,
+                                             'user_type': user_type})
 
 # Do we need this?
 @csrf_protect

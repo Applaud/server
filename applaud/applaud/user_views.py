@@ -5,7 +5,7 @@ from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
-from datetime import datetime
+from datetime import datetime, date
 from django.contrib.auth.models import Group, User
 import sys
 import json
@@ -13,7 +13,6 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-
 
 # And end-user who wants to edit his/her profile
 def edit_user_profile(request):
@@ -23,13 +22,17 @@ def edit_user_profile(request):
             # if we have separate user profiles set up we can probably use the change paramenter function here.
             u.first_name=request.POST['first_name']
             u.last_name=request.POST['last_name']
+            datestring = request.POST['date_of_birth']
+            u.userprofile.date_of_birth = datetime.strptime(datestring, '%m/%d/%Y').date()
+            sys.stderr.write('date: %s\n\n' % str(u.userprofile.date_of_birth))
             u.save()
-            return render_to_response('user.html',
-                                      context_instance=RequestContext(request))
+            u.userprofile.save()
+            return HttpResponseRedirect('/user/welcome')
         else:
             n = request.user
             f = UserChangeForm()
-            return render_to_response('edit_user_profile.html', 
+            return render_to_response('edit_user_profile.html',
+                                      {'dob': n.userprofile.date_of_birth.strftime('%m/%d/%Y')},
                                       context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect("/fail/")

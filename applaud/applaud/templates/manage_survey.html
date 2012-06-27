@@ -1,0 +1,192 @@
+{% extends "business.html" %}
+{% block title %}Create survey{% endblock %}
+{% block links %}
+<link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block scripts %}
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+<script type="text/javascript">
+  
+   // Keeps track of # of questions
+      var i = {{ num_questions }};
+
+  // Start off with question 0 has 1 option
+  var questionOptions = [1];
+  
+
+  $(document).ready(function() {
+      // Set up buttons
+      $(".question_div").each( function(index, ele){
+	  console.log($(this).children(".question_option").length);
+	  questionOptions[index]=$(this).children(".question_option").length;
+      });
+			      
+      $(".question_div").click(function() {
+	  var qnum = $(this).attr('id').split('_')[1];
+	  console.log(qnum);
+	  addOption(qnum);
+	  
+      });
+
+      
+  $("#addquestion").click(function() {
+  addQuestion();
+  });
+  
+  function addQuestion() {
+      //Objects to instantiate:
+      //1.Question label
+      //2.Question type
+      //3.Option field (e.g. first entry of a radio button)
+      //4.Add option button
+
+      var questionDiv = $("<div></div>");
+      questionDiv.prop({'id':"question_"+i+"_div"});
+      questionDiv.prop({'class':"question"});
+      $("#submit_button").before(questionDiv);
+      
+      var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
+      questionAreaLabel.prop({"for":"question_"+i});
+      
+      var questionArea = $("<textarea></textarea>");
+      questionArea.prop({'name':"question_"+i,
+			 'id':"question_"+i});
+  
+      
+      var questionTypeLabel = $("<label>Question type </label>");
+      questionTypeLabel.prop({"for":"question_"+i+"_type"});
+      
+      var questionType = $("<select></select>");
+      questionType.prop({'name':"question_"+i+"_type",
+      'id':"question_"+i+"_type"});
+      
+      questionType.append("<option value=\"TA\">textarea</option><option value=\"TF\">textfield</option><option value=\"RG\">radio group</option><option value=\"CG\">checkbox group</option>");
+      
+      // Create a new question bucket for storing # of options
+      
+      questionOptions.push(0);
+      
+      var optionDiv = $("<div></div>");
+      optionDiv.prop({'id':"question_"+i+"_options",
+		      'class':"question_option",
+		     });
+      
+      
+      
+      var questionNumber = i;
+      var addOptionButton = $("<button>Add Option</button>");
+      addOptionButton.prop({'type':"button",
+			    'name':"question_"+i+"_optionbutton",
+			    'id':"question_"+i+"_optionbutton"});
+      console.log("question number: "+questionNumber);
+      addOptionButton.click(function() {
+	  console.log("i is: "+i);
+          $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
+      });
+      
+      questionDiv
+	  .append(questionArea)
+	  .append("<br />")
+	  .append(questionAreaLabel)
+	  .append($("<br />"))
+	  .append(questionTypeLabel)
+	  .append(questionType)
+	  .append($("<br />"))
+	  .append(optionDiv)
+	  .append($("<br />"))
+	  .append(addOptionButton);
+      console.log(i);
+      addOption(i);
+      i++;
+  }
+      
+  
+  function addOption(qindex) {
+  var questionOptionsDiv = $("#question_"+qindex+"_options");
+  
+  var optionFieldLabel = $("<label>Option "+(questionOptions[qindex]+1)+"</label>");
+  optionFieldLabel.prop({"for":"question_"+qindex+"_option_"+questionOptions[qindex]});
+
+  var optionField = $("<input type=\"text\" class=\"question_option\" name=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\" id=\"question_"+qindex+"_option_"+questionOptions[qindex]+"\"/><br />");
+      console.log("qindex is :"+qindex);
+  questionOptions[qindex]++;
+  questionOptionsDiv
+  .append(optionFieldLabel)
+  .append(optionField);
+  }
+  });
+</script>
+{% endblock %}
+{% block content %}
+<h1>Create Survey</h1>
+{% if title_err %}
+<h2>{{ title_err }}</h2>
+{% endif %}
+{% if questions_err %}
+<h2>{{ dimensions_err }}</h2>
+{% endif %}
+<form action="/survey_create/" method="post" id="survey_form">
+  {% csrf_token %}
+  
+  Title:
+  <input type="text" name="title" value="{{ survey.title }}"/>
+  <br />
+  {% for question in survey.question_set.all %}
+  <div class="question_div" id="question_{{ forloop.counter0 }}_div">
+  question label:
+  <textarea name="question_{{ forloop.counter0 }}" cols="40" rows="8">{{ question.label }}</textarea>
+  question type:
+  <select name="question_{{ forloop.counter0 }}_type">
+    <option value="TA" {% ifequal question.type "TA" %}selected="selected"{% endifequal %}>textarea</option>
+    <option value="TF" {% ifequal question.type "TF" %}selected="selected"{% endifequal %}>textfield</option>
+    <option value="RG" {% ifequal question.type "RG" %}selected="selected"{% endifequal %}>radio group</option>
+    <option value="CG" {% ifequal question.type "CG" %}selected="selected"{% endifequal %}>checkbox group</option>
+  </select>
+  <div id="question_{{ forloop.counter0 }}_options">
+    {% if question.options %}
+    {% for option in question.options %}
+    Option {{ forloop.counter }}:
+    <input type="text" class="question_option" name="question_{{ forloop.parentloop.counter0 }}_option_{{ forloop.counter0 }}" value="{{ option }}"/><br />
+    {% endfor %}
+    {% else %}
+    Option 1:
+    <input type="text" class="question_option" name="question_{{ forloop.parentloop.counter0 }}_option_0"/><br />
+    {% endif %}
+    <button type="button" name="question_{{ forloop.counter0 }}_optionbutton" id="question_{{ forloop.counter0 }}_optionbutton">Add Option</button><br /><br />
+  </div>
+  </div>
+  {% endfor %}
+  <!-- Question #1: -->
+  <!-- <br /> -->
+  <!-- <textarea name="question_0" cols="40" rows="8"></textarea> -->
+  <!-- <br /> -->
+  <!-- Question type: -->
+  <!-- <select name="question_0_type"> -->
+  <!--   <option value="TA">textarea</option> -->
+  <!--   <option value="TF">textfield</option> -->
+  <!--   <option value="RG">radio group</option> -->
+  <!--   <option value="CG">checkbox group</option> -->
+  <!-- </select> -->
+  <!-- <br /> -->
+  <!-- <div id="question_0_options"> -->
+  <!--   Option 1: -->
+  <!--   <input type="text" name="question_0_option_0"/><br /> -->
+  <!-- </div> -->
+  <!--      <button type="button" name="question_0_optionbutton" id="question_0_optionbutton">Add Option</button>-->
+  <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
+</form>
+<button id="addquestion">add question</button>
+
+
+
+<!-- {% for item in list %} -->
+<!-- <li>{{item.title}} -->
+<!--   <ul> -->
+<!-- 	{% for d in item.dimensions %} -->
+<!-- 	<li>{{ d }} -->
+<!-- 	{% endfor %} -->
+<!--   </ul>  -->
+<!-- {% endfor %} -->
+<!-- </ul> -->
+
+{% endblock %}
