@@ -1,3 +1,12 @@
+// Keeps track of how many dimensions we have when creating
+// a new RatingProfile.
+var dimension_count = 0;
+
+/**
+ * bind_delete_buttons
+ *
+ * Binds a callback to the buttons that remove an entire ratingprofile.
+ */
 function bind_delete_buttons() {
     console.log('binding to buttons');
     $('.del_rp_button').click(
@@ -15,6 +24,12 @@ function bind_delete_buttons() {
 	});
 }
 
+/**
+ * bind_remove_buttons
+ *
+ * Binds a callback to the buttons that remove a single dimension 
+ * from a ratingprofile.
+ */
 function bind_remove_buttons() {
     $('.del_rp_dim_button').click(
 	function ( event ) {
@@ -30,6 +45,11 @@ function bind_remove_buttons() {
 	});
 }
 
+/**
+ * submit_dimension
+ *
+ * Submits information to the server to add a dimension to a ratingprofile.
+ */
 function submit_dimension( event ) {
     event.preventDefault();
     
@@ -43,6 +63,12 @@ function submit_dimension( event ) {
 	   });
 }
 
+/**
+ * bind_insert_buttons
+ *
+ * Binds a callback to the buttons that insert a dimension for a
+ * ratingprofile.
+ */
 function bind_insert_buttons() {
     $('.ins_rp_button').click( function(event) {
 	// Close all other 'insert dimension' forms
@@ -111,12 +137,88 @@ var listProfiles = function(data) {
     bind_remove_buttons();
 }
 
+function handle_insert_dimension() {
+    $('#newprofile_form').append($('<br />'));
+
+    var dimLabel = $('<label>Quality '+(dimension_count+1)+'</label>');
+    dimLabel.attr({'for':'dimension_'+dimension_count});
+    $('#newprofile_form').append(dimLabel);
+
+    var dimText = $('<input />');
+    dimText.attr({'type':'text',
+		  'name':'dimension_'+dimension_count,
+		  'class':'rp_dimension'});
+
+    $('#newprofile_form').append( dimLabel ).append( dimText );
+    dimension_count++;
+}
+
+function handle_remove_dimension() {
+    // dimension_count--;
+}
+
+function bind_newprofile_button() {
+
+    $('#new_ratingprofile_button').click(
+	function( event ) {
+	    // Don't allow more than one 'new ratingprofile' form at a time
+	    if ( $('#new_ratingprofile').children().length > 0 )
+		return;
+
+	    // Create the form for adding a ratingprofile
+	    var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
+	    var submit_button = $('<input type="submit" value="OK" />');
+	    submit_button.click( function( event ) {
+		event.preventDefault();
+		
+		data = {'title':$('#profile_title').val()}
+		// Grab all dimensions
+		$('.rp_dimension').each( function(index, element) {
+		    data['dim'+index] = $(this).val();
+		});
+		data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
+
+		// Make the call to the db
+		$.ajax({ url:'/business/business_new_ratingprofile/',
+			 type: 'POST',
+			 data: data,
+			 success: listProfiles,
+			 error: function() { alert("Something went wrong."); }
+		       });
+		
+		$('#new_ratingprofile').empty();
+	    });
+
+	    // Add insert/delete dimension buttons
+	    var dim_insert_button = $('<button type="button">+</button>');
+	    var dim_remove_button = $('<button type="button">-</button>');
+
+	    // Register click handlers on each of the insert/delete buttons
+	    dim_insert_button.click( function() {
+		handle_insert_dimension();
+	    });
+	    dim_insert_button.click( function() {
+		handle_remove_dimension();
+	    });
+
+	    newprofile_form.append( dim_insert_button );
+	    newprofile_form.append( dim_remove_button );
+	    newprofile_form.append( submit_button );
+
+	    newprofile_form.append( $('<label for="title">Title</label>') );
+	    newprofile_form.append( $('<input type="text" name="title" id="profile_title" />') );
+	    
+	    // Add the form to the ratingprofile div
+	    $('#new_ratingprofile').append( newprofile_form );
+	});
+}
+
 /**
  * This is executed after the page has fully loaded.
  */
 $(document).ready(function() {
-    // Bind the 'delete' buttons for ratingprofiles to an AJAX call
-    bind_delete_buttons();
-    bind_insert_buttons();
-    bind_remove_buttons();
+    bind_delete_buttons();	// Delete an entire profile
+    bind_insert_buttons();	// Insert a dimension
+    bind_remove_buttons();	// Remove a dimension
+    bind_newprofile_button();	// Make a new ratingprofile
 });

@@ -253,13 +253,48 @@ def list_rating_profiles(request):
 	ap['dimensions']=item.dimensions
 	ret.append(ap)
     return render_to_response('employeeprofile_create.html',
-				  {'list':ret},
-				  context_instance=RequestContext(request))
+                              {'list':ret},
+                              context_instance=RequestContext(request))
 
 # List the rating profiles for a business
 def _list_rating_profiles(businessID):
     rps = BusinessProfile.objects.get(id=businessID)
     return list(rps.ratingprofile_set.all())
+
+@csrf_protect
+def new_ratingprofile(request):
+    '''
+    {'title':"thetitle",
+     'dim0':"firstdimensiontext",
+     'dim1':"seconddimensiontext",
+     ...}
+    '''
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect("/acounts/login/")
+
+    profile = ""
+    try:
+        profile = request.user.businessprofile
+    except BusinessProfile.DoesNotExist:
+        return HttpResponseRedirect("/")
+    if requst.method != 'POST':
+        return HttpResponseRedirect("/business/business_manage_employees/")
+
+    sys.stderr.write("Passed all the tests in new_ratingprofile")
+
+    dimensions = []
+    i = 0
+    while 'dim%d'%i in request.POST:
+        dimensions.append( request.POST['dim%d'%i] )
+
+    rp = RatingProfile(title=request.POST['title'],
+                       dimensions=dimensions,
+                       business=profile)
+
+    return HttpResponse(json.dumps({'rating_profiles':
+                                        _list_rating_profiles(profile.id)},
+                                   cls=RatingProfileEncoder),
+                        context_instance=RequestContext(request))
     
 # Survey stuff.
 @csrf_protect
