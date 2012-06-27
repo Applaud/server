@@ -48,28 +48,6 @@
 <hr />
 <h2>Rating Profiles</h2>
 <div id="profiles_listing">
-<ul>
-{% for profile in rating_profiles %}
-<li><form action="{% url business_manage_ratingprofile %}" method="post" />
-{% csrf_token %}
-{{ profile.title }}
-<input type="submit" class="ins_rp_button" id="ins_rp_button_{{profile.id}}" value="Insert" />
-<input type="submit" class="del_rp_button" id="del_rp_button_{{profile.id}}" value="Delete" />
-</form>
-  <ul>
-    {% for dim in profile.dimensions %}
-    <li><form action="{% url business_manage_ratingprofile %}" method="post" />
-      {{ dim }}
-      <input type="hidden" value="{{profile.id}}" />
-      <input type="hidden" value="{{dim}}" />
-      <input type="submit" class="del_rp_dim_button" value="-" />
-      </form>
-</li>
-    {% endfor %}
-  </ul>
-</li>
-{% endfor %}
-</ul>
 </div>
 
 <!-- new rating profile form -->

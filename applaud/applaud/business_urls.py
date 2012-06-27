@@ -30,6 +30,9 @@ urlpatterns = patterns('',
                        url(r'^business_new_ratingprofile',
                            views.new_ratingprofile,
                            name="business_new_ratingprofile"),
+                       url(r'^business_list_ratingprofiles',
+                           views.list_rating_profiles,
+                           name="business_list_ratingprofiles"),
 
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
@@ -37,9 +40,6 @@ urlpatterns = patterns('',
                            views.add_employee,
                            name="business_new_employee"),
 
-                       # TODO: employee stats.
-                       # url(r'^employee_stats/', views.employee_stats),
-                       url(r'^ratingprofiles/',views.list_rating_profiles),                       
                        # Business home
                        url(r'^$',
                            redirect_to,

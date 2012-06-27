@@ -235,26 +235,19 @@ def manage_ratingprofiles(request):
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
 
-
-@csrf_protect
 def list_rating_profiles(request):
     # Make sure we're a business.
-    if request.user.is_authenticated():
-        try:
-            business = request.user.businessprofile
-        except:
-            return render_to_response('fail.html')
-    business = request.user.businessprofile
-    l = list(business.ratingprofile_set.all())
-    ret = []
-    for item in l:
-	ap = {}
-	ap['title']=item.title
-	ap['dimensions']=item.dimensions
-	ret.append(ap)
-    return render_to_response('employeeprofile_create.html',
-                              {'list':ret},
-                              context_instance=RequestContext(request))
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect("/accounts/login/")
+    profile = ""
+    try:
+        profile = request.user.businessprofile
+    except:
+        return HttpResponseRedirect("/")
+
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
+                                   cls=RatingProfileEncoder),
+                        mimetype='application/json')
 
 # List the rating profiles for a business
 def _list_rating_profiles(businessID):
@@ -277,25 +270,28 @@ def new_ratingprofile(request):
         profile = request.user.businessprofile
     except BusinessProfile.DoesNotExist:
         return HttpResponseRedirect("/")
-    if requst.method != 'POST':
+    if request.method != 'POST':
         return HttpResponseRedirect("/business/business_manage_employees/")
-
-    sys.stderr.write("Passed all the tests in new_ratingprofile")
 
     dimensions = []
     i = 0
-    while 'dim%d'%i in request.POST:
+    key = 'dim'+str(i)
+    while key in request.POST:
+        sys.stderr.write("In loop %s"%key)
         dimensions.append( request.POST['dim%d'%i] )
+        i += 1
+        key = 'dim'+str(i)
 
     rp = RatingProfile(title=request.POST['title'],
                        dimensions=dimensions,
                        business=profile)
+    rp.save()
 
     return HttpResponse(json.dumps({'rating_profiles':
                                         _list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
-                        context_instance=RequestContext(request))
-    
+                        mimetype='application/json')
+                        
 # Survey stuff.
 @csrf_protect
 def create_survey(request):

@@ -217,6 +217,13 @@ function bind_newprofile_button() {
  * This is executed after the page has fully loaded.
  */
 $(document).ready(function() {
+    // Get all the rating profiles
+    $.ajax( {
+	url: '/business/business_list_ratingprofiles/',
+	success: listProfiles,
+	error: function() { alert("Something went wrong."); }
+    });
+
     bind_delete_buttons();	// Delete an entire profile
     bind_insert_buttons();	// Insert a dimension
     bind_remove_buttons();	// Remove a dimension
