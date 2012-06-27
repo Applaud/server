@@ -19,7 +19,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder
+from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder
 import re
 import csv
 from django.utils.timezone import utc
@@ -74,6 +74,7 @@ def manage_employees(request):
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
+
         return render_to_response('employees.html',
                                   {'employee_list':_list_employees(profile.id),
                                    'rating_profiles':_list_rating_profiles(profile.id)},
@@ -192,6 +193,50 @@ def _delete_employee(employeeID):
     return False
 
 @csrf_protect
+def manage_ratingprofiles(request):
+    '''
+    {'profile_id':#,
+     'insert':"asdfasdfasdf",
+     'remove':--,
+     'remove_dim':"dimtitle"}
+     '''
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect("/accounts/login/")
+    profile = ""
+    try:
+        profile = request.user.businessprofile
+    except BusinessProfile.DoesNotExist:
+        return HttpResponseRedirect("/")
+
+    if not 'insert' in request.POST and not 'remove' in request.POST and not 'remove_dim' in request.POST:
+        return HttpResponseRedirect("/business/business_manage_employees/")
+    
+    try:
+        rating_profile = RatingProfile.objects.get(id=int(request.POST['profile_id']))
+    except RatingProfile.DoesNotExist:
+        return HttpResponseRedirect("/business/business_manage_employees/")
+
+    if 'insert' in request.POST:
+        rating_profile.dimensions.append(request.POST['insert'])
+        rating_profile.save()
+
+    if 'remove' in request.POST:
+        rating_profile.delete()
+
+    if 'remove_dim' in request.POST:
+        rating_profile.dimensions.remove(request.POST['remove_dim'])
+        rating_profile.save()
+
+    ret = {}
+    ret['rating_profiles'] = []
+    for rp in _list_rating_profiles(profile.id):
+        ret['rating_profiles'].append(rp)
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
+                                   cls=RatingProfileEncoder),
+                        mimetype='application/json')
+
+
+@csrf_protect
 def list_rating_profiles(request):
     # Make sure we're a business.
     if request.user.is_authenticated():
@@ -208,13 +253,48 @@ def list_rating_profiles(request):
 	ap['dimensions']=item.dimensions
 	ret.append(ap)
     return render_to_response('employeeprofile_create.html',
-				  {'list':ret},
-				  context_instance=RequestContext(request))
+                              {'list':ret},
+                              context_instance=RequestContext(request))
 
 # List the rating profiles for a business
 def _list_rating_profiles(businessID):
     rps = BusinessProfile.objects.get(id=businessID)
-    return [{'title':rp.title,'dimensions':rp.dimensions} for rp in rps.ratingprofile_set.all()]
+    return list(rps.ratingprofile_set.all())
+
+@csrf_protect
+def new_ratingprofile(request):
+    '''
+    {'title':"thetitle",
+     'dim0':"firstdimensiontext",
+     'dim1':"seconddimensiontext",
+     ...}
+    '''
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect("/acounts/login/")
+
+    profile = ""
+    try:
+        profile = request.user.businessprofile
+    except BusinessProfile.DoesNotExist:
+        return HttpResponseRedirect("/")
+    if requst.method != 'POST':
+        return HttpResponseRedirect("/business/business_manage_employees/")
+
+    sys.stderr.write("Passed all the tests in new_ratingprofile")
+
+    dimensions = []
+    i = 0
+    while 'dim%d'%i in request.POST:
+        dimensions.append( request.POST['dim%d'%i] )
+
+    rp = RatingProfile(title=request.POST['title'],
+                       dimensions=dimensions,
+                       business=profile)
+
+    return HttpResponse(json.dumps({'rating_profiles':
+                                        _list_rating_profiles(profile.id)},
+                                   cls=RatingProfileEncoder),
+                        context_instance=RequestContext(request))
     
 # Survey stuff.
 @csrf_protect

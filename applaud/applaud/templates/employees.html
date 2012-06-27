@@ -3,6 +3,7 @@
 
 {% block scripts %}
 <script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}manage_ratingprofiles.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -46,17 +47,35 @@
 
 <hr />
 <h2>Rating Profiles</h2>
-{% if rating_profiles|length > 0 %}
+<div id="profiles_listing">
 <ul>
 {% for profile in rating_profiles %}
-<li>{{ profile.title }}
+<li><form action="{% url business_manage_ratingprofile %}" method="post" />
+{% csrf_token %}
+{{ profile.title }}
+<input type="submit" class="ins_rp_button" id="ins_rp_button_{{profile.id}}" value="Insert" />
+<input type="submit" class="del_rp_button" id="del_rp_button_{{profile.id}}" value="Delete" />
+</form>
   <ul>
     {% for dim in profile.dimensions %}
-    <li>{{ dim }}</li><!-- TODO: +/- buttons here, to remove/insert a dimension -->
+    <li><form action="{% url business_manage_ratingprofile %}" method="post" />
+      {{ dim }}
+      <input type="hidden" value="{{profile.id}}" />
+      <input type="hidden" value="{{dim}}" />
+      <input type="submit" class="del_rp_dim_button" value="-" />
+      </form>
+</li>
     {% endfor %}
   </ul>
 </li>
 {% endfor %}
-{% endif %}
+</ul>
+</div>
+
+<!-- new rating profile form -->
+<button type="button" id="new_ratingprofile_button">Add Profile</button>
+<div id="new_ratingprofile">
+  
+</div>
 
 {% endblock %}
