@@ -7,7 +7,7 @@ Forms and validation code for user registration.
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from applaud.models import EmployeeProfile, BusinessProfile
+from applaud.models import EmployeeProfile, BusinessProfile, UserProfile
 
 import sys
 
@@ -175,3 +175,6 @@ class UserRegistrationForm(RegistrationForm):
     # The RegistrationForm (at the top of this page) only has the username, email and password.
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
+    
+    class Meta:
+        model = UserProfile
