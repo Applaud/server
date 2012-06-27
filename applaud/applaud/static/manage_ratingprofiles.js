@@ -15,6 +15,21 @@ function bind_delete_buttons() {
 	});
 }
 
+function bind_remove_buttons() {
+    $('.del_rp_dim_button').click(
+	function ( event ) {
+	    event.preventDefault();
+	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
+		     type: 'POST',
+		     data: {'profile_id':$(this).prev().prev().val(),
+			    'remove_dim':$(this).prev().val(),
+			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		     success: listProfiles,
+		     error: function() { alert("Something went wrong."); }
+		   });
+	});
+}
+
 function submit_dimension( event ) {
     event.preventDefault();
     
@@ -74,7 +89,15 @@ var listProfiles = function(data) {
 	var innerlist = $('<ul></ul>');
 	for ( d in profile.dimensions ) {
 	    var dimension = profile.dimensions[d];
-	    var innerlistitem = $('<li>'+dimension+'</li>');
+	    var innerlistitem = $('<li></li>');
+	    
+	    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
+				   +dimension
+				   +'<input type="hidden" value="'+profile.id+'" />'
+				   +'<input type="hidden" value="'+dimension+'" />'
+				   +'<input type="submit" class="del_rp_dim_button" value="-" />'
+				   +'</form>'));
+
 	    innerlist.append( innerlistitem );
 	}
 	
@@ -85,6 +108,7 @@ var listProfiles = function(data) {
     $('#profiles_listing').append(listing);
     bind_delete_buttons();
     bind_insert_buttons();
+    bind_remove_buttons();
 }
 
 /**
@@ -94,4 +118,5 @@ $(document).ready(function() {
     // Bind the 'delete' buttons for ratingprofiles to an AJAX call
     bind_delete_buttons();
     bind_insert_buttons();
+    bind_remove_buttons();
 });

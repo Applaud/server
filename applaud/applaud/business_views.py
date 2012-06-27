@@ -197,7 +197,8 @@ def manage_ratingprofiles(request):
     '''
     {'profile_id':#,
      'insert':"asdfasdfasdf",
-     'remove':True/False}
+     'remove':--,
+     'remove_dim':"dimtitle"}
      '''
     if not request.user.is_authenticated():
         return HttpResponseRedirect("/accounts/login/")
@@ -207,7 +208,7 @@ def manage_ratingprofiles(request):
     except BusinessProfile.DoesNotExist:
         return HttpResponseRedirect("/")
 
-    if not 'insert' in request.POST and not 'remove' in request.POST:
+    if not 'insert' in request.POST and not 'remove' in request.POST and not 'remove_dim' in request.POST:
         return HttpResponseRedirect("/business/business_manage_employees/")
     
     try:
@@ -221,6 +222,10 @@ def manage_ratingprofiles(request):
 
     if 'remove' in request.POST:
         rating_profile.delete()
+
+    if 'remove_dim' in request.POST:
+        rating_profile.dimensions.remove(request.POST['remove_dim'])
+        rating_profile.save()
 
     ret = {}
     ret['rating_profiles'] = []

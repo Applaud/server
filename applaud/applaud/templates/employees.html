@@ -58,7 +58,13 @@
 </form>
   <ul>
     {% for dim in profile.dimensions %}
-    <li>{{ dim }}</li><!-- TODO: +/- buttons here, to remove/insert a dimension -->
+    <li><form action="{% url business_manage_ratingprofile %}" method="post" />
+      {{ dim }}
+      <input type="hidden" value="{{profile.id}}" />
+      <input type="hidden" value="{{dim}}" />
+      <input type="submit" class="del_rp_dim_button" value="-" />
+      </form>
+</li>
     {% endfor %}
   </ul>
 </li>
