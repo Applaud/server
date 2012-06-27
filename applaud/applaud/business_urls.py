@@ -24,7 +24,10 @@ urlpatterns = patterns('',
                            {'template':'fail.html'},
                            name='business_manage_survey'),
 
-                       
+                       url(r'^business_manage_ratingprofiles',
+                           views.manage_ratingprofiles,
+                           name="business_manage_ratingprofile"),
+
                        url(r'^edit_employee/', views.edit_employee),
                        url(r'^delete_employee/', views.delete_employee),
                        url(r'^new_employee/',

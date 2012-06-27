@@ -19,7 +19,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder
+from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder
 import re
 import csv
 from django.utils.timezone import utc
@@ -74,6 +74,7 @@ def manage_employees(request):
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect("/")
+
         return render_to_response('employees.html',
                                   {'employee_list':_list_employees(profile.id),
                                    'rating_profiles':_list_rating_profiles(profile.id)},
@@ -192,6 +193,44 @@ def _delete_employee(employeeID):
     return False
 
 @csrf_protect
+def manage_ratingprofiles(request):
+    '''
+    {'profile_id':#,
+     'insert':"asdfasdfasdf",
+     'remove':True/False}
+     '''
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect("/accounts/login/")
+    profile = ""
+    try:
+        profile = request.user.businessprofile
+    except BusinessProfile.DoesNotExist:
+        return HttpResponseRedirect("/")
+
+    if not 'insert' in request.POST and not 'remove' in request.POST:
+        return HttpResponseRedirect("/business/business_manage_employees/")
+    
+    try:
+        rating_profile = RatingProfile.objects.get(id=int(request.POST['profile_id']))
+    except RatingProfile.DoesNotExist:
+        return HttpResponseRedirect("/business/business_manage_employees/")
+
+    if 'insert' in request.POST:
+        rating_profile.dimensions.append(request.POST['insert'])
+        rating_profile.save()
+
+    if 'remove' in request.POST:
+        rating_profile.delete()
+
+    ret = {}
+    ret['rating_profiles'] = []
+    for rp in _list_rating_profiles(profile.id):
+        ret['rating_profiles'].append(rp)
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},cls=RatingProfileEncoder),
+                        mimetype='application/json')
+
+
+@csrf_protect
 def list_rating_profiles(request):
     # Make sure we're a business.
     if request.user.is_authenticated():
@@ -214,7 +253,7 @@ def list_rating_profiles(request):
 # List the rating profiles for a business
 def _list_rating_profiles(businessID):
     rps = BusinessProfile.objects.get(id=businessID)
-    return [{'title':rp.title,'dimensions':rp.dimensions} for rp in rps.ratingprofile_set.all()]
+    return list(rps.ratingprofile_set.all())
     
 # Survey stuff.
 @csrf_protect

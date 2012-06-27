@@ -53,6 +53,18 @@ def create_employee(request):
                               {'list':employees},
                               context_instance=RequestContext(request))
 
+# Encodes a RatingProfile into JSON format
+class RatingProfileEncoder(json.JSONEncoder):
+    def default(self, o):
+	if isinstance(o, models.RatingProfile):
+	    res = {'title':o.title,
+                   'dimensions':o.dimensions,
+                   'business_id':o.business.id,
+                   'id':o.id }
+	    return res
+	else:
+	    return json.JSONEncoder.default(self, o)
+
 # Encodes an Employee into JSON format
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
