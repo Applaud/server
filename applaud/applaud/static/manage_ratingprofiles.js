@@ -15,6 +15,40 @@ function bind_delete_buttons() {
 	});
 }
 
+function submit_dimension( event ) {
+    event.preventDefault();
+    
+    $.ajax({ url:'/business/business_manage_ratingprofiles/',
+	     type: 'POST',
+	     data: {'profile_id':$(this).attr('id').split('_')[1],
+		    'insert':$('#dimension_title').val(),
+		    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+	     success: listProfiles,
+	     error: function() { alert("Something went wrong."); }
+	   });
+}
+
+function bind_insert_buttons() {
+    $('.ins_rp_button').click( function(event) {
+	// Close all other 'insert dimension' forms
+	$('#insert_dimension_div').remove();
+
+	event.preventDefault();
+	var newdimdiv = $("<div id=\"insert_dimension_div\"></div>");
+	var label = $("<label for=\"dimension_title\">New dimension name</label>");
+	var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
+	var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" value=\"OK\" />");
+	submit.click( submit_dimension );
+	newdimdiv
+	    .append( '<br />' )
+	    .append( label )
+	    .append( textfield )
+	    .append( submit );
+	$(this).parent().append(newdimdiv);
+    });
+}
+
+
 /**
  * listProfiles(data)
  *
@@ -50,6 +84,7 @@ var listProfiles = function(data) {
     
     $('#profiles_listing').append(listing);
     bind_delete_buttons();
+    bind_insert_buttons();
 }
 
 /**
@@ -58,4 +93,5 @@ var listProfiles = function(data) {
 $(document).ready(function() {
     // Bind the 'delete' buttons for ratingprofiles to an AJAX call
     bind_delete_buttons();
+    bind_insert_buttons();
 });

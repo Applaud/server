@@ -226,7 +226,8 @@ def manage_ratingprofiles(request):
     ret['rating_profiles'] = []
     for rp in _list_rating_profiles(profile.id):
         ret['rating_profiles'].append(rp)
-    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},cls=RatingProfileEncoder),
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
+                                   cls=RatingProfileEncoder),
                         mimetype='application/json')
 
 
