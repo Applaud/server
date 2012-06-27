@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud.models import BusinessProfile, EmployeeProfile
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.views.decorators.csrf import csrf_protect

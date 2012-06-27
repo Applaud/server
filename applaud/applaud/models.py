@@ -67,9 +67,10 @@ class Rating(models.Model):
 	# The title of the question or dimension of the rating,
 	# e.g., 'smelliness' or 'How quick was your food?'
 	# If a question, answer should be quantifiable.
-        # TODO: 
-        # This seems a bit sloppy, make a foreign key to RatingProfile?
 	title = models.TextField(max_length=100)
+
+        # The profile that this rating is associated with
+        profile = models.ForeignKey('RatingProfile')
 
 	# Numeric value (response) for the question or dimension
 	rating_value = models.FloatField()
@@ -157,6 +158,9 @@ class Question(models.Model):
 
     # Labels for multiple-choice type questions
     options = SerializedStringsField()
+
+    # Whether this question is active or not
+    active = models.BooleanField(default=1)
 
     # The survey to which this question belongs
     survey = models.ForeignKey(Survey)

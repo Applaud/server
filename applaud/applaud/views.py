@@ -111,6 +111,7 @@ class SurveyEncoder(json.JSONEncoder):
                 questions.append({'label': q.label,
                                   'type': q.type,
                                   'options': q.options,
+                                  'active': q.active,
                                   'id': q.id})
             res = {'title': o.title,
                    'description': o.description,

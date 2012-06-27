@@ -96,24 +96,28 @@ rating1 = models.Rating(title='Awesomeness',
                         employee=master,
                         id=1,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                        profile=profile1,
                         user=userprofile)
 rating1.save()
 rating2 = models.Rating(title='Slickness',
                         rating_value=5,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                        profile=profile1,
                         user=userprofile)
 rating2.save()
 rating3 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                        profile=profile1,
                         user=userprofile)
 rating3.save()
 rating4 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
+                        profile=profile1,
                         user=userprofile)
 rating4.save()
 

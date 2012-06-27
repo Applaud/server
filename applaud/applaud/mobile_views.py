@@ -93,6 +93,7 @@ def evaluate(request):
                 r = Rating(title=key,
                            rating_value=float(value),
                            employee=e,
+                           profile=e.rating_profile,
                            date_created=datetime.utcnow().replace(tzinfo=utc),
                            user=request.user.userprofile)
                 r.save()

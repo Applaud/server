@@ -371,24 +371,50 @@ def create_survey(request):
 
         return HttpResponseRedirect('/survey_create')	
 
-@csrf_protect
 # Landing page for editing and creating surveys.
+# This can both create and edit a survey
+@csrf_protect
 def manage_survey(request):
+    '''
+    {'survey_id':id,
+     'survey_title':"title",
+     'survey_description':"description",
+     'questions':[{'question_id':qid,
+                   'label':qlabel,
+                   'options':["option1","option2",...],
+                   'active':True/False,
+                   'type':TA/TF/RG/CG}, { question2 }, ...]
+    }
+    '''
+    profile = ""
     if request.user.is_authenticated():
         try:
             profile = request.user.businessprofile
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect('/')
+
     if request.method == 'GET':
-        # Get the business' survey.
-        survey = profile.survey_set.get(pk=1)
         return render_to_response('manage_survey.html',
-                                  {'survey': survey,
-                                   'num_questions': len(survey.question_set.all())},
                                   context_instance=RequestContext(request))
+
+        # return render_to_response('manage_survey.html',
+        #                           {'survey': survey,
+        #                            'num_questions': len(survey.question_set.all())},
+        #                           context_instance=RequestContext(request))
     if request.method == 'POST':
-        survey = profile.survey_set.get(pk=1)
-        questions = survey.question_set.all()
+        survey = ""
+        # Get the business' survey.
+        try:
+            survey = profile.survey_set.get(pk=1)
+        except Survey.DoesNotExist:
+            survey = models.Survey(title="",description="",business=profile)
+
+        return HttpResponse(json.dumps({'survey':survey},
+                                       cls=SurveyEncoder),
+                            mimetype='application/json')
+
+        # survey = profile.survey_set.get(pk=1)
+        # questions = survey.question_set.all()
         
 
 @csrf_protect
@@ -562,8 +588,13 @@ def analytics(request):
         employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
         for dimension in employee.rating_profile.dimensions: # Make sure we have a dictionary entry for each dimension
             ratings[dimension] = []
-        for rating in list(employee.rating_set.all()): # Make a list of all the ratings for each dimension
-            ratings[rating.title].append(rating.rating_value)
+        for rating in list(employee.rating_profile.rating_set.all()): # Make a list of all the ratings for each dimension
+            # N.B.! This only gives the information directly relevant to the current version
+            # of the RatingProfile. Old data is still stored from any previous version! We
+            # should display this somehow, and give the business the option of removing it
+            # (similar to behavior with surveys)
+            if rating.title in ratings:
+                ratings[rating.title].append(rating.rating_value)
 
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():
