@@ -423,6 +423,7 @@ def _get_average_employee_analytics(employee_id, rating_titles):
     """A function to return average statistics of an employee
        employee_id is employee_id
        rating_titles is a list of rating_titles
+       if rating_titles is empty it will use all RatedDimension titles
        returns: [first_name_last_name, avg_rating_1, avg_rating_2]
     """
     try:
@@ -444,8 +445,8 @@ def _get_average_employee_analytics(employee_id, rating_titles):
         else:
             ratings[rating.title]=[rating.rating_value]
     
-    if len(rating_titles) == 0:
-        rating_titles = [rating.title for rating in employee.ratingprofile_set.all()[0].rateddimension_set.all()]
+    if len(rating_titles) == 0 or not rating_titles:
+        rating_titles = [rating.title for rating in employee.rating_profile.rateddimension_set.all()]
 
     rating_list=[]
     for title in rating_titles:
