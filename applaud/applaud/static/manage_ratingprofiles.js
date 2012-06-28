@@ -15,7 +15,7 @@ function bind_delete_buttons() {
 	    event.preventDefault();
 	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
 		     type: 'POST',
-		     data: {'profile_id':$(this).attr('id').split('_')[3],
+		     data: {'profile_id':$(this).siblings('.profileid').val(),
 			    'remove':'True',
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: listProfiles,
@@ -43,24 +43,6 @@ function bind_remove_buttons() {
 		     error: function() { alert("Something went wrong."); }
 		   });
 	});
-}
-
-/**
- * submit_dimension
- *
- * Submits information to the server to add a dimension to a ratingprofile.
- */
-function submit_dimension( event ) {
-    event.preventDefault();
-    
-    $.ajax({ url:'/business/business_manage_ratingprofiles/',
-	     type: 'POST',
-	     data: {'profile_id':$(this).siblings('.profileid').val(),
-		    'insert':$('#dimension_title').val(),
-		    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-	     success: listProfiles,
-	     error: function() { alert("Something went wrong."); }
-	   });
 }
 
 /**
@@ -142,7 +124,20 @@ function bind_insert_buttons() {
 	var label = $("<label for=\"dimension_title\">New dimension name</label>");
 	var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
 	var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" value=\"OK\" />");
-	submit.click( submit_dimension );
+	submit.click( function( event ) {
+	    event.preventDefault();
+	    var profile_id = $(this).siblings('.profileid').val();
+	    console.log("Submitting dimension... --- "+profile_id);
+	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
+		     type: 'POST',
+		     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
+			    'insert':$('#dimension_title').val(),
+			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		     success: listProfiles,
+		     error: function() { alert("Something went wrong."); }
+		   });
+	});
+
 	newdimdiv
 	    .append( '<br />' )
 	    .append( label )
@@ -172,6 +167,7 @@ var listProfiles = function(data) {
 	// This is the way it's done per the RatingProfileEncoder
 	var listform = $("<form action=\"/business/business_manage_ratingprofiles/\" method=\"post\">"
 			 +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
+			 +"<input type=\"hidden\" class=\"profileid\" value=\""+profile.id+"\" />"
 			 +"<input type=\"submit\" id=\"del_rp_button_"+profile.id+"\" class=\"del_rp_button\" value=\"Delete\" />"
 			 +"<input type=\"submit\" id=\"ins_rp_button_"+profile.id+"\" class=\"ins_rp_button\" value=\"Insert\" />");
 	listitem.append( listform );
@@ -181,15 +177,26 @@ var listProfiles = function(data) {
 	    var dimension = profile.dimensions[d];
 	    var innerlistitem = $('<li></li>');
 	    
-	    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-				   +'<span class="dimension_text">'+dimension+'</span>'
-				   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
-				   +'<input type="hidden" value="'+dimension+'" />'
-				   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
-				   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
-				   +'<input type="submit" class="del_rp_dim_button" value="-" />'
-				   +'</form>'));
+	    // Regular dimensions
+	    if ( "Quality" != dimension ) {
+		innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
+				       +'<span class="dimension_text">'+dimension+'</span>'
+				       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
+				       +'<input type="hidden" value="'+dimension+'" />'
+				       +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
+				       +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
+				       +'<input type="submit" class="del_rp_dim_button" value="-" />'
+				       +'</form>'));
 
+	    }
+	    // The permanent "Quality" dimension
+	    else {
+		innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
+				       +'<span class="dimension_text">'+dimension+'</span>'
+				       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
+				       +'<input type="hidden" value="'+dimension+'" />'
+				       +'</form>'));
+	    }
 	    innerlist.append( innerlistitem );
 	}
 	
