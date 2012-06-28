@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.template import RequestContext, Template, Context
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
@@ -16,7 +17,7 @@ from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
 import urllib2
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension
 from applaud import forms, models
 from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder
@@ -36,7 +37,7 @@ def business_view(view):
         return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse("home"))
 
     def wrapper(*args, **kw):
         request = args[0]
@@ -53,20 +54,36 @@ def business_view(view):
 
 # Employee stuff.
 
-# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+# Adding employees. Can handle a comma-separated field of emails (like
+# textarea/textfield) or a CSV file
 @business_view
 @csrf_protect
 def add_employee(request):
+    profile = request.user.businessprofile
     if request.method == "POST":
         # Get emails from POST
-        emails = strip_and_validate_emails(request.POST['emails'])
-        success=_add_employee(emails,
-                              request.user.businessprofile.business_name,
-                              request.user.businessprofile.goog_id)
-    if success:
-        return HttpResponse("All went well!")
-    else:
-        return HttpResponse("Something went wrong.")
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        
+        # If they choose to upload a CSV file.
+        if request.FILES:
+            user = profile.user.username
+            with open('/tmp/%s.txt'%user, 'w+') as destination:
+                for chunk in request.FILES['csv'].chunks():
+                    destination.write(chunk)
+
+                # Union of POST emails and CSV emails
+                email_list.extend( strip_and_validate_emails(destination.read()) )
+
+        # Render the contents of the email
+        _add_employee(set(email_list),
+                      request.user.businessprofile.business_name,
+                      request.user.businessprofile.goog_id)
+
+        # Success message
+        messages.add_message(request, messages.SUCCESS, "Emails have been sent inviting your employees to join Apatapa. Thank you!")
+
+        return HttpResponseRedirect(reverse('business_home'))
 
 def _add_employee(emails, biz_name, biz_goog_id):
     email_template=Template('email_employee.txt')
@@ -118,9 +135,8 @@ def _delete_employee(employeeID):
         profile.delete()
         user.delete()
         return True
-    except:
-        pass
-    return False
+    except EmployeeProfile.DoesNotExist:
+        return False
 
 @business_view
 @csrf_protect
@@ -129,14 +145,15 @@ def manage_ratingprofiles(request):
     {'profile_id':#,
      'insert':"asdfasdfasdf",
      'remove':--,
-     'remove_dim':"dimtitle",
+     'remove_dim':dimid,
 
-     'replace_dim':"oldtext"
+     'replace_dim':dimid,
      'with_dim':"newtext"
 
-     'deactivate_dim':"dimtitle"
+     'deactivate_dim':dimid,
+     'activate_dim':dimid
      '''
-    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
+    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim', 'activate_dim'])
            & set(request.POST.keys()))==0:
         return HttpResponse(json.dumps({'error':"No valid JSON dictionary key sent to this view."}))
 
@@ -145,34 +162,47 @@ def manage_ratingprofiles(request):
     except RatingProfile.DoesNotExist:
         return HttpResponse(json.dumps({'error':"Rating profile did not exist."}))
 
+    # Insert one dimension
     if 'insert' in request.POST:
-        rating_profile.dimensions.append(request.POST['insert'])
-        rating_profile.save()
+        dim = RatedDimension(title=request.POST['insert'],
+                             rating_profile=rating_profile)
+        dim.save()
 
+    # Delete the rating profile and all associated data. Warn the user
+    # before doing this!
     if 'remove' in request.POST:
-        # Delete the rating profile and all associated data. Warn the user before doing this!
-        rating_profile.rating_set.all().delete()
+        alldims = rating_profile.rateddimension_set.all()
+        for dim in alldims:
+            dim.rating_set.all().delete()
+        alldims.delete()
         rating_profile.delete()
 
+    # Remove one dimension
     if 'remove_dim' in request.POST:
-        rating_profile.dimensions.remove(request.POST['remove_dim'])
-        rating_profile.save()
+        dim = RatedDimension.objects.get(id=int(request.POST['remove_dim']))
+        dim.delete()
 
     if 'replace_dim' in request.POST:
         # Step 1: Change the title in all the ratings for this dimension
-        tochange = rating_profile.rating_set.filter(title=request.POST['replace_dim'][0])
-        for rating in tochange:
-            rating.title = request.POST['replace_dim'][1]
+        dim = RatedDimension.objects.get(id=int(request.POST['replace_dim']))
+        for rating in dim.rating_set.all():
+            rating.title = request.POST['with_dim']
             rating.save()
 
         # Step 2: Change the ratingprofile itself
-        rating_profile.dimensions.remove(request.POST['replace_dim'])
-        rating_profile.dimensions.append(request.POST['with_dim'])
-        rating_profile.save()
+        dim.title = request.POST['with_dim']
+        dim.save()
 
     if 'deactivate_dim' in request.POST:
-        rating_profile.dimensions.remove(request.POST['deactivate_dim'])
-        rating_profile.save()
+        dim = RatedDimension.objects.get(id=int(request.POST['deactivate_dim']))
+        dim.is_active = False
+        dim.save()
+
+    if 'activate_dim' in request.POST:
+        dim = RatedDimension.objects.get(id=int(request.POST['activate_dim']))
+        dim.is_active = True
+        dim.save()
+
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
                                    cls=RatingProfileEncoder),
@@ -207,14 +237,14 @@ def new_ratingprofile(request):
     dimensions = []
     i = 0
 
-    while 'dim%d'%i in request.POST:
-        dimensions.append( request.POST['dim%d'%i] )
-        i += 1
-
     rp = RatingProfile(title=request.POST['title'],
-                       dimensions=dimensions,
                        business=profile)
     rp.save()
+
+    while 'dim%d'%i in request.POST:
+        dim = RatedDimension(title=request.POST['dim%d'%i],
+                             rating_profile=rp)
+        i += 1
 
     return HttpResponse(json.dumps({'rating_profiles':
                                         _list_rating_profiles(profile.id)},
@@ -274,54 +304,15 @@ def manage_survey(request):
                 else:
                     q.save()
             survey.save()
-            return HttpResponse('foo')
+
+            messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
+            return HttpResponse("") # Empty response = all went well
         # We're getting data for this business' survey.
         else:
             return HttpResponse(json.dumps({'survey':survey},
                                            cls=SurveyEncoder),
                                 mimetype='application/json')
 
-
-@business_view
-@csrf_protect
-def create_rating_profile(request):
-    '''Create a rating profile.
-    Takes a variable number of text fields and turns them into dimensions
-    for a rating profile. Also includes the title.
-    '''
-    if request.method == 'GET':
-        return render_to_response('create_rating_profile.html',
-                                  {},
-                                  context_instance=RequestContext(request))
-    if request.method == 'POST':
-        profile = request.user.businessprofile
-        i = 0
-        dimensions = []
-        while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
-            dimensions.append(request.POST['dimension_' + str(i)])
-            i += 1
-        title = ''
-        if 'title' in request.POST and request.POST['title']:
-            title = request.POST['title']
-        errors = {}
-        err = False
-        if not title:
-            errors['title_err'] = "You should enter a title for this rating profile."
-            err = True
-        if not dimensions:
-            errors['dimensions_err'] = "No dimensions?"
-            err = True
-        if err:
-            errors['dimensions'] = dimensions
-            return render_to_response('create_rating_profile.html',
-                                      errors,
-                                      context_instance=RequestContext(request))
-        rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
-        rp.save()
-	
-        return HttpResponseRedirect(reverse("business_manage_ratingprofiles"))
-
-        
 # A function to recieve a comma-separated email list, strip them
 # and check them for validity
 def strip_and_validate_emails(emails):
@@ -329,51 +320,21 @@ def strip_and_validate_emails(emails):
     email_list=filter(lambda a: re.match(r"[^@]+@[^@]+\.[^@]+", a), email_list)
     return email_list
 
-''' View that is called only the first time that a business logged in
-'''
 @business_view
 def business_welcome(request):
+    ''' View that is called only the first time that a business logged in
+    '''
     profile = request.user.businessprofile
     if request.method != "POST":
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
-
     if request.method == "POST":
-        # Get emails from POST
-        emails = request.POST['emails']
-        email_list=strip_and_validate_emails(emails)
-        email_template=Template('email_employee.txt')
-        
-        # If they choose to upload a CSV file.
-        if request.FILES:
-            user = profile.user.username
-            emp_list=''
-            reader_str=''
-            with open('/tmp/%s.txt'%user, 'w+') as destination:
-                for chunk in request.FILES['csv'].chunks():
-                    destination.write(chunk)
-                email_list.extend( strip_and_validate_emails(destination.read()) )
-
-        # Render the contents of the email
-        context = {'business':request.user.username,
-                   'goog_id':request.user.businessprofile.goog_id}
-        message = render_to_string('email_employee.txt',
-                                   context)
-
-        subject = 'Register at apatapa.com!'
-        from_email='register@apatapa.com'
-
-        _add_employee(set(email_list),
-                      request.user.businessprofile.business_name,
-                      request.user.businessprofile.goog_id)
-                                
-        request.user.businessprofile.first_time = False
-        return HttpResponseRedirect(reverse('business_home'))
+        return add_employee(request)
     
+@business_view
 def business_home(request):
     return render_to_response('business.html')
-
 
 # Checking analytics.
 @business_view
@@ -386,15 +347,10 @@ def analytics(request):
         employee_dict = {}
         ratings = {}
         employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
-        for dimension in employee.rating_profile.dimensions: # Make sure we have a dictionary entry for each dimension
-            ratings[dimension] = []
-        for rating in list(employee.rating_profile.rating_set.all()): # Make a list of all the ratings for each dimension
-            # N.B.! This only gives the information directly relevant to the current version
-            # of the RatingProfile. Old data is still stored from any previous version! We
-            # should display this somehow, and give the business the option of removing it
-            # (similar to behavior with surveys)
-            if rating.title in ratings:
-                ratings[rating.title].append(rating.rating_value)
+
+        # Make sure we have a dictionary entry for each dimension
+        for dimension in employee.rating_profile.rateddimension_set.all(): 
+            ratings[dimension.title] = [d.rating_value for d in dimension.rating_set.filter(employee=employee)]
 
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():
@@ -602,7 +558,7 @@ def edit_newsfeed(request):
     else:
 	try:                        
 	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	except:
+	except NewsFeedItem.DoesNotExist:
 	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy

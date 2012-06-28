@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
@@ -31,38 +32,16 @@ def index(request):
     return render_to_response('index.html', {'user': request.user,
                                              'user_type': user_type})
 
-# Do we need this?
-@csrf_protect
-def create_employee(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/accounts/login/")
-
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/accounts/login/")
-
-    # if  request.method == 'POST':
-    #     employee_form = forms.EmployeeForm(request.POST)
-    #     e=employee_form.save(commit=False)
-    #     e.business= profile
-    #     e.save()
-        
-    employees = profile.employeeprofile_set.all()
-
-    return render_to_response('employees.html',
-                              {'list':employees},
-                              context_instance=RequestContext(request))
-
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.RatingProfile):
+            dim_list = [{'title':d.title,
+                         'active':d.is_active,
+                         'id':d.id} for d in o.rateddimension_set.all()]
+            
 	    res = {'title':o.title,
-                   'dimensions':o.dimensions,
+                   'dimensions':dim_list,
                    'business_id':o.business.id,
                    'id':o.id }
 	    return res
@@ -73,13 +52,18 @@ class RatingProfileEncoder(json.JSONEncoder):
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.EmployeeProfile):
-	    dimensions = o.rating_profile.dimensions
+	    dimensions = o.rating_profile.rateddimension_set.all()
+            dimension_list = []
+            for d in dimensions:
+                dimension_list.append( {'title':d.title,
+                                        'id':d.id} )
+
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
-			'dimensions':dimensions},
+			'dimensions':dimension_list},
                    'id':o.id
 		   }
 	    return res

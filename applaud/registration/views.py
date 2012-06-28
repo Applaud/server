@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
+from django.core.urlresolvers import reverse
 import urllib2
 from registration.backends import get_backend
 import forms
@@ -299,8 +300,7 @@ def profile(request):
     '''
 
     if not request.user.is_authenticated():
-        sys.stderr.write("shit! you're not authenticated!")
-        return HttpResponseRedirect('/accounts/login')
+        return HttpResponseRedirect(reverse("auth_login"))
     
     profile = ""
     prefix = ""

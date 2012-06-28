@@ -10,13 +10,27 @@
   {% endblock %}
   <script type="text/javascript" src="/static/jquery.js"></script>
   <script type="text/javascript" >
+/**
+ * URLS
+ */
 var manage_employees_url = "{% url business_manage_employees %}";
 var delete_employee_url = "{% url business_delete_employee %}";
 var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
 var new_ratingprofile_url = "{% url business_new_ratingprofile %}";
 var list_ratingprofiles_url = "{% url business_list_ratingprofiles %}";
-
 var manage_survey_url = "{% url business_manage_survey %}";
+
+/**
+ * UTIL
+ */
+function escapeHTML( str ) {
+    console.log("Escaping string: "+str);
+    var temp = $('<pre></pre>');
+    temp.text(str);
+    var escaped = temp.html();
+    console.log("Escaped version: "+escaped);
+    return escaped;
+}
   </script>
   {% block scripts %}
   {% endblock %}
@@ -24,17 +38,17 @@ var manage_survey_url = "{% url business_manage_survey %}";
 <body>
   <div id="navigation">
     {% block navigation %}
-    <a href="{% url home %}">{% trans "Home" %}</a> |
+    <a href="{% url home %}">{% trans "Apatapa" %}</a> |
     {% if user.is_authenticated %}
     ({% trans "Logged in" %}: {{ user.username }}) |
     {% if user.userprofile %}
-    <a href="/user/">{% trans "My Profile" %}</a> |
+    <a href="{% url user_home %}">{% trans "Home" %}</a> |
     {% endif %}
     {% if user.employeeprofile %}
-    <a href="/employee/">{% trans "My Profile" %}</a> |
+    <a href="{% url employee_home %}">{% trans "Home" %}</a> |
     {% endif %}
     {% if user.businessprofile %}
-    <a href="/business/">{% trans "My Profile" %}</a> |
+    <a href="{% url business_home %}">{% trans "Home" %}</a> |
     {% endif %}
     <a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
     <a href="{% url auth_password_change %}">{% trans "Change password" %}</a>
@@ -43,8 +57,18 @@ var manage_survey_url = "{% url business_manage_survey %}";
     {% endif %}
     {% endblock %}
   </div>
+
+  <div id="messages">
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %} >{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
   {% block content %}
-  
   {% endblock %}
 </body>
 </html>

@@ -69,8 +69,8 @@ class Rating(models.Model):
 	# If a question, answer should be quantifiable.
 	title = models.TextField(max_length=100)
 
-        # The profile that this rating is associated with
-        profile = models.ForeignKey('RatingProfile')
+        # What dimension this rating is for
+        dimension = models.ForeignKey('RatedDimension')
 
 	# Numeric value (response) for the question or dimension
 	rating_value = models.FloatField()
@@ -90,27 +90,33 @@ class RatingProfile(models.Model):
     '''Models what dimensions are relevant to a specific employee.
     '''
     title = models.TextField(max_length=100)
-    dimensions = SerializedStringsField()
     business = models.ForeignKey('BusinessProfile')
 
     def __init__(self, *args, **kwargs):
         super(RatingProfile, self).__init__(*args, **kwargs)
-        self.validate()
 
     def save(self, *args, **kwargs):
-        # Make sure we still have 'Quality' as a dimension
-        self.validate()
-
         # No empty titles
         if self.title != "":
             super(RatingProfile, self).save(*args, **kwargs)
 
+            # Make sure we still have 'Quality' as a dimension
+            self.validate()
+
     def validate(self):
-        if 'Quality' not in self.dimensions:
-            self.dimensions.append('Quality')
-        
+        if not 'Quality' in [t.title for t in self.rateddimension_set.all()]:
+            r = RatedDimension(title='Quality',
+                               rating_profile=self)
+            r.save()
+
     def __unicode__(self):
         return self.title
+    
+
+class RatedDimension(models.Model):
+    title = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=1)
+    rating_profile = models.ForeignKey('RatingProfile')
     
 #
 # NEWSFEED

@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 from PIL import Image as PImage
 import registration.forms as registration_forms
 import os
@@ -19,10 +20,10 @@ def employee_view(view):
     to the appropriate page.
     '''
     def goto_login(*args, **kw):
-        return HttpResponseRedirect("/accounts/login/")
+        return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse("home"))
 
     def wrapper(*args, **kw):
         request = args[0]
@@ -48,20 +49,23 @@ def employee_stats(request):
     ratings = profile.rating_set
 
     # List of valid dimensions for rating
-    dimensions = rating_profile.dimensions
+    dimensions = list(rating_profile.rateddimension_set.all())
 
     success_chart = []
     axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
     success_chart.append(axis)
     for i in range(len(dimensions)):
-        row = [ dimensions[i] ]
+        row = [ dimensions[i].title ]
         rating_vals = []
+
+        # Count how many ratings we have of a particular value for each dimension
         for j in range(5):
-            rating_vals.append(len(ratings.filter(title=dimensions[i],
+            rating_vals.append(len(ratings.filter(title=dimensions[i].title,
                                                   rating_value=j+1)))
         row.extend(rating_vals)
         success_chart.append(row)
 
+    # See note in edit_profile about this naming scheme
     imagepath = "%s.%d"%(profile.business.user.username.replace(" ","_"),
                          profile.business.id)
 
@@ -87,7 +91,6 @@ def edit_profile(request):
                                                       instance=profile)
         if form.is_valid():
             form.save()
-            print "Form was valid"
             # ---------- HANDLE IMAGE UPLOAD ----------
             # Set the image name based upon employeeprofile id and business id
             # imagename = employeefn_employeeln.employeeid.fileext
@@ -107,7 +110,6 @@ def edit_profile(request):
                 with open( imagepath, "wb+" ) as destination:
                     for chunk in request.FILES['profile_picture']:
                         destination.write(chunk)
-                destination.close()
 
                 # Generate a thumbnail
                 thumb = PImage.open( imagepath )
@@ -115,7 +117,7 @@ def edit_profile(request):
                 thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
             #TODO: Specify default image for an employee
 
-            return HttpResponseRedirect('/employee/profilesuccess/')
+            return HttpResponseRedirect(reverse("employee_profile_success"))
     else:
         form = registration_forms.EmployeeProfileForm(instance=profile)
     return render_to_response('employee_profile.html',
@@ -129,4 +131,3 @@ def welcome(request):
     profile = request.user.employeeprofile
     return render_to_response("employee_welcome.html",
                               {"employee":profile})
-
