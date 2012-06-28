@@ -44,7 +44,7 @@ def employee_stats(request):
     '''
     employee = request.user
     profile = employee.employeeprofile
-
+    rating_profile = profile.rating_profile
     ratings = profile.rating_set
 
     # List of valid dimensions for rating
@@ -92,26 +92,28 @@ def edit_profile(request):
             # Set the image name based upon employeeprofile id and business id
             # imagename = employeefn_employeeln.employeeid.fileext
             # imagedir = MEDIA_ROOT/businessname.businessid
-            fileext = request.FILES['profile_picture'].name.split('.')[-1]
-            imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
-                                  profile.business.user.username.replace(" ","_"),
-                                  profile.business.id)
-            if not os.path.exists(imagedir):
-                os.makedirs(imagedir)
-            imagename = "%s_%s.%d.%s"%(profile.user.first_name,
-                                       profile.user.last_name,
-                                       profile.id,
-                                       fileext)
-            imagepath = "%s/%s"%(imagedir,imagename) 
-            with open( imagepath, "wb+" ) as destination:
-                for chunk in request.FILES['profile_picture']:
-                    destination.write(chunk)
-            destination.close()
+            if 'profile_picture' in request.FILES:
+                fileext = request.FILES['profile_picture'].name.split('.')[-1]
+                imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
+                                      profile.business.user.username.replace(" ","_"),
+                                      profile.business.id)
+                if not os.path.exists(imagedir):
+                    os.makedirs(imagedir)
+                imagename = "%s_%s.%d.%s"%(profile.user.first_name,
+                                           profile.user.last_name,
+                                           profile.id,
+                                           fileext)
+                imagepath = "%s/%s"%(imagedir,imagename) 
+                with open( imagepath, "wb+" ) as destination:
+                    for chunk in request.FILES['profile_picture']:
+                        destination.write(chunk)
+                destination.close()
 
-            # Generate a thumbnail
-            thumb = PImage.open( imagepath )
-            thumb.thumbnail((128,128), PImage.ANTIALIAS)
-            thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
+                # Generate a thumbnail
+                thumb = PImage.open( imagepath )
+                thumb.thumbnail((128,128), PImage.ANTIALIAS)
+                thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
+            #TODO: Specify default image for an employee
 
             return HttpResponseRedirect('/employee/profilesuccess/')
     else:
@@ -124,6 +126,7 @@ def edit_profile(request):
 def welcome(request):
     '''Welcomes an employee the first time that they log in
     '''
+    profile = request.user.employeeprofile
     return render_to_response("employee_welcome.html",
                               {"employee":profile})
 
