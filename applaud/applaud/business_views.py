@@ -457,25 +457,6 @@ def manage_survey(request):
                                            cls=SurveyEncoder),
                                 mimetype='application/json')
 
-@business_view
-@csrf_protect
-def get_survey(request):
-    '''Gets the survey for a particular business, the ID of
-    which is passed in as JSON.
-    '''
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
-    survey = business.survey_set.all()[0]
-    questions = []
-    qe = QuestionEncoder()
-    for question in survey.question_set.all():
-        if question.active:
-            questions.append(qe.default(question))
-    return HttpResponse(json.dumps({'title': survey.title,
-                                    'description': survey.description,
-                                    'questions': questions}))
 
 @business_view
 @csrf_protect

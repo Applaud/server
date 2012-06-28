@@ -149,20 +149,13 @@ class EmployeeRegistrationForm(RegistrationForm):
     last_name = forms.CharField(max_length=100)
 
 class EmployeeProfileForm(forms.ModelForm):
-    
-    acceptable_image_types = ('jpg','png',)
-    # business = forms.ModelChoiceField(editable=False)
-    # user = forms.ModelChoiceField(editable=False)
-    # first_time = forms.BooleanField(editable=False)
-    # rating_profile = forms.ModelChoiceField(editable=False)
+    # Maximum image size = 1Mb
+    max_image_size = 1048576
 
     def clean_profile_picture(self):
         image = self.cleaned_data['profile_picture']
-        # Only pngs and jpgs are allowed here.
-        fileext = image.name.split('.')[-1]
-        sys.stderr.write("FILE EXTENSION: "+fileext)
-        if not fileext in self.acceptable_image_types:
-            raise forms.ValidationError("Only jpg and png images are allowed.")
+        if image and image.size > self.max_image_size:
+            raise forms.ValidationError("Image size must be under 1Mb.")
         return image
 
     class Meta:
@@ -171,7 +164,6 @@ class EmployeeProfileForm(forms.ModelForm):
 
 
 class UserRegistrationForm(RegistrationForm):
-    
     # The RegistrationForm (at the top of this page) only has the username, email and password.
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
