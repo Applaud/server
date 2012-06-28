@@ -427,6 +427,67 @@ def analytics(request):
                                'business': profile.user.businessprofile},
                              context_instance=RequestContext(request))
 
+@business_view
+def get_analytics(request):
+    """A view to retrieve statistics for employees, surveys, and general feedback.
+    """
+    profile = request.user.businessprofile
+    if request.method == 'GET':
+        employee_list = []
+        for employee in profile.employeeprofile_set.all():
+            employee_list.append(_get_employee_analytics(employee.id))
+        
+        
+        return HttpResponse(json.dumps(employee_list),
+                            mimetype="application/json")
+        
+    
+def _get_employee_analytics(employee_id):
+    """A function to return everything for an employee by their id
+       employee = {'first_name': %s,
+                   'last_name':%s,
+                   'rating_profile': (object as specified below) }                
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+    ret={}
+    ret['first_name'] = employee.user.first_name
+    ret['last_name'] = employee.user.last_name
+    ret['rating_profile'] = _get_rating_profile(employee_id)
+
+    return ret
+
+def _get_rating_profile(employee_id):
+    """Returns a json-able rating_profile object of the form
+       rating_profile={'title':%s,
+                       'ratings':{'title':['rating_value':%s (TODO: implement %d accross the board)
+                                  }}
+                      }
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+
+    rating_profile = {}
+    profile=employee.rating_profile
+    rating_profile['title']=profile.title
+    ratings={}
+
+    # loop over ratings
+    for rating in employee.rating_set.all():
+        #rating has already been accounted for
+        if rating.title in ratings:
+            ratings[rating.title].append(rating.rating_value)
+        else:
+            ratings[rating.title]=[rating.rating_value]
+            
+
+        rating_profile['ratings']=ratings
+    return rating_profile
+    
 
 ################################################
 # Everything newsfeed related for the business #

@@ -35,6 +35,8 @@ urlpatterns = patterns('',
                            name="business_list_ratingprofiles"),
                        url(r'^create_rating_profile/',views.create_rating_profile),
 
+                       url(r'^get_analytics/', views.get_analytics),
+
                        # Business home
                        url(r'^$',
                            redirect_to,

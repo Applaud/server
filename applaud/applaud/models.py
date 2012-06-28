@@ -81,7 +81,7 @@ class Rating(models.Model):
         # End user who provided the response
         user = models.ForeignKey('UserProfile')
 
-        date_created = models.DateTimeField()
+        date_created = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return "%s:%s"%(self.title,self.rating_value)
