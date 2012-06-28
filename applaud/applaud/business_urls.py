@@ -49,7 +49,6 @@ urlpatterns = patterns('',
                        
                        # Survey stuff
                        url(r'^survey_create/',views.create_survey),
-                       url(r'^get_survey/',views.get_survey),
                        #url(r'^general_feedback/',views.feedback),
 
                        url(r'^create_rating_profile/',views.create_rating_profile),
