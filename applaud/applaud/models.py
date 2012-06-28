@@ -128,10 +128,9 @@ class NewsFeedItem(models.Model):
 	subtitle = models.TextField(max_length=100)
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
-
         business = models.ForeignKey('BusinessProfile')
 
-        date_edited = models.DateTimeField(editable=False)
+        date_edited = models.DateTimeField()
 
         def change_parameters(self, d):
             for key, value in d.iteritems():

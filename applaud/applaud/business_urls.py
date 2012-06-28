@@ -50,9 +50,9 @@ urlpatterns = patterns('',
                        url(r'^manage_newsfeed/$',
                            views.manage_newsfeed,
                            name="business_manage_newsfeed"),
-                       url(r'^newsfeed_create/$',views.newsfeed_create),
-                       url(r'^edit_newsfeed/$', views.edit_newsfeed),
-                       url(r'^delete_newsfeed_item/$', views.delete_newsfeed_item),
+                       url(r'^newsfeed_list/$',
+                           views.newsfeed_list,
+                           name='business_newsfeed_list'),
                        
                        # Checking analytics.
                        url(r'^analytics/$', views.analytics, name="analytics"),

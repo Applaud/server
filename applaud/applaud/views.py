@@ -13,7 +13,10 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from employee_views import _profile_picture
 from registration import forms as registration_forms
+import settings
+import datetime
 
 def index(request):
     user_type = ''
@@ -30,7 +33,8 @@ def index(request):
             except EmployeeProfile.DoesNotExist:
                 user_type = 'user'
     return render_to_response('index.html', {'user': request.user,
-                                             'user_type': user_type})
+                                             'user_type': user_type},
+                              context_instance=RequestContext(request))
 
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
@@ -58,12 +62,14 @@ class EmployeeEncoder(json.JSONEncoder):
                 dimension_list.append( {'title':d.title,
                                         'id':d.id} )
 
+            image_url = settings.SERVER_URL+settings.MEDIA_URL+_profile_picture(o)
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimension_list},
+                   'image':image_url,
                    'id':o.id
 		   }
 	    return res
@@ -110,5 +116,19 @@ class QuestionEncoder(json.JSONEncoder):
                     'options': o.options,
                     'active': o.active,
                     'id': o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+# Encodes a NewsFeedItem into JSON.
+class NewsFeedItemEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.NewsFeedItem):
+            return {'id': o.id,
+                    'title': o.title,
+                    'subtitle': o.subtitle,
+                    'body': o.body,
+                    'date': o.date.strftime('%m/%d/%Y'),
+                    'business': o.business.business_name,
+                    'date_edited':o.date_edited.strftime('%m/%d/%Y')}
         else:
             return json.JSONEncoder.default(self, o)

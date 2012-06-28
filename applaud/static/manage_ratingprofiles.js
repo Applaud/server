@@ -1,21 +1,20 @@
-ratingProfiles = {};
+var ratingProfile = {};
 
-(function (ratingProfiles) {
-    
+(function (ratingProfile) {
+    // Keeps track of how many dimensions we have when creating
+    // a new RatingProfile.
     var dimension_count = 0;
-    
+
     /**
      * bind_delete_buttons
      *
      * Binds a callback to the buttons that remove an entire ratingprofile.
      */
-    var bind_delete_buttons = function () {
-	console.log('binding to buttons');
+    var bind_delete_buttons = function() {
 	$('.del_rp_button').click(
 	    function ( event ) {
-		console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 		event.preventDefault();
-		$.ajax({ url:'/business/business_manage_ratingprofiles/',
+		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).siblings('.profileid').val(),
 				'remove':'True',
@@ -32,14 +31,14 @@ ratingProfiles = {};
      * Binds a callback to the buttons that remove a single dimension 
      * from a ratingprofile.
      */
-    var bind_remove_buttons = function () {
+    var bind_remove_buttons = function() {
 	$('.del_rp_dim_button').click(
 	    function ( event ) {
 		event.preventDefault();
-		$.ajax({ url:'/business/business_manage_ratingprofiles/',
+		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).siblings('.profileid').val(),
-				'remove_dim':$(this).siblings('.dimension_text').text(),
+				'remove_dim': $(this).siblings('.dimension_text').prop('id'),
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			 success: listProfiles,
 			 error: function() { alert("Something went wrong."); }
@@ -53,14 +52,34 @@ ratingProfiles = {};
      * Binds a callback to the buttons that deactivate (remove from RP, but keep data)
      * a dimension.
      */
-    var bind_deactivate_buttons = function () {
+    var bind_deactivate_buttons = function() {
 	$('.deactivate_rp_dim_button').click( function( event ) {
 	    event.preventDefault();
 
-	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
+	    $.ajax({ url: manage_ratingprofiles_url,
 		     type: 'POST',
 		     data: {'profile_id':$(this).siblings('.profileid').val(),
-			    'deactivate_dim':$(this).siblings('.dimension_text').text(),
+			    'deactivate_dim':$(this).siblings('.dimension_text').prop('id'),
+			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		     success: listProfiles,
+		     error: function() { alert("Something went wrong."); }
+		   });
+	});
+    }
+
+    /**
+     * bind_activate_buttons
+     *
+     * Binds a callback to the buttons that activate a dimension.
+     */
+    var bind_activate_buttons = function() {
+	$('.activate_rp_dim_button').click( function( event ) {
+	    event.preventDefault();
+
+	    $.ajax({ url: manage_ratingprofiles_url,
+		     type: 'POST',
+		     data: {'profile_id':$(this).siblings('.profileid').val(),
+			    'activate_dim':$(this).siblings('.dimension_text').prop('id'),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -73,16 +92,15 @@ ratingProfiles = {};
      *
      * Binds a callback to the buttons that edit a dimension's text.
      */
-    var bind_edit_buttons = function () {
+    var bind_edit_buttons = function() {
 	$('.edit_rp_dim_button').click( function(event) {
 	    event.preventDefault();
 
 	    // Turn dimension text into text field
 	    var dimdom = $(this).siblings('.dimension_text');
-	    var dimtext = dimdom.text();
 	    var dimfield = $('<input />');
 	    dimfield.prop({'type':'text',
-			   'value':dimtext,
+			   'value':	dimdom.text(),
 			   'class':'dimfield_edit'});
 	    dimdom.replaceWith( dimfield );
 	    
@@ -97,11 +115,11 @@ ratingProfiles = {};
 	    $(this).click( function( event ) {
 		event.preventDefault();
 
-		$.ajax({url:'/business/business_manage_ratingprofiles/',
+		$.ajax({url: manage_ratingprofiles_url,
 			type:'POST',
 			data:{'profile_id':$(this).siblings('.profileid').val(),
-			      'replace_dim':dimtext,
-			      'with_dim':$(this).siblings('.dimfield_edit').val(),
+			      'replace_dim':dimdom.prop('id'),
+			      'with_dim': $(this).siblings('.dimfield_edit').val(),
 			      'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			success: listProfiles,
 			error: function() { alert("Something went wrong."); }
@@ -116,12 +134,13 @@ ratingProfiles = {};
      * Binds a callback to the buttons that insert a dimension for a
      * ratingprofile.
      */
-    var bind_insert_buttons = function () {
+    var bind_insert_buttons = function() {
 	$('.ins_rp_button').click( function(event) {
 	    // Close all other 'insert dimension' forms
 	    $('#insert_dimension_div').remove();
 
 	    event.preventDefault();
+
 	    var newdimdiv = $("<div id=\"insert_dimension_div\"></div>");
 	    var label = $("<label for=\"dimension_title\">New dimension name</label>");
 	    var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
@@ -129,11 +148,10 @@ ratingProfiles = {};
 	    submit.click( function( event ) {
 		event.preventDefault();
 		var profile_id = $(this).siblings('.profileid').val();
-		console.log("Submitting dimension... --- "+profile_id);
-		$.ajax({ url:'/business/business_manage_ratingprofiles/',
+		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
-				'insert':$('#dimension_title').val(),
+				'insert':escape(escapeHTML( $('#dimension_title').val() )),
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			 success: listProfiles,
 			 error: function() { alert("Something went wrong."); }
@@ -157,14 +175,13 @@ ratingProfiles = {};
      * Re-builds the list of profiles.
      */
     var listProfiles = function(data) {
-	console.log("listProfiles is called.");
 	// Clear the current list
 	$('#profiles_listing').empty();
 	var listing = $('<ul></ul>');
 
 	for ( p in data.rating_profiles ) {
 	    profile = data.rating_profiles[p];
-	    var listitem = $('<li><strong>'+profile.title+'</strong></li>');
+	    var listitem = $('<li><strong>'+unescape(profile.title)+'</strong></li>');
 
 	    // This is the way it's done per the RatingProfileEncoder
 	    var listform = $("<form action=\"/business/business_manage_ratingprofiles/\" method=\"post\">"
@@ -177,28 +194,36 @@ ratingProfiles = {};
 	    var innerlist = $('<ul></ul>');
 	    for ( d in profile.dimensions ) {
 		var dimension = profile.dimensions[d];
+		var dim_title = dimension.title;
+		var dim_id = dimension.id;
 		var innerlistitem = $('<li></li>');
+		var innerlistform = $('<form></form>');
 		
 		// Regular dimensions
 		if ( "Quality" != dimension ) {
-		    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-					   +'<span class="dimension_text">'+dimension+'</span>'
+		    if (! dimension.active ) {
+			innerlistform.append($('<span class="deactivated">(not active)</span>'
+					       +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+					       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
+					       +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
+					       +'<input type="submit" class="activate_rp_dim_button" value="activate" />'
+					       +'<input type="submit" class="del_rp_dim_button" value="-" />'));
+		    }
+		    else {
+		    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 					   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
-					   +'<input type="hidden" value="'+dimension+'" />'
 					   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 					   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
-					   +'<input type="submit" class="del_rp_dim_button" value="-" />'
-					   +'</form>'));
-
+					   +'<input type="submit" class="del_rp_dim_button" value="-" />'));
+		    }
 		}
 		// The permanent "Quality" dimension
 		else {
-		    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-					   +'<span class="dimension_text">'+dimension+'</span>'
+		    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 					   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
-					   +'<input type="hidden" value="'+dimension+'" />'
 					   +'</form>'));
 		}
+		innerlistitem.append( innerlistform );
 		innerlist.append( innerlistitem );
 	    }
 	    
@@ -210,12 +235,13 @@ ratingProfiles = {};
 
 	bind_edit_buttons();
 	bind_deactivate_buttons();
+	bind_activate_buttons();
 	bind_delete_buttons();
 	bind_insert_buttons();
 	bind_remove_buttons();
     }
 
-    var handle_insert_dimension = function () {
+    var handle_insert_dimension = function() {
 	var newDimSpan = $('<span class="newdimension_span"></span>');
 	var dimLabel = $('<label>Quality '+(dimension_count+1)+'</label>');
 	dimLabel.attr({'for':'dimension_'+dimension_count});
@@ -231,20 +257,21 @@ ratingProfiles = {};
 	dimension_count++;
     }
 
-    var handle_remove_dimension = function () {
+    var handle_remove_dimension = function() {
 	if ( dimension_count > 0 ) {
 	    $('#newprofile_form').children('.newdimension_span').last().remove();
 	    dimension_count--;
 	}
     }
 
-    var bind_newprofile_button = function () {
+    var bind_newprofile_button = function() {
 
 	$('#new_ratingprofile_button').click(
 	    function( event ) {
 		// Don't allow more than one 'new ratingprofile' form at a time
 		if ( $('#new_ratingprofile').children().length > 0 )
 		    return;
+
 
 		// Create the form for adding a ratingprofile
 		var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
@@ -260,7 +287,7 @@ ratingProfiles = {};
 		    data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
 
 		    // Make the call to the db
-		    $.ajax({ url:'/business/business_new_ratingprofile/',
+		    $.ajax({ url: new_ratingprofile_url,
 			     type: 'POST',
 			     data: data,
 			     success: listProfiles,
@@ -310,16 +337,17 @@ ratingProfiles = {};
     $(document).ready(function() {
 	// Get all the rating profiles
 	$.ajax( {
-	    url: manage_ratingprofiles_url,
+	    url: list_ratingprofiles_url,
 	    success: listProfiles,
 	    error: function() { alert("Something went wrong."); }
 	});
 
-	bind_edit_buttons();	// Edit a single dimension's text
+	bind_edit_buttons();		// Edit a single dimension's text
 	bind_deactivate_buttons();	// Deactivate one dimension
-	bind_delete_buttons();	// Delete an entire profile
-	bind_insert_buttons();	// Insert a dimension
-	bind_remove_buttons();	// Remove a dimension
+	bind_activate_buttons();	// Activate one dimension
+	bind_delete_buttons();		// Delete an entire profile
+	bind_insert_buttons();		// Insert a dimension
+	bind_remove_buttons();		// Remove a dimension
 	bind_newprofile_button();	// Make a new ratingprofile
     });
-})(ratingProfiles);
+})(ratingProfile);

@@ -200,7 +200,7 @@ var ratingProfile = {};
 		var innerlistform = $('<form></form>');
 		
 		// Regular dimensions
-		if ( "Quality" != dimension ) {
+		if ( "Quality" != dim_title ) {
 		    if (! dimension.active ) {
 			innerlistform.append($('<span class="deactivated">(not active)</span>'
 					       +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
