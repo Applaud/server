@@ -164,9 +164,7 @@ class Question(models.Model):
 
     # The survey to which this question belongs
     survey = models.ForeignKey(Survey)
-
-    # TODO: perhaps have a field for default value?
-
+    
     def __unicode__(self):
         return self.label
 

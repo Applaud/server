@@ -45,7 +45,7 @@ function drawVisualization() {
   <h2>{{ survey.title }}</h2>
   <p>{{ survey.description }}</p>
   {% for question in survey.questions %}
-  <h3>{{ question.label }}</h3>
+  <h3>{{ question.label }} {% if not question.active %} (inactive) {% endif %}</h3>
   <ul>
     {% for response in question.responses %}
     <li>

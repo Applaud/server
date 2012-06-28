@@ -392,30 +392,48 @@ def manage_survey(request):
             profile = request.user.businessprofile
         except BusinessProfile.DoesNotExist:
             return HttpResponseRedirect('/')
-
+    else:
+        return HttpResponseRedirect('/')
+    survey = ""
+    # Get the business' survey.
+    try:
+        survey = profile.survey_set.get(pk=1)
+    except models.Survey.DoesNotExist:
+        survey = models.Survey(title="",description="",business=profile)
     if request.method == 'GET':
         return render_to_response('manage_survey.html',
+                                  {'survey_id': survey.id},
                                   context_instance=RequestContext(request))
-
-        # return render_to_response('manage_survey.html',
-        #                           {'survey': survey,
-        #                            'num_questions': len(survey.question_set.all())},
-        #                           context_instance=RequestContext(request))
     if request.method == 'POST':
-        survey = ""
-        # Get the business' survey.
-        try:
-            survey = profile.survey_set.get(pk=1)
-        except Survey.DoesNotExist:
-            survey = models.Survey(title="",description="",business=profile)
-
-        return HttpResponse(json.dumps({'survey':survey},
-                                       cls=SurveyEncoder),
-                            mimetype='application/json')
-
-        # survey = profile.survey_set.get(pk=1)
-        # questions = survey.question_set.all()
-        
+        if 'survey_id' in request.POST:
+            survey.title = request.POST['survey_title']
+            survey.description = request.POST['survey_description']
+            for question in json.loads(request.POST['questions']):
+                print 'question : %s ' % question
+                if int(question['question_id']) == 0:
+                    print 'new question'
+                    q = models.Question(survey=survey)
+                else:
+                    print 'old question'
+                    q = models.Question.objects.get(id=question['question_id'])
+                q.label = question['question_label']
+                q.options = question['question_options']
+                q.type = question['question_type']
+                print 'is active: %s' % question['question_active']
+                if question['question_active'] == 'true':
+                    q.active = True
+                else:
+                    q.active = False
+                if question['should_delete'] == 'true' or not q.label:
+                    q.delete()
+                else:
+                    q.save()
+            survey.save()
+            return HttpResponse('foo')
+        else:
+            return HttpResponse(json.dumps({'survey':survey},
+                                           cls=SurveyEncoder),
+                                mimetype='application/json')
 
 @csrf_protect
 def get_survey(request):
@@ -613,7 +631,8 @@ def analytics(request):
         # Gather all the question responses in a dict.
         for question in list(survey.question_set.all()):
             question_dict = {'label': question.label,
-                             'responses': []}
+                             'responses': [],
+                             'active': question.active}
             for response in question.questionresponse_set.all():
                 question_dict['responses'].append(response.response)
             survey_dict['questions'].append(question_dict)
