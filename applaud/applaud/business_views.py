@@ -510,35 +510,11 @@ def _make_google_charts_data(data):
     return success_chart
 
 
-def _get_rating_profile(employee_id):
-    """Returns a json-able rating_profile object of the form
-       rating_profile={'title':%s,
-                       'ratings':{'title':['rating_value':%s (TODO: implement %d accross the board)
-                                  }}
-                      }
-    """
-    try:
-        employee = models.EmployeeProfile.objects.get(pk=employee_id)
-    except EmployeeProfile.DoesNotExist:
-        return False
-
-    rating_profile = {}
-    profile=employee.rating_profile
-    rating_profile['title']=profile.title
-    ratings={}
-
-    # loop over ratings
-    for rating in employee.rating_set.all():
-        #rating has already been accounted for
-        if rating.title in ratings:
-            ratings[rating.title].append(rating.rating_value)
-        else:
-            ratings[rating.title]=[rating.rating_value]
-            
-
-        rating_profile['ratings']=ratings
-    return rating_profile
-    
+def average(the_list):
+    if len(the_list) == 0:
+        return 0
+    else:
+        return float(sum(the_list))/len(the_list)
 
 ################################################
 # Everything newsfeed related for the business #
