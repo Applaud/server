@@ -14,7 +14,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder
 from django.utils.timezone import utc
 
 # 'mobile_view' decorator.
