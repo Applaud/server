@@ -1,6 +1,6 @@
+from django.utils.timezone import utc
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
 from django.template import RequestContext, Template, Context
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm
@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
 from django.contrib.auth.models import Group, User
-# TODO: clean up the next 3
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -16,13 +15,13 @@ from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
 import urllib2
-from applaud import forms
-from applaud import models
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud import forms, models
 from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder
 import re
 import csv
-from django.utils.timezone import utc
+
 
 # 'business_view' decorator.
 def business_view(view):
