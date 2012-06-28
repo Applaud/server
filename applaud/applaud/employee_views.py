@@ -87,7 +87,7 @@ def edit_profile(request):
                                                       instance=profile)
         if form.is_valid():
             form.save()
-
+            print "Form was valid"
             # ---------- HANDLE IMAGE UPLOAD ----------
             # Set the image name based upon employeeprofile id and business id
             # imagename = employeefn_employeeln.employeeid.fileext

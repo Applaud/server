@@ -153,14 +153,24 @@ class EmployeeProfileForm(forms.ModelForm):
     # Maximum image size = 1Mb
     max_image_size = 1048576
     # Acceptable file formats
-    image_formats = ('JPEG','JPG','BMP','PNG','GIF',)
+    image_formats = ('JPEG','JPG','BMP','PNG','GIF','image')
 
     def clean_profile_picture(self):
         image = self.cleaned_data['profile_picture']
-        if image.format not in self.image_formats:
-            raise forms.ValidationError("Image type must be one of jpg, bmp, gif, or png")
-        if image and image.size > self.max_image_size:
-            raise forms.ValidationError("Image size must be under 1Mb.")
+
+        if image:
+            print image.name
+            image_format = image.content_type.split('/')[0]
+
+            if len(image.name.split('.')) == 1:
+                raise forms.ValidationError(_('File type unsupported.'))
+
+            if image_format in self.image_formats:
+                if image.size > self.max_image_size:
+                    raise forms.ValidationError("Image size must be under 1Mb.")
+            else:
+                raise forms.ValidationError(_('File type unsupported.'))
+
         return image
 
     class Meta:
