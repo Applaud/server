@@ -418,19 +418,6 @@ def get_analytics(request):
        
         return HttpResponse(json.dumps(_make_google_charts_data_with_many_categories(chart_data)),
                             mimetype="application/json")
-                  
-def _make_google_charts_data_with_many_categories(data):
-    """A function to make google charts data. The data variable should be of the form
-    goog_data=[["category","smelliness",....],[employee_name, data_for_smelliness,...],...,]
-    """
-    success_chart=[[] for i in range(len(data))]
-    print success_chart
-    for i in range(len(data)):
-        next_list = data[i]
-        for j in range(len(next_list)):
-            success_chart[i].append(next_list[j])
-    
-    return success_chart
 
 def _get_average_employee_analytics(employee_id, rating_titles):
     """A function to return average statistics of an employee
@@ -448,22 +435,37 @@ def _get_average_employee_analytics(employee_id, rating_titles):
     
     ratings = {}
     profile = employee.rating_profile
-
+    
     # First make a dictionary so as not to lose individual ratings
     for rating in employee.rating_set.all():
-        #rating has already been accounted for
+        #RatedDimension has already been accounted for
         if rating.title in ratings:
             ratings[rating.title].append(rating.rating_value)
         else:
             ratings[rating.title]=[rating.rating_value]
-     
     
+    if len(rating_titles) == 0:
+        rating_titles = [rating.title for rating in employee.ratingprofile_set.all()[0].rateddimension_set.all()]
+
     rating_list=[]
     for title in rating_titles:
         rating_list.append(average(ratings[title]))
 
     ret.extend(rating_list)
     return ret
+                  
+def _make_google_charts_data_with_many_categories(data):
+    """A function to make google charts data. The data variable should be of the form
+    goog_data=[["category","smelliness",....],[employee_name, data_for_smelliness,...],...,]
+    """
+    success_chart=[[] for i in range(len(data))]
+    print success_chart
+    for i in range(len(data)):
+        next_list = data[i]
+        for j in range(len(next_list)):
+            success_chart[i].append(next_list[j])
+    
+    return success_chart
 
 
 def _get_rating_profile(employee_id):

@@ -16,7 +16,7 @@ function drawVisualization(chartdata) {
   var data = google.visualization.arrayToDataTable(chartdata);
 
   // Create and draw the visualization.
-  new google.visualization.Column8Chart(document.getElementById('visualization')).
+  new google.visualization.ColumnChart(document.getElementById('visualization')).
       draw(data,
            {title:"Evaluations by Dimension",
             width:600, height:400,

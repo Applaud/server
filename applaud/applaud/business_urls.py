@@ -31,7 +31,6 @@ urlpatterns = patterns('',
                        url(r'^list_ratingprofiles/$',
                            views.list_rating_profiles,
                            name="business_list_ratingprofiles"),
-                       url(r'^create_rating_profile/',views.create_rating_profile),
 
                        # Business home
                        url(r'^$',
