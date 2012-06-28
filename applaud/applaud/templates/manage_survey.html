@@ -1,7 +1,6 @@
 {% extends "business.html" %}
 {% block title %}Create survey{% endblock %}
 {% block links %}
-<link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block scripts %}
 <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -12,6 +11,89 @@ var questionTypes = {"CG":"checkbox group",
 		     "TA":"textarea",
 		     "TF":"textfield"};
 
+
+function registerClickHandlers() {
+        
+    // Set up buttons and click handlers.
+    $(".question_div").each( function(index, ele){
+	console.log($(this).children(".question_option").length + 'asdfasdf');
+	questionOptions[index]=$(this).children(".question_option").length;
+    });
+    
+    $(".question_div").click(function() {
+	var qnum = $(this).prop('id').split('_')[1];
+	console.log(qnum);
+	addOption(qnum);
+	
+    });
+    
+    $('.deletebutton').click( function () {
+	console.log('deleting');
+	$(this).parent('.question').children('.should_delete').val('true');
+	$(this).parent('.question').hide(1000);
+    });
+    
+    $('.toggleactivebutton').click( function () {
+	if($(this).parent('.question').children('.is_active').val() === 'true') {
+	    $(this).parent('.question').children('.is_active').val('false');
+	    $(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
+	}
+	else {
+	    $(this).parent('.question').children('.is_active').val('true');
+	    $(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
+	}
+    });
+    
+    $("#addquestion_button").click(function(event) {
+	event.preventDefault();
+	// A new question -- ID is 0.
+	addQuestion('', 'CG', [], true, 0);
+    });
+    
+    $('#submit_button').click( function(event) {
+	event.preventDefault();
+	var questions = [];
+	// Get each question out of the DOM and put its info into a dictionary.
+	$('.question').each( function(index, element) {
+	    var question_id = $(this).children('.question_id').val();
+	    var question_label = $(this).children('#question_'+index).val();
+	    var shouldDelete = $(this).children('.should_delete').val();
+	    var question_active = $(this).children('.is_active').val();
+	    var question_options = [];
+	    $(this).children('.question_option').children('.option_field').each( function(ind, ele) {
+		question_options.push($(this).val());
+	    });
+	    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
+	    var question_dict = {'question_id': question_id,
+				 'question_label': question_label,
+				 'question_active': question_active,
+				 'question_options': question_options,
+				 'should_delete': shouldDelete,
+				 'question_type': question_type};
+	    console.log(question_dict);
+	    questions.push(question_dict);
+	});
+	console.log(questions);
+	// Send it all off.
+	$.ajax({url: '/business/business_manage_survey/',
+		data: {'survey_id': $('#survey_id').val(),
+		       'survey_title': $('#survey_title').val(),
+		       'survey_description': $('#survey_description').val(),
+		       'questions': JSON.stringify(questions),
+		       'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+		      },
+		type: 'POST',
+		error: function() { alert('Something went wrong.'); },
+		success: function () { alert('Great success!');
+				       window.location.replace('/business/');
+				     }
+	       });
+    });
+}
+
+/*
+ * Creates the survey in the DOM from our first AJAX call.
+ */
 function renderSurvey( data ) {
     var survey = data.survey;
     console.log("Title = "+survey['title']);
@@ -24,15 +106,17 @@ function renderSurvey( data ) {
 	addQuestion( question.label,
 		     question.type,
 		     question.options,
-		     question.active );
+		     question.active,
+		     question.id );
     }
+    registerClickHandlers();
 }
 
 // Keeps track of # of questions
 var i = 0;
 
 // Start off with question 0 has 1 option
-var questionOptions = [1];
+var questionOptions = [0];
 
 $(document).ready(function() {
     // Pull down the survey
@@ -43,27 +127,12 @@ $(document).ready(function() {
 	type: 'POST',
 	error: function() { alert("Something went wrong."); }
     });
-    
-    // Set up buttons
-    $(".question_div").each( function(index, ele){
-	console.log($(this).children(".question_option").length);
-	questionOptions[index]=$(this).children(".question_option").length;
-    });
-    
-    $(".question_div").click(function() {
-	var qnum = $(this).prop('id').split('_')[1];
-	console.log(qnum);
-	addOption(qnum);
-	
-    });
 
-    
-    $("#addquestion").click(function() {
-	addQuestion();
-    });
 });
 
-function addQuestion( label, type, options, active ) {
+
+
+function addQuestion( label, type, options, active, id ) {
     //Objects to instantiate:
     //1.Question label
     //2.Question type
@@ -75,6 +144,17 @@ function addQuestion( label, type, options, active ) {
     questionDiv.prop({'class':"question"});
     $("#submit_button").before(questionDiv);
     
+    // If ID is 0, it's a new question.
+    var questionId = $('<input />');
+    questionId.prop({'type': 'hidden',
+		     'class': 'question_id',
+		     'value': id});
+    
+    var shouldDelete = $('<input />');
+    shouldDelete.prop({'type': 'hidden',
+		       'class': 'should_delete',
+		       'value': 'false'});
+        
     var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
     questionAreaLabel.prop({"for":"question_"+i});
     
@@ -82,14 +162,25 @@ function addQuestion( label, type, options, active ) {
     questionArea.prop({'name':"question_"+i,
 		       'id':"question_"+i});
     questionArea.text( label );
-    
     var questionTypeLabel = $("<label>Question type </label>");
     questionTypeLabel.prop({"for":"question_"+i+"_type"});
     
     var questionType = $("<select></select>");
     questionType.prop({'name':"question_"+i+"_type",
-		       'id':"question_"+i+"_type"});
-    
+		       'id':"question_"+i+"_type",
+		       'class': 'questionTypeMenu'});
+    questionType.change( function() {
+	if( $(this).children(':selected').val() === 'TA' ||
+	    $(this).children(':selected').val() === 'TF') {
+	    console.log('changing question type');
+	    $(this).siblings('.question_option').hide(1000);
+	    $(this).siblings('.option_button').hide(1000);
+	}
+	else {
+	    $(this).siblings('.question_option').show(1000);
+	    $(this).siblings('.option_button').show(1000);
+	}
+    });
     // Render question types, selecting the appropriate one by default
     for ( o in questionTypes ) {
 	var optionWidget = $('<option value="'+o+'">'+questionTypes[o]+'</option>');
@@ -109,41 +200,81 @@ function addQuestion( label, type, options, active ) {
     
     // Render each of the options for the question
     for ( o in options ) {
-	var optionLabel = $('<label>Option '+o+'</label>');
+	var optionLabel = $('<label>Option '+ (parseInt(o) + 1) +'</label>');
 	optionLabel.prop({'for':'question_'+i+'_option_'+o});
-
 	var optionWidget = $('<input />');
 	optionWidget.prop({'type':'text',
 			   'name':'question_'+i+'_option_'+o,
-			   'class':'option_field'});
+			   'class':'option_field',
+			   'value':options[o]});
 	
-	optionDiv.append( optionLabel ).append( optionWidget );
+	optionDiv.append( optionLabel ).append( optionWidget ).append($( "<br />" ));
+	questionOptions[i]++;
     }
     
-    // var questionNumber = i;
-    // var addOptionButton = $("<button>Add Option</button>");
-    // addOptionButton.prop({'type':"button",
-    // 			    'name':"question_"+i+"_optionbutton",
-    // 			    'id':"question_"+i+"_optionbutton"});
-    // console.log("question number: "+questionNumber);
-    // addOptionButton.click(function() {
-    // 	  console.log("i is: "+i);
-    //     $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
-    // });
+    var questionNumber = i;
+    var addOptionButton = $("<button>Add Option</button>");
+    addOptionButton.prop({'type':"button",
+    			  'name':"question_"+i+"_optionbutton",
+     			  'id':"question_"+i+"_optionbutton",
+			  'class': 'option_button'});
+    console.log("question number: "+questionNumber);
+    addOptionButton.click(function() {
+    	console.log("i is: "+i);
+        $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
+    });
+    
+    // Add a delete button.
+    var deleteButton = $("<button>Delete Question</button>");
+    deleteButton.prop({'type': 'button',
+		       'name': 'question_'+i+'_deletebutton',
+		       'id': 'question_'+i+'_deletebutton',
+		       'class': 'deletebutton'});
+    
+    var toggleActiveButton = $('<button></button>');
+    toggleActiveButton.prop({'type': 'button',
+			     'name': 'question_'+i+'_toggleactivebutton',
+			     'id': 'question_'+i+'_toggleactivebutton',
+			     'class': 'toggleactivebutton'});
+    
+    var isActive = $('<input />');
+    isActive.prop({'type': 'hidden',
+		   'class': 'is_active'
+		  });
+    if(active) {
+	toggleActiveButton.html('Deactivate Question');
+	console.log('setting to true');
+	isActive.prop({'value': 'true'});
+	console.log(isActive.val());
+    }
+    else {
+	toggleActiveButton.html('Activate Question');
+	isActive.prop({'value': 'false'});
+    }
     
     questionDiv
+	.append(questionId)
+	.append(shouldDelete)
 	.append(questionArea)
-	.append("<br />")
+	.append(isActive)
+	.append($( "<br />" ))
 	.append(questionAreaLabel)
 	.append($("<br />"))
 	.append(questionTypeLabel)
 	.append(questionType)
 	.append($("<br />"))
-	.append(optionDiv);
-    // .append($("<br />"))
-    // .append(addOptionButton);
+	.append(optionDiv)
+	.append($("<br />"))
+	.append(addOptionButton)
+	.append($("<br />"))
+	.append(deleteButton)
+	.append(toggleActiveButton);
     console.log(i);
-    addOption(i);
+    
+    // Hide the add option if we're a textfield or textarea.
+    if(type === 'TA' || type === 'TF') {
+	addOptionButton.hide();
+    }
     i++;
 }
 
@@ -173,7 +304,8 @@ function addOption(qindex) {
 {% if questions_err %}
 <h2>{{ dimensions_err }}</h2>
 {% endif %}
-<form action="/survey_create/" method="post" id="survey_form">
+<form action="" method="post" id="survey_form">
+    <input type="hidden" value="{{ survey_id }}" id="survey_id" />
   {% csrf_token %}
   
   Title:
@@ -185,18 +317,4 @@ function addOption(qindex) {
   <input type="submit" id="addquestion_button" value="Add Question" />
 </form>
 </div>
-
-
-
-
-<!-- {% for item in list %} -->
-<!-- <li>{{item.title}} -->
-<!--   <ul> -->
-<!-- 	{% for d in item.dimensions %} -->
-<!-- 	<li>{{ d }} -->
-<!-- 	{% endfor %} -->
-<!--   </ul>  -->
-<!-- {% endfor %} -->
-<!-- </ul> -->
-
 {% endblock %}

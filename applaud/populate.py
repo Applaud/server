@@ -156,7 +156,7 @@ q1 = models.Question(label='Yes or no?', type='RG', options=['yes', 'no'], surve
 q1.save()
 q2 = models.Question(label='African swallow or European swallow?', type='CG', options=['yes', 'no'], survey=s1)
 q2.save()
-q3 = models.Question(label='What is your favorite color?', type='TF', options=['blue', 'yellow', 'aaargh!'], survey=s1)
+q3 = models.Question(label='What is your favorite color?', type='TF', options=[], survey=s1)
 q3.save()
 q4 = models.Question(label='Tell us your life story', type='TA', survey=s1)
 q4.save()
