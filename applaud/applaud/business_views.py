@@ -400,29 +400,50 @@ def get_analytics(request):
         'rating_categories': }
     """
     profile = request.user.businessprofile
+    print "Seeing something"
     
-    data = json.loads(request.POST['data'])
-
     if request.method == 'GET' or request.method=='POST':
-        first_row=["category"]
-        category_list = [category for category in data['rating_categories']]
-        first_row.extend(category_list)
-        chart_data = [first_row]
-        print chart_data
-        for employee in data['employee_ids']:
-            chart_data.append(_get_average_employee_analytics(employee, category_list))
+        data = json.loads(request.POST['data'])
+
+        print "Employee ids: "+str(data['employee_ids'])
+        print "Rating categories: "+str(data['rating_categories'])
+
+        # If more than one category
+        # include type(data['rating_categories'])
+        if len(data['employee_ids'])==0:
+            employee_ids = [ employee.id for employee in profile.employeeprofile_set.all() ]
+        else:
+            employee_ids = data['employee_ids']
         
-        print chart_data
-        # return HttpResponse(json.dumps({'hello':"Hellllloooooooo"}),
-        #                    mimetype="application/json")
-       
-        return HttpResponse(json.dumps(_make_google_charts_data_with_many_categories(chart_data)),
+        category_list = data['rating_categories']
+        
+        if len(data['rating_categories']) > 0:
+            first_row=["category"]
+            for category in data['rating_categories']:
+                dimension = models.RatedDimension.objects.get(pk=category)
+                first_row.append(dimension.title)
+                
+            chart_data = [first_row]
+            for employee in employee_ids:
+                chart_data.append(_get_average_employee_analytics(employee, category_list))
+        else:
+        # If only one category
+            category = data['rating_categories'][0]
+            first_row=["rating","poor","fair","good","excellent","glorious"]
+            chart_data = [first_row]
+            for employee in employee_ids:
+                chart_data.append(_get_employee_analytics(employee,category))
+
+        to_chart = _make_google_charts_data(chart_data)
+        print "About to print array"
+        print to_chart
+        return HttpResponse(json.dumps(to_chart),
                             mimetype="application/json")
 
-def _get_average_employee_analytics(employee_id, rating_titles):
+def _get_average_employee_analytics(employee_id, category_ids):
     """A function to return average statistics of an employee
        employee_id is employee_id
-       rating_titles is a list of rating_titles
+       category_ids is a list of RatedDimension ids
        if rating_titles is empty it will use all RatedDimension titles
        returns: [first_name_last_name, avg_rating_1, avg_rating_2]
     """
@@ -434,28 +455,48 @@ def _get_average_employee_analytics(employee_id, rating_titles):
     ret=[]
     ret.append("%s %s"%(employee.user.first_name, employee.user.last_name))
     
-    ratings = {}
+    ratings = []
     profile = employee.rating_profile
-    
-    # First make a dictionary so as not to lose individual ratings
-    for rating in employee.rating_set.all():
-        #RatedDimension has already been accounted for
-        if rating.title in ratings:
-            ratings[rating.title].append(rating.rating_value)
-        else:
-            ratings[rating.title]=[rating.rating_value]
-    
-    if len(rating_titles) == 0 or not rating_titles:
-        rating_titles = [rating.title for rating in employee.rating_profile.rateddimension_set.all()]
+ 
+    if len(category_ids) == 0 or not category_ids:
+        category_ids = [rating.id for rating in employee.rating_profile.rateddimension_set.all()]
+   
+    for category in category_ids:
+         dimension = models.RatedDimension.objects.get(pk=category)
+         rel_ratings = [rating.rating_value for rating in dimension.rating_set.filter(employee=employee)]
+         ratings.append(average(rel_ratings))
+         
+    ret.extend(ratings)
+    return ret              
 
-    rating_list=[]
-    for title in rating_titles:
-        rating_list.append(average(ratings[title]))
+def _get_employee_analytics(employee_id, category):
+    """A function to return the number of ratings (1-5) of an employee for a single category
+       employee_id is employee_id
+       category is the RatedDimension id to use
+       returns: [first_name_last_name, num_ratings_1, num_ratings_2]
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+    
+    ret = []
+    quantity_of_ratings = [ 0 for i in range(5)]
+    ret.append("%s %s"%(employee.user.first_name, employee.user.last_name))
+    
+    profile = employee.rating_profile
+    dimension = models.RatedDimension.objects.get(pk=category)
+    ratings = dimension.rating_set.filter(employee=employee)
 
-    ret.extend(rating_list)
+    for rating in ratings:
+        quantity_of_ratings[rating.rating_value]+=1
+    
+    str_list_of_ratings = [quantity_of_ratings[i] for i in range(len(quantity_of_ratings))]
+    ret.extend(quantity_of_ratings)
     return ret
-                  
-def _make_google_charts_data_with_many_categories(data):
+
+
+def _make_google_charts_data(data):
     """A function to make google charts data. The data variable should be of the form
     goog_data=[["category","smelliness",....],[employee_name, data_for_smelliness,...],...,]
     """
@@ -597,4 +638,7 @@ def delete_newsfeed_item(request):
 				  context_instance=RequestContext(request))
 
 def average(nums):
-    return (float(sum(nums))/len(nums))
+    if not nums:
+        return 0
+    else:
+        return (float(sum(nums))/len(nums))

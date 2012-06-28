@@ -13,6 +13,7 @@ Employee Information
 
 function drawVisualization(chartdata) {
   // Create and populate the data table.
+    console.log(chartdata);  
   var data = google.visualization.arrayToDataTable(chartdata);
 
   // Create and draw the visualization.
@@ -30,23 +31,26 @@ function drawVisualization(chartdata) {
 var chartdata;
 
 $(document).ready( function(){
-    var rating_categories = ['Slickness','Awesomeness'];	    
-    var data = JSON.stringify({'employee_ids':[1],
-			       'rating_categories':rating_categories});
+    console.log("Document.ready");
+    get_chart_data([1,2],[2,1]);
+});
+
+var get_chart_data = function(employee_ids, rating_dimension_ids){
+
+    var data = JSON.stringify({'employee_ids':[1,2],
+			       'rating_categories':[3,4]});
 
     $.ajax({ url: "{% url business_get_analytics %}",
 	     type: 'POST',
 	     dataType: 'json',
 	     data: {'data':data,
 		    'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
-	     success: successHandler,
+	     success: function(data){drawVisualization(data);},
+	     //success: function(data){ console.log(data); },
 	     error: function(a, b, c) { alert(a+"  "+b+"   "+c); }
-	   });
-});
+    });
+}
 
-var successHandler = function( data ){
-    drawVisualization(data);
-}  
 </script>
 {% endblock %}
 {% block content %}
