@@ -308,7 +308,7 @@ function bind_newprofile_button() {
 $(document).ready(function() {
     // Get all the rating profiles
     $.ajax( {
-	url: '/business/business_list_ratingprofiles/',
+	url: manage_ratingprofiles_url,
 	success: listProfiles,
 	error: function() { alert("Something went wrong."); }
     });

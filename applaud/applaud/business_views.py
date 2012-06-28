@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group, User
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.files import File
+from django.core.urlresolvers import reverse
 from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
@@ -32,7 +33,7 @@ def business_view(view):
     to the appropriate page.
     '''
     def goto_login(*args, **kw):
-        return HttpResponseRedirect("/accounts/login/")
+        return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
         return HttpResponseRedirect("/")
@@ -63,16 +64,11 @@ def add_employee(request):
                               request.user.businessprofile.business_name,
                               request.user.businessprofile.goog_id)
     if success:
-        # return HttpResponse(json.dumps({'message':'Great Success!'}),
-        #                     context_instance=RequestContext(request))
         return HttpResponse("All went well!")
     else:
-        # return HttpResponse(json.dumps({'message':'Employee could not be added. Please check the email again'}),
-        #                      context_instance=RequestContext(request))
         return HttpResponse("Something went wrong.")
 
 def _add_employee(emails, biz_name, biz_goog_id):
-    sys.stderr.write("%s, %s, %s"%(str(emails), biz_name, biz_goog_id))
     email_template=Template('email_employee.txt')
     context = {'business':biz_name,
                'goog_id':biz_goog_id}
@@ -105,41 +101,6 @@ def _list_employees(businessID):
 
 @business_view
 @csrf_protect
-def edit_employee(request):
-    profile = request.user.businessprofile
-    if request.method == 'POST':	
-        n = models.Employee.objects.get(pk=request.POST['id'])
-	d = {'first_name':request.POST['first_name'],
-	     'last_name':request.POST['last_name'],
-	     'bio':request.POST['bio']}
-	
-	n.change_parameters(d)
-	n = n.save()
-
-	f = forms.EmployeeForm()
-	emp = profile.employee_set.all()
-	return render_to_response('employees.html',
-				  {'form':f, 'list':emp},
-				  context_instance=RequestContext(request))
-    # request method is GET
-    else:
-	try:                        
-            n = models.Employee.objects.get(pk=request.GET['id'])
-	except:
-	    return render_to_response('fail.html',
-                                      {},
-                                      context_instance=RequestContext(request))
-
-        #this might be a tad sloppy
-	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	f = registration_forms.EmployeeRegistrationForm(initial=d)
-	return render_to_response('edit_employee.html',
-				  {'form':f, 'id':request.GET['id']},
-				  context_instance=RequestContext(request))
-
-
-@business_view
-@csrf_protect
 def delete_employee(request):
     profile = request.user.businessprofile
     if 'employee_id' in request.POST:
@@ -147,9 +108,9 @@ def delete_employee(request):
         return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)},
                                        cls=EmployeeEncoder),
                             mimetype='application/json')
-    return HttpResponseRedirect("/business/business_manage_employees")
-        
-# Fully deletes an employee (including employee) from the database
+    return HttpResponseRedirect(reverse("business_manage_employees"))
+
+# Fully deletes an employeeprofile (including the employee user) from the database
 def _delete_employee(employeeID):
     try:
         profile = EmployeeProfile.objects.get(id=employeeID)
@@ -177,13 +138,12 @@ def manage_ratingprofiles(request):
      '''
     if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
            & set(request.POST.keys()))==0:
-        print "No dice!"
-        return HttpResponseRedirect("/business/business_manage_employees/")
-    
+        return HttpResponse(json.dumps({'error':"No valid JSON dictionary key sent to this view."}))
+
     try:
         rating_profile = RatingProfile.objects.get(id=int(request.POST['profile_id']))
     except RatingProfile.DoesNotExist:
-        return HttpResponseRedirect("/business/business_manage_employees/")
+        return HttpResponse(json.dumps({'error':"Rating profile did not exist."}))
 
     if 'insert' in request.POST:
         rating_profile.dimensions.append(request.POST['insert'])
@@ -239,25 +199,17 @@ def new_ratingprofile(request):
      'dim1':"seconddimensiontext",
      ...}
     '''
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect("/acounts/login/")
 
-    profile = ""
-    try:
-        profile = request.user.businessprofile
-    except BusinessProfile.DoesNotExist:
-        return HttpResponseRedirect("/")
+    profile = request.user.businessprofile
     if request.method != 'POST':
-        return HttpResponseRedirect("/business/business_manage_employees/")
+        return HttpResponseRedirect(reverse("business_manage_employees"))
 
     dimensions = []
     i = 0
-    key = 'dim'+str(i)
-    while key in request.POST:
-        sys.stderr.write("In loop %s"%key)
+
+    while 'dim%d'%i in request.POST:
         dimensions.append( request.POST['dim%d'%i] )
         i += 1
-        key = 'dim'+str(i)
 
     rp = RatingProfile(title=request.POST['title'],
                        dimensions=dimensions,
@@ -268,72 +220,6 @@ def new_ratingprofile(request):
                                         _list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
-                        
-# Survey stuff.
-@business_view
-@csrf_protect
-def create_survey(request):
-    '''Create a survey.
-    Takes a variable number of text fields and turns them into questions
-    for a survey. Also includes the title and description.
-    '''
-    if request.method == 'GET':
-        # Be sure we're logged in and that we're a business.
-        # This uses dir(), but it should be 
-        return render_to_response('survey_create.html',
-                                  {},
-                                  context_instance=RequestContext(request))
-    if request.method == 'POST':
-        profile = request.user.businessprofile
-        i = 0
-        questions = []
-        while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
-	    options = []
-	    j = 0
-	    optionFieldName='question_'+str(i)+"_option_"+str(j)
-	    while optionFieldName in request.POST and request.POST[optionFieldName]:
-		options.append(request.POST[optionFieldName])
-		j += 1
-		optionFieldName='question_'+str(i)+"_option_"+str(j)
-
-	    questions.append({'title':request.POST['question_' + str(i)],
-			      'type':request.POST['question_' +str(i)+"_type"],
-			      'options':json.dumps(options)})
-            i += 1
-	    
-        title = description = ''
-        if 'title' in request.POST and request.POST['title']:
-            title = request.POST['title']
-        if 'description' in request.POST and request.POST['description']:
-            description = request.POST['description']
-        errors = {}
-        err = False
-        if not title:
-            errors['title_err'] = "You should enter a title for this survey."
-            err = True
-        if not questions:
-            errors['questions_err'] = "No questions?"
-            err = True
-        if err:
-            errors['questions'] = questions
-            return render_to_response('survey_create.html',
-                                      errors,
-                                      context_instance=RequestContext(request))
-        # Which business are we?
-        business = BusinessProfile.objects.get(user=request.user)
-	# First, create the Survey
-	s = models.Survey(title=title, description=description, business=business)
-	s.save()
-
-	# Create each of the questions on the Survey
-	for question in questions:
-	    q = models.Question(label=question['title'],
-				type=question['type'],
-				options= question['options'],
-				survey=s)
-	    q.save()
-
-        return HttpResponseRedirect('/survey_create')	
 
 # Landing page for editing and creating surveys.
 # This can both create and edit a survey
@@ -436,7 +322,7 @@ def create_rating_profile(request):
         rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
         rp.save()
 	
-        return HttpResponseRedirect('/ratingprofiles')
+        return HttpResponseRedirect(reverse("business_manage_ratingprofiles"))
 
         
 # A function to recieve a comma-separated email list, strip them
@@ -465,26 +351,12 @@ def business_welcome(request):
         # If they choose to upload a CSV file.
         if request.FILES:
             user = profile.user.username
-            r = open('/tmp/%s.txt'%user, 'w+')
-            reader = File(r)
             emp_list=''
             reader_str=''
-            with reader as destination:
+            with open('/tmp/%s.txt'%user, 'w+') as destination:
                 for chunk in request.FILES['csv'].chunks():
                     destination.write(chunk)
-                    reader_str+=chunk
-
-                row_list = []
-                for i in reader_str.split(','):
-                    row_list.append(str(i)+' ')                
-
-                count = 0
-                for row in reader:
-                    emp_list += row_list[(32*count)+28]+', '
-                    sys.stderr.write(row_list[(32*count)+28])
-                    count+=1
-            emp_list_final = strip_and_validate_emails(emp_list)
-            email_list.extend(emp_list_final)
+                email_list.extend( strip_and_validate_emails(destination.read()) )
 
         # Render the contents of the email
         context = {'business':request.user.username,
@@ -495,19 +367,12 @@ def business_welcome(request):
         subject = 'Register at apatapa.com!'
         from_email='register@apatapa.com'
 
-        try:
-            send_mail(subject, message, from_email, email_list)
-        except BadHeaderError:
-            pass
-
-        success=_add_employee(email_list,
-                              request.user.businessprofile.business_name,
-                              request.user.businessprofile.goog_id)
+        _add_employee(set(email_list),
+                      request.user.businessprofile.business_name,
+                      request.user.businessprofile.goog_id)
                                 
-        if not success:
-            return HttpResponse('Invalid header found')
         request.user.businessprofile.first_time = False
-        return HttpResponseRedirect('/business/')
+        return HttpResponseRedirect(reverse('business_home'))
     
 def business_home(request):
     return render_to_response('business.html')

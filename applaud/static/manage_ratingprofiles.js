@@ -4,8 +4,8 @@ function bind_delete_buttons() {
 	function ( event ) {
 	    console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 	    event.preventDefault();
-	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
-		     type: 'POST',
+	    $.ajax({ url: manage_ratingprofiles_url,
+		     typee: 'POST',
 		     data: {'profile_id':$(this).attr('id').split('_')[3],
 			    'remove':'True',
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
@@ -31,7 +31,7 @@ var listProfiles = function(data) {
 	var listitem = $('<li><strong>'+profile.title+'</strong></li>');
 
 	// This is the way it's done per the RatingProfileEncoder
-	var listform = $("<form action=\"/business/business_manage_ratingprofiles/\" method=\"post\">"
+	var listform = $("<form action=\"\" method=\"post\">"
 			 +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
 			 +"<input type=\"submit\" id=\"del_rp_button_"+profile.id+"\" class=\"del_rp_button\" value=\"Delete\" />"
 			 +"<input type=\"submit\" id=\"ins_rp_button_"+profile.id+"\" class=\"ins_rp_button\" value=\"Insert\" />");

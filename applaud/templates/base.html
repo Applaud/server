@@ -9,6 +9,11 @@
   {% block links %}
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+  <script type="text/javascript" >
+var manage_employees_url = "{% url business_manage_employees %}";
+var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
+var list_ratingprofiles_url = "{% url business_list_ratingprofiles %}";
+  </script>
   {% block scripts %}
   {% endblock %}
 </head>
