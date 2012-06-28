@@ -420,26 +420,27 @@ def manage_survey(request):
         survey = profile.survey_set.get(pk=1)
     except models.Survey.DoesNotExist:
         survey = models.Survey(title="",description="",business=profile)
+    # Return the survey page.
     if request.method == 'GET':
         return render_to_response('manage_survey.html',
                                   {'survey_id': survey.id},
                                   context_instance=RequestContext(request))
     if request.method == 'POST':
+        # If we're POSTing survey data.
         if 'survey_id' in request.POST:
             survey.title = request.POST['survey_title']
             survey.description = request.POST['survey_description']
             for question in json.loads(request.POST['questions']):
-                print 'question : %s ' % question
+                # If it's a new question.
                 if int(question['question_id']) == 0:
-                    print 'new question'
                     q = models.Question(survey=survey)
                 else:
-                    print 'old question'
                     q = models.Question.objects.get(id=question['question_id'])
                 q.label = question['question_label']
                 q.options = question['question_options']
                 q.type = question['question_type']
                 print 'is active: %s' % question['question_active']
+                # Set whether this question is visible to users or not.
                 if question['question_active'] == 'true':
                     q.active = True
                 else:
@@ -450,6 +451,7 @@ def manage_survey(request):
                     q.save()
             survey.save()
             return HttpResponse('foo')
+        # We're getting data for this business' survey.
         else:
             return HttpResponse(json.dumps({'survey':survey},
                                            cls=SurveyEncoder),
