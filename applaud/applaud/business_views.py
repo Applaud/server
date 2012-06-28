@@ -19,7 +19,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder
+from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder
 import re
 import csv
 from django.utils.timezone import utc
@@ -445,8 +445,15 @@ def get_survey(request):
             return HttpResponse(get_token(request))
         business_id = json.load(request)['business_id']
         business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.survey_set.all())[0],
-                                       cls=SurveyEncoder))
+        survey = business.survey_set.all()[0]
+        questions = []
+        qe = QuestionEncoder()
+        for question in survey.question_set.all():
+            if question.active:
+                questions.append(qe.default(question))
+        return HttpResponse(json.dumps({'title': survey.title,
+                                        'description': survey.description,
+                                        'questions': questions}))
     return HttpResponseForbidden("end-user not authenticated")
 
 @csrf_protect
