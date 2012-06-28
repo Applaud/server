@@ -20,8 +20,8 @@ from django.utils.timezone import utc
 # 'mobile_view' decorator.
 def mobile_view(view):
     '''
-    Checks a BusinessView to make sure that a user is logged in and
-    is in fact a business (i.e., has a BusinessProfile) before the
+    Checks a MobileView to make sure that a user is logged in and
+    is in fact an end-user (i.e., has a UserProfile) before the
     view is executed. If either of these tests fail, the user is redirected
     to the appropriate page.
     '''
@@ -81,6 +81,7 @@ def whereami(request):
     ret = json.dumps({'nearby_businesses':business_list})
     return HttpResponse(ret)
 
+@mobile_view
 @csrf_protect
 def checkin(request):
     # if not request.user.is_authenticated():
@@ -106,6 +107,7 @@ def checkin(request):
         return HttpResponse(get_token(request))
 
 # Getting and posting employee data from iOS.
+@mobile_view
 @csrf_protect
 def evaluate(request):
     '''evaluate
@@ -113,25 +115,25 @@ def evaluate(request):
     This is the view that accepts rating data from end-users and
     rates an employee of a business per that employee's RatingProfile.
     '''
-    if request.user.is_authenticated():
-        if request.method != 'POST':
-            return HttpResponse(get_token(request))
-        rating_data = json.load(request)
-        if 'employee' in request.POST:
-            try:
-                e = EmployeeProfile.objects.get(rating_data['employee']['id'])
-            except EmployeeProfile.DoesNotExist:
-                pass
-            for key, value in rating_data['ratings']:
-                r = Rating(title=key,
-                           rating_value=float(value),
-                           employee=e,
-                           profile=e.rating_profile,
-                           date_created=datetime.utcnow().replace(tzinfo=utc),
-                           user=request.user.userprofile)
-                r.save()
+    if request.method != 'POST':
+        return HttpResponse(get_token(request))
+    rating_data = json.load(request)
+    if 'employee' in request.POST:
+        try:
+            e = EmployeeProfile.objects.get(rating_data['employee']['id'])
+        except EmployeeProfile.DoesNotExist:
+            pass
+        for key, value in rating_data['ratings']:
+            r = Rating(title=key,
+                       rating_value=float(value),
+                       employee=e,
+                       profile=e.rating_profile,
+                       date_created=datetime.utcnow().replace(tzinfo=utc),
+                       user=request.user.userprofile)
+            r.save()
     return HttpResponse('foo')
 
+@mobile_view
 @csrf_protect
 def employee_list(request):
     '''List the employees by last name and first name, according
@@ -139,14 +141,10 @@ def employee_list(request):
 
     This is used by mobile devices to view all the employees for a business.
     '''
-    if request.user.is_authenticated():
-        if request.method == 'GET':
-            return HttpResponse(get_token(request))
-        business_id = json.load(request)['business_id']
-        business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
-                                       cls=EmployeeEncoder))
-    return HttpResponseForbidden("end-user not authenticated")
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
+                                   cls=EmployeeEncoder))
 
 @mobile_view
 @csrf_protect
@@ -154,8 +152,6 @@ def get_survey(request):
     '''Gets the survey for a particular business, the ID of
     which is passed in as JSON.
     '''
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
     business_id = json.load(request)['business_id']
     business = models.BusinessProfile(id=business_id)
     survey = business.survey_set.all()[0]
@@ -176,16 +172,13 @@ def survey_respond(request):
     This is the view that accepts a response to a survey for a particular
     business from the end-user.
     '''
-    if request.user.is_authenticated():
-        if request.method != 'POST':
-            return HttpResponse(get_token(request))
-        for answer in json.load(request)['answers']:
-            question = models.Question.objects.get(id=answer['id'])
-            response = answer['response']
-            qr = models.QuestionResponse(question=question, response=response,
-                                         date_created=datetime.utcnow().replace(tzinfo=utc),
-                                         user=request.user.userprofile)
-            qr.save()
+    for answer in json.load(request)['answers']:
+        question = models.Question.objects.get(id=answer['id'])
+        response = answer['response']
+        qr = models.QuestionResponse(question=question, response=response,
+                                     date_created=datetime.utcnow().replace(tzinfo=utc),
+                                     user=request.user.userprofile)
+        qr.save()
     return HttpResponse('foo')
 
 # Static JSON data that can be used for testing when the internet's down
@@ -224,42 +217,34 @@ def example3(request):
     return HttpResponse(json.dumps(res))
 
 # General feedback.
+@mobile_view
 @csrf_protect
 def general_feedback(request):
-    if request.user.is_authenticated():
-        if request.method != 'POST':
-                return HttpResponse(get_token(request))
-        answer_data = json.load(request)
-        feedback = models.GeneralFeedback(feedback=answer_data['answer'],
-                                          business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
-                                          user=request.user.userprofile,
-                                          date_created=datetime.utcnow().replace(tzinfo=utc))
-        feedback.save()
-        return HttpResponse('foo')
-    return HttpResponseForbidden("end-user not authenticated")
+    answer_data = json.load(request)
+    feedback = models.GeneralFeedback(feedback=answer_data['answer'],
+                                      business=models.BusinessProfile.objects.get(id=answer_data['business_id']),
+                                      user=request.user.userprofile,
+                                      date_created=datetime.utcnow().replace(tzinfo=utc))
+    feedback.save()
+    return HttpResponse('foo')
 
 # Getting the CSRF token for mobile devices
 def get_csrf(request):
     return HttpResponse(get_token(request))
 
-
+@mobile_view
 @csrf_protect
 def nfdata(request):
-    if request.method == 'GET':
-        return HttpResponse(get_token(request))
-    if request.user.is_authenticated():
-        business_id = json.load(request)['business_id']
-        business = models.BusinessProfile(id=business_id)
-        nfitems = business.newsfeeditem_set.all()
-        nfitem_list = []
-        for nfitem in nfitems :
-            nfitem_list.append({'title':nfitem.title,
-                                'subtitle':nfitem.subtitle,
-                                'body':nfitem.body,
-                                'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    nfitems = business.newsfeeditem_set.all()
+    nfitem_list = []
+    for nfitem in nfitems :
+        nfitem_list.append({'title':nfitem.title,
+                            'subtitle':nfitem.subtitle,
+                            'body':nfitem.body,
+                            'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
 
-        ret = { 'newsfeed_items':nfitem_list }
+    ret = { 'newsfeed_items':nfitem_list }
 
-        return HttpResponse(json.dumps(ret))
-    
-    return HttpResponseForbidden("end-user not authenticated")
+    return HttpResponse(json.dumps(ret))
