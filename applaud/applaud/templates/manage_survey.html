@@ -54,25 +54,42 @@ function registerClickHandlers() {
 	event.preventDefault();
 	var questions = [];
 	// Get each question out of the DOM and put its info into a dictionary.
-	$('.question').each( function(index, element) {
-	    var question_id = $(this).children('.question_id').val();
-	    var question_label = $(this).children('#question_'+index).val();
-	    var shouldDelete = $(this).children('.should_delete').val();
-	    var question_active = $(this).children('.is_active').val();
-	    var question_options = [];
-	    $(this).children('.question_option').children('.option_field').each( function(ind, ele) {
-		question_options.push($(this).val());
+	// This is nasty! But we need some form of non-local exit, so a try/catch
+	// block will have to do for now.
+	try {
+	    $('.question').each( function(index, element) {
+		var question_id = $(this).children('.question_id').val();
+		var question_label = $(this).children('#question_'+index).val();
+		var shouldDelete = $(this).children('.should_delete').val();
+		var question_active = $(this).children('.is_active').val();
+		var question_options = [];
+		$(this).children('.question_option').children('.option_field').each( function(ind, ele) {
+		    question_options.push($(this).val());
+		});
+		var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
+		// If it's a check or radio, and we don't have options.
+		if((question_type === "CG" || question_type === "RG") &&
+		   question_options.length === 0) {
+		    // Complain about it, and don't let the user create the survey.
+		    alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
+		    throw "no options";
+		}
+		var question_dict = {'question_id': question_id,
+				     'question_label': question_label,
+				     'question_active': question_active,
+				     'question_options': question_options,
+				     'should_delete': shouldDelete,
+				     'question_type': question_type};
+		console.log(question_dict);
+		questions.push(question_dict);
 	    });
-	    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
-	    var question_dict = {'question_id': question_id,
-				 'question_label': question_label,
-				 'question_active': question_active,
-				 'question_options': question_options,
-				 'should_delete': shouldDelete,
-				 'question_type': question_type};
-	    console.log(question_dict);
-	    questions.push(question_dict);
-	});
+	}
+	catch( err ) {
+	    if(err === "no options") {
+		console.log('caught the exception');
+		return;
+	    }
+	}
 	console.log(questions);
 	// Send it all off.
 	$.ajax({url: '/business/business_manage_survey/',
