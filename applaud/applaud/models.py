@@ -100,7 +100,10 @@ class RatingProfile(models.Model):
     def save(self, *args, **kwargs):
         # Make sure we still have 'Quality' as a dimension
         self.validate()
-        super(RatingProfile, self).save(*args, **kwargs)
+
+        # No empty titles
+        if self.title != "":
+            super(RatingProfile, self).save(*args, **kwargs)
 
     def validate(self):
         if 'Quality' not in self.dimensions:

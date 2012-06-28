@@ -55,7 +55,7 @@ function submit_dimension( event ) {
     
     $.ajax({ url:'/business/business_manage_ratingprofiles/',
 	     type: 'POST',
-	     data: {'profile_id':$(this).attr('id').split('_')[1],
+	     data: {'profile_id':$(this).siblings('.profileid').val(),
 		    'insert':$('#dimension_title').val(),
 		    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	     success: listProfiles,
@@ -63,6 +63,32 @@ function submit_dimension( event ) {
 	   });
 }
 
+/**
+ * bind_deactivate_buttons
+ *
+ * Binds a callback to the buttons that deactivate (remove from RP, but keep data)
+ * a dimension.
+ */
+function bind_deactivate_buttons() {
+    $('.deactivate_rp_dim_button').click( function( event ) {
+	event.preventDefault();
+
+	$.ajax({ url:'/business/business_manage_ratingprofiles/',
+		 type: 'POST',
+		 data: {'profile_id':$(this).siblings('.profileid').val(),
+			'deactivate_dim':$(this).siblings('.dimension_text').text(),
+			'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		 success: listProfiles,
+		 error: function() { alert("Something went wrong."); }
+	       });
+    });
+}
+
+/**
+ * bind_edit_buttons
+ *
+ * Binds a callback to the buttons that edit a dimension's text.
+ */
 function bind_edit_buttons() {
     $('.edit_rp_dim_button').click( function(event) {
 	event.preventDefault();
@@ -78,10 +104,13 @@ function bind_edit_buttons() {
 	
 	// Turn edit button into "done" button
 	$(this).val("done");
-	    
+
+	// Hide close and delete buttons
+	$(this).siblings('.deactivate_rp_dim_button').hide();
+	$(this).siblings('.del_rp_dim_button').hide();
+
 	// Bind click handler to "done" button to one which submits the edit
 	$(this).click( function( event ) {
-	    console.log("Done button was clicked");
 	    event.preventDefault();
 
 	    $.ajax({url:'/business/business_manage_ratingprofiles/',
@@ -157,7 +186,7 @@ var listProfiles = function(data) {
 				   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 				   +'<input type="hidden" value="'+dimension+'" />'
 				   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
-				   +'<input type="submit" class="deactivate_rp_dim_button" value="close" />'
+				   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
 				   +'<input type="submit" class="del_rp_dim_button" value="-" />'
 				   +'</form>'));
 
@@ -171,6 +200,7 @@ var listProfiles = function(data) {
     $('#profiles_listing').append(listing);
 
     bind_edit_buttons();
+    bind_deactivate_buttons();
     bind_delete_buttons();
     bind_insert_buttons();
     bind_remove_buttons();
@@ -263,7 +293,8 @@ $(document).ready(function() {
 	error: function() { alert("Something went wrong."); }
     });
 
-    bind_edit_buttons();
+    bind_edit_buttons();	// Edit a single dimension's text
+    bind_deactivate_buttons();	// Deactivate one dimension
     bind_delete_buttons();	// Delete an entire profile
     bind_insert_buttons();	// Insert a dimension
     bind_remove_buttons();	// Remove a dimension

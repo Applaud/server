@@ -253,6 +253,10 @@ def manage_ratingprofiles(request):
         rating_profile.dimensions.append(request.POST['with_dim'])
         rating_profile.save()
 
+    if 'deactivate_dim' in request.POST:
+        rating_profile.dimensions.remove(request.POST['deactivate_dim'])
+        rating_profile.save()
+
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
