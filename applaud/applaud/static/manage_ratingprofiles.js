@@ -214,8 +214,7 @@ var listProfiles = function(data) {
 }
 
 function handle_insert_dimension() {
-    $('#newprofile_form').append($('<br />'));
-
+    var newDimSpan = $('<span class="newdimension_span"></span>');
     var dimLabel = $('<label>Quality '+(dimension_count+1)+'</label>');
     dimLabel.attr({'for':'dimension_'+dimension_count});
     $('#newprofile_form').append(dimLabel);
@@ -224,13 +223,17 @@ function handle_insert_dimension() {
     dimText.attr({'type':'text',
 		  'name':'dimension_'+dimension_count,
 		  'class':'rp_dimension'});
+    newDimSpan.append($('<br />')).append( dimLabel ).append( dimText);
 
-    $('#newprofile_form').append( dimLabel ).append( dimText );
+    $('#newprofile_form').append( newDimSpan );
     dimension_count++;
 }
 
 function handle_remove_dimension() {
-    // dimension_count--;
+    if ( dimension_count > 0 ) {
+	$('#newprofile_form').children('.newdimension_span').last().remove();
+	dimension_count--;
+    }
 }
 
 function bind_newprofile_button() {
@@ -273,7 +276,7 @@ function bind_newprofile_button() {
 	    dim_insert_button.click( function() {
 		handle_insert_dimension();
 	    });
-	    dim_insert_button.click( function() {
+	    dim_remove_button.click( function() {
 		handle_remove_dimension();
 	    });
 
