@@ -199,6 +199,10 @@ def manage_ratingprofiles(request):
      'insert':"asdfasdfasdf",
      'remove':--,
      'remove_dim':"dimtitle",
+
+     'replace_dim':"oldtext"
+     'with_dim':"newtext"
+
      'deactivate_dim':"dimtitle"
      '''
     if not request.user.is_authenticated():
@@ -209,8 +213,14 @@ def manage_ratingprofiles(request):
     except BusinessProfile.DoesNotExist:
         return HttpResponseRedirect("/")
 
-    if len(set(['insert','remove','remove_dim','deactivate_dim'])
+    if request.method == 'GET':
+        print "GET request: %s"%str(request.GET)
+    elif request.method == 'POST':
+        print "POST request: %s"%str(request.POST)
+
+    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
            & set(request.POST.keys()))==0:
+        print "No dice!"
         return HttpResponseRedirect("/business/business_manage_employees/")
     
     try:
@@ -224,17 +234,25 @@ def manage_ratingprofiles(request):
 
     if 'remove' in request.POST:
         # Delete the rating profile and all associated data. Warn the user before doing this!
-        rating_profile.delete()
         rating_profile.rating_set.all().delete()
+        rating_profile.delete()
 
     if 'remove_dim' in request.POST:
         rating_profile.dimensions.remove(request.POST['remove_dim'])
         rating_profile.save()
 
-    ret = {}
-    ret['rating_profiles'] = []
-    for rp in _list_rating_profiles(profile.id):
-        ret['rating_profiles'].append(rp)
+    if 'replace_dim' in request.POST:
+        # Step 1: Change the title in all the ratings for this dimension
+        tochange = rating_profile.rating_set.filter(title=request.POST['replace_dim'][0])
+        for rating in tochange:
+            rating.title = request.POST['replace_dim'][1]
+            rating.save()
+
+        # Step 2: Change the ratingprofile itself
+        rating_profile.dimensions.remove(request.POST['replace_dim'])
+        rating_profile.dimensions.append(request.POST['with_dim'])
+        rating_profile.save()
+
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')

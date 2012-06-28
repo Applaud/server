@@ -36,8 +36,8 @@ function bind_remove_buttons() {
 	    event.preventDefault();
 	    $.ajax({ url:'/business/business_manage_ratingprofiles/',
 		     type: 'POST',
-		     data: {'profile_id':$(this).prev().prev().val(),
-			    'remove_dim':$(this).prev().val(),
+		     data: {'profile_id':$(this).siblings('.profileid').val(),
+			    'remove_dim':$(this).siblings('.dimension_text').text(),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -61,6 +61,40 @@ function submit_dimension( event ) {
 	     success: listProfiles,
 	     error: function() { alert("Something went wrong."); }
 	   });
+}
+
+function bind_edit_buttons() {
+    $('.edit_rp_dim_button').click( function(event) {
+	event.preventDefault();
+
+	// Turn dimension text into text field
+	var dimdom = $(this).siblings('.dimension_text');
+	var dimtext = dimdom.text();
+	var dimfield = $('<input />');
+	dimfield.prop({'type':'text',
+		       'value':dimtext,
+		       'class':'dimfield_edit'});
+	dimdom.replaceWith( dimfield );
+	
+	// Turn edit button into "done" button
+	$(this).val("done");
+	    
+	// Bind click handler to "done" button to one which submits the edit
+	$(this).click( function( event ) {
+	    console.log("Done button was clicked");
+	    event.preventDefault();
+
+	    $.ajax({url:'/business/business_manage_ratingprofiles/',
+		    type:'POST',
+		    data:{'profile_id':$(this).siblings('.profileid').val(),
+			  'replace_dim':dimtext,
+			  'with_dim':$(this).siblings('.dimfield_edit').val(),
+			  'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		    success: listProfiles,
+		    error: function() { alert("Something went wrong."); }
+		   });
+	});
+    });
 }
 
 /**
@@ -97,6 +131,7 @@ function bind_insert_buttons() {
  * Re-builds the list of profiles.
  */
 var listProfiles = function(data) {
+    console.log("listProfiles is called.");
     // Clear the current list
     $('#profiles_listing').empty();
     var listing = $('<ul></ul>');
@@ -118,9 +153,11 @@ var listProfiles = function(data) {
 	    var innerlistitem = $('<li></li>');
 	    
 	    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-				   +dimension
-				   +'<input type="hidden" value="'+profile.id+'" />'
+				   +'<span class="dimension_text">'+dimension+'</span>'
+				   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 				   +'<input type="hidden" value="'+dimension+'" />'
+				   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
+				   +'<input type="submit" class="deactivate_rp_dim_button" value="close" />'
 				   +'<input type="submit" class="del_rp_dim_button" value="-" />'
 				   +'</form>'));
 
@@ -132,6 +169,8 @@ var listProfiles = function(data) {
     }
     
     $('#profiles_listing').append(listing);
+
+    bind_edit_buttons();
     bind_delete_buttons();
     bind_insert_buttons();
     bind_remove_buttons();
@@ -224,6 +263,7 @@ $(document).ready(function() {
 	error: function() { alert("Something went wrong."); }
     });
 
+    bind_edit_buttons();
     bind_delete_buttons();	// Delete an entire profile
     bind_insert_buttons();	// Insert a dimension
     bind_remove_buttons();	// Remove a dimension
