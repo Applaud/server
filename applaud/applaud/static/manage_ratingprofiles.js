@@ -267,6 +267,15 @@ function bind_newprofile_button() {
 		
 		$('#new_ratingprofile').empty();
 	    });
+	    var cancel_button = $('<input />');
+	    cancel_button.prop({'type':'submit',
+				'id':'newprofile_cancel_button',
+				'value':"Cancel"});
+	    cancel_button.click( function( event ) {
+		event.preventDefault();
+		$('#newprofile_form').remove();
+		dimension_count=0;
+	    });
 
 	    // Add insert/delete dimension buttons
 	    var dim_insert_button = $('<button type="button">+</button>');
@@ -283,6 +292,7 @@ function bind_newprofile_button() {
 	    newprofile_form.append( dim_insert_button );
 	    newprofile_form.append( dim_remove_button );
 	    newprofile_form.append( submit_button );
+	    newprofile_form.append( cancel_button );
 
 	    newprofile_form.append( $('<label for="title">Title</label>') );
 	    newprofile_form.append( $('<input type="text" name="title" id="profile_title" />') );
