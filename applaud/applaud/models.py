@@ -87,15 +87,28 @@ class Rating(models.Model):
 		return "%s:%s"%(self.title,self.rating_value)
 
 class RatingProfile(models.Model):
-	'''Models what dimensions are relevant to a specific employee.
-	'''
-	title = models.TextField(max_length=100)
-	dimensions = SerializedStringsField()
-        business = models.ForeignKey('BusinessProfile')
-        
-        def __unicode__(self):
-            return self.title
+    '''Models what dimensions are relevant to a specific employee.
+    '''
+    title = models.TextField(max_length=100)
+    dimensions = SerializedStringsField()
+    business = models.ForeignKey('BusinessProfile')
 
+    def __init__(self, *args, **kwargs):
+        super(RatingProfile, self).__init__(*args, **kwargs)
+        self.validate()
+
+    def save(self, *args, **kwargs):
+        # Make sure we still have 'Quality' as a dimension
+        self.validate()
+        super(RatingProfile, self).save(*args, **kwargs)
+
+    def validate(self):
+        if 'Quality' not in self.dimensions:
+            self.dimensions.append('Quality')
+        
+    def __unicode__(self):
+        return self.title
+    
 #
 # NEWSFEED
 #
