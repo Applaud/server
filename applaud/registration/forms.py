@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from applaud.models import EmployeeProfile, BusinessProfile, UserProfile
+from PIL import Image
 
 import sys
 
@@ -151,9 +152,13 @@ class EmployeeRegistrationForm(RegistrationForm):
 class EmployeeProfileForm(forms.ModelForm):
     # Maximum image size = 1Mb
     max_image_size = 1048576
+    # Acceptable file formats
+    image_formats = ('JPEG','JPG','BMP','PNG','GIF',)
 
     def clean_profile_picture(self):
         image = self.cleaned_data['profile_picture']
+        if image.format not in self.image_formats:
+            raise forms.ValidationError("Image type must be one of jpg, bmp, gif, or png")
         if image and image.size > self.max_image_size:
             raise forms.ValidationError("Image size must be under 1Mb.")
         return image
