@@ -24,6 +24,33 @@ import re
 import csv
 from django.utils.timezone import utc
 
+# 'business_view' decorator.
+def business_view(view):
+    '''
+    Checks a BusinessView to make sure that a user is logged in and
+    is in fact a business (i.e., has a BusinessProfile) before the
+    view is executed. If either of these tests fail, the user is redirected
+    to the appropriate page.
+    '''
+    def goto_login(*args, **kw):
+        return HttpResponseRedirect("/accounts/login/")
+
+    def goto_home(*args, **kw):
+        return HttpResponseRedirect("/")
+
+    def wrapper(*args, **kw):
+        request = args[0]
+        if not request.user.is_authenticated():
+            return goto_login(*args, **kw)
+        try:
+            profile = request.user.businessprofile
+        except BusinessProfile.DoesNotExist:
+            return goto_home(*args, **kw)
+
+        return view(*args, **kw)
+            
+    return wrapper
+
 # Employee stuff.
 
 # Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
@@ -192,6 +219,7 @@ def _delete_employee(employeeID):
         pass
     return False
 
+@business_view
 @csrf_protect
 def manage_ratingprofiles(request):
     '''
@@ -205,14 +233,6 @@ def manage_ratingprofiles(request):
 
      'deactivate_dim':"dimtitle"
      '''
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect("/accounts/login/")
-    profile = ""
-    try:
-        profile = request.user.businessprofile
-    except BusinessProfile.DoesNotExist:
-        return HttpResponseRedirect("/")
-
     if request.method == 'GET':
         print "GET request: %s"%str(request.GET)
     elif request.method == 'POST':
@@ -261,16 +281,9 @@ def manage_ratingprofiles(request):
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
 
+@business_view
 def list_rating_profiles(request):
-    # Make sure we're a business.
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect("/accounts/login/")
-    profile = ""
-    try:
-        profile = request.user.businessprofile
-    except:
-        return HttpResponseRedirect("/")
-
+    profile = request.user.businessprofile
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
@@ -280,6 +293,7 @@ def _list_rating_profiles(businessID):
     rps = BusinessProfile.objects.get(id=businessID)
     return list(rps.ratingprofile_set.all())
 
+@business_view
 @csrf_protect
 def new_ratingprofile(request):
     '''
@@ -319,6 +333,7 @@ def new_ratingprofile(request):
                         mimetype='application/json')
                         
 # Survey stuff.
+@business_view
 @csrf_protect
 def create_survey(request):
     '''Create a survey.
@@ -328,25 +343,11 @@ def create_survey(request):
     if request.method == 'GET':
         # Be sure we're logged in and that we're a business.
         # This uses dir(), but it should be 
-        if request.user.is_authenticated():
-            try:
-                profile = request.user.businessprofile
-                return render_to_response('survey_create.html',
-                                          {},
-                                          context_instance=RequestContext(request))
-            except:
-                return HttpResponseRedirect('/')
-        else:
-            return render_to_response('fail.html')
+        return render_to_response('survey_create.html',
+                                  {},
+                                  context_instance=RequestContext(request))
     if request.method == 'POST':
-	sys.stderr.write(str(request.POST))
-        if request.user.is_authenticated():
-            try:
-                profile = request.user.businessprofile
-            except BusinessProfile.DoesNotExist:
-                return render_to_response('fail.html')
-        else:
-            return HttpResponseRedirect('/accounts/business/')
+        profile = request.user.businessprofile
         i = 0
         questions = []
         while 'question_' + str(i) in request.POST and request.POST['question_' + str(i)]:
@@ -399,6 +400,7 @@ def create_survey(request):
 
 # Landing page for editing and creating surveys.
 # This can both create and edit a survey
+@business_view
 @csrf_protect
 def manage_survey(request):
     '''
@@ -412,14 +414,7 @@ def manage_survey(request):
                    'type':TA/TF/RG/CG}, { question2 }, ...]
     }
     '''
-    profile = ""
-    if request.user.is_authenticated():
-        try:
-            profile = request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect('/')
-    else:
-        return HttpResponseRedirect('/')
+    profile = request.user.businessprofile
     survey = ""
     # Get the business' survey.
     try:
@@ -462,19 +457,20 @@ def manage_survey(request):
                                 mimetype='application/json')
 
 @csrf_protect
+@business_view
 def get_survey(request):
     '''Gets the survey for a particular business, the ID of
     which is passed in as JSON.
     '''
-    if request.user.is_authenticated():
-        if request.method == 'GET':
-            return HttpResponse(get_token(request))
-        business_id = json.load(request)['business_id']
-        business = models.BusinessProfile(id=business_id)
-        return HttpResponse(json.dumps(list(business.survey_set.all())[0],
-                                       cls=SurveyEncoder))
-    return HttpResponseForbidden("end-user not authenticated")
 
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    return HttpResponse(json.dumps(list(business.survey_set.all())[0],
+                                   cls=SurveyEncoder))
+
+@business_view
 @csrf_protect
 def create_rating_profile(request):
     '''Create a rating profile.
@@ -483,25 +479,13 @@ def create_rating_profile(request):
     '''
     if request.method == 'GET':
         # Be sure we're logged in and that we're a business.
-        if request.user.is_authenticated():
-            try:
-                profile = request.user.businessprofile
-                return render_to_response('create_rating_profile.html',
-                                          {},
-                                          context_instance=RequestContext(request))
-            except:
-                return HttpResponseRedirect('/')
-        else:
-            return render_to_response('fail.html')
+        profile = request.user.businessprofile
+        return render_to_response('create_rating_profile.html',
+                                  {},
+                                  context_instance=RequestContext(request))
     if request.method == 'POST':
 	sys.stderr.write(str(request.POST))
-        if request.user.is_authenticated():
-            try:
-                profile = request.user.businessprofile
-            except BusinessProfile.DoesNotExist:
-                return render_to_response('fail.html')
-        else:
-            return render_to_response('fail.html')
+        profile = request.user.businessprofile
         i = 0
         dimensions = []
         while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
@@ -538,23 +522,14 @@ def strip_and_validate_emails(emails):
 
 ''' View that is called only the first time that a business logged in
 '''
+@business_view
 def business_welcome(request):
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    # Authernticated but not a business
-            return HttpResponseRedirect('/accounts/login')
-        
-    else:
-        return HttpResponseRedirect('/accounts/login')  
-    
+    profile = request.user.businessprofile
     if request.method != "POST":
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
-    # Business is authenticated
+
     if request.method == "POST":
         # Get emails from POST
         emails = request.POST['emails']
@@ -613,16 +588,9 @@ def business_home(request):
 
 
 # Checking analytics.
+@business_view
 def analytics(request):
-    if request.user.is_authenticated():
-        try:
-            profile = request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return render_to_response('fail.html',
-                                      {'debug': "You're no business!"},
-                                      context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect('/')
+    profile = request.user.businessprofile
 
     # For each employee, get all their ratings and gather them into a dictionary.
     employees = []
@@ -677,18 +645,10 @@ def analytics(request):
 # Everything newsfeed related for the business #
 ################################################
 @csrf_protect
+@business_view
 def manage_newsfeed(request):
     #This view will check allow a business to create, edit, and delete items from their newsfeed
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    # Authernticated but not a business
-            return HttpResponseRedirect('/accounts/login')
-        
-    else:
-        return HttpResponseRedirect('/accounts/login')  
+    profile = request.user.businessprofile
 
     newsfeed = profile.newsfeeditem_set.all()
     # Business is authenticated
@@ -699,19 +659,9 @@ def manage_newsfeed(request):
 
 # Creating/editing newsfeed, looking at the newsfeed.
 @csrf_protect
+@business_view
 def newsfeed_create(request):
-    #What happens if an employee or end-user visits this page?
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    return HttpResponseRedirect('/fail/')
-
-	username = request.user.username
-
-    else:
-        return HttpResponseRedirect('/accounts/business/')
+    profile = request.user.businessprofile
 
     if request.method == 'POST':
 	n = forms.NewsFeedItemForm(request.POST)
@@ -729,19 +679,10 @@ def newsfeed_create(request):
 				  {'form':f},
 				  context_instance=RequestContext(request))
 
-
 @csrf_protect
+@business_view
 def edit_newsfeed(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/fail/")
-
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/")
+    profile=request.user.businessprofile
 
     if request.method == 'POST':	
 	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
@@ -775,18 +716,9 @@ def edit_newsfeed(request):
 				  context_instance=RequestContext(request))
 
 @csrf_protect
+@business_view
 def delete_newsfeed_item(request):
-    if request.user.is_authenticated():
-	# Are we a business?
-	try:
-	    profile = request.user.businessprofile
-	except BusinessProfile.DoesNotExist:
-	    pass
-        
-    else:
-        return HttpResponseRedirect('/accounts/login')  
-
-    #Business is authenticated
+    profile = request.user.businessprofile
 
     #Request is POST - Business has selected and confirmed news feed item deletion
     if request.method == 'POST':
@@ -806,4 +738,3 @@ def delete_newsfeed_item(request):
 	return render_to_response('delete_newsfeed.html',
 				  {'item':n, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
-
