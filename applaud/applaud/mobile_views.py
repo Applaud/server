@@ -17,6 +17,39 @@ from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder
 from django.utils.timezone import utc
 
+# 'mobile_view' decorator.
+def mobile_view(view):
+    '''
+    Checks a BusinessView to make sure that a user is logged in and
+    is in fact a business (i.e., has a BusinessProfile) before the
+    view is executed. If either of these tests fail, the user is redirected
+    to the appropriate page.
+    '''
+    def goto_login(*args, **kw):
+        return HttpResponseForbidden("ERROR: not authenticated")
+
+    def goto_home(*args, **kw):
+        return HttpResponseForbidden("ERROR: no profile")
+
+    def get_csrf(*args, **kw):
+        return HttpResponse(get_token(args[0]))
+
+    def wrapper(*args, **kw):
+        request = args[0]
+        if not request.user.is_authenticated():
+            return goto_login(*args, **kw)
+        try:
+            profile = request.user.userprofile
+        except UserProfile.DoesNotExist:
+            return goto_home(*args, **kw)
+
+        if request.method == 'GET':
+            return get_csrf(*args, **kw)
+
+        return view(*args, **kw)
+            
+    return wrapper
+
 # IOS notifies us of where device is. We return business locations.
 def whereami(request):
     if not "latitude" in request.GET or not  "longitude" in request.GET:
@@ -114,6 +147,26 @@ def employee_list(request):
         return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                        cls=EmployeeEncoder))
     return HttpResponseForbidden("end-user not authenticated")
+
+@mobile_view
+@csrf_protect
+def get_survey(request):
+    '''Gets the survey for a particular business, the ID of
+    which is passed in as JSON.
+    '''
+    if request.method == 'GET':
+        return HttpResponse(get_token(request))
+    business_id = json.load(request)['business_id']
+    business = models.BusinessProfile(id=business_id)
+    survey = business.survey_set.all()[0]
+    questions = []
+    qe = QuestionEncoder()
+    for question in survey.question_set.all():
+        if question.active:
+            questions.append(qe.default(question))
+    return HttpResponse(json.dumps({'title': survey.title,
+                                    'description': survey.description,
+                                    'questions': questions}))
 
 # Posting survey response.
 @csrf_protect

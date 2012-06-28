@@ -10,6 +10,33 @@ import settings
 import sys
 from applaud.models import EmployeeProfile
 
+# 'employee_view' decorator.
+def employee_view(view):
+    '''
+    Checks a BusinessView to make sure that a user is logged in and
+    is in fact a business (i.e., has a BusinessProfile) before the
+    view is executed. If either of these tests fail, the user is redirected
+    to the appropriate page.
+    '''
+    def goto_login(*args, **kw):
+        return HttpResponseRedirect("/accounts/login/")
+
+    def goto_home(*args, **kw):
+        return HttpResponseRedirect("/")
+
+    def wrapper(*args, **kw):
+        request = args[0]
+        if not request.user.is_authenticated():
+            return goto_login(*args, **kw)
+        try:
+            profile = request.user.employeeprofile
+        except EmployeeProfile.DoesNotExist:
+            return goto_home(*args, **kw)
+
+        return view(*args, **kw)
+            
+    return wrapper
+
 def employee_stats(request):
     '''Gives statistics for a particular employee (given in request). This
     is accessed through the apatapa website when an employee is logged in.
