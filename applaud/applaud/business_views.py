@@ -53,13 +53,9 @@ def business_view(view):
 # Employee stuff.
 
 # Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+@business_view
 @csrf_protect
 def add_employee(request):
-    if request.user.is_authenticated():
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
     if request.method == "POST":
         # Get emails from POST
         emails = strip_and_validate_emails(request.POST['emails'])
@@ -92,22 +88,13 @@ def _add_employee(emails, biz_name, biz_goog_id):
         return False
 
 # View function that lists employees for employees.html
+@business_view
 def manage_employees(request):
-    if request.user.is_authenticated():
-        profile=""
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-
-        return render_to_response('employees.html',
-                                  {'employee_list':_list_employees(profile.id),
-                                   'rating_profiles':_list_rating_profiles(profile.id)},
+    profile = request.user.businessprofile
+    return render_to_response('employees.html',
+                              {'employee_list':_list_employees(profile.id),
+                               'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect("/accounts/login")
-
 
 # List the employees for a business
 def _list_employees(businessID):
@@ -116,19 +103,10 @@ def _list_employees(businessID):
 
     return employee_list
 
+@business_view
 @csrf_protect
 def edit_employee(request):
-    if request.user.is_authenticated():
-    #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-
-        username=request.user.username
-    else:
-        return HttpResponseRedirect("/accounts/login/")
-
+    profile = request.user.businessprofile
     if request.method == 'POST':	
         n = models.Employee.objects.get(pk=request.POST['id'])
 	d = {'first_name':request.POST['first_name'],
@@ -148,57 +126,22 @@ def edit_employee(request):
 	try:                        
             n = models.Employee.objects.get(pk=request.GET['id'])
 	except:
-	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
+	    return render_to_response('fail.html',
+                                      {},
+                                      context_instance=RequestContext(request))
 
-                #this might be a tad sloppy
+        #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	
 	f = registration_forms.EmployeeRegistrationForm(initial=d)
-       	
 	return render_to_response('edit_employee.html',
 				  {'form':f, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
 
-# @csrf_protect
-# def delete_employee(request):
-#     if request.user.is_authenticated():
-#         #Are we a business?
-#         try:
-#             profile=request.user.businessprofile
-#         except BusinessProfile.DoesNotExist:
-#             return HttpResponseRedirect("/")
 
-#         username=request.user.username
-#     else:
-#         return HttpResponseRedirect("/accounts/login/")
-
-#     if request.method == 'POST':
-#         emp = models.Employee.objects.get(pk=request.POST['id'])
-#         emp.delete()
-        
-#         new_form = forms.EmployeeForm()
-#         employees = profile.employee_set.all()
-
-#         return render_to_response('employees.html',
-#                                   {'form': new_form, 'list': employees},
-#                                   context_instance=RequestContext(request))
-#     else:
-#         emp = models.EmployeeProfile.objects.get(pk=request.GET['id'])
-#         return render_to_response('delete_employee_confirmation.html',
-#                                   {'employee':emp, 'id':request.GET['id']},
-#                                   context_instance=RequestContext(request))
-
+@business_view
 @csrf_protect
 def delete_employee(request):
-    if request.user.is_authenticated():
-        profile = ""
-        try:
-            profile = request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/")
-    else:
-        return HttpReponseRedirect("/accounts/login")
-
+    profile = request.user.businessprofile
     if 'employee_id' in request.POST:
         _delete_employee(request.POST['employee_id'])
         return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)},
@@ -232,11 +175,6 @@ def manage_ratingprofiles(request):
 
      'deactivate_dim':"dimtitle"
      '''
-    if request.method == 'GET':
-        print "GET request: %s"%str(request.GET)
-    elif request.method == 'POST':
-        print "POST request: %s"%str(request.POST)
-
     if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
            & set(request.POST.keys()))==0:
         print "No dice!"
