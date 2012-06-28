@@ -35,7 +35,7 @@ urlpatterns = patterns('',
                            name="business_list_ratingprofiles"),
                        url(r'^create_rating_profile/',views.create_rating_profile),
 
-                       url(r'^get_analytics/', views.get_analytics),
+
 
                        # Business home
                        url(r'^$',
@@ -43,8 +43,13 @@ urlpatterns = patterns('',
                            {'url':'analytics'},
                            name="business_home"),
                        
-
-
+                       #analytics
+                       url(r'^business_analytics',
+                           views.business_analytics,
+                           name="business_analytics"),
+                       url(r'^get_analytics/',
+                           views.get_analytics,
+                           name="business_get_analytics"),
                           
                        # Everything related to newsfeed
                        url(r'^manage_newsfeed/',

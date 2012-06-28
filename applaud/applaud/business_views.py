@@ -426,38 +426,89 @@ def analytics(request):
                                'feedback': feedback,
                                'business': profile.user.businessprofile},
                              context_instance=RequestContext(request))
-
+@csrf_protect
+@business_view
+def business_analytics(request):
+    """To display various statistics for a business
+    """
+    profile = request.user.businessprofile
+    return render_to_response('business_analytics_test.html',
+                              {'business':profile},
+                              context_instance=RequestContext(request))
+@csrf_protect
 @business_view
 def get_analytics(request):
     """A view to retrieve statistics for employees, surveys, and general feedback.
+       Currently only implemented for employee statistics. Should receive a dictionary of the form:
+       {'employee_ids':[%d, %d, %d, ....],
+        'rating_categories': }
     """
     profile = request.user.businessprofile
-    if request.method == 'GET':
-        employee_list = []
-        for employee in profile.employeeprofile_set.all():
-            employee_list.append(_get_employee_analytics(employee.id))
-        
-        
-        return HttpResponse(json.dumps(employee_list),
-                            mimetype="application/json")
-        
     
-def _get_employee_analytics(employee_id):
-    """A function to return everything for an employee by their id
-       employee = {'first_name': %s,
-                   'last_name':%s,
-                   'rating_profile': (object as specified below) }                
+    data = json.loads(request.POST['data'])
+
+    if request.method == 'GET' or request.method=='POST':
+        first_row=["category"]
+        category_list = [category for category in data['rating_categories']]
+        first_row.extend(category_list)
+        chart_data = [first_row]
+        print chart_data
+        for employee in data['employee_ids']:
+            chart_data.append(_get_average_employee_analytics(employee, category_list))
+        
+        print chart_data
+        # return HttpResponse(json.dumps({'hello':"Hellllloooooooo"}),
+        #                    mimetype="application/json")
+       
+        return HttpResponse(json.dumps(_make_google_charts_data_with_many_categories(chart_data)),
+                            mimetype="application/json")
+                  
+def _make_google_charts_data_with_many_categories(data):
+    """A function to make google charts data. The data variable should be of the form
+    goog_data=[["category","smelliness",....],[employee_name, data_for_smelliness,...],...,]
+    """
+    success_chart=[[] for i in range(len(data))]
+    print success_chart
+    for i in range(len(data)):
+        next_list = data[i]
+        for j in range(len(next_list)):
+            success_chart[i].append(next_list[j])
+    
+    return success_chart
+
+def _get_average_employee_analytics(employee_id, rating_titles):
+    """A function to return average statistics of an employee
+       employee_id is employee_id
+       rating_titles is a list of rating_titles
+       returns: [first_name_last_name, avg_rating_1, avg_rating_2]
     """
     try:
         employee = models.EmployeeProfile.objects.get(pk=employee_id)
     except EmployeeProfile.DoesNotExist:
         return False
-    ret={}
-    ret['first_name'] = employee.user.first_name
-    ret['last_name'] = employee.user.last_name
-    ret['rating_profile'] = _get_rating_profile(employee_id)
+    
+    ret=[]
+    ret.append("%s %s"%(employee.user.first_name, employee.user.last_name))
+    
+    ratings = {}
+    profile = employee.rating_profile
 
+    # First make a dictionary so as not to lose individual ratings
+    for rating in employee.rating_set.all():
+        #rating has already been accounted for
+        if rating.title in ratings:
+            ratings[rating.title].append(rating.rating_value)
+        else:
+            ratings[rating.title]=[rating.rating_value]
+     
+    
+    rating_list=[]
+    for title in rating_titles:
+        rating_list.append(average(ratings[title]))
+
+    ret.extend(rating_list)
     return ret
+
 
 def _get_rating_profile(employee_id):
     """Returns a json-able rating_profile object of the form
@@ -585,3 +636,6 @@ def delete_newsfeed_item(request):
 	return render_to_response('delete_newsfeed.html',
 				  {'item':n, 'id':request.GET['id']},
 				  context_instance=RequestContext(request))
+
+def average(nums):
+    return (float(sum(nums))/len(nums))
