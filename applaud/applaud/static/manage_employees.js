@@ -4,7 +4,7 @@ function bind_delete_buttons() {
 	function ( event ) {
 	    console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 	    event.preventDefault();
-	    $.ajax({ url:'/business/delete_employee/',
+	    $.ajax({ url: delete_employee_url,
 		     type: 'POST',
 		     data: {'employee_id':$(this).attr('id').split('_')[2],
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
@@ -32,7 +32,7 @@ var listEmployees = function(data) {
 
 	// This is the way it's done per the EmployeeEncoder
 	listitem.html( employee.first_name+" "+employee.last_name
-		       +"<br /><form action=\"/business/delete_employee/\" method=\"post\">"
+		       +"<br /><form action=\"\" method=\"post\">"
 		       +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
 		       +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />"
 		       +"<br />" );

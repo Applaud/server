@@ -173,8 +173,8 @@ def manage_ratingprofiles(request):
     if 'deactivate_dim' in request.POST:
         rating_profile.dimensions.remove(request.POST['deactivate_dim'])
         rating_profile.save()
-
-    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
+        
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
 
@@ -263,7 +263,7 @@ def manage_survey(request):
                 q.label = question['question_label']
                 q.options = question['question_options']
                 q.type = question['question_type']
-                print 'is active: %s' % question['question_active']
+
                 # Set whether this question is visible to users or not.
                 if question['question_active'] == 'true':
                     q.active = True
@@ -290,13 +290,10 @@ def create_rating_profile(request):
     for a rating profile. Also includes the title.
     '''
     if request.method == 'GET':
-        # Be sure we're logged in and that we're a business.
-        profile = request.user.businessprofile
         return render_to_response('create_rating_profile.html',
                                   {},
                                   context_instance=RequestContext(request))
     if request.method == 'POST':
-	sys.stderr.write(str(request.POST))
         profile = request.user.businessprofile
         i = 0
         dimensions = []
@@ -402,7 +399,6 @@ def analytics(request):
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():
             ratings[rating] = 'N/A' if len(ratings[rating]) == 0 else sum(ratings[rating])/len(ratings[rating])
-        print ratings
         employee_dict['ratings'] = ratings
         employees.append(employee_dict)
 
@@ -462,7 +458,7 @@ def newsfeed_create(request):
         newsitem.business = profile
 	newsitem.save()
         
-        return HttpResponseRedirect('/business/business_manage_newsfeed/')
+        return HttpResponseRedirect(reverse('business_manage_newsfeed'))
     
     f = forms.NewsFeedItemForm()
     	
@@ -499,7 +495,6 @@ def edit_newsfeed(request):
 
                 #this might be a tad sloppy
 	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	
 	f = forms.NewsFeedItemForm(initial=d)
        	
 	return render_to_response('edit_newsfeed.html',
