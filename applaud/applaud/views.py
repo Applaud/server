@@ -36,8 +36,11 @@ def index(request):
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.RatingProfile):
+            dim_list = [{'title':d.title,
+                         'id':d.id} for d in o.rateddimension_set.all()]
+            
 	    res = {'title':o.title,
-                   'dimensions':o.dimensions,
+                   'dimensions':dim_list,
                    'business_id':o.business.id,
                    'id':o.id }
 	    return res
@@ -48,13 +51,18 @@ class RatingProfileEncoder(json.JSONEncoder):
 class EmployeeEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.EmployeeProfile):
-	    dimensions = o.rating_profile.dimensions
+	    dimensions = o.rating_profile.rateddimension_set.all()
+            dimension_list = []
+            for d in dimensions:
+                dimension_list.append( {'title':d.title,
+                                        'id':d.id} )
+
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
-			'dimensions':dimensions},
+			'dimensions':dimension_list},
                    'id':o.id
 		   }
 	    return res

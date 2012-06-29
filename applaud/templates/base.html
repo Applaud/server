@@ -10,13 +10,27 @@
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
   <script type="text/javascript" >
+/**
+ * URLS
+ */
 var manage_employees_url = "{% url business_manage_employees %}";
 var delete_employee_url = "{% url business_delete_employee %}";
 var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
 var new_ratingprofile_url = "{% url business_new_ratingprofile %}";
 var list_ratingprofiles_url = "{% url business_list_ratingprofiles %}";
-
 var manage_survey_url = "{% url business_manage_survey %}";
+
+/**
+ * UTIL
+ */
+function escapeHTML( str ) {
+    console.log("Escaping string: "+str);
+    var temp = $('<pre></pre>');
+    temp.text(str);
+    var escaped = temp.html();
+    console.log("Escaped version: "+escaped);
+    return escaped;
+}
   </script>
   {% block scripts %}
   {% endblock %}

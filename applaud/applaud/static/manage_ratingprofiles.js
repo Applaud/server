@@ -39,7 +39,7 @@ ratingProfile.bind_remove_buttons = function() {
 	    $.ajax({ url: manage_ratingprofiles_url,
 		     type: 'POST',
 		     data: {'profile_id':$(this).siblings('.profileid').val(),
-			    'remove_dim':$(this).siblings('.dimension_text').text(),
+			    'remove_dim': $(this).siblings('.dimension_text').prop('id'),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: ratingProfile.listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -60,7 +60,7 @@ ratingProfile.bind_deactivate_buttons = function() {
 	$.ajax({ url: manage_ratingprofiles_url,
 		 type: 'POST',
 		 data: {'profile_id':$(this).siblings('.profileid').val(),
-			'deactivate_dim':$(this).siblings('.dimension_text').text(),
+			'deactivate_dim':$(this).siblings('.dimension_text').prop('id'),
 			'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		 success: ratingProfile.listProfiles,
 		 error: function() { alert("Something went wrong."); }
@@ -79,10 +79,9 @@ ratingProfile.bind_edit_buttons = function() {
 
 	// Turn dimension text into text field
 	var dimdom = $(this).siblings('.dimension_text');
-	var dimtext = dimdom.text();
 	var dimfield = $('<input />');
 	dimfield.prop({'type':'text',
-		       'value':dimtext,
+		       'value':	dimdom.text(),
 		       'class':'dimfield_edit'});
 	dimdom.replaceWith( dimfield );
 	
@@ -100,8 +99,8 @@ ratingProfile.bind_edit_buttons = function() {
 	    $.ajax({url: manage_ratingprofiles_url,
 		    type:'POST',
 		    data:{'profile_id':$(this).siblings('.profileid').val(),
-			  'replace_dim':dimtext,
-			  'with_dim':$(this).siblings('.dimfield_edit').val(),
+			  'replace_dim':dimdom.prop('id'),
+			  'with_dim': $(this).siblings('.dimfield_edit').val(),
 			  'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		    success: ratingProfile.listProfiles,
 		    error: function() { alert("Something went wrong."); }
@@ -133,7 +132,7 @@ ratingProfile.bind_insert_buttons = function() {
 	    $.ajax({ url: manage_ratingprofiles_url,
 		     type: 'POST',
 		     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
-			    'insert':$('#dimension_title').val(),
+			    'insert':escape(escapeHTML( $('#dimension_title').val() )),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: ratingProfile.listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -164,7 +163,7 @@ ratingProfile.listProfiles = function(data) {
 
     for ( p in data.rating_profiles ) {
 	profile = data.rating_profiles[p];
-	var listitem = $('<li><strong>'+profile.title+'</strong></li>');
+	var listitem = $('<li><strong>'+unescape(profile.title)+'</strong></li>');
 
 	// This is the way it's done per the RatingProfileEncoder
 	var listform = $("<form action=\"/business/business_manage_ratingprofiles/\" method=\"post\">"
@@ -177,14 +176,15 @@ ratingProfile.listProfiles = function(data) {
 	var innerlist = $('<ul></ul>');
 	for ( d in profile.dimensions ) {
 	    var dimension = profile.dimensions[d];
+	    var dim_title = dimension.title;
+	    var dim_id = dimension.id;
 	    var innerlistitem = $('<li></li>');
 	    
 	    // Regular dimensions
 	    if ( "Quality" != dimension ) {
 		innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-				       +'<span class="dimension_text">'+dimension+'</span>'
+				       +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 				       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
-				       +'<input type="hidden" value="'+dimension+'" />'
 				       +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 				       +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
 				       +'<input type="submit" class="del_rp_dim_button" value="-" />'
@@ -194,9 +194,8 @@ ratingProfile.listProfiles = function(data) {
 	    // The permanent "Quality" dimension
 	    else {
 		innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-				       +'<span class="dimension_text">'+dimension+'</span>'
+				       +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 				       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
-				       +'<input type="hidden" value="'+dimension+'" />'
 				       +'</form>'));
 	    }
 	    innerlist.append( innerlistitem );
@@ -255,7 +254,7 @@ ratingProfile.bind_newprofile_button = function() {
 		data = {'title':$('#profile_title').val()}
 		// Grab all dimensions
 		$('.rp_dimension').each( function(index, element) {
-		    data['dim'+index] = $(this).val();
+		    data['dim'+index] = escape(escapeHTML($(this).val()));
 		});
 		data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
 
