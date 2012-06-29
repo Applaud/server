@@ -1,4 +1,6 @@
-function bind_delete_buttons() {
+var manageEmployees = {};
+
+manageEmployees.bind_delete_buttons = function () {
     console.log('binding to buttons');
     $('.del_emp_button').click(
 	function ( event ) {
@@ -8,7 +10,7 @@ function bind_delete_buttons() {
 		     type: 'POST',
 		     data: {'employee_id':$(this).attr('id').split('_')[2],
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-		     success: listEmployees,
+		     success: manageEmployees.listEmployees,
 		     error: function() { alert("Something went wrong."); }
 		   });
 	});
@@ -20,7 +22,7 @@ function bind_delete_buttons() {
  * data - JSON data returned by AJAX call for deleting an employee.
  * Re-builds the list of employees.
  */
-var listEmployees = function(data) {
+manageEmployees.listEmployees = function(data) {
     console.log("listing employees now.");
     // Clear the current list
     $('#employees_listing').empty();
@@ -40,7 +42,7 @@ var listEmployees = function(data) {
     }
     
     $('#employees_listing').append(listing);
-    bind_delete_buttons();
+   manageEmployees.bind_delete_buttons();
 }
 
 /**
@@ -48,5 +50,5 @@ var listEmployees = function(data) {
  */
 $(document).ready(function() {
     // Bind the 'delete' buttons for employees to an AJAX call
-    bind_delete_buttons();
+    manageEmployees.bind_delete_buttons();
 });
