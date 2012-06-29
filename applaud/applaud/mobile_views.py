@@ -63,7 +63,6 @@ def whereami(request):
     from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+settings.GOOGLE_PLACES_RADIUS+"&sensor=true&key="+settings.GOOGLE_API_KEY)
 
     to_parse = json.loads(from_goog.read())
-	#return HttpResponse(to_parse)
 
     business_list = []
 
@@ -84,8 +83,6 @@ def whereami(request):
 @mobile_view
 @csrf_protect
 def checkin(request):
-    # if not request.user.is_authenticated():
-    #     return HttpResponseForbidden("")
     if request.method == 'POST':
         checkin_location = json.load(request)
 	try:
@@ -102,9 +99,6 @@ def checkin(request):
 	    business.save()
 
 	return HttpResponse(json.dumps(business, cls=BusinessProfileEncoder))
-    else:
-        sys.stderr.write("---------------------------------------- giving csrf")
-        return HttpResponse(get_token(request))
 
 # Getting and posting employee data from iOS.
 @mobile_view
@@ -115,8 +109,6 @@ def evaluate(request):
     This is the view that accepts rating data from end-users and
     rates an employee of a business per that employee's RatingProfile.
     '''
-    if request.method != 'POST':
-        return HttpResponse(get_token(request))
     rating_data = json.load(request)
     if 'employee' in request.POST:
         try:
@@ -131,7 +123,7 @@ def evaluate(request):
                        date_created=datetime.utcnow().replace(tzinfo=utc),
                        user=request.user.userprofile)
             r.save()
-    return HttpResponse('foo')
+    return HttpResponse("") # Empty response = all went well
 
 @mobile_view
 @csrf_protect
@@ -179,7 +171,7 @@ def survey_respond(request):
                                      date_created=datetime.utcnow().replace(tzinfo=utc),
                                      user=request.user.userprofile)
         qr.save()
-    return HttpResponse('foo')
+    return HttpResponse("")
 
 # Static JSON data that can be used for testing when the internet's down
 def example(request):
@@ -226,11 +218,7 @@ def general_feedback(request):
                                       user=request.user.userprofile,
                                       date_created=datetime.utcnow().replace(tzinfo=utc))
     feedback.save()
-    return HttpResponse('foo')
-
-# Getting the CSRF token for mobile devices
-def get_csrf(request):
-    return HttpResponse(get_token(request))
+    return HttpResponse("")
 
 @mobile_view
 @csrf_protect

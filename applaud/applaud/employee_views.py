@@ -20,7 +20,7 @@ def employee_view(view):
     to the appropriate page.
     '''
     def goto_login(*args, **kw):
-        return HttpResponseRedirect("/accounts/login/")
+        return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
         return HttpResponseRedirect("/")
