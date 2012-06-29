@@ -100,7 +100,7 @@ ratingProfile.bind_edit_buttons = function() {
 		    type:'POST',
 		    data:{'profile_id':$(this).siblings('.profileid').val(),
 			  'replace_dim':dimdom.prop('id'),
-			  'with_dim': $(this).siblings('.dimfield_edit').val(),
+			  'with_dim': escapeHTML( $(this).siblings('.dimfield_edit').val() ),
 			  'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		    success: ratingProfile.listProfiles,
 		    error: function() { alert("Something went wrong."); }
@@ -132,7 +132,7 @@ ratingProfile.bind_insert_buttons = function() {
 	    $.ajax({ url: manage_ratingprofiles_url,
 		     type: 'POST',
 		     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
-			    'insert':escape(escapeHTML( $('#dimension_title').val() )),
+			    'insert':escapeHTML( $('#dimension_title').val() ),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: ratingProfile.listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -163,7 +163,7 @@ ratingProfile.listProfiles = function(data) {
 
     for ( p in data.rating_profiles ) {
 	profile = data.rating_profiles[p];
-	var listitem = $('<li><strong>'+unescape(profile.title)+'</strong></li>');
+	var listitem = $('<li><strong>'+profile.title+'</strong></li>');
 
 	// This is the way it's done per the RatingProfileEncoder
 	var listform = $("<form action=\"/business/business_manage_ratingprofiles/\" method=\"post\">"
@@ -254,7 +254,7 @@ ratingProfile.bind_newprofile_button = function() {
 		data = {'title':$('#profile_title').val()}
 		// Grab all dimensions
 		$('.rp_dimension').each( function(index, element) {
-		    data['dim'+index] = escape(escapeHTML($(this).val()));
+		    data['dim'+index] = $(this).val();
 		});
 		data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
 
