@@ -6,8 +6,10 @@ Forms and validation code for user registration.
 
 from django.contrib.auth.models import User
 from django import forms
+from django.forms.fields import ImageField
 from django.utils.translation import ugettext_lazy as _
 from applaud.models import EmployeeProfile, BusinessProfile, UserProfile
+from widgets import ApatapaImageWidget
 from PIL import Image
 
 import sys
@@ -154,6 +156,8 @@ class EmployeeProfileForm(forms.ModelForm):
     max_image_size = 1048576
     # Acceptable file formats
     image_formats = ('JPEG','JPG','BMP','PNG','GIF','image')
+
+    profile_picture = forms.ImageField(widget=ApatapaImageWidget())
 
     def clean_profile_picture(self):
         image = self.cleaned_data['profile_picture']

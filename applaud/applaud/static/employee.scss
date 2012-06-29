@@ -1,0 +1,28 @@
+/************
+ * variables
+ **/
+
+
+/************
+ * stats view
+ */
+#employee_welcome {
+    #employee_img {
+	vertical-align:text-top;
+	width:128px;
+	height:128px;
+    }
+    p {
+	display:inline;
+    }
+}
+
+#emp_graph {
+    width:600;
+    height:400px;
+    overflow:hidden;
+    margin: {
+	left:auto;
+	right:auto;
+    }
+}
