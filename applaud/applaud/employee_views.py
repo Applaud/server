@@ -49,16 +49,18 @@ def employee_stats(request):
     ratings = profile.rating_set
 
     # List of valid dimensions for rating
-    dimensions = rating_profile.dimensions
+    dimensions = list(rating_profile.rateddimension_set.all())
 
     success_chart = []
     axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
     success_chart.append(axis)
     for i in range(len(dimensions)):
-        row = [ dimensions[i] ]
+        row = [ dimensions[i].title ]
         rating_vals = []
+
+        # Count how many ratings we have of a particular value for each dimension
         for j in range(5):
-            rating_vals.append(len(ratings.filter(title=dimensions[i],
+            rating_vals.append(len(ratings.filter(title=dimensions[i].title,
                                                   rating_value=j+1)))
         row.extend(rating_vals)
         success_chart.append(row)

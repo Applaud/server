@@ -16,7 +16,7 @@ from django.core.mail import send_mail, BadHeaderError
 import sys
 import json
 import urllib2
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension
 from applaud import forms, models
 from registration import forms as registration_forms
 from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder
@@ -144,34 +144,41 @@ def manage_ratingprofiles(request):
     except RatingProfile.DoesNotExist:
         return HttpResponse(json.dumps({'error':"Rating profile did not exist."}))
 
+    # Insert one dimension
     if 'insert' in request.POST:
-        rating_profile.dimensions.append(request.POST['insert'])
-        rating_profile.save()
+        dim = RatedDimension(title=request.POST['insert'],
+                             rating_profile=rating_profile)
+        dim.save()
 
+    # Delete the rating profile and all associated data. Warn the user
+    # before doing this!
     if 'remove' in request.POST:
-        # Delete the rating profile and all associated data. Warn the user before doing this!
-        rating_profile.rating_set.all().delete()
+        alldims = rating_profile.rateddimension_set.all()
+        for dim in alldims:
+            dim.rating_set.all().delete()
+        alldims.delete()
         rating_profile.delete()
 
+    # Remove one dimension
     if 'remove_dim' in request.POST:
-        rating_profile.dimensions.remove(request.POST['remove_dim'])
-        rating_profile.save()
+        dim = RatedDimension.objects.get(id=int(request.POST['remove_dim']))
+        dim.delete()
 
     if 'replace_dim' in request.POST:
         # Step 1: Change the title in all the ratings for this dimension
-        tochange = rating_profile.rating_set.filter(title=request.POST['replace_dim'][0])
-        for rating in tochange:
-            rating.title = request.POST['replace_dim'][1]
+        dim = RatedDimension.objects.get(id=int(request.POST['replace_dim']))
+        for rating in dim.rating_set.all():
+            rating.title = request.POST['with_dim']
             rating.save()
 
         # Step 2: Change the ratingprofile itself
-        rating_profile.dimensions.remove(request.POST['replace_dim'])
-        rating_profile.dimensions.append(request.POST['with_dim'])
-        rating_profile.save()
+        dim.title = request.POST['with_dim']
+        dim.save()
 
     if 'deactivate_dim' in request.POST:
-        rating_profile.dimensions.remove(request.POST['deactivate_dim'])
-        rating_profile.save()
+        dim = RatedDimension.objects.get(id=int(request.POST['deactivate_dim']))
+        dim.is_active = False
+        dim.save()
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
                                    cls=RatingProfileEncoder),
@@ -206,14 +213,14 @@ def new_ratingprofile(request):
     dimensions = []
     i = 0
 
-    while 'dim%d'%i in request.POST:
-        dimensions.append( request.POST['dim%d'%i] )
-        i += 1
-
     rp = RatingProfile(title=request.POST['title'],
-                       dimensions=dimensions,
                        business=profile)
     rp.save()
+
+    while 'dim%d'%i in request.POST:
+        dim = RatedDimension(title=request.POST['dim%d'%i],
+                             rating_profile=rp)
+        i += 1
 
     return HttpResponse(json.dumps({'rating_profiles':
                                         _list_rating_profiles(profile.id)},
@@ -280,47 +287,6 @@ def manage_survey(request):
                                            cls=SurveyEncoder),
                                 mimetype='application/json')
 
-
-@business_view
-@csrf_protect
-def create_rating_profile(request):
-    '''Create a rating profile.
-    Takes a variable number of text fields and turns them into dimensions
-    for a rating profile. Also includes the title.
-    '''
-    if request.method == 'GET':
-        return render_to_response('create_rating_profile.html',
-                                  {},
-                                  context_instance=RequestContext(request))
-    if request.method == 'POST':
-        profile = request.user.businessprofile
-        i = 0
-        dimensions = []
-        while 'dimension_' + str(i) in request.POST and request.POST['dimension_' + str(i)]:
-            dimensions.append(request.POST['dimension_' + str(i)])
-            i += 1
-        title = ''
-        if 'title' in request.POST and request.POST['title']:
-            title = request.POST['title']
-        errors = {}
-        err = False
-        if not title:
-            errors['title_err'] = "You should enter a title for this rating profile."
-            err = True
-        if not dimensions:
-            errors['dimensions_err'] = "No dimensions?"
-            err = True
-        if err:
-            errors['dimensions'] = dimensions
-            return render_to_response('create_rating_profile.html',
-                                      errors,
-                                      context_instance=RequestContext(request))
-        rp = RatingProfile(title=title, dimensions=dimensions, business=profile)
-        rp.save()
-	
-        return HttpResponseRedirect(reverse("business_manage_ratingprofiles"))
-
-        
 # A function to recieve a comma-separated email list, strip them
 # and check them for validity
 def strip_and_validate_emails(emails):
@@ -384,15 +350,10 @@ def analytics(request):
         employee_dict = {}
         ratings = {}
         employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
-        for dimension in employee.rating_profile.dimensions: # Make sure we have a dictionary entry for each dimension
-            ratings[dimension] = []
-        for rating in list(employee.rating_profile.rating_set.all()): # Make a list of all the ratings for each dimension
-            # N.B.! This only gives the information directly relevant to the current version
-            # of the RatingProfile. Old data is still stored from any previous version! We
-            # should display this somehow, and give the business the option of removing it
-            # (similar to behavior with surveys)
-            if rating.title in ratings:
-                ratings[rating.title].append(rating.rating_value)
+
+        # Make sure we have a dictionary entry for each dimension
+        for dimension in employee.rating_profile.rateddimension_set.all(): 
+            ratings[dimension.title] = [d.rating_value for d in dimension.rating_set.filter(employee=employee)]
 
         # Calculate the average of that list or each dimension
         for rating in ratings.keys():

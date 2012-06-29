@@ -42,12 +42,38 @@ business2.groups = [business_group]
 business2.save()
 
 # Make a RatingProfile.
-profile1 = models.RatingProfile(title='Profile 1', dimensions=['Slickness', 'Awesomeness'], business=business)
+
+profile1 = models.RatingProfile(title='Profile 1', business=business)
 profile1.save()
-profile2 = models.RatingProfile(title='Profile 2', dimensions=['Efficiency', 'Enthusiasm', 'Sarcasm'], business=business2)
+slickness = models.RatedDimension(title="Slickness",
+                           rating_profile=profile1)
+awesomeness = models.RatedDimension(title="Awesomeness",
+                             rating_profile=profile1)
+slickness.save()
+awesomeness.save()
+
+profile2 = models.RatingProfile(title='Profile 2', business=business2)
 profile2.save()
-profile3 = models.RatingProfile(title='Profile 3', dimensions=['Slipperiness', 'Surliness'], business=business)
+efficiency = models.RatedDimension(title="Efficiency",
+                           rating_profile=profile2)
+enthusiasm = models.RatedDimension(title="Enthusiasm",
+                             rating_profile=profile2)
+efficiency.save()
+enthusiasm.save()
+
+
+
+profile3 = models.RatingProfile(title='Profile 3', business=business)
 profile3.save()
+slipperiness = models.RatedDimension(title="Slipperiness",
+                           rating_profile=profile3)
+surliness = models.RatedDimension(title="Surliness",
+                             rating_profile=profile3)
+slipperiness.save()
+surliness.save()
+
+
+
 
 # Make a User.
 emp_user = User.objects.create_user('joe', 'joes@aol.com', 'apatapa')
@@ -96,28 +122,28 @@ rating1 = models.Rating(title='Awesomeness',
                         employee=master,
                         id=1,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
-                        profile=profile1,
+                        dimension=awesomeness,
                         user=userprofile)
 rating1.save()
 rating2 = models.Rating(title='Slickness',
                         rating_value=5,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
-                        profile=profile1,
+                        dimension=slickness,
                         user=userprofile)
 rating2.save()
 rating3 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
-                        profile=profile1,
+                        dimension=slickness,
                         user=userprofile)
 rating3.save()
 rating4 = models.Rating(title='Slickness',
                         rating_value=4,
                         employee=master,
                         date_created=datetime.utcnow().replace(tzinfo=utc),
-                        profile=profile1,
+                        dimension=slickness,
                         user=userprofile)
 rating4.save()
 
