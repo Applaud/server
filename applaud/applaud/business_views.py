@@ -36,7 +36,7 @@ def business_view(view):
         return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse("home"))
 
     def wrapper(*args, **kw):
         request = args[0]
@@ -274,7 +274,7 @@ def manage_survey(request):
                 else:
                     q.save()
             survey.save()
-            return HttpResponse('foo')
+            return HttpResponse("") # Empty response = all went well
         # We're getting data for this business' survey.
         else:
             return HttpResponse(json.dumps({'survey':survey},

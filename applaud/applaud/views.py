@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect
@@ -39,11 +40,11 @@ def create_employee(request):
         try:
             profile=request.user.businessprofile
         except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect("/accounts/login/")
+            return HttpResponseRedirect(reverse("auth_login"))
 
         username=request.user.username
     else:
-        return HttpResponseRedirect("/accounts/login/")
+        return HttpResponseRedirect(reverse("auth_login"))
 
     # if  request.method == 'POST':
     #     employee_form = forms.EmployeeForm(request.POST)
