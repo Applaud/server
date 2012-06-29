@@ -33,6 +33,7 @@ var rating_dimension_ids = [];
 
 $(document).ready( function(){
     console.log("Document.ready");
+    apatapa.employee.getEmployees($('#employees'));
     make_chart();
     bind_employee_divs();
 });
@@ -56,14 +57,15 @@ var make_chart = function(){
 }
 
 var bind_employee_divs = function(){
-    apatapa.employee.getEmployees($('#employees'));
-/*
+    console.log("Binding");
     //When we hover over a div, it should be highlighted,
-    $('.employees').hover(employee_div_hover_in, employee_div_hover_out)
+    $('.employee_item').hover(function(){employee_div_hover_in, employee_div_hover_out});
+
     //When we click on a div it should remain permanently highlighted and also pass
     //the updated employee id form the graph
-    $('.employees').click( function() {
-	var e_id = $(this).attr('id').split('_')[1]
+    $('.employee_item').click( function() {
+	var e_id = $(this).children(':hidden').attr('value');
+	console.log(e_id);
 	$(this).toggleClass('selected');
 	
 	if( $(this).is('.selected') ) {
@@ -76,9 +78,10 @@ var bind_employee_divs = function(){
 	}
 
     });
-*/
+
 }
 var employee_div_hover_in = function(){
+    console.log("here here");
     $(this).css('background-color','#666666');
 }
 var employee_div_hover_out = function(){
