@@ -3,6 +3,7 @@
 {% block title %}
 Employee Information
 {% endblock %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_analytics.css" />
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}employees.js"></script>
@@ -33,15 +34,12 @@ var rating_dimension_ids = [];
 
 $(document).ready( function(){
     console.log("Document.ready");
-    apatapa.employee.getEmployees($('#employees'));
+    apatapa.employee.getEmployees($('#employees'), bind_employee_divs);
     make_chart();
-    bind_employee_divs();
 });
 
 var make_chart = function(){
-    console.log("employee ids: "+employee_ids);
-    console.log("rating dimension ids: "+rating_dimension_ids);
-    
+
     var data = JSON.stringify({'employee_ids':employee_ids,
 			       'rating_categories':rating_dimension_ids});
 
@@ -57,9 +55,8 @@ var make_chart = function(){
 }
 
 var bind_employee_divs = function(){
-    console.log("Binding");
     //When we hover over a div, it should be highlighted,
-    $('.employee_item').hover(function(){employee_div_hover_in, employee_div_hover_out});
+    $('.employee_item').hover(employee_div_hover_in, employee_div_hover_out );
 
     //When we click on a div it should remain permanently highlighted and also pass
     //the updated employee id form the graph
@@ -81,7 +78,6 @@ var bind_employee_divs = function(){
 
 }
 var employee_div_hover_in = function(){
-    console.log("here here");
     $(this).css('background-color','#666666');
 }
 var employee_div_hover_out = function(){
