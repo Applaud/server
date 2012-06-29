@@ -54,12 +54,12 @@ manageSurvey = {};
 	    try {
 		$('.question').each( function(index, element) {
 		    var question_id = $(this).children('.question_id').val();
-		    var question_label = $(this).children('#question_'+index).val();
+		    var question_label = escapeHTML( $(this).children('#question_'+index).val() );
 		    var shouldDelete = $(this).children('.should_delete').val();
 		    var question_active = $(this).children('.is_active').val();
 		    var question_options = [];
 		    $(this).children('.question_option').children('.option_field').each( function(ind, ele) {
-			question_options.push($(this).val());
+			question_options.push(escapeHTML( $(this).val()) );
 		    });
 		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
 		    // If it's a check or radio, and we don't have options.
@@ -89,8 +89,8 @@ manageSurvey = {};
 	    // Send it all off.
 	    $.ajax({url: manage_survey_url,
 		    data: {'survey_id': $('#survey_id').val(),
-			   'survey_title': $('#survey_title').val(),
-			   'survey_description': $('#survey_description').val(),
+			   'survey_title': escapeHTML( $('#survey_title').val() ),
+			   'survey_description': escapeHTML( $('#survey_description').val() ),
 			   'questions': JSON.stringify(questions),
 			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
 			  },
