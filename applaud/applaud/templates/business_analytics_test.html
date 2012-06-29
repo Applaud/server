@@ -5,6 +5,7 @@ Employee Information
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
 <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawVisualization);
@@ -55,7 +56,7 @@ var make_chart = function(){
 }
 
 var bind_employee_divs = function(){
-    applaud.employee.get_employees($('#employees'));
+    apatapa.employee.getEmployees($('#employees'));
 /*
     //When we hover over a div, it should be highlighted,
     $('.employees').hover(employee_div_hover_in, employee_div_hover_out)
