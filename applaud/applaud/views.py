@@ -32,32 +32,6 @@ def index(request):
     return render_to_response('index.html', {'user': request.user,
                                              'user_type': user_type})
 
-# Do we need this?
-@csrf_protect
-def create_employee(request):
-    if request.user.is_authenticated():
-        #Are we a business?
-        try:
-            profile=request.user.businessprofile
-        except BusinessProfile.DoesNotExist:
-            return HttpResponseRedirect(reverse("auth_login"))
-
-        username=request.user.username
-    else:
-        return HttpResponseRedirect(reverse("auth_login"))
-
-    # if  request.method == 'POST':
-    #     employee_form = forms.EmployeeForm(request.POST)
-    #     e=employee_form.save(commit=False)
-    #     e.business= profile
-    #     e.save()
-        
-    employees = profile.employeeprofile_set.all()
-
-    return render_to_response('employees.html',
-                              {'list':employees},
-                              context_instance=RequestContext(request))
-
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
