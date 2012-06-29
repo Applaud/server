@@ -28,13 +28,13 @@ var manage_survey_url = "{% url business_manage_survey %}";
     {% if user.is_authenticated %}
     ({% trans "Logged in" %}: {{ user.username }}) |
     {% if user.userprofile %}
-    <a href="/user/">{% trans "My Profile" %}</a> |
+    <a href="{% url user_home %}">{% trans "My Profile" %}</a> |
     {% endif %}
     {% if user.employeeprofile %}
-    <a href="/employee/">{% trans "My Profile" %}</a> |
+    <a href="{% url employee_home %}">{% trans "My Profile" %}</a> |
     {% endif %}
     {% if user.businessprofile %}
-    <a href="/business/">{% trans "My Profile" %}</a> |
+    <a href="{% url business_home %}">{% trans "My Profile" %}</a> |
     {% endif %}
     <a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
     <a href="{% url auth_password_change %}">{% trans "Change password" %}</a>
