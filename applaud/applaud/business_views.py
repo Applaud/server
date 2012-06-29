@@ -118,9 +118,8 @@ def _delete_employee(employeeID):
         profile.delete()
         user.delete()
         return True
-    except:
-        pass
-    return False
+    except EmployeeProfile.DoesNotExist:
+        return False
 
 @business_view
 @csrf_protect
@@ -450,7 +449,7 @@ def edit_newsfeed(request):
     else:
 	try:                        
 	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	except:
+	except NewsFeedItem.DoesNotExist:
 	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
 
                 #this might be a tad sloppy
