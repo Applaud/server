@@ -8,6 +8,9 @@
 
 {% block content %}
 Hello, {{ user.businessprofile.business_name }}!
+{% if message %}
+<strong>{{ message }}</strong>
+{% endif %}
 
 <!-- relevant functional links for business -->
 <div id="business_links">
