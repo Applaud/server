@@ -367,8 +367,7 @@ def business_welcome(request):
         _add_employee(set(email_list),
                       request.user.businessprofile.business_name,
                       request.user.businessprofile.goog_id)
-                                
-        request.user.businessprofile.first_time = False
+
         return HttpResponseRedirect(reverse('business_home'))
     
 def business_home(request):

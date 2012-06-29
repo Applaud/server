@@ -13,7 +13,10 @@ urlpatterns = patterns('',
                            name='employee_stats'),
 
                        # Welcome page. We visit this right after registering.
-                       url(r'^welcome/',redirect_to, {'url':'/employee/profile/'}),
+                       url(r'^welcome/',
+                           redirect_to,
+                           {'url':'/employee/profile/'},
+                           name="employee_welcome"),
 
                        # Landing page
                        url(r'^$', redirect_to, {'url':'stats'},
@@ -27,5 +30,6 @@ urlpatterns = patterns('',
                        # Where we go when editing profile was successful
                        url(r'^profilesuccess/',
                            direct_to_template,
-                           {'template':'profile_success.html'}),
+                           {'template':'profile_success.html'},
+                           name="employee_profile_success"),
         )
