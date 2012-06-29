@@ -109,6 +109,14 @@ def manage_employees(request):
                                'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
 
+# List the employees for a business (view)
+@business_view
+def list_employees(request):
+    return HttpResponse(json.dumps({'employee_list':
+                                        _list_employees(request.user.businessprofile.id)},
+                                   cls=EmployeeEncoder),
+                        mimetype='application/json')
+
 # List the employees for a business
 def _list_employees(businessID):
     business_profile = BusinessProfile.objects.get(id=businessID)
@@ -122,9 +130,7 @@ def delete_employee(request):
     profile = request.user.businessprofile
     if 'employee_id' in request.POST:
         _delete_employee(request.POST['employee_id'])
-        return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)},
-                                       cls=EmployeeEncoder),
-                            mimetype='application/json')
+        return list_employees(request)
     return HttpResponseRedirect(reverse("business_manage_employees"))
 
 # Fully deletes an employeeprofile (including the employee user) from the database
@@ -230,6 +236,10 @@ def new_ratingprofile(request):
      ...}
     '''
 
+    # Profiles must have titles
+    if 'title' not in request.POST:
+        return HttpResponse("")
+
     profile = request.user.businessprofile
     if request.method != 'POST':
         return HttpResponseRedirect(reverse("business_manage_employees"))
@@ -244,10 +254,10 @@ def new_ratingprofile(request):
     while 'dim%d'%i in request.POST:
         dim = RatedDimension(title=request.POST['dim%d'%i],
                              rating_profile=rp)
+        dim.save()
         i += 1
 
-    return HttpResponse(json.dumps({'rating_profiles':
-                                        _list_rating_profiles(profile.id)},
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
 
@@ -287,6 +297,9 @@ def manage_survey(request):
             for question in json.loads(request.POST['questions']):
                 # If it's a new question.
                 if int(question['question_id']) == 0:
+                    # If this is a new question that should be deleted, just keep on walking.
+                    if question['should_delete'] == 'true':
+                        continue
                     q = models.Question(survey=survey)
                 else:
                     q = models.Question.objects.get(id=question['question_id'])
@@ -589,7 +602,8 @@ def manage_newsfeed(request):
                                            business=profile,
                                            date=datetime.now().replace(tzinfo=utc),
                                            date_edited=datetime.now().replace(tzinfo=utc))
-            newsfeed.save()
+            if feed['should_delete'] != 'true':
+                newsfeed.save()
     return HttpResponse('')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.

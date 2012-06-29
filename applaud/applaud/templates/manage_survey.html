@@ -1,14 +1,12 @@
 {% extends "business.html" %}
 {% block title %}Create survey{% endblock %}
-{% block links %}
-{% endblock %}
 {% block scripts %}
-<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+{{ block.super }}
 <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}manage_survey.js"></script>
 {% endblock %}
 {% block content %}
 {{ block.super }}
-<h1>Create Survey</h1>
+<h1>Questions</h1>
 <div id="survey_div">
 
   {% if title_err %}
@@ -21,9 +19,9 @@
     <input type="hidden" value="{{ survey_id }}" id="survey_id" />
     {% csrf_token %}
     
-    Title:
+    <label for="title">Title</label>
     <input type="text" id="survey_title" name="title" />
-    Description:
+    <label for="description">Description</label>
     <input type="text" id="survey_description" name="description" />
 
     <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />

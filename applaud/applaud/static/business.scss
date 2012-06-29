@@ -1,0 +1,87 @@
+/************
+ * Variables
+ */
+$deletecolor: rgb(255,100,100);
+
+
+/************
+ * Styles that apply to all pages
+ */
+form {
+    display:inline;
+}
+
+h3 {
+    font-size:16pt;
+    font-weight:bold;
+    text-transform:uppercase;
+    color:rgb(44,30,30);
+}
+
+strong {
+    font-weight:bold;
+}
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
+    margin:5px;
+    background-color:rgb(255,235,250);
+    padding:5px;
+}
+
+.profile_image {
+    width:64px;
+    height:64px;
+    vertical-align:middle;
+}
+
+/************
+ * Newsfeed
+ */
+.feed input {
+    margin-bottom:10px;
+}
+
+.nf_delete_button {
+    margin-top: 10px;
+    background-color:$deletecolor;
+}
+
+.question_optionlist {
+    padding-top:10px;
+
+    label {
+	padding-right:5px;
+    }
+
+    .question_item {
+	padding: {
+	    left:20px;
+	    top:5px;
+	}
+    }
+}
+
+/************
+ * Employee management
+ */
+#newemployeeform {
+    margin: {
+	top: 30px;
+	bottom: 30px;
+    }
+    display:block;
+}
+
+.profile_title {
+    margin-right: 15px;
+    display: inline;
+}
+
+.employee_name {
+    padding-left:10px;
+}
+
+.del_emp_button {
+    background-color:$deletecolor;
+    margin-left:10px;
+}

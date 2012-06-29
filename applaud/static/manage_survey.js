@@ -267,11 +267,9 @@ manageSurvey = {};
 	questionDiv
 	    .append(questionId)
 	    .append(shouldDelete)
+	    .append(questionAreaLabel)
 	    .append(questionArea)
 	    .append(isActive)
-	    .append($( "<br />" ))
-	    .append(questionAreaLabel)
-	    .append($("<br />"))
 	    .append(questionTypeLabel)
 	    .append(questionType)
 	    .append($("<br />"))
@@ -293,6 +291,7 @@ manageSurvey = {};
 
     function addOption(qindex) {
 	var questionOptionsDiv = $("#question_"+qindex+"_options");
+	questionOptionsDiv.addClass('question_option');
 	
 	var optionFieldLabel = $("<label>Option "+(questionOptions[qindex]+1)+"</label>");
 	optionFieldLabel.prop({"for":"question_"+qindex+"_option_"+questionOptions[qindex]});
