@@ -176,7 +176,7 @@ class EmployeeProfileForm(forms.ModelForm):
 
     class Meta:
         model = EmployeeProfile
-        fields = ('bio','profile_picture',)
+        fields = ('bio',)
 
 
 class UserRegistrationForm(RegistrationForm):

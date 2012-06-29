@@ -82,7 +82,6 @@ if (! apatapa.employee) {
 	}
 	
 	container.append(listing);
-
     };
 
     /**
