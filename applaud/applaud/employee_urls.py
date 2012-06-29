@@ -8,12 +8,12 @@ import settings
 
 urlpatterns = patterns('',
                        # Stats page.
-                       url(r'^stats/',
+                       url(r'^stats/$',
                            employee_views.employee_stats,
                            name='employee_stats'),
 
                        # Welcome page. We visit this right after registering.
-                       url(r'^welcome/',
+                       url(r'^welcome/$',
                            redirect_to,
                            {'url':'/employee/profile/'},
                            name="employee_welcome"),
@@ -23,12 +23,12 @@ urlpatterns = patterns('',
                            name='employee_home'),
 
                        # Profile-editing page
-                       url(r'^profile/',
+                       url(r'^profile/$',
                            employee_views.edit_profile,
                            name='employee_profile'),
 
                        # Where we go when editing profile was successful
-                       url(r'^profilesuccess/',
+                       url(r'^profilesuccess/$',
                            direct_to_template,
                            {'template':'profile_success.html'},
                            name="employee_profile_success"),
