@@ -11,10 +11,8 @@ var ratingProfile = {};
      * Binds a callback to the buttons that remove an entire ratingprofile.
      */
     var bind_delete_buttons = function() {
-	console.log('binding to buttons');
 	$('.del_rp_button').click(
 	    function ( event ) {
-		console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 		event.preventDefault();
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
@@ -62,6 +60,26 @@ var ratingProfile = {};
 		     type: 'POST',
 		     data: {'profile_id':$(this).siblings('.profileid').val(),
 			    'deactivate_dim':$(this).siblings('.dimension_text').prop('id'),
+			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		     success: listProfiles,
+		     error: function() { alert("Something went wrong."); }
+		   });
+	});
+    }
+
+    /**
+     * bind_activate_buttons
+     *
+     * Binds a callback to the buttons that activate a dimension.
+     */
+    var bind_activate_buttons = function() {
+	$('.activate_rp_dim_button').click( function( event ) {
+	    event.preventDefault();
+
+	    $.ajax({ url: manage_ratingprofiles_url,
+		     type: 'POST',
+		     data: {'profile_id':$(this).siblings('.profileid').val(),
+			    'activate_dim':$(this).siblings('.dimension_text').prop('id'),
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		     success: listProfiles,
 		     error: function() { alert("Something went wrong."); }
@@ -130,7 +148,6 @@ var ratingProfile = {};
 	    submit.click( function( event ) {
 		event.preventDefault();
 		var profile_id = $(this).siblings('.profileid').val();
-		console.log("Submitting dimension... --- "+profile_id);
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
@@ -158,7 +175,6 @@ var ratingProfile = {};
      * Re-builds the list of profiles.
      */
     var listProfiles = function(data) {
-	console.log("listProfiles is called.");
 	// Clear the current list
 	$('#profiles_listing').empty();
 	var listing = $('<ul></ul>');
@@ -181,25 +197,33 @@ var ratingProfile = {};
 		var dim_title = dimension.title;
 		var dim_id = dimension.id;
 		var innerlistitem = $('<li></li>');
+		var innerlistform = $('<form></form>');
 		
 		// Regular dimensions
 		if ( "Quality" != dimension ) {
-		    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-					   +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+		    if (! dimension.active ) {
+			innerlistform.append($('<span class="deactivated">(not active)</span>'
+					       +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+					       +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
+					       +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
+					       +'<input type="submit" class="activate_rp_dim_button" value="activate" />'
+					       +'<input type="submit" class="del_rp_dim_button" value="-" />'));
+		    }
+		    else {
+		    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 					   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 					   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 					   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
-					   +'<input type="submit" class="del_rp_dim_button" value="-" />'
-					   +'</form>'));
-
+					   +'<input type="submit" class="del_rp_dim_button" value="-" />'));
+		    }
 		}
 		// The permanent "Quality" dimension
 		else {
-		    innerlistitem.append($('<form action="/business/business_manage_ratingprofiles/" method="post" />'
-					   +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+		    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 					   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 					   +'</form>'));
 		}
+		innerlistitem.append( innerlistform );
 		innerlist.append( innerlistitem );
 	    }
 	    
@@ -211,6 +235,7 @@ var ratingProfile = {};
 
 	bind_edit_buttons();
 	bind_deactivate_buttons();
+	bind_activate_buttons();
 	bind_delete_buttons();
 	bind_insert_buttons();
 	bind_remove_buttons();
@@ -319,9 +344,10 @@ var ratingProfile = {};
 
 	bind_edit_buttons();		// Edit a single dimension's text
 	bind_deactivate_buttons();	// Deactivate one dimension
-	bind_delete_buttons();	// Delete an entire profile
-	bind_insert_buttons();	// Insert a dimension
-	bind_remove_buttons();	// Remove a dimension
+	bind_activate_buttons();	// Activate one dimension
+	bind_delete_buttons();		// Delete an entire profile
+	bind_insert_buttons();		// Insert a dimension
+	bind_remove_buttons();		// Remove a dimension
 	bind_newprofile_button();	// Make a new ratingprofile
     });
 })(ratingProfile);

@@ -1,19 +1,19 @@
 {% extends "base.html" %}
+
 {% block title %}APATAPA{% endblock %}
-{% block links %}
-<link rel="stylesheet" type="text/css" href="/static/applaud.css" />
-{% endblock %}
-{% block scripts %}{% endblock %}
+
 {% block content %}
-    <h2>APATAPA</h2>
-    {% if user.is_authenticated %}
-    <p>We're hapatappy to havatava you at apatapa, {{ user }}!</p>
-    {% else %}
-    <p>Welcome to apatapa!</p>
-    <p style="color:rgb(255,0,0); font-weight:bold;">You are not logged in.</p>
-    {% endif %}
-    <br />
-    {% if profile %}
-    Your phone number is {{ profile.phone }}.
-    {% endif %}
+<div id="features">
+  <div class="content-title">
+    <h2>New Features</h2>
+  </div>
+  We have so many features!!!
+</div>
+
+<div id="partners">
+  <div class="content-title">
+    <h2>Partners</h2>
+  </div>
+  Partners go here.
+</div>
 {% endblock %}
