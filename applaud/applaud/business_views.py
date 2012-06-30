@@ -382,7 +382,163 @@ def analytics(request):
                                'feedback': feedback,
                                'business': profile.user.businessprofile},
                              context_instance=RequestContext(request))
+@csrf_protect
+@business_view
+def business_analytics(request):
+    """To display various statistics for a business
+    """
+    profile = request.user.businessprofile
+    return render_to_response('business_analytics_test.html',
+                              {'business':profile},
+                              context_instance=RequestContext(request))
+@csrf_protect
+@business_view
+def get_analytics(request):
+    """A view to retrieve statistics for employees, surveys, and general feedback.
+       Currently only implemented for employee statistics. Should receive a dictionary of the form:
+       {'employee_ids':[%d, %d, %d, ....],
+        'rating_categories': }
+    """
+    profile = request.user.businessprofile
+    print "Seeing something"
+    
+    if request.method == 'GET' or request.method=='POST':
+        data = json.loads(request.POST['data'])
 
+        print "Employee ids: "+str(data['employee_ids'])
+        print "Rating categories: "+str(data['rating_categories'])
+
+        # If more than one category
+        # include type(data['rating_categories'])
+        if len(data['employee_ids'])==0:
+            employee_ids = [ employee.id for employee in profile.employeeprofile_set.all() ]
+        else:
+            employee_ids = data['employee_ids']
+        
+        category_list = data['rating_categories']
+        
+        if len(data['rating_categories']) > 0:
+            first_row=["category"]
+            for category in data['rating_categories']:
+                dimension = models.RatedDimension.objects.get(pk=category)
+                first_row.append(dimension.title)
+                
+            chart_data = [first_row]
+            for employee in employee_ids:
+                chart_data.append(_get_average_employee_analytics(employee, category_list))
+        else:
+        # If only one category
+            category = data['rating_categories'][0]
+            first_row=["rating","poor","fair","good","excellent","glorious"]
+            chart_data = [first_row]
+            for employee in employee_ids:
+                chart_data.append(_get_employee_analytics(employee,category))
+
+        to_chart = _make_google_charts_data(chart_data)
+        print "About to print array"
+        print to_chart
+        return HttpResponse(json.dumps(to_chart),
+                            mimetype="application/json")
+
+def _get_average_employee_analytics(employee_id, category_ids):
+    """A function to return average statistics of an employee
+       employee_id is employee_id
+       category_ids is a list of RatedDimension ids
+       if rating_titles is empty it will use all RatedDimension titles
+       returns: [first_name_last_name, avg_rating_1, avg_rating_2]
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+    
+    ret=[]
+    ret.append("%s %s"%(employee.user.first_name, employee.user.last_name))
+    
+    ratings = []
+    profile = employee.rating_profile
+ 
+    if len(category_ids) == 0 or not category_ids:
+        category_ids = [rating.id for rating in employee.rating_profile.rateddimension_set.all()]
+   
+    for category in category_ids:
+         dimension = models.RatedDimension.objects.get(pk=category)
+         rel_ratings = [rating.rating_value for rating in dimension.rating_set.filter(employee=employee)]
+         ratings.append(average(rel_ratings))
+         
+    ret.extend(ratings)
+    return ret              
+
+def _get_employee_analytics(employee_id, category):
+    """A function to return the number of ratings (1-5) of an employee for a single category
+       employee_id is employee_id
+       category is the RatedDimension id to use
+       returns: [first_name_last_name, num_ratings_1, num_ratings_2]
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+    
+    ret = []
+    quantity_of_ratings = [ 0 for i in range(5)]
+    ret.append("%s %s"%(employee.user.first_name, employee.user.last_name))
+    
+    profile = employee.rating_profile
+    dimension = models.RatedDimension.objects.get(pk=category)
+    ratings = dimension.rating_set.filter(employee=employee)
+
+    for rating in ratings:
+        quantity_of_ratings[rating.rating_value]+=1
+    
+    str_list_of_ratings = [quantity_of_ratings[i] for i in range(len(quantity_of_ratings))]
+    ret.extend(quantity_of_ratings)
+    return ret
+
+
+def _make_google_charts_data(data):
+    """A function to make google charts data. The data variable should be of the form
+    goog_data=[["category","smelliness",....],[employee_name, data_for_smelliness,...],...,]
+    """
+    success_chart=[[] for i in range(len(data))]
+    print success_chart
+    for i in range(len(data)):
+        next_list = data[i]
+        for j in range(len(next_list)):
+            success_chart[i].append(next_list[j])
+    
+    return success_chart
+
+
+def _get_rating_profile(employee_id):
+    """Returns a json-able rating_profile object of the form
+       rating_profile={'title':%s,
+                       'ratings':{'title':['rating_value':%s (TODO: implement %d accross the board)
+                                  }}
+                      }
+    """
+    try:
+        employee = models.EmployeeProfile.objects.get(pk=employee_id)
+    except EmployeeProfile.DoesNotExist:
+        return False
+
+    rating_profile = {}
+    profile=employee.rating_profile
+    rating_profile['title']=profile.title
+    ratings={}
+
+    # loop over ratings
+    for rating in employee.rating_set.all():
+        #rating has already been accounted for
+        if rating.title in ratings:
+            ratings[rating.title].append(rating.rating_value)
+        else:
+            ratings[rating.title]=[rating.rating_value]
+            
+
+        rating_profile['ratings']=ratings
+    return rating_profile
+    
 
 ################################################
 # Everything newsfeed related for the business #
@@ -433,6 +589,7 @@ def manage_newsfeed(request):
 @business_view
 def newsfeed_list(request):
     profile = request.user.businessprofile
+
     feed = json.dumps(list(profile.newsfeeditem_set.all()),
                                    cls=NewsFeedItemEncoder)
     return HttpResponse(feed, mimetype="application/json")

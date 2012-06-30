@@ -31,15 +31,20 @@ urlpatterns = patterns('',
                        url(r'^list_ratingprofiles/$',
                            views.list_rating_profiles,
                            name="business_list_ratingprofiles"),
-  
+
                        # Business home
                        url(r'^$',
                            redirect_to,
                            {'url':'analytics'},
                            name="business_home"),
                        
-
-
+                       #analytics
+                       url(r'^business_analytics',
+                           views.business_analytics,
+                           name="business_analytics"),
+                       url(r'^get_analytics/',
+                           views.get_analytics,
+                           name="business_get_analytics"),
                           
                        # Everything related to newsfeed
                        url(r'^manage_newsfeed/$',
