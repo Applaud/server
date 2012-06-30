@@ -128,14 +128,15 @@ def manage_ratingprofiles(request):
     {'profile_id':#,
      'insert':"asdfasdfasdf",
      'remove':--,
-     'remove_dim':"dimtitle",
+     'remove_dim':dimid,
 
-     'replace_dim':"oldtext"
+     'replace_dim':dimid,
      'with_dim':"newtext"
 
-     'deactivate_dim':"dimtitle"
+     'deactivate_dim':dimid,
+     'activate_dim':dimid
      '''
-    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
+    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim', 'activate_dim'])
            & set(request.POST.keys()))==0:
         return HttpResponse(json.dumps({'error':"No valid JSON dictionary key sent to this view."}))
 
@@ -179,6 +180,12 @@ def manage_ratingprofiles(request):
         dim = RatedDimension.objects.get(id=int(request.POST['deactivate_dim']))
         dim.is_active = False
         dim.save()
+
+    if 'activate_dim' in request.POST:
+        dim = RatedDimension.objects.get(id=int(request.POST['activate_dim']))
+        dim.is_active = True
+        dim.save()
+
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
                                    cls=RatingProfileEncoder),

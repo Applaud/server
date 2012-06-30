@@ -37,6 +37,7 @@ class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.RatingProfile):
             dim_list = [{'title':d.title,
+                         'active':d.is_active,
                          'id':d.id} for d in o.rateddimension_set.all()]
             
 	    res = {'title':o.title,
