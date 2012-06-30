@@ -13,7 +13,9 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from employee_views import _profile_picture
 from registration import forms as registration_forms
+import settings
 import datetime
 
 def index(request):
@@ -60,12 +62,14 @@ class EmployeeEncoder(json.JSONEncoder):
                 dimension_list.append( {'title':d.title,
                                         'id':d.id} )
 
+            image_url = settings.SERVER_URL+settings.MEDIA_URL+_profile_picture(o)
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimension_list},
+                   'image':image_url,
                    'id':o.id
 		   }
 	    return res
