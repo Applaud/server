@@ -53,20 +53,33 @@ def business_view(view):
 
 # Employee stuff.
 
-# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+# Adding employees. Can handle a comma-separated field of emails (like
+# textarea/textfield) or a CSV file
 @business_view
 @csrf_protect
 def add_employee(request):
+    profile = request.user.businessprofile
     if request.method == "POST":
         # Get emails from POST
-        emails = strip_and_validate_emails(request.POST['emails'])
-        success=_add_employee(emails,
-                              request.user.businessprofile.business_name,
-                              request.user.businessprofile.goog_id)
-    if success:
-        return HttpResponse("All went well!")
-    else:
-        return HttpResponse("Something went wrong.")
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        
+        # If they choose to upload a CSV file.
+        if request.FILES:
+            user = profile.user.username
+            with open('/tmp/%s.txt'%user, 'w+') as destination:
+                for chunk in request.FILES['csv'].chunks():
+                    destination.write(chunk)
+
+                # Union of POST emails and CSV emails
+                email_list.extend( strip_and_validate_emails(destination.read()) )
+
+        # Render the contents of the email
+        _add_employee(set(email_list),
+                      request.user.businessprofile.business_name,
+                      request.user.businessprofile.goog_id)
+
+        return HttpResponseRedirect(reverse('business_home'))
 
 def _add_employee(emails, biz_name, biz_goog_id):
     email_template=Template('email_employee.txt')
@@ -301,50 +314,21 @@ def strip_and_validate_emails(emails):
     email_list=filter(lambda a: re.match(r"[^@]+@[^@]+\.[^@]+", a), email_list)
     return email_list
 
-''' View that is called only the first time that a business logged in
-'''
 @business_view
 def business_welcome(request):
+    ''' View that is called only the first time that a business logged in
+    '''
     profile = request.user.businessprofile
     if request.method != "POST":
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
-
     if request.method == "POST":
-        # Get emails from POST
-        emails = request.POST['emails']
-        email_list=strip_and_validate_emails(emails)
-        email_template=Template('email_employee.txt')
-        
-        # If they choose to upload a CSV file.
-        if request.FILES:
-            user = profile.user.username
-            emp_list=''
-            reader_str=''
-            with open('/tmp/%s.txt'%user, 'w+') as destination:
-                for chunk in request.FILES['csv'].chunks():
-                    destination.write(chunk)
-                email_list.extend( strip_and_validate_emails(destination.read()) )
-
-        # Render the contents of the email
-        context = {'business':request.user.username,
-                   'goog_id':request.user.businessprofile.goog_id}
-        message = render_to_string('email_employee.txt',
-                                   context)
-
-        subject = 'Register at apatapa.com!'
-        from_email='register@apatapa.com'
-
-        _add_employee(set(email_list),
-                      request.user.businessprofile.business_name,
-                      request.user.businessprofile.goog_id)
-
-        return HttpResponseRedirect(reverse('business_home'))
+        return add_employee(request)
     
+@business_view
 def business_home(request):
     return render_to_response('business.html')
-
 
 # Checking analytics.
 @business_view
