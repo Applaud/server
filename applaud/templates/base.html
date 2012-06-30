@@ -6,6 +6,7 @@
   <title>{% block title %}Apatapa{% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}applaud.css" />
   <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css">
   {% block links %}
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -49,7 +50,9 @@ function escapeHTML( str ) {
     <div id="header">
       <!-- <img id="logo" alt="apatapa" src="{{ STATIC_URL }}wallpaper.jpg" /> -->
       <div id="logo">
-	<h1>apatapa</h1>
+	<a href="{% url home %}">
+	  <h1>apatapa</h1>
+	</a>
       </div>
 
       <div id="accountlinks">
@@ -95,23 +98,26 @@ function escapeHTML( str ) {
       </div>
     </div>
 
-    <div id="extra-content">
-      {% block header %}
+    <div id="main">
+      <div id="extra-content">
+	{% block header %}
+	{% endblock %}
+      </div>
+
+      {% block content %}
       {% endblock %}
+
     </div>
 
-    {% block content %}
-    {% endblock %}
-
-    <div id="footer">
-      <div id="copyright">
-	All rights reserved - copyright 2012
-      </div>
-
-      <div id="contact">
-	<a href="mailto:pfogg@oberlin.edu">Contact</a>
-      </div>
+  </div>
+  <div id="footer">
+    <div id="copyright">
+      All rights reserved - copyright 2012
     </div>
-</div>
+
+    <div id="contact">
+      <a href="mailto:pfogg@oberlin.edu">Contact</a>
+    </div>
+  </div>
 </body>
 </html>

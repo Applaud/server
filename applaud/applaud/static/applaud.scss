@@ -53,41 +53,36 @@ table {
  ******************************/
 
 /******** variables ********/
-$pagefont: 'Arvo', serif;
-$contentwidth: 800px;
-$logocolor: rgb(110,155,255);
-$titlecolor: rgb(80,2,120);
+$pagefont: 'Arvo', serif;	// most page fonts
+$contentwidth: 800px;		// width of main content div
+$logocolor: rgb(110,155,255);	// color of logo
+$titlecolor: rgb(80,2,120);	// color of sub-section titles
+$footerspacing: 7px;		// padding on footer
+$footerheight: 15px;
 /***************************/
 
 /* styles that apply to the whole page */
 html, body {
     font-family: 'Arvo', serif;
-    text-align:center;
     background-image:url('/static/wallpaper.jpg');
     height:100%;
-    margin: {
-	top:0px;
-	bottom:0px;
-    }
+    margin:auto;
 }
 
 /* main content style */
 #content {
     width: $contentwidth;
+    min-height:100%;
     background-color:rgb(255,255,255);
-    
+
     margin: {
 	left: auto;
 	right: auto;
-	bottom: 0px;
     }
-
-    height:100%;
 }
 
 /* very top and bottom caps */
 #header, #footer, #extra-content {
-    position:relative;
     color:rgb(255,255,255);
     background-color:rgb(44,30,30);
 }
@@ -96,6 +91,33 @@ html, body {
     height:150px;
 }
 
+#main {
+    overflow:auto;
+    padding-bottom:$footerheight;
+    height:90%;
+}
+
+/* very bottom div */
+#footer {
+    position:relative;
+    width:$contentwidth - 2*$footerspacing;
+    height:$footerheight;
+    line-height:$footerheight;
+    font-family: 'PT Sans Caption', sans-serif;
+    font-size:10pt;
+
+    margin: {
+	left: auto;
+	right: auto;
+	top:-$footerheight;
+    }
+
+    padding: {
+    	left:$footerspacing;
+    	right:$footerspacing;
+    	top:$footerspacing;
+    }
+}
 
 /* for styling primary content divs (in content div) */
 @mixin contentTitles($side, $width) {
@@ -106,14 +128,19 @@ html, body {
 	right: 20px;
 	top: 30px;
     }
-    font-variant:small-caps;
     text-align:left;
+    h2 {
+	font-size:20pt;
+	margin-bottom:10px;
+    }
 }
 
 /* titles for main content divs */
 .content-title {
+    text-transform:uppercase;
     border-bottom:solid 1px $titlecolor;
     color: $titlecolor;
+    margin-bottom:15px;
 }
 
 /* "features" div */
@@ -128,6 +155,7 @@ html, body {
 
 /* the logo div */
 #logo {
+    position:relative;
     h1 {
 	position:absolute;
 	top:0px;
@@ -140,26 +168,26 @@ html, body {
 
 #accountlinks {
     text-align:right;
+    font-size:10pt;
+    font-family:'Pt Sans Caption', sans-serif;
+    padding: {
+	right:10px;
+	top:15px;
+    }
     a {
 	color:rgb(255,255,255);
+	text-decoration:none;
     }
-}
-
-/* very bottom div */
-#footer {
-    position:absolute;
-    bottom:0px;
-    width:$contentwidth;
 }
 
 /* main links at the top */
 #navigation {
     margin:10px;
-    font-variant:small-caps;
+    text-transform:uppercase;
     display:block;
     text-align:right;
     position:relative;
-    top:100px;
+    top:60px;
     li {
 	display: inline;
 	padding: 5px;
@@ -170,5 +198,17 @@ html, body {
 	&:hover {
 	    text-decoration:underline;
 	}
+    }
+}
+
+#copyright {
+    float:left;
+}
+
+#contact {
+    float:right;
+    a {
+	text-decoration:none;
+	color:rgb(255,255,255);
     }
 }

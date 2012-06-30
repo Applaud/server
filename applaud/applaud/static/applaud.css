@@ -56,35 +56,53 @@ table {
 /* styles that apply to the whole page */
 html, body {
   font-family: 'Arvo', serif;
-  text-align: center;
   background-image: url("/static/wallpaper.jpg");
   height: 100%;
-  margin-top: 0px;
-  margin-bottom: 0px; }
+  margin: auto; }
 
 /* main content style */
 #content {
   width: 800px;
+  min-height: 100%;
   background-color: white;
   margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 0px;
-  height: 100%; }
+  margin-right: auto; }
 
 /* very top and bottom caps */
 #header, #footer, #extra-content {
-  position: relative;
   color: white;
   background-color: #2c1e1e; }
 
 #header {
   height: 150px; }
 
+#main {
+  overflow: auto;
+  padding-bottom: 15px;
+  height: 90%; }
+
+/* very bottom div */
+#footer {
+  position: relative;
+  width: 786px;
+  height: 15px;
+  line-height: 15px;
+  font-family: 'PT Sans Caption', sans-serif;
+  font-size: 10pt;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -15px;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 7px; }
+
 /* for styling primary content divs (in content div) */
 /* titles for main content divs */
 .content-title {
+  text-transform: uppercase;
   border-bottom: solid 1px #500278;
-  color: #500278; }
+  color: #500278;
+  margin-bottom: 15px; }
 
 /* "features" div */
 #features {
@@ -93,8 +111,10 @@ html, body {
   margin-left: 20px;
   margin-right: 20px;
   margin-top: 30px;
-  font-variant: small-caps;
   text-align: left; }
+  #features h2 {
+    font-size: 20pt;
+    margin-bottom: 10px; }
 
 /* "partners" div */
 #partners {
@@ -103,37 +123,40 @@ html, body {
   margin-left: 20px;
   margin-right: 20px;
   margin-top: 30px;
-  font-variant: small-caps;
   text-align: left; }
+  #partners h2 {
+    font-size: 20pt;
+    margin-bottom: 10px; }
 
 /* the logo div */
-#logo h1 {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  color: #6e9bff;
-  font-size: 36pt;
-  padding: 15px; }
+#logo {
+  position: relative; }
+  #logo h1 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: #6e9bff;
+    font-size: 36pt;
+    padding: 15px; }
 
 #accountlinks {
-  text-align: right; }
+  text-align: right;
+  font-size: 10pt;
+  font-family: 'Pt Sans Caption', sans-serif;
+  padding-right: 10px;
+  padding-top: 15px; }
   #accountlinks a {
-    color: white; }
-
-/* very bottom div */
-#footer {
-  position: absolute;
-  bottom: 0px;
-  width: 800px; }
+    color: white;
+    text-decoration: none; }
 
 /* main links at the top */
 #navigation {
   margin: 10px;
-  font-variant: small-caps;
+  text-transform: uppercase;
   display: block;
   text-align: right;
   position: relative;
-  top: 100px; }
+  top: 60px; }
   #navigation li {
     display: inline;
     padding: 5px; }
@@ -142,3 +165,12 @@ html, body {
     text-decoration: none; }
     #navigation a:hover {
       text-decoration: underline; }
+
+#copyright {
+  float: left; }
+
+#contact {
+  float: right; }
+  #contact a {
+    text-decoration: none;
+    color: white; }
