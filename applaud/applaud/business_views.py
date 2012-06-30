@@ -19,7 +19,7 @@ import urllib2
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension
 from applaud import forms, models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder
+from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder, NewsFeedItemEncoder
 import re
 import csv
 
@@ -395,91 +395,47 @@ def analytics(request):
 def manage_newsfeed(request):
     #This view will check allow a business to create, edit, and delete items from their newsfeed
     profile = request.user.businessprofile
-
-    newsfeed = profile.newsfeeditem_set.all()
-    # Business is authenticated
-    return render_to_response('manage_newsfeed.html',
-                              {'business':profile,
-                               'list':newsfeed},
-                              context_instance=RequestContext(request))
-
-# Creating/editing newsfeed, looking at the newsfeed.
-@csrf_protect
-@business_view
-def newsfeed_create(request):
-    profile = request.user.businessprofile
-
-    if request.method == 'POST':
-	n = forms.NewsFeedItemForm(request.POST)
-	newsitem = n.save(commit=False)
-	newsitem.date = datetime.utcnow().replace(tzinfo=utc)
-	newsitem.date_edited = datetime.utcnow().replace(tzinfo=utc)
-        newsitem.business = profile
-	newsitem.save()
-        
-        return HttpResponseRedirect(reverse('business_manage_newsfeed'))
-    
-    f = forms.NewsFeedItemForm()
-    	
-    return render_to_response('create_newsfeed.html',
-				  {'form':f},
-				  context_instance=RequestContext(request))
-
-@csrf_protect
-@business_view
-def edit_newsfeed(request):
-    profile=request.user.businessprofile
-
-    if request.method == 'POST':	
-	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-	d = {'title':request.POST['title'],
-	     'subtitle':request.POST['subtitle'],
-	     'body':request.POST['body'],
-             'date_edited':datetime.utcnow().replace(tzinfo=utc)}
-	
-	n.change_parameters(d)
-	n = n.save()
-
-	f = forms.NewsFeedItemForm()
-	newsfeed = profile.newsfeeditem_set.all()
-	return render_to_response('manage_newsfeed.html',
-				  {'business':profile, 'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
-
-    else:
-	try:                        
-	    n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	except NewsFeedItem.DoesNotExist:
-	    return render_to_response('fail.html', {}, context_instance=RequestContext(request))
-
-                #this might be a tad sloppy
-	d = dict((key, value) for key, value in n.__dict__.iteritems() if not callable(value) and not key.startswith('_'))
-	f = forms.NewsFeedItemForm(initial=d)
-       	
-	return render_to_response('edit_newsfeed.html',
-				  {'form':f, 'id':request.GET['id']},
-				  context_instance=RequestContext(request))
-
-@csrf_protect
-@business_view
-def delete_newsfeed_item(request):
-    profile = request.user.businessprofile
-
-    #Request is POST - Business has selected and confirmed news feed item deletion
-    if request.method == 'POST':
-	n = models.NewsFeedItem.objects.get(pk=request.POST['id'])
-	n.delete()
-	
-        f = forms.NewsFeedItemForm()
+    if request.method == 'GET':
         newsfeed = profile.newsfeeditem_set.all()
-	
+        # Business is authenticated
         return render_to_response('manage_newsfeed.html',
-				  {'form':f, 'list':newsfeed},
-				  context_instance=RequestContext(request))
+                                  {'business':profile,
+                                   'list':newsfeed},
+                                  context_instance=RequestContext(request))
+    # Otherwise, it's a POST.
+    profile = request.user.businessprofile
+    print request.POST
+    feeds = json.loads(request.POST['feeds'])
+    for feed in feeds:
+        # It's an old feed, just updated.
+        print feed['should_delete']
+        if int(feed['id']):
+            newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
+            if feed['should_delete'] == 'true':
+                print 'WOO!'
+                newsfeed.delete()
+            else:
+                newsfeed.title = feed['title']
+                newsfeed.subtitle = feed['subtitle']
+                newsfeed.body = feed['body']
+                newsfeed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+                newsfeed.save()
+        # It's a new feed item.
+        else:
+            newsfeed = models.NewsFeedItem(title=feed['title'],
+                                           subtitle=feed['subtitle'],
+                                           body=feed['body'],
+                                           business=profile,
+                                           date=datetime.now().replace(tzinfo=utc),
+                                           date_edited=datetime.now().replace(tzinfo=utc))
+            newsfeed.save()
+    return HttpResponse('')
 
-    #Request is GET - Send to confirmation page
-    else:
-	n = models.NewsFeedItem.objects.get(pk=request.GET['id'])
-	return render_to_response('delete_newsfeed.html',
-				  {'item':n, 'id':request.GET['id']},
-				  context_instance=RequestContext(request))
+# Returns all of a business' newsfeeds as JSON. To be called from AJAX.
+@csrf_protect
+@business_view
+def newsfeed_list(request):
+    profile = request.user.businessprofile
+    feed = json.dumps(list(profile.newsfeeditem_set.all()),
+                                   cls=NewsFeedItemEncoder)
+    return HttpResponse(feed, mimetype="application/json")
