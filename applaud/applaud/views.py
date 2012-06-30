@@ -31,7 +31,8 @@ def index(request):
             except EmployeeProfile.DoesNotExist:
                 user_type = 'user'
     return render_to_response('index.html', {'user': request.user,
-                                             'user_type': user_type})
+                                             'user_type': user_type},
+                              context_instance=RequestContext(request))
 
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
