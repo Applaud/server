@@ -8,8 +8,6 @@ urlpatterns = patterns('',
                        
                        # Employee stuff
                        url(r'^manage_employees/$',
-                           # direct_to_template,
-                           # {'template':'manage_employees.html'},
                            views.manage_employees,
                            name='business_manage_employees'),
                        url(r'^delete_employee/$',

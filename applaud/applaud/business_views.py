@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.template import RequestContext, Template, Context
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
@@ -53,20 +54,36 @@ def business_view(view):
 
 # Employee stuff.
 
-# Adding employees. A lot of the code (minus the CSV input) is used from the business welcome view
+# Adding employees. Can handle a comma-separated field of emails (like
+# textarea/textfield) or a CSV file
 @business_view
 @csrf_protect
 def add_employee(request):
+    profile = request.user.businessprofile
     if request.method == "POST":
         # Get emails from POST
-        emails = strip_and_validate_emails(request.POST['emails'])
-        success=_add_employee(emails,
-                              request.user.businessprofile.business_name,
-                              request.user.businessprofile.goog_id)
-    if success:
-        return HttpResponse("All went well!")
-    else:
-        return HttpResponse("Something went wrong.")
+        emails = request.POST['emails']
+        email_list=strip_and_validate_emails(emails)
+        
+        # If they choose to upload a CSV file.
+        if request.FILES:
+            user = profile.user.username
+            with open('/tmp/%s.txt'%user, 'w+') as destination:
+                for chunk in request.FILES['csv'].chunks():
+                    destination.write(chunk)
+
+                # Union of POST emails and CSV emails
+                email_list.extend( strip_and_validate_emails(destination.read()) )
+
+        # Render the contents of the email
+        _add_employee(set(email_list),
+                      request.user.businessprofile.business_name,
+                      request.user.businessprofile.goog_id)
+
+        # Success message
+        messages.add_message(request, messages.SUCCESS, "Emails have been sent inviting your employees to join Apatapa. Thank you!")
+
+        return HttpResponseRedirect(reverse('business_home'))
 
 def _add_employee(emails, biz_name, biz_goog_id):
     email_template=Template('email_employee.txt')
@@ -128,14 +145,15 @@ def manage_ratingprofiles(request):
     {'profile_id':#,
      'insert':"asdfasdfasdf",
      'remove':--,
-     'remove_dim':"dimtitle",
+     'remove_dim':dimid,
 
-     'replace_dim':"oldtext"
+     'replace_dim':dimid,
      'with_dim':"newtext"
 
-     'deactivate_dim':"dimtitle"
+     'deactivate_dim':dimid,
+     'activate_dim':dimid
      '''
-    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim'])
+    if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim', 'activate_dim'])
            & set(request.POST.keys()))==0:
         return HttpResponse(json.dumps({'error':"No valid JSON dictionary key sent to this view."}))
 
@@ -179,6 +197,12 @@ def manage_ratingprofiles(request):
         dim = RatedDimension.objects.get(id=int(request.POST['deactivate_dim']))
         dim.is_active = False
         dim.save()
+
+    if 'activate_dim' in request.POST:
+        dim = RatedDimension.objects.get(id=int(request.POST['activate_dim']))
+        dim.is_active = True
+        dim.save()
+
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
                                    cls=RatingProfileEncoder),
@@ -280,6 +304,8 @@ def manage_survey(request):
                 else:
                     q.save()
             survey.save()
+
+            messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
             return HttpResponse("") # Empty response = all went well
         # We're getting data for this business' survey.
         else:
@@ -294,50 +320,21 @@ def strip_and_validate_emails(emails):
     email_list=filter(lambda a: re.match(r"[^@]+@[^@]+\.[^@]+", a), email_list)
     return email_list
 
-''' View that is called only the first time that a business logged in
-'''
 @business_view
 def business_welcome(request):
+    ''' View that is called only the first time that a business logged in
+    '''
     profile = request.user.businessprofile
     if request.method != "POST":
         return render_to_response('business_welcome.html',
                                   {'business':profile},
                                   context_instance=RequestContext(request))
-
     if request.method == "POST":
-        # Get emails from POST
-        emails = request.POST['emails']
-        email_list=strip_and_validate_emails(emails)
-        email_template=Template('email_employee.txt')
-        
-        # If they choose to upload a CSV file.
-        if request.FILES:
-            user = profile.user.username
-            emp_list=''
-            reader_str=''
-            with open('/tmp/%s.txt'%user, 'w+') as destination:
-                for chunk in request.FILES['csv'].chunks():
-                    destination.write(chunk)
-                email_list.extend( strip_and_validate_emails(destination.read()) )
-
-        # Render the contents of the email
-        context = {'business':request.user.username,
-                   'goog_id':request.user.businessprofile.goog_id}
-        message = render_to_string('email_employee.txt',
-                                   context)
-
-        subject = 'Register at apatapa.com!'
-        from_email='register@apatapa.com'
-
-        _add_employee(set(email_list),
-                      request.user.businessprofile.business_name,
-                      request.user.businessprofile.goog_id)
-
-        return HttpResponseRedirect(reverse('business_home'))
+        return add_employee(request)
     
+@business_view
 def business_home(request):
     return render_to_response('business.html')
-
 
 # Checking analytics.
 @business_view
