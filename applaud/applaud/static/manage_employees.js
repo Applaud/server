@@ -35,10 +35,9 @@ var manageEmployees = {};
 
 	    // This is the way it's done per the EmployeeEncoder
 	    listitem.html( employee.first_name+" "+employee.last_name
-			   +"<br /><form action=\"\" method=\"post\">"
+			   +"<form action=\"\" method=\"post\">"
 			   +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
-			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />"
-			   +"<br />" );
+			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
 	    listing.append(listitem);
 	}
 	

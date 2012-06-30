@@ -10,16 +10,6 @@ var manageNewsfeed = {};
      * our AJAX call.
      */
     var handleNewsfeedData = function (data) {
-	for(d in data) {
-	    console.log(data[d]);
-	    feed = data[d];
-	    addFeed(feed.id,
-		    feed.title,
-		    feed.date,
-		    feed.date_edited,
-		    feed.subtitle,
-		    feed.body);
-	}
 	var add_newsfeed_button = $('<button></button>');
 	add_newsfeed_button.prop({'type': 'button',
 				  'name': 'add_newsfeed_button',
@@ -35,8 +25,18 @@ var manageNewsfeed = {};
 				   'id': 'save_newsfeed_button',
 				   'class': 'save_newsfeed_button'});
 	save_newsfeed_button.html('Save Changes');
-	$('body').append(save_newsfeed_button)
+	$('#newsfeeds').append(save_newsfeed_button)
 	    .append(add_newsfeed_button);
+	for(d in data) {
+	    console.log(data[d]);
+	    feed = data[d];
+	    addFeed(feed.id,
+		    feed.title,
+		    feed.date,
+		    feed.date_edited,
+		    feed.subtitle,
+		    feed.body);
+	}
 	registerClickHandlers();
     };
     
@@ -122,18 +122,18 @@ var manageNewsfeed = {};
 			    'name': 'feed_' + i + '_delete_button'})
 	delete_button.html('Delete');
 	
-	$('#newsfeeds').append(feed_div.append('Title: ')
-			       .append(feed_id)
-			       .append(should_delete)
-			       .append(title_text)
-			       .append(date_text)
-			       .append('Subtitle: ')
-			       .append(subtitle_text)
-			       .append('<br />')
-			       .append('Body: ')
-			       .append(body_text)
-			       .append('<br />')
-			       .append(delete_button));
+	$('#save_newsfeed_button').before(feed_div.append('Title: ')
+					  .append(feed_id)
+					  .append(should_delete)
+					  .append(title_text)
+					  .append(date_text)
+					  .append('Subtitle: ')
+					  .append(subtitle_text)
+					  .append('<br />')
+					  .append('Body: ')
+					  .append(body_text)
+					  .append('<br />')
+					  .append(delete_button));
 	i++;
     }
     

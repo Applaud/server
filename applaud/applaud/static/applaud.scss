@@ -122,36 +122,34 @@ html, body {
     }
 }
 
-/* for styling primary content divs (in content div) */
-@mixin contentTitles($side, $width) {
-    float:$side;
-    width:$width;
-    margin: {
-	top: 5px;
-    }
-    text-align:left;
-    h2 {
-	font-size:20pt;
-	margin-bottom:10px;
-    }
-}
-
 /* titles for main content divs */
 .content-title {
     text-transform:uppercase;
     border-bottom:solid 1px $titlecolor;
     color: $titlecolor;
     margin-bottom:15px;
+
+    margin-top: 5px;
+    text-align:left;
+
+    max-width:480px;
+
+    h2 {
+	font-size:20pt;
+	margin-bottom:10px;
+    }
 }
 
 /* "features" div */
 #features {
-    @include contentTitles(left, 30%);
+    float:left;
+    width:40%;
 }
 
 /* "partners" div */
 #partners {
-    @include contentTitles(right, 60%);
+    float:right;
+    width:50%;
 }
 
 /* the logo div */

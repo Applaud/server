@@ -8,23 +8,19 @@
 
 {% block content %}
 {{ block.super }}
-<h1>EMPLOYEES</h>
+<div class="content-title">
+  <h2>EMPLOYEES</h2>
+</div>
 
 <div id="employees_listing">
 {% if employee_list|length > 0 %}
 <ul>
 {% for employee in employee_list %}
 <li>{{employee.user.first_name}} {{ employee.user.last_name }}
-
-<br />
-
 <form action="/business/delete_employee/" method="post" />
 {% csrf_token %}
 <input type="submit" id="del_emp_{{employee.id}}" class="del_emp_button" value="Delete" />
 </form>
-
-<br />
-
 {% endfor %}
 </ul>
 
@@ -32,7 +28,7 @@
 </div>
 
 
-<h2>Add Employees</h2>
+<h3>Add Employees</h3>
 <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data">
 {% csrf_token %}
 <label for="emails">Email List</labels>
@@ -43,8 +39,9 @@
 <input type="submit" value="Submit" >
 </form>
 
-<hr />
-<h2>Rating Profiles</h2>
+<div class="content-title">
+  <h2>Rating Profiles</h2>
+</div>
 <div id="profiles_listing">
 </div>
 
