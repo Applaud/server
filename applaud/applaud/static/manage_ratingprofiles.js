@@ -11,10 +11,8 @@ var ratingProfile = {};
      * Binds a callback to the buttons that remove an entire ratingprofile.
      */
     var bind_delete_buttons = function() {
-	console.log('binding to buttons');
 	$('.del_rp_button').click(
 	    function ( event ) {
-		console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 		event.preventDefault();
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
@@ -66,10 +64,6 @@ var ratingProfile = {};
 		     success: listProfiles,
 		     error: function() { alert("Something went wrong."); }
 		   });
-
-	    // // Make this now an 'activate' button
-	    // $(this).prop({ 'value':'activate',
-	    // 		   'class':'activate_rp_dim_button' });
 	});
     }
 
@@ -90,10 +84,6 @@ var ratingProfile = {};
 		     success: listProfiles,
 		     error: function() { alert("Something went wrong."); }
 		   });
-
-	    // // Make this now an 'deactivate' button
-	    // $(this).prop({ 'value':'deactivate',
-	    // 		   'class':'deactivate_rp_dim_button' });
 	});
     }
 
@@ -158,7 +148,6 @@ var ratingProfile = {};
 	    submit.click( function( event ) {
 		event.preventDefault();
 		var profile_id = $(this).siblings('.profileid').val();
-		console.log("Submitting dimension... --- "+profile_id);
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
@@ -186,7 +175,6 @@ var ratingProfile = {};
      * Re-builds the list of profiles.
      */
     var listProfiles = function(data) {
-	console.log("listProfiles is called.");
 	// Clear the current list
 	$('#profiles_listing').empty();
 	var listing = $('<ul></ul>');
