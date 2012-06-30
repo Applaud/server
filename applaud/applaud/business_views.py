@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.template import RequestContext, Template, Context
 from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
 from datetime import datetime
@@ -78,6 +79,9 @@ def add_employee(request):
         _add_employee(set(email_list),
                       request.user.businessprofile.business_name,
                       request.user.businessprofile.goog_id)
+
+        # Success message
+        messages.add_message(request, messages.SUCCESS, "Emails have been sent inviting your employees to join Apatapa. Thank you!")
 
         return HttpResponseRedirect(reverse('business_home'))
 
@@ -300,6 +304,8 @@ def manage_survey(request):
                 else:
                     q.save()
             survey.save()
+
+            messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
             return HttpResponse("") # Empty response = all went well
         # We're getting data for this business' survey.
         else:
