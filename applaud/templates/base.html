@@ -56,27 +56,34 @@ function escapeHTML( str ) {
       </div>
 
       <div id="accountlinks">
-	{% block navigation %}
-	{% if user.is_authenticated %}
-	({% trans "Logged in" %}: {{ user.username }}) |
-	{% if user.userprofile %}
-	<a href="{% url user_home %}">{% trans "Home" %}</a> |
-	{% endif %}
-	{% if user.employeeprofile %}
-	<a href="{% url employee_home %}">{% trans "Home" %}</a> |
-	{% endif %}
-	{% if user.businessprofile %}
-	<a href="{% url business_home %}">{% trans "Home" %}</a> |
-	{% endif %}
-	<a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
-	<a href="{% url auth_password_change %}">{% trans "Change password" %}</a>
-	{% else %}
-	<a href="{% url auth_login %}">{% trans "Log in" %}</a>
-	{% endif %}
-	{% endblock %}
+	<ul>
+	  {% block navigation %}
+	    {% if user.is_authenticated %}
+	      <li>
+	      {% if user.userprofile %}
+	        <a href="{% url user_home %}">
+	      {% elif user.employeeprofile %}
+	        <a href="{% url employee_home %}">
+	      {% elif user.businessprofile %}
+	        <a href="{% url business_home %}">
+	      {% endif %}
+	          View Account
+	        </a>
+	      </li>
+	      <li>
+		<a href="{% url auth_logout %}">Log out</a>
+	      </li>
+	    {% else %}
+	      <li>
+		<a href="{% url auth_login %}">{% trans "Log in" %}</a>
+	      </li>
+	    {% endif %}
+	  {% endblock %}
+        </ul>
       </div>
 
       <div id="navigation">
+	{% block navigation_links %}
 	<ul>
 	  <li><a href="{% url home %}">Apatapa</a></li>
 	  <li><a href="">History</a></li>
@@ -85,6 +92,7 @@ function escapeHTML( str ) {
 	  <li><a href="">Use cases</a></li>
 	  <li><a href="">Features</a></li>
 	</ul>
+	{% endblock %}
       </div>
 
       <div id="messages">
@@ -98,15 +106,14 @@ function escapeHTML( str ) {
       </div>
     </div>
 
-    <div id="main">
-      <div id="extra-content">
-	{% block header %}
-	{% endblock %}
-      </div>
+    <div id="extra-content">
+      {% block header %}
+      {% endblock %}
+    </div>
 
+    <div id="main">
       {% block content %}
       {% endblock %}
-
     </div>
 
   </div>

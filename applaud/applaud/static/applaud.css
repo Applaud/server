@@ -79,7 +79,8 @@ html, body {
 #main {
   overflow: auto;
   padding-bottom: 15px;
-  height: 90%; }
+  height: 90%;
+  padding: 15px; }
 
 /* very bottom div */
 #footer {
@@ -91,7 +92,7 @@ html, body {
   font-size: 10pt;
   margin-left: auto;
   margin-right: auto;
-  margin-top: -15px;
+  margin-top: 0px;
   padding-left: 7px;
   padding-right: 7px;
   padding-top: 7px; }
@@ -108,9 +109,7 @@ html, body {
 #features {
   float: left;
   width: 30%;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 30px;
+  margin-top: 5px;
   text-align: left; }
   #features h2 {
     font-size: 20pt;
@@ -120,9 +119,7 @@ html, body {
 #partners {
   float: right;
   width: 60%;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 30px;
+  margin-top: 5px;
   text-align: left; }
   #partners h2 {
     font-size: 20pt;

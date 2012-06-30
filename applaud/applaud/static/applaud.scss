@@ -58,7 +58,8 @@ $contentwidth: 800px;		// width of main content div
 $logocolor: rgb(110,155,255);	// color of logo
 $titlecolor: rgb(80,2,120);	// color of sub-section titles
 $footerspacing: 7px;		// padding on footer
-$footerheight: 15px;
+$footerheight: 15px;		// height of footer region
+$mainpadding: 15px;		// padding for main content
 /***************************/
 
 /* styles that apply to the whole page */
@@ -95,6 +96,8 @@ html, body {
     overflow:auto;
     padding-bottom:$footerheight;
     height:90%;
+
+    padding: $mainpadding;
 }
 
 /* very bottom div */
@@ -109,7 +112,7 @@ html, body {
     margin: {
 	left: auto;
 	right: auto;
-	top:-$footerheight;
+	top:-$footerheight + $mainpadding;
     }
 
     padding: {
@@ -124,9 +127,7 @@ html, body {
     float:$side;
     width:$width;
     margin: {
-	left: 20px;
-	right: 20px;
-	top: 30px;
+	top: 5px;
     }
     text-align:left;
     h2 {
