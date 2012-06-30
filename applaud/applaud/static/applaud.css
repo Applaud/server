@@ -51,6 +51,9 @@ table {
 /******************************
  * ---- END CSS RESET  -----  *
  ******************************/
+/******** variables ********/
+/***************************/
+/* styles that apply to the whole page */
 html, body {
   font-family: 'Arvo', serif;
   text-align: center;
@@ -59,6 +62,7 @@ html, body {
   margin-top: 0px;
   margin-bottom: 0px; }
 
+/* main content style */
 #content {
   width: 800px;
   background-color: white;
@@ -67,21 +71,69 @@ html, body {
   margin-bottom: 0px;
   height: 100%; }
 
-#header, #footer {
+/* very top and bottom caps */
+#header, #footer, #extra-content {
+  position: relative;
   color: white;
   background-color: #2c1e1e; }
 
-#features {
-  float: left; }
+#header {
+  height: 150px; }
 
+/* for styling primary content divs (in content div) */
+/* titles for main content divs */
+.content-title {
+  border-bottom: solid 1px #500278;
+  color: #500278; }
+
+/* "features" div */
+#features {
+  float: left;
+  width: 30%;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 30px;
+  font-variant: small-caps;
+  text-align: left; }
+
+/* "partners" div */
+#partners {
+  float: right;
+  width: 60%;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 30px;
+  font-variant: small-caps;
+  text-align: left; }
+
+/* the logo div */
+#logo h1 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  color: #6e9bff;
+  font-size: 36pt;
+  padding: 15px; }
+
+#accountlinks {
+  text-align: right; }
+  #accountlinks a {
+    color: white; }
+
+/* very bottom div */
 #footer {
   position: absolute;
   bottom: 0px;
   width: 800px; }
 
+/* main links at the top */
 #navigation {
   margin: 10px;
-  font-variant: small-caps; }
+  font-variant: small-caps;
+  display: block;
+  text-align: right;
+  position: relative;
+  top: 100px; }
   #navigation li {
     display: inline;
     padding: 5px; }

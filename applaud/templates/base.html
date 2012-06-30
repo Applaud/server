@@ -48,7 +48,9 @@ function escapeHTML( str ) {
   <div id="content">
     <div id="header">
       <!-- <img id="logo" alt="apatapa" src="{{ STATIC_URL }}wallpaper.jpg" /> -->
-      <h1>apatapa</h1>
+      <div id="logo">
+	<h1>apatapa</h1>
+      </div>
 
       <div id="accountlinks">
 	{% block navigation %}
@@ -82,11 +84,6 @@ function escapeHTML( str ) {
 	</ul>
       </div>
 
-      {% block header %}
-      <!-- main video goes here -->
-      <img src="{{ STATIC_URL }}placeholder.png" alt="Main Video" id="mainvideo" />
-      {% endblock %}
-
       <div id="messages">
 	{% if messages %}
 	<ul class="messages">
@@ -96,6 +93,11 @@ function escapeHTML( str ) {
 	</ul>
 	{% endif %}
       </div>
+    </div>
+
+    <div id="extra-content">
+      {% block header %}
+      {% endblock %}
     </div>
 
     {% block content %}

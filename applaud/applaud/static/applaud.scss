@@ -52,9 +52,14 @@ table {
  * ---- END CSS RESET  -----  *
  ******************************/
 
+/******** variables ********/
 $pagefont: 'Arvo', serif;
 $contentwidth: 800px;
+$logocolor: rgb(110,155,255);
+$titlecolor: rgb(80,2,120);
+/***************************/
 
+/* styles that apply to the whole page */
 html, body {
     font-family: 'Arvo', serif;
     text-align:center;
@@ -66,6 +71,7 @@ html, body {
     }
 }
 
+/* main content style */
 #content {
     width: $contentwidth;
     background-color:rgb(255,255,255);
@@ -79,24 +85,81 @@ html, body {
     height:100%;
 }
 
-#header, #footer {
+/* very top and bottom caps */
+#header, #footer, #extra-content {
+    position:relative;
     color:rgb(255,255,255);
     background-color:rgb(44,30,30);
 }
 
-#features {
-    float:left;
+#header {
+    height:150px;
 }
 
+
+/* for styling primary content divs (in content div) */
+@mixin contentTitles($side, $width) {
+    float:$side;
+    width:$width;
+    margin: {
+	left: 20px;
+	right: 20px;
+	top: 30px;
+    }
+    font-variant:small-caps;
+    text-align:left;
+}
+
+/* titles for main content divs */
+.content-title {
+    border-bottom:solid 1px $titlecolor;
+    color: $titlecolor;
+}
+
+/* "features" div */
+#features {
+    @include contentTitles(left, 30%);
+}
+
+/* "partners" div */
+#partners {
+    @include contentTitles(right, 60%);
+}
+
+/* the logo div */
+#logo {
+    h1 {
+	position:absolute;
+	top:0px;
+	left:0px;
+	color: $logocolor;
+	font-size: 36pt;
+	padding: 15px;
+    }
+}
+
+#accountlinks {
+    text-align:right;
+    a {
+	color:rgb(255,255,255);
+    }
+}
+
+/* very bottom div */
 #footer {
     position:absolute;
     bottom:0px;
     width:$contentwidth;
 }
 
+/* main links at the top */
 #navigation {
     margin:10px;
     font-variant:small-caps;
+    display:block;
+    text-align:right;
+    position:relative;
+    top:100px;
     li {
 	display: inline;
 	padding: 5px;
