@@ -3,9 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 {% load i18n %}
 <head>
-  <link href="http://fonts.googleapis.com/css?family=Gentium+Basic" rel="stylesheet" type="text/css">
   <title>{% block title %}Apatapa{% endblock %}</title>
-  <link rel="stylesheet" type="text/css" href="/static/applaud.css" />
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}applaud.css" />
+  <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
   {% block links %}
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -45,39 +45,71 @@ function escapeHTML( str ) {
   {% endblock %}
 </head>
 <body>
-  <div id="navigation">
-    {% block navigation %}
-    <a href="{% url home %}">{% trans "Apatapa" %}</a> |
-    {% if user.is_authenticated %}
-    ({% trans "Logged in" %}: {{ user.username }}) |
-    {% if user.userprofile %}
-    <a href="{% url user_home %}">{% trans "Home" %}</a> |
-    {% endif %}
-    {% if user.employeeprofile %}
-    <a href="{% url employee_home %}">{% trans "Home" %}</a> |
-    {% endif %}
-    {% if user.businessprofile %}
-    <a href="{% url business_home %}">{% trans "Home" %}</a> |
-    {% endif %}
-    <a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
-    <a href="{% url auth_password_change %}">{% trans "Change password" %}</a>
-    {% else %}
-    <a href="{% url auth_login %}">{% trans "Log in" %}</a>
-    {% endif %}
+  <div id="content">
+    <div id="header">
+      <!-- <img id="logo" alt="apatapa" src="{{ STATIC_URL }}wallpaper.jpg" /> -->
+      <h1>apatapa</h1>
+
+      <div id="accountlinks">
+	{% block navigation %}
+	{% if user.is_authenticated %}
+	({% trans "Logged in" %}: {{ user.username }}) |
+	{% if user.userprofile %}
+	<a href="{% url user_home %}">{% trans "Home" %}</a> |
+	{% endif %}
+	{% if user.employeeprofile %}
+	<a href="{% url employee_home %}">{% trans "Home" %}</a> |
+	{% endif %}
+	{% if user.businessprofile %}
+	<a href="{% url business_home %}">{% trans "Home" %}</a> |
+	{% endif %}
+	<a href="{% url auth_logout %}">{% trans "Log out" %}</a> |
+	<a href="{% url auth_password_change %}">{% trans "Change password" %}</a>
+	{% else %}
+	<a href="{% url auth_login %}">{% trans "Log in" %}</a>
+	{% endif %}
+	{% endblock %}
+      </div>
+
+      <div id="navigation">
+	<ul>
+	  <li><a href="{% url home %}">Apatapa</a></li>
+	  <li><a href="">History</a></li>
+	  <li><a href="">Blog</a></li>
+	  <li><a href="">How to use</a></li>
+	  <li><a href="">Use cases</a></li>
+	  <li><a href="">Features</a></li>
+	</ul>
+      </div>
+
+      {% block header %}
+      <!-- main video goes here -->
+      <img src="{{ STATIC_URL }}placeholder.png" alt="Main Video" id="mainvideo" />
+      {% endblock %}
+
+      <div id="messages">
+	{% if messages %}
+	<ul class="messages">
+	  {% for message in messages %}
+	  <li{% if message.tags %} class="{{ message.tags }}"{% endif %} >{{ message }}</li>
+	  {% endfor %}
+	</ul>
+	{% endif %}
+      </div>
+    </div>
+
+    {% block content %}
     {% endblock %}
-  </div>
 
-  <div id="messages">
-    {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %} >{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-  </div>
+    <div id="footer">
+      <div id="copyright">
+	All rights reserved - copyright 2012
+      </div>
 
-  {% block content %}
-  {% endblock %}
+      <div id="contact">
+	<a href="mailto:pfogg@oberlin.edu">Contact</a>
+      </div>
+    </div>
+</div>
 </body>
 </html>
