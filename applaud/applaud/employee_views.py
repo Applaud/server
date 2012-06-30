@@ -65,21 +65,35 @@ def employee_stats(request):
         row.extend(rating_vals)
         success_chart.append(row)
 
-    # See note in edit_profile about this naming scheme
-    imagepath = "%s.%d"%(profile.business.user.username.replace(" ","_"),
-                         profile.business.id)
-
-    imagename = "%s_%s.%d.%s"%(employee.first_name,
-                               employee.last_name,
-                               profile.id,
-                               profile.profile_picture.name.split('.')[-1])
-
     # Return string for rendering in google charts
     return render_to_response('employee_stats.html',
                               {'chartdata':json.dumps( success_chart ),
                                'employee':employee,
-                               'image':"%s/%s"%(imagepath,imagename)},
+                               'image':_profile_picture(profile)},
                               context_instance=RequestContext(request))
+
+def _profile_picture(em_profile):
+    '''
+    Returns the path to the profile picture for the given employee.
+    Gives the default profile picture if no specific one exists.
+    '''
+    employee = em_profile.user
+
+    # See note in edit_profile about this naming scheme
+    imagepath = "%s.%d"%(em_profile.business.user.username.replace(" ","_"),
+                         em_profile.business.id)
+
+    imagename = "%s_%s.%d.%s"%(employee.first_name,
+                               employee.last_name,
+                               em_profile.id,
+                               em_profile.profile_picture.name.split('.')[-1])
+
+    # Does this file exist?
+    image_url = "%s/%s"%(imagepath,imagename)
+    if not os.path.exists(settings.MEDIA_ROOT + image_url):
+        image_url = settings.DEFAULT_PROFILE_IMAGE
+
+    return image_url
 
 @employee_view
 @csrf_protect
@@ -115,7 +129,6 @@ def edit_profile(request):
                 thumb = PImage.open( imagepath )
                 thumb.thumbnail((128,128), PImage.ANTIALIAS)
                 thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
-            #TODO: Specify default image for an employee
 
             return HttpResponseRedirect(reverse("employee_profile_success"))
     else:
