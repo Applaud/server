@@ -16,6 +16,7 @@ from applaud import models
 from employee_views import _profile_picture
 from registration import forms as registration_forms
 import settings
+import datetime
 
 def index(request):
     user_type = ''
@@ -114,5 +115,19 @@ class QuestionEncoder(json.JSONEncoder):
                     'options': o.options,
                     'active': o.active,
                     'id': o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+# Encodes a NewsFeedItem into JSON.
+class NewsFeedItemEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.NewsFeedItem):
+            return {'id': o.id,
+                    'title': o.title,
+                    'subtitle': o.subtitle,
+                    'body': o.body,
+                    'date': o.date.strftime('%m/%d/%Y'),
+                    'business': o.business.business_name,
+                    'date_edited':o.date_edited.strftime('%m/%d/%Y')}
         else:
             return json.JSONEncoder.default(self, o)

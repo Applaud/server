@@ -11,23 +11,23 @@
 <h1>Create Survey</h1>
 <div id="survey_div">
 
-{% if title_err %}
-<h2>{{ title_err }}</h2>
-{% endif %}
-{% if questions_err %}
-<h2>{{ dimensions_err }}</h2>
-{% endif %}
-<form action="" method="post" id="survey_form">
+  {% if title_err %}
+  <h2>{{ title_err }}</h2>
+  {% endif %}
+  {% if questions_err %}
+  <h2>{{ dimensions_err }}</h2>
+  {% endif %}
+  <form action="" method="post" id="survey_form">
     <input type="hidden" value="{{ survey_id }}" id="survey_id" />
-  {% csrf_token %}
-  
-  Title:
-  <input type="text" id="survey_title" name="title" />
-  Description:
-  <input type="text" id="survey_description" name="description" />
+    {% csrf_token %}
+    
+    Title:
+    <input type="text" id="survey_title" name="title" />
+    Description:
+    <input type="text" id="survey_description" name="description" />
 
-  <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
-  <input type="submit" id="addquestion_button" value="Add Question" />
-</form>
+    <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
+    <input type="submit" id="addquestion_button" value="Add Question" />
+  </form>
 </div>
 {% endblock %}
