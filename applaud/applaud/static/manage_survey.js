@@ -7,7 +7,11 @@ if ( !apatapa.survey ) {
 			 "RG":"radio group",
 			 "TA":"textarea",
 			 "TF":"textfield"};
-
+    
+    // To indicate that a question is inactive right now.
+    var inactive_color = 'rgb(200, 200, 200)';
+    
+    var question_div_bg_color = 'rgb(255, 235, 250)';
 
     var registerClickHandlers = function () {
 	
@@ -32,74 +36,19 @@ if ( !apatapa.survey ) {
 	    if($(this).parent('.question').children('.is_active').val() === 'true') {
 		$(this).parent('.question').children('.is_active').val('false');
 		$(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
+		$(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
+		console.log('made inactive');
 	    }
 	    else {
 		$(this).parent('.question').children('.is_active').val('true');
 		$(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
+		$(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		console.log('made active');
 	    }
 	});
 	
 
-	
-	$('#submit_button').click( function(event) {
-	    event.preventDefault();
-	    var questions = [];
-	    // Get each question out of the DOM and put its info into a dictionary.
-	    // This is nasty! But we need some form of non-local exit, so a try/catch
-	    // block will have to do for now.
-	    try {
-		$('.question').each( function(index, element) {
-		    var question_id = $(this).children('.question_id').val();
-		    var question_label = apatapa.util.escapeHTML( $(this).children('#question_'+index).val() );
-		    var shouldDelete = $(this).children('.should_delete').val();
-		    var question_active = $(this).children('.is_active').val();
-		    var question_options = [];
-		    $(this).children('.question_option').find('.option_field').each( function(ind, ele) {
-			question_options.push(apatapa.util.escapeHTML( $(this).val()) );
-			console.log('adding option');
-		    });
-		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
-		    // If it's a check or radio, and we don't have options.
-		    console.log(question_options);
-		    if((question_type === "CG" || question_type === "RG") &&
-		       question_options.length === 0 &&
-		       shouldDelete === 'false') {
-			// Complain about it, and don't let the user create the survey.
-			alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
-			throw "no options";
-		    }
-		    var question_dict = {'question_id': question_id,
-					 'question_label': question_label,
-					 'question_active': question_active,
-					 'question_options': question_options,
-					 'should_delete': shouldDelete,
-					 'question_type': question_type};
-		    console.log(question_dict);
-		    questions.push(question_dict);
-		});
-	    }
-	    catch( err ) {
-		if(err === "no options") {
-		    console.log('caught the exception');
-		    return;
-		}
-	    }
-	    console.log(questions);
-	    // Send it all off.
-	    $.ajax({url: manage_survey_url,
-		    data: {'survey_id': $('#survey_id').val(),
-			   'survey_title': apatapa.util.escapeHTML( $('#survey_title').val() ),
-			   'survey_description': apatapa.util.escapeHTML( $('#survey_description').val() ),
-			   'questions': JSON.stringify(questions),
-			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
-			  },
-		    type: 'POST',
-		    error: function() { alert('Something went wrong.'); },
-		    success: function () { alert('Great success!');
-					   window.location.replace('/business/');
-					 }
-		   });
-	});
+
     }
 
     /*
@@ -118,6 +67,9 @@ if ( !apatapa.survey ) {
 	    registerClickHandlers();
 	});
 	
+	
+	
+	
 	for ( q in survey.questions ) {
 	    var question = survey.questions[q];
 	    
@@ -129,6 +81,70 @@ if ( !apatapa.survey ) {
 			 false);
 	}
 	registerClickHandlers();
+	$('#submit_button').click( function(event) {
+	    event.preventDefault();
+	    var title = apatapa.util.escapeHTML( $('#survey_title').val() );
+	    var description = apatapa.util.escapeHTML( $('#survey_description').val() )
+	    if( title === "" || description === "") {
+		apatapa.showAlert("You're missing something!",
+				  'You should fix that.',
+				  function () {/* Doesn't really need to do much. */ });
+		return;
+	    }
+	    console.log('returns are for noobs');
+	    var questions = [];
+	    // Get each question out of the DOM and put its info into a dictionary.
+	    // This is nasty! But we need some form of non-local exit, so a try/catch
+	    // block will have to do for now.
+	    try {
+		$('.question').each( function(index, element) {
+		    var question_id = $(this).children('.question_id').val();
+		    var question_label = apatapa.util.escapeHTML( $(this).children('#question_'+index).val() );
+		    var shouldDelete = $(this).children('.should_delete').val();
+		    var question_active = $(this).children('.is_active').val();
+		    var question_options = [];
+		    $(this).children('.question_option').find('.option_field').each( function(ind, ele) {
+			question_options.push(apatapa.util.escapeHTML( $(this).val()) );
+		    });
+		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
+		    // If it's a check or radio, and we don't have options.
+		    if((question_type === "CG" || question_type === "RG") &&
+		       question_options.length === 0 &&
+		       shouldDelete === 'false') {
+			// Complain about it, and don't let the user create the survey.
+			alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
+			throw "no options";
+		    }
+		    var question_dict = {'question_id': question_id,
+					 'question_label': question_label,
+					 'question_active': question_active,
+					 'question_options': question_options,
+					 'should_delete': shouldDelete,
+					 'question_type': question_type};
+		    questions.push(question_dict);
+		});
+	    }
+	    catch( err ) {
+		if(err === "no options") {
+		    console.log('caught the exception');
+		    return;
+		}
+	    }
+	    // Send it all off.
+	    $.ajax({url: manage_survey_url,
+		    data: {'survey_id': $('#survey_id').val(),
+			   'survey_title': title,
+			   'survey_description': description,
+			   'questions': JSON.stringify(questions),
+			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+			  },
+		    type: 'POST',
+		    error: function() { alert('Something went wrong.'); },
+		    success: function () { alert('Great success!');
+					   window.location.replace('/business/');
+					 }
+		   });
+	});
     }
 
     // Keeps track of # of questions
@@ -286,6 +302,7 @@ if ( !apatapa.survey ) {
 	else {
 	    toggleActiveButton.html('Activate Question');
 	    isActive.prop({'value': 'false'});
+	    questionDiv.css('background-color', inactive_color);
 	}
 	
 	questionDiv
