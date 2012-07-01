@@ -97,33 +97,28 @@ html, body {
   padding-right: 7px;
   padding-top: 7px; }
 
-/* for styling primary content divs (in content div) */
 /* titles for main content divs */
 .content-title {
-  text-transform: uppercase;
+  font-variant: small-caps;
   border-bottom: solid 1px #500278;
   color: #500278;
-  margin-bottom: 15px; }
+  margin-bottom: 15px;
+  margin-top: 5px;
+  text-align: left;
+  max-width: 480px; }
+  .content-title h2 {
+    font-size: 20pt;
+    margin-bottom: 10px; }
 
 /* "features" div */
 #features {
   float: left;
-  width: 30%;
-  margin-top: 5px;
-  text-align: left; }
-  #features h2 {
-    font-size: 20pt;
-    margin-bottom: 10px; }
+  width: 40%; }
 
 /* "partners" div */
 #partners {
   float: right;
-  width: 60%;
-  margin-top: 5px;
-  text-align: left; }
-  #partners h2 {
-    font-size: 20pt;
-    margin-bottom: 10px; }
+  width: 50%; }
 
 /* the logo div */
 #logo {
@@ -135,6 +130,9 @@ html, body {
     color: #6e9bff;
     font-size: 36pt;
     padding: 15px; }
+
+.logo_title {
+  text-transform: lowercase; }
 
 #accountlinks {
   text-align: right;
@@ -171,3 +169,15 @@ html, body {
   #contact a {
     text-decoration: none;
     color: white; }
+
+h1, h3 {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+h1 {
+  font-size: 24pt;
+  padding-bottom: 8px; }
+
+h3 {
+  font-size: 16pt; }

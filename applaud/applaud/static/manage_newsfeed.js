@@ -117,7 +117,7 @@ var manageNewsfeed = {};
 	
 	var delete_button = $('<button></button>');
 	delete_button.prop({'type': 'button',
-			    'class': 'delete_button',
+			    'class': 'nf_delete_button',
 			    'id': 'feed_' + i + '_delete_button',
 			    'name': 'feed_' + i + '_delete_button'})
 	delete_button.html('Delete');

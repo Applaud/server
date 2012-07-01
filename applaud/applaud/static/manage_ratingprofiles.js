@@ -144,7 +144,7 @@ var ratingProfile = {};
 	    var newdimdiv = $("<div id=\"insert_dimension_div\"></div>");
 	    var label = $("<label for=\"dimension_title\">New dimension name</label>");
 	    var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
-	    var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" value=\"OK\" />");
+	    var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" class=\"ratingprofile_submit\" value=\"OK\" />");
 	    submit.click( function( event ) {
 		event.preventDefault();
 		var profile_id = $(this).siblings('.profileid').val();
@@ -177,7 +177,7 @@ var ratingProfile = {};
     var listProfiles = function(data) {
 	// Clear the current list
 	$('#profiles_listing').empty();
-	var listing = $('<ul></ul>');
+	var listing = $('<ul id="profiles_listing"></ul>');
 
 	for ( p in data.rating_profiles ) {
 	    profile = data.rating_profiles[p];
@@ -268,6 +268,10 @@ var ratingProfile = {};
 
 	$('#new_ratingprofile_button').click(
 	    function( event ) {
+		// Toggle visibility
+		$('#new_ratingprofile').slideToggle(100);
+
+		
 		// Don't allow more than one 'new ratingprofile' form at a time
 		if ( $('#new_ratingprofile').children().length > 0 )
 		    return;
@@ -275,9 +279,12 @@ var ratingProfile = {};
 
 		// Create the form for adding a ratingprofile
 		var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
-		var submit_button = $('<input type="submit" value="OK" />');
+		var submit_button = $('<input type="submit" class="rp_okbutton" value="OK" />');
 		submit_button.click( function( event ) {
 		    event.preventDefault();
+
+		    // Hide the new profile form
+		    $('#new_ratingprofile').slideUp(100);
 		    
 		    data = {'title':$('#profile_title').val()}
 		    // Grab all dimensions
@@ -297,9 +304,10 @@ var ratingProfile = {};
 		    $('#new_ratingprofile').empty();
 		});
 		var cancel_button = $('<input />');
-		cancel_button.prop({'type':'submit',
-				    'id':'newprofile_cancel_button',
-				    'value':"Cancel"});
+		cancel_button.prop({'type':"submit",
+				    'id':"newprofile_cancel_button",
+				    'value':"Cancel",
+				    'class':"rp_cancel"});
 		cancel_button.click( function( event ) {
 		    event.preventDefault();
 		    $('#newprofile_form').remove();
@@ -307,8 +315,8 @@ var ratingProfile = {};
 		});
 
 		// Add insert/delete dimension buttons
-		var dim_insert_button = $('<button type="button">+</button>');
-		var dim_remove_button = $('<button type="button">-</button>');
+		var dim_insert_button = $('<button class="rp_add" type="button">+</button>');
+		var dim_remove_button = $('<button class="rp_minus" type="button">-</button>');
 
 		// Register click handlers on each of the insert/delete buttons
 		dim_insert_button.click( function() {
@@ -318,13 +326,17 @@ var ratingProfile = {};
 		    handle_remove_dimension();
 		});
 
+		var new_title = $('<div class="profile_title"></div>');
+		new_title.append( $('<label for="title">Title</label>') );
+		new_title.append( $('<input type="text" name="title" id="profile_title" />') );
+		newprofile_form.append( new_title );
 		newprofile_form.append( dim_insert_button );
 		newprofile_form.append( dim_remove_button );
 		newprofile_form.append( submit_button );
 		newprofile_form.append( cancel_button );
 
-		newprofile_form.append( $('<label for="title">Title</label>') );
-		newprofile_form.append( $('<input type="text" name="title" id="profile_title" />') );
+
+
 		
 		// Add the form to the ratingprofile div
 		$('#new_ratingprofile').append( newprofile_form );
@@ -335,6 +347,9 @@ var ratingProfile = {};
      * This is executed after the page has fully loaded.
      */
     $(document).ready(function() {
+	// New profile form is invisible
+	$('#new_ratingprofile').hide();
+	
 	// Get all the rating profiles
 	$.ajax( {
 	    url: list_ratingprofiles_url,
