@@ -9,7 +9,8 @@
   <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css">
   {% block links %}
   {% endblock %}
-  <script type="text/javascript" src="/static/jquery.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
   <script type="text/javascript" >
 /**
  * URLS
@@ -29,19 +30,7 @@ var manage_survey_url = "{% url business_manage_survey %}";
 // Newsfeed URLs.
 var list_newsfeed_url = "{% url business_newsfeed_list %}";
 var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
-
-/**
- * UTIL
- */
-function escapeHTML( str ) {
-    console.log("Escaping string: "+str);
-    var temp = $('<pre></pre>');
-    temp.text(str);
-    var escaped = temp.html();
-    console.log("Escaped version: "+escaped);
-    return escaped;
-}
-  </script>
+</script>
   {% block scripts %}
   {% endblock %}
 </head>

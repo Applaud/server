@@ -1,6 +1,8 @@
-var manageEmployees = {};
+if (! apatapa.employee) {
+    apatapa.employee = {};
+}
 
-(function (manageEmployees) {
+(function (_ns) {
     var bind_delete_buttons = function () {
 	console.log('binding to buttons');
 	$('.del_emp_button').click(
@@ -52,4 +54,4 @@ var manageEmployees = {};
 	// Bind the 'delete' buttons for employees to an AJAX call
 	bind_delete_buttons();
     });
-})(manageEmployees);
+})(apatapa.employee);
