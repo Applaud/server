@@ -4,7 +4,7 @@ function bind_delete_buttons() {
 	function ( event ) {
 	    console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 	    event.preventDefault();
-	    $.ajax({ url:'/business/delete_employee/',
+	    $.ajax({ url: manage_employees_url,
 		     type: 'POST',
 		     data: {'employee_id':$(this).attr('id').split('_')[2],
 			    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},

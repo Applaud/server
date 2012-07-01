@@ -193,6 +193,7 @@ class QuestionResponse(models.Model):
     
     # The end user who provided the response
     user = models.ForeignKey('UserProfile')
+
     date_created=models.DateTimeField()
     def __unicode__(self):
         return json.dumps(self.response)

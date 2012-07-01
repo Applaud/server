@@ -107,15 +107,37 @@ class SurveyEncoder(json.JSONEncoder):
         if isinstance(o, models.Survey):
             question_list = list(o.question_set.all())
             questions = []
+            question_encoder = QuestionEncoder()
             for q in question_list:
-                questions.append({'label': q.label,
-                                  'type': q.type,
-                                  'options': q.options,
-                                  'active': q.active,
-                                  'id': q.id})
+                questions.append(question_encoder.default(q))
             res = {'title': o.title,
                    'description': o.description,
                    'questions': questions}
             return res
         else:
             return json.JSONEncoder.default(self, o)
+
+# Encodes a Question into JSON.
+class QuestionEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Question):
+            return {'label': o.label,
+                    'type': o.type,
+                    'options': o.options,
+                    'active': o.active,
+                    'id': o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+
+# Encodes a rating into JSON
+class RatingEncoder(json.JSONENcoder):
+    def default(self, o)
+    if isinstance(o, models.Rating):
+        return {'business': o.employee.businessprofile,
+                'date': o.date_created,
+                'profile': o.profile,
+                'rating_value': o.rating_value,
+                'user': user}
+    else:
+        return json.JSONEncdoder.default(self, o)

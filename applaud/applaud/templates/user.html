@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
 {% block links %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
 {% endblock %}
 
-{% block title %}User{% endblock %}
+{% block scripts %}
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}user_analytics.js"></script>
+{% endblock %}
+
+
+{% block title %}User Landing{% endblock %}
 
 {% block content %}
 Hello {{ user.username }}!
@@ -13,17 +19,20 @@ Hello {{ user.username }}!
 <div id="user_links">
   <ul>
     <li><a href="{% url edit_user_profile %}">Edit Your Profile</a></li>
-<!--    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>-->
   </ul>
 </div>
 
 <h1> My Previous Responses </h1>
 
+<table border=1>
 <div class="feedback">
  <h2>General Feedback</h2>
  {% for feed in feedback %}
- <p>{{ feed.business }}
-   {{ feed }}</p>
+
+<tr>
+<td> {{ feed.business }} </td>
+<td> {{ feed.date_created }} </td>
+</tr>
  {% endfor %}
 </div>
 

@@ -17,6 +17,7 @@ urlpatterns = patterns('',
                        url(r'^employees/',views.employee_list),
                        
                        # Posting survey response
+                       url(r'^get_survey/', views.get_survey),
                        url(r'^survey_respond/', views.survey_respond),
 
                        # Static JSON data that can be used for testing when the internet's down

@@ -3,11 +3,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 {% load i18n %}
 <head>
+  <link href="http://fonts.googleapis.com/css?family=Gentium+Basic" rel="stylesheet" type="text/css">
   <title>{% block title %}Apatapa{% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="/static/applaud.css" />
   {% block links %}
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+  <script type="text/javascript" >
+var manage_employees_url = "{% url business_manage_employees %}";
+var delete_employee_url = "{% url business_delete_employee %}";
+var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
+var new_ratingprofile_url = "{% url business_new_ratingprofile %}";
+var list_ratingprofiles_url = "{% url business_list_ratingprofiles %}";
+
+var manage_survey_url = "{% url business_manage_survey %}";
+  </script>
   {% block scripts %}
   {% endblock %}
 </head>
