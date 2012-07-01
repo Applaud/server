@@ -144,7 +144,7 @@ var ratingProfile = {};
 	    var newdimdiv = $("<div id=\"insert_dimension_div\"></div>");
 	    var label = $("<label for=\"dimension_title\">New dimension name</label>");
 	    var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
-	    var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" value=\"OK\" />");
+	    var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" class=\"ratingprofile_submit\" value=\"OK\" />");
 	    submit.click( function( event ) {
 		event.preventDefault();
 		var profile_id = $(this).siblings('.profileid').val();
@@ -279,7 +279,7 @@ var ratingProfile = {};
 
 		// Create the form for adding a ratingprofile
 		var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
-		var submit_button = $('<input type="submit" class="okbutton" value="OK" />');
+		var submit_button = $('<input type="submit" class="rp_okbutton" value="OK" />');
 		submit_button.click( function( event ) {
 		    event.preventDefault();
 
@@ -304,9 +304,10 @@ var ratingProfile = {};
 		    $('#new_ratingprofile').empty();
 		});
 		var cancel_button = $('<input />');
-		cancel_button.prop({'type':'submit',
-				    'id':'newprofile_cancel_button',
-				    'value':"Cancel"});
+		cancel_button.prop({'type':"submit",
+				    'id':"newprofile_cancel_button",
+				    'value':"Cancel",
+				    'class':"rp_cancel"});
 		cancel_button.click( function( event ) {
 		    event.preventDefault();
 		    $('#newprofile_form').remove();
@@ -314,8 +315,8 @@ var ratingProfile = {};
 		});
 
 		// Add insert/delete dimension buttons
-		var dim_insert_button = $('<button class="add" type="button">+</button>');
-		var dim_remove_button = $('<button class="minus" type="button">-</button>');
+		var dim_insert_button = $('<button class="rp_add" type="button">+</button>');
+		var dim_remove_button = $('<button class="rp_minus" type="button">-</button>');
 
 		// Register click handlers on each of the insert/delete buttons
 		dim_insert_button.click( function() {

@@ -1,4 +1,32 @@
-#employees_listing li {
+form {
+  display: inline; }
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
   margin: 5px;
   background-color: #ffebfa;
   padding: 5px; }
+
+.feed input {
+  margin-bottom: 10px; }
+
+.delete_button {
+  margin-top: 10px;
+  background-color: #ff6464; }
+
+#newemployeeform {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: block; }
+
+.profile_title {
+  margin-right: 15px;
+  display: inline; }
+
+h3 {
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+strong {
+  font-weight: bold; }

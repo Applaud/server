@@ -124,7 +124,7 @@ html, body {
 
 /* titles for main content divs */
 .content-title {
-    text-transform:uppercase;
+    font-variant:small-caps;
     border-bottom:solid 1px $titlecolor;
     color: $titlecolor;
     margin-bottom:15px;
@@ -163,6 +163,10 @@ html, body {
 	font-size: 36pt;
 	padding: 15px;
     }
+}
+
+.logo_title {
+    text-transform:lowercase;
 }
 
 #accountlinks {
@@ -210,4 +214,19 @@ html, body {
 	text-decoration:none;
 	color:rgb(255,255,255);
     }
+}
+
+h1, h3 {
+    font-weight:bold;
+    text-transform:uppercase;
+    color:rgb(44,30,30);
+}
+
+h1 {
+    font-size:24pt;
+    padding-bottom:8px;
+}
+
+h3 {
+    font-size:16pt;
 }

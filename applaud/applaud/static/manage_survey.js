@@ -209,7 +209,9 @@ manageSurvey = {};
 	optionDiv.prop({'id':"question_"+i+"_options",
 			'class':"question_option",
 		       });
-	
+	var optionList = $("<ul></ul>");
+	optionList.addClass("question_optionlist");
+
 	// Render each of the options for the question
 	for ( o in options ) {
 	    var optionLabel = $('<label>Option '+ (parseInt(o) + 1) +'</label>');
@@ -220,10 +222,16 @@ manageSurvey = {};
 			       'class':'option_field',
 			       'value':options[o]});
 	    
-	    optionDiv.append( optionLabel ).append( optionWidget ).append($( "<br />" ));
+	    var optionItem = $('<li></li>');
+	    optionItem.addClass('question_item');
+
+	    optionItem.append( optionLabel ).append( optionWidget );
+	    optionList.append( optionItem );
 	    questionOptions[i]++;
 	}
-	
+
+	optionDiv.append( optionList );
+
 	var questionNumber = i;
 	var addOptionButton = $("<button>Add Option</button>");
 	addOptionButton.prop({'type':"button",
@@ -267,11 +275,9 @@ manageSurvey = {};
 	questionDiv
 	    .append(questionId)
 	    .append(shouldDelete)
+	    .append(questionAreaLabel)
 	    .append(questionArea)
 	    .append(isActive)
-	    .append($( "<br />" ))
-	    .append(questionAreaLabel)
-	    .append($("<br />"))
 	    .append(questionTypeLabel)
 	    .append(questionType)
 	    .append($("<br />"))
@@ -293,7 +299,8 @@ manageSurvey = {};
 
     function addOption(qindex) {
 	var questionOptionsDiv = $("#question_"+qindex+"_options");
-	
+	var optionList = questionOptionsDiv.children('.question_optionlist');
+
 	var optionFieldLabel = $("<label>Option "+(questionOptions[qindex]+1)+"</label>");
 	optionFieldLabel.prop({"for":"question_"+qindex+"_option_"+questionOptions[qindex]});
 
@@ -304,8 +311,15 @@ manageSurvey = {};
 			   'id':'question_'+qindex+'_option_'+questionOptions[qindex]} );
 	console.log("qindex is :"+qindex);
 	questionOptions[qindex]++;
-	questionOptionsDiv
+
+	var optionItem = $('<li></li>');
+	optionItem.addClass('question_item');
+
+	optionItem
 	    .append(optionFieldLabel)
 	    .append(optionField);
+
+	optionList.append( optionItem );
+	questionOptionsDiv.append( optionList );
     }
 })(manageSurvey);

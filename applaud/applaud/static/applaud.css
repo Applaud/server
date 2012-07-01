@@ -99,7 +99,7 @@ html, body {
 
 /* titles for main content divs */
 .content-title {
-  text-transform: uppercase;
+  font-variant: small-caps;
   border-bottom: solid 1px #500278;
   color: #500278;
   margin-bottom: 15px;
@@ -130,6 +130,9 @@ html, body {
     color: #6e9bff;
     font-size: 36pt;
     padding: 15px; }
+
+.logo_title {
+  text-transform: lowercase; }
 
 #accountlinks {
   text-align: right;
@@ -166,3 +169,15 @@ html, body {
   #contact a {
     text-decoration: none;
     color: white; }
+
+h1, h3 {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+h1 {
+  font-size: 24pt;
+  padding-bottom: 8px; }
+
+h3 {
+  font-size: 16pt; }
