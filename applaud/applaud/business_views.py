@@ -244,10 +244,10 @@ def new_ratingprofile(request):
     while 'dim%d'%i in request.POST:
         dim = RatedDimension(title=request.POST['dim%d'%i],
                              rating_profile=rp)
+        dim.save()
         i += 1
 
-    return HttpResponse(json.dumps({'rating_profiles':
-                                        _list_rating_profiles(profile.id)},
+    return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=RatingProfileEncoder),
                         mimetype='application/json')
 

@@ -1,4 +1,26 @@
-#employees_listing li {
+form {
+  display: inline; }
+
+#employees_listing li, #profiles_listing li ul li {
   margin: 5px;
   background-color: #ffebfa;
   padding: 5px; }
+  #employees_listing li:hover, #profiles_listing li ul li:hover {
+    background-color: #fff5fa; }
+
+#newemployeeform {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: block; }
+
+.profile_title {
+  margin-right: 15px;
+  display: inline; }
+
+h3 {
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase; }
+
+strong {
+  font-weight: bold; }
