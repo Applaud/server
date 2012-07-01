@@ -3,34 +3,16 @@
 {% block links %}
 {{ block.super }}
 {% endblock %}
-{% block scripts %}{% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}manage_newsfeed.js"></script>
+{% endblock %}
 {% block content %}
 {{ block.super }}
+
 <h1>NEWSFEED</h1>
 
-{% for item in list %}
-
-
-{{ item.title }}<br />
-{{ item.subtitle }} - {{ item.date }}<br />
-<p>{{ item.body }}</p>
-
-<form action="/business/delete_newsfeed_item/" method="get" />
-<input type="hidden" value="{{ item.id }}" name="id" />
-<input type="submit" value="Delete" />
-</form>
-
-<br />
-
-<form action="/business/edit_newsfeed/" method="get" />
-<input type="hidden" value="{{ item.id }}" name="id" />
-<input type="submit" value="Edit" />
-</form>
-
-<br />
-
-{% endfor %}
-
-<a href="/business/newsfeed_create/">Add a new item!</a>
-
+<div id="newsfeeds" name="newsfeeds" class="newsfeeds">
+  {% csrf_token %}
+</div>
 {% endblock %}

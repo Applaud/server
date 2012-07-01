@@ -4,36 +4,36 @@ import business_views as views
 
 urlpatterns = patterns('',
                        # First time visiting the site
-                       url(r'^welcome/', views.business_welcome),
+                       url(r'^welcome/$', views.business_welcome),
                        
                        # Employee stuff
-                       url(r'^manage_employees/',
-                           # direct_to_template,
-                           # {'template':'manage_employees.html'},
+                       url(r'^manage_employees/$',
                            views.manage_employees,
                            name='business_manage_employees'),
-                       url(r'^delete_employee/',
+                       url(r'^delete_employee/$',
                            views.delete_employee,
                            name='business_delete_employee'),
-                       url(r'^new_employee/',
+                       url(r'^new_employee/$',
                            views.add_employee,
                            name="business_new_employee"),
+                       url(r'^list_employees/$',
+                           views.list_employees,
+                           name="business_list_employees"),
                        
                        # Survey stuff
-                       url(r'^manage_survey/', views.manage_survey,
+                       url(r'^manage_survey/$', views.manage_survey,
                            name="business_manage_survey"),
 
                        # Rating Profiles
-                       url(r'^manage_ratingprofiles',
+                       url(r'^manage_ratingprofiles/$',
                            views.manage_ratingprofiles,
                            name="business_manage_ratingprofiles"),
-                       url(r'^new_ratingprofile',
+                       url(r'^new_ratingprofile/$',
                            views.new_ratingprofile,
                            name="business_new_ratingprofile"),
-                       url(r'^list_ratingprofiles',
+                       url(r'^list_ratingprofiles/$',
                            views.list_rating_profiles,
                            name="business_list_ratingprofiles"),
-                       url(r'^create_rating_profile/',views.create_rating_profile),
 
                        # Business home
                        url(r'^$',
@@ -41,17 +41,22 @@ urlpatterns = patterns('',
                            {'url':'analytics'},
                            name="business_home"),
                        
-
-
+                       #analytics
+                       url(r'^business_analytics',
+                           views.business_analytics,
+                           name="business_analytics"),
+                       url(r'^get_analytics/',
+                           views.get_analytics,
+                           name="business_get_analytics"),
                           
                        # Everything related to newsfeed
-                       url(r'^manage_newsfeed/',
+                       url(r'^manage_newsfeed/$',
                            views.manage_newsfeed,
                            name="business_manage_newsfeed"),
-                       url(r'^newsfeed_create/',views.newsfeed_create),
-                       url(r'^edit_newsfeed/', views.edit_newsfeed),
-                       url(r'^delete_newsfeed_item/', views.delete_newsfeed_item),
+                       url(r'^newsfeed_list/$',
+                           views.newsfeed_list,
+                           name='business_newsfeed_list'),
                        
                        # Checking analytics.
-                       url(r'^analytics/', views.analytics, name="analytics"),
+                       url(r'^analytics/$', views.analytics, name="analytics"),
                        )

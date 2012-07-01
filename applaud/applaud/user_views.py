@@ -27,7 +27,7 @@ def user_view(view):
         return HttpResponseRedirect(reverse("auth_login"))
 
     def goto_home(*args, **kw):
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse("home"))
 
     def wrapper(*args, **kw):
         request = args[0]

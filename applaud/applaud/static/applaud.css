@@ -1,32 +1,187 @@
-html, body {
-    font-family:'Gentium Basic', serif;
-    text-align:center;
-    background-image:url('/static/wallpaper.jpg');
-}
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
 
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+/******** variables ********/
+/***************************/
+/* styles that apply to the whole page */
+html, body {
+  font-family: 'Arvo', serif;
+  background-image: url("/static/wallpaper.jpg");
+  height: 100%;
+  margin: auto; }
+
+/* main content style */
+#content {
+  width: 800px;
+  min-height: 100%;
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto; }
+
+/* very top and bottom caps */
+#header, #footer, #extra-content {
+  color: white;
+  background-color: #2c1e1e; }
+
+#header {
+  height: 150px; }
+
+#main {
+  overflow: auto;
+  padding-bottom: 15px;
+  height: 90%;
+  padding: 15px; }
+
+/* very bottom div */
+#footer {
+  position: relative;
+  width: 786px;
+  height: 15px;
+  line-height: 15px;
+  font-family: 'PT Sans Caption', sans-serif;
+  font-size: 10pt;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0px;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 7px; }
+
+/* titles for main content divs */
+.content-title {
+  font-variant: small-caps;
+  border-bottom: solid 1px #500278;
+  color: #500278;
+  margin-bottom: 15px;
+  margin-top: 5px;
+  text-align: left;
+  max-width: 480px; }
+  .content-title h2 {
+    font-size: 20pt;
+    margin-bottom: 10px; }
+
+/* "features" div */
+#features {
+  float: left;
+  width: 40%; }
+
+/* "partners" div */
+#partners {
+  float: right;
+  width: 50%; }
+
+/* the logo div */
+#logo {
+  position: relative; }
+  #logo h1 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: #6e9bff;
+    font-size: 36pt;
+    padding: 15px; }
+
+.logo_title {
+  text-transform: lowercase; }
+
+#accountlinks {
+  text-align: right;
+  font-size: 10pt;
+  font-family: 'Pt Sans Caption', sans-serif;
+  padding-right: 10px;
+  padding-top: 15px; }
+  #accountlinks a {
+    color: white;
+    text-decoration: none; }
+
+/* main links at the top */
 #navigation {
-    border-bottom:1px solid;
-    width:400px;
-    margin-bottom:10px;
-    margin-left:auto;
-    margin-right:auto;
-}
+  margin: 10px;
+  text-transform: uppercase;
+  display: block;
+  text-align: right;
+  position: relative;
+  top: 60px; }
+  #navigation li {
+    display: inline;
+    padding: 5px; }
+  #navigation a {
+    color: white;
+    text-decoration: none; }
+    #navigation a:hover {
+      text-decoration: underline; }
+
+#copyright {
+  float: left; }
+
+#contact {
+  float: right; }
+  #contact a {
+    text-decoration: none;
+    color: white; }
+
+h1, h3 {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
 
 h1 {
-    font-size:40px;
-}
+  font-size: 24pt;
+  padding-bottom: 8px; }
 
-h2 {
-    font-size:30px;
-}
+h3 {
+  font-size: 16pt; }
 
-.question {
-    margin:20px auto;
-}
-
-li {
-    margin:20px auto;
-/*    border-color:rgb(150,30,30);
-    border-width:2px;
-    border-style:solid;*/
-}
+.errorlist li {
+  color: red;
+  padding-bottom: 10px; }

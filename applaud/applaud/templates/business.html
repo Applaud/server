@@ -6,16 +6,11 @@
 
 {% block title %}Business{% endblock %}
 
-{% block content %}
-Hello, {{ user.businessprofile.business_name }}!
-
-<!-- relevant functional links for business -->
-<div id="business_links">
-  <ul>
-    <li><a href="{% url analytics %}">View Stats</a></li>
-    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>
-    <li><a href="{% url business_manage_newsfeed %}">Manage News Items</a></li>
-    <li><a href="{% url business_manage_survey %}">My Survey</a></li>
-  </ul>
-</div>
+{% block navigation_links %}
+<ul>
+  <li><a href="{% url analytics %}">Stats</a></li>
+  <li><a href="{% url business_manage_employees %}">Employees</a></li>
+  <li><a href="{% url business_manage_newsfeed %}">News Items</a></li>
+  <li><a href="{% url business_manage_survey %}">Questions</a></li>
+</ul>
 {% endblock %}

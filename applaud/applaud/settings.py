@@ -16,6 +16,8 @@ ACCOUNT_ACTIVATION_DAYS = 7
 # Where to go after login
 LOGIN_REDIRECT_URL = '/accounts/profile'
 
+SERVER_URL="http://ec2-107-22-6-55.compute-1.amazonaws.com"
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -69,6 +71,9 @@ MEDIA_ROOT = CWD+'/../media/'
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
+
+# Path to the default profile picture
+DEFAULT_PROFILE_IMAGE = 'default.jpg'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

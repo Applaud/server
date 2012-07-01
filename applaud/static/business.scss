@@ -1,0 +1,42 @@
+form {
+    display:inline;
+}
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
+    margin:5px;
+    background-color:rgb(255,235,250);
+    padding:5px;
+}
+
+.feed input {
+    margin-bottom:10px;
+}
+
+.delete_button {
+    margin-top: 10px;
+    background-color:rgb(255,100,100);
+}
+
+#newemployeeform {
+    margin: {
+	top: 30px;
+	bottom: 30px;
+    }
+    display:block;
+}
+
+.profile_title {
+    margin-right: 15px;
+    display: inline;
+}
+
+h3 {
+    font-size:16pt;
+    font-weight:bold;
+    text-transform:uppercase;
+    color:rgb(44,30,30);
+}
+
+strong {
+    font-weight:bold;
+}
