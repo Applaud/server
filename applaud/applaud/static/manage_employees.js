@@ -19,9 +19,13 @@ if (! apatapa.employee) {
 	    });
     }
 
+    /**
+     * you must have {% csrf_token %} on the page calling this somewhere.
+     */
     _ns.getEmployees = function( container ) {
 	$.ajax({url: list_employees_url,
 		type: 'POST',
+		data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		success: function(data) {
 		    _ns.listEmployees(data, container);
 		},

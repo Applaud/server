@@ -2,7 +2,8 @@
  * Variables
  */
 $deletecolor: rgb(255,100,100);
-
+$lightpink: rgb(255,235,250);
+$browncolor: rgb(44,30,30);	// dark brown color for header/footer
 
 /************
  * Styles that apply to all pages
@@ -15,7 +16,7 @@ h3 {
     font-size:16pt;
     font-weight:bold;
     text-transform:uppercase;
-    color:rgb(44,30,30);
+    color:$browncolor;
 }
 
 strong {
@@ -24,7 +25,7 @@ strong {
 
 #employees_listing li, #profiles_listing li ul li, .feed, .question {
     margin:5px;
-    background-color:rgb(255,235,250);
+    background-color:$lightpink;
     padding:5px;
 }
 
