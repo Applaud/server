@@ -1,4 +1,7 @@
 /************
+ * Variables
+ */
+/************
  * Styles that apply to all pages
  */
 form {
@@ -17,6 +20,11 @@ strong {
   margin: 5px;
   background-color: #ffebfa;
   padding: 5px; }
+
+.profile_image {
+  width: 64px;
+  height: 64px;
+  vertical-align: middle; }
 
 /************
  * Newsfeed
@@ -47,3 +55,10 @@ strong {
 .profile_title {
   margin-right: 15px;
   display: inline; }
+
+.employee_name {
+  padding-left: 10px; }
+
+.del_emp_button {
+  background-color: #ff6464;
+  margin-left: 10px; }

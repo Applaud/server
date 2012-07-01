@@ -109,6 +109,14 @@ def manage_employees(request):
                                'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))
 
+# List the employees for a business (view)
+@business_view
+def list_employees(request):
+    return HttpResponse(json.dumps({'employee_list':
+                                        _list_employees(request.user.businessprofile.id)},
+                                   cls=EmployeeEncoder),
+                        mimetype='application/json')
+
 # List the employees for a business
 def _list_employees(businessID):
     business_profile = BusinessProfile.objects.get(id=businessID)
@@ -122,9 +130,7 @@ def delete_employee(request):
     profile = request.user.businessprofile
     if 'employee_id' in request.POST:
         _delete_employee(request.POST['employee_id'])
-        return HttpResponse(json.dumps({'employee_list':_list_employees(profile.id)},
-                                       cls=EmployeeEncoder),
-                            mimetype='application/json')
+        return list_employees(request)
     return HttpResponseRedirect(reverse("business_manage_employees"))
 
 # Fully deletes an employeeprofile (including the employee user) from the database

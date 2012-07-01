@@ -4,10 +4,8 @@ if (! apatapa.employee) {
 
 (function (_ns) {
     var bind_delete_buttons = function () {
-	console.log('binding to buttons');
 	$('.del_emp_button').click(
 	    function ( event ) {
-		console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 		event.preventDefault();
 		$.ajax({ url: delete_employee_url,
 			 type: 'POST',
@@ -26,7 +24,6 @@ if (! apatapa.employee) {
      * Re-builds the list of employees.
      */
     var listEmployees = function(data) {
-	console.log("listing employees now.");
 	// Clear the current list
 	$('#employees_listing').empty();
 	var listing = $('<ul></ul>');
@@ -34,12 +31,17 @@ if (! apatapa.employee) {
 	for ( e in data.employee_list ) {
 	    employee = data.employee_list[e];
 	    var listitem = $('<li></li>');
+	    var employee_image = $('<img />');
+	    employee_image.prop({'src':employee.image,
+				 'alt':employee.first_name+" "+employee.last_name,
+				 'class':'profile_image'});
 
 	    // This is the way it's done per the EmployeeEncoder
-	    listitem.html( employee.first_name+" "+employee.last_name
-			   +"<form action=\"\" method=\"post\">"
-			   +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
-			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
+	    listitem.append( employee_image );
+	    listitem.append( '<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>'
+			     +"<form action=\"\" method=\"post\">"
+			     +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
+			     +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
 	    listing.append(listitem);
 	}
 	
@@ -53,5 +55,10 @@ if (! apatapa.employee) {
     $(document).ready(function() {
 	// Bind the 'delete' buttons for employees to an AJAX call
 	bind_delete_buttons();
+
+	// Fetch the list of employees
+	$.ajax({'url':list_employees_url,
+		success:listEmployees,
+		error:function(){alert("Something went wrong.");}});
     });
 })(apatapa.employee);
