@@ -561,7 +561,8 @@ def manage_newsfeed(request):
                                            business=profile,
                                            date=datetime.now().replace(tzinfo=utc),
                                            date_edited=datetime.now().replace(tzinfo=utc))
-            newsfeed.save()
+            if feed['should_delete'] != 'true':
+                newsfeed.save()
     return HttpResponse('')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
