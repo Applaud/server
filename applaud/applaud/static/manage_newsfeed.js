@@ -1,6 +1,8 @@
-var manageNewsfeed = {};
+if (! apatapa.newsfeed) {
+    apatapa.newsfeed = {};
+}
 
-(function (manageNewsfeed) {
+(function (_ns) {
     
     // Keeps track of which feed is which.
     var i = 0;
@@ -185,4 +187,4 @@ var manageNewsfeed = {};
 		error: function () { alert('Something went wrong.'); },
 		success: handleNewsfeedData});
     });
-})(manageNewsfeed);
+})(apatapa.newsfeed);
