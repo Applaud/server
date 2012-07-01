@@ -1,0 +1,215 @@
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+
+/******** variables ********/
+$pagefont: 'Arvo', serif;	// most page fonts
+$contentwidth: 800px;		// width of main content div
+$logocolor: rgb(110,155,255);	// color of logo
+$titlecolor: rgb(80,2,120);	// color of sub-section titles
+$footerspacing: 7px;		// padding on footer
+$footerheight: 15px;		// height of footer region
+$mainpadding: 15px;		// padding for main content
+/***************************/
+
+/* styles that apply to the whole page */
+html, body {
+    font-family: 'Arvo', serif;
+    background-image:url('/static/wallpaper.jpg');
+    height:100%;
+    margin:auto;
+}
+
+/* main content style */
+#content {
+    width: $contentwidth;
+    min-height:100%;
+    background-color:rgb(255,255,255);
+
+    margin: {
+	left: auto;
+	right: auto;
+    }
+}
+
+/* very top and bottom caps */
+#header, #footer, #extra-content {
+    color:rgb(255,255,255);
+    background-color:rgb(44,30,30);
+}
+
+#header {
+    height:150px;
+}
+
+#main {
+    overflow:auto;
+    padding-bottom:$footerheight;
+    height:90%;
+
+    padding: $mainpadding;
+}
+
+/* very bottom div */
+#footer {
+    position:relative;
+    width:$contentwidth - 2*$footerspacing;
+    height:$footerheight;
+    line-height:$footerheight;
+    font-family: 'PT Sans Caption', sans-serif;
+    font-size:10pt;
+
+    margin: {
+	left: auto;
+	right: auto;
+	top:-$footerheight + $mainpadding;
+    }
+
+    padding: {
+    	left:$footerspacing;
+    	right:$footerspacing;
+    	top:$footerspacing;
+    }
+}
+
+/* for styling primary content divs (in content div) */
+@mixin contentTitles($side, $width) {
+    float:$side;
+    width:$width;
+    margin: {
+	top: 5px;
+    }
+    text-align:left;
+    h2 {
+	font-size:20pt;
+	margin-bottom:10px;
+    }
+}
+
+/* titles for main content divs */
+.content-title {
+    text-transform:uppercase;
+    border-bottom:solid 1px $titlecolor;
+    color: $titlecolor;
+    margin-bottom:15px;
+}
+
+/* "features" div */
+#features {
+    @include contentTitles(left, 30%);
+}
+
+/* "partners" div */
+#partners {
+    @include contentTitles(right, 60%);
+}
+
+/* the logo div */
+#logo {
+    position:relative;
+    h1 {
+	position:absolute;
+	top:0px;
+	left:0px;
+	color: $logocolor;
+	font-size: 36pt;
+	padding: 15px;
+    }
+}
+
+#accountlinks {
+    text-align:right;
+    font-size:10pt;
+    font-family:'Pt Sans Caption', sans-serif;
+    padding: {
+	right:10px;
+	top:15px;
+    }
+    a {
+	color:rgb(255,255,255);
+	text-decoration:none;
+    }
+}
+
+/* main links at the top */
+#navigation {
+    margin:10px;
+    text-transform:uppercase;
+    display:block;
+    text-align:right;
+    position:relative;
+    top:60px;
+    li {
+	display: inline;
+	padding: 5px;
+    }
+    a {
+	color:rgb(255,255,255);
+	text-decoration:none;
+	&:hover {
+	    text-decoration:underline;
+	}
+    }
+}
+
+#copyright {
+    float:left;
+}
+
+#contact {
+    float:right;
+    a {
+	text-decoration:none;
+	color:rgb(255,255,255);
+    }
+}
