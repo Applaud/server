@@ -268,6 +268,10 @@ var ratingProfile = {};
 
 	$('#new_ratingprofile_button').click(
 	    function( event ) {
+		// Toggle visibility
+		$('#new_ratingprofile').slideToggle(100);
+
+		
 		// Don't allow more than one 'new ratingprofile' form at a time
 		if ( $('#new_ratingprofile').children().length > 0 )
 		    return;
@@ -278,6 +282,9 @@ var ratingProfile = {};
 		var submit_button = $('<input type="submit" class="okbutton" value="OK" />');
 		submit_button.click( function( event ) {
 		    event.preventDefault();
+
+		    // Hide the new profile form
+		    $('#new_ratingprofile').slideUp(100);
 		    
 		    data = {'title':$('#profile_title').val()}
 		    // Grab all dimensions
@@ -339,6 +346,9 @@ var ratingProfile = {};
      * This is executed after the page has fully loaded.
      */
     $(document).ready(function() {
+	// New profile form is invisible
+	$('#new_ratingprofile').hide();
+	
 	// Get all the rating profiles
 	$.ajax( {
 	    url: list_ratingprofiles_url,

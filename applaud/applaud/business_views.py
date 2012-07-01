@@ -230,6 +230,10 @@ def new_ratingprofile(request):
      ...}
     '''
 
+    # Profiles must have titles
+    if 'title' not in request.POST:
+        return HttpResponse("")
+
     profile = request.user.businessprofile
     if request.method != 'POST':
         return HttpResponseRedirect(reverse("business_manage_employees"))
