@@ -122,36 +122,34 @@ html, body {
     }
 }
 
-/* for styling primary content divs (in content div) */
-@mixin contentTitles($side, $width) {
-    float:$side;
-    width:$width;
-    margin: {
-	top: 5px;
-    }
+/* titles for main content divs */
+.content-title {
+    font-variant:small-caps;
+    border-bottom:solid 1px $titlecolor;
+    color: $titlecolor;
+    margin-bottom:15px;
+
+    margin-top: 5px;
     text-align:left;
+
+    max-width:480px;
+
     h2 {
 	font-size:20pt;
 	margin-bottom:10px;
     }
 }
 
-/* titles for main content divs */
-.content-title {
-    text-transform:uppercase;
-    border-bottom:solid 1px $titlecolor;
-    color: $titlecolor;
-    margin-bottom:15px;
-}
-
 /* "features" div */
 #features {
-    @include contentTitles(left, 30%);
+    float:left;
+    width:40%;
 }
 
 /* "partners" div */
 #partners {
-    @include contentTitles(right, 60%);
+    float:right;
+    width:50%;
 }
 
 /* the logo div */
@@ -165,6 +163,10 @@ html, body {
 	font-size: 36pt;
 	padding: 15px;
     }
+}
+
+.logo_title {
+    text-transform:lowercase;
 }
 
 #accountlinks {
@@ -212,4 +214,19 @@ html, body {
 	text-decoration:none;
 	color:rgb(255,255,255);
     }
+}
+
+h1, h3 {
+    font-weight:bold;
+    text-transform:uppercase;
+    color:rgb(44,30,30);
+}
+
+h1 {
+    font-size:24pt;
+    padding-bottom:8px;
+}
+
+h3 {
+    font-size:16pt;
 }

@@ -16,6 +16,9 @@ urlpatterns = patterns('',
                        url(r'^new_employee/$',
                            views.add_employee,
                            name="business_new_employee"),
+                       url(r'^list_employees/$',
+                           views.list_employees,
+                           name="business_list_employees"),
                        
                        # Survey stuff
                        url(r'^manage_survey/$', views.manage_survey,

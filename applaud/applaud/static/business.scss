@@ -1,4 +1,10 @@
 /************
+ * Variables
+ */
+$deletecolor: rgb(255,100,100);
+
+
+/************
  * Styles that apply to all pages
  */
 form {
@@ -22,6 +28,12 @@ strong {
     padding:5px;
 }
 
+.profile_image {
+    width:64px;
+    height:64px;
+    vertical-align:middle;
+}
+
 /************
  * Newsfeed
  */
@@ -31,7 +43,7 @@ strong {
 
 .nf_delete_button {
     margin-top: 10px;
-    background-color:rgb(255,100,100);
+    background-color:$deletecolor;
 }
 
 .question_optionlist {
@@ -63,4 +75,13 @@ strong {
 .profile_title {
     margin-right: 15px;
     display: inline;
+}
+
+.employee_name {
+    padding-left:10px;
+}
+
+.del_emp_button {
+    background-color:$deletecolor;
+    margin-left:10px;
 }
