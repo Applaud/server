@@ -11,11 +11,25 @@ if (! apatapa.employee) {
 			 type: 'POST',
 			 data: {'employee_id':$(this).attr('id').split('_')[2],
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-			 success: listEmployees,
+			 success: function(data) {
+			     _ns.listEmployees(data, $('#employees_listing'));
+			 },
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
     }
+
+    _ns.getEmployees = function( container ) {
+	$.ajax({url: list_employees_url,
+		type: 'POST',
+		success: function(data) {
+		    _ns.listEmployees(data, container);
+		},
+		error: function() {
+		    alert("Something went wrong.");
+		}
+	       });
+    };
 
     /**
      * listEmployees(data)
@@ -23,7 +37,7 @@ if (! apatapa.employee) {
      * data - JSON data returned by AJAX call for deleting an employee.
      * Re-builds the list of employees.
      */
-    var listEmployees = function(data) {
+    _ns.listEmployees = function(data, container) {
 	// Clear the current list
 	$('#employees_listing').empty();
 	var listing = $('<ul></ul>');
@@ -47,7 +61,7 @@ if (! apatapa.employee) {
 	
 	$('#employees_listing').append(listing);
 	bind_delete_buttons();
-    }
+    };
 
     /**
      * This is executed after the page has fully loaded.
@@ -58,7 +72,9 @@ if (! apatapa.employee) {
 
 	// Fetch the list of employees
 	$.ajax({'url':list_employees_url,
-		success:listEmployees,
+		success: function(data) {
+			     _ns.listEmployees(data, $('#employees_listing'));
+			 },
 		error:function(){alert("Something went wrong.");}});
     });
 })(apatapa.employee);

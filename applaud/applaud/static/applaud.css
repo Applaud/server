@@ -181,3 +181,7 @@ h1 {
 
 h3 {
   font-size: 16pt; }
+
+.errorlist li {
+  color: red;
+  padding-bottom: 10px; }
