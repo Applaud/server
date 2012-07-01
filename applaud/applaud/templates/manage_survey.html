@@ -1,7 +1,7 @@
 {% extends "business.html" %}
 {% block title %}Create survey{% endblock %}
 {% block scripts %}
-<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+{{ block.super }}
 <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}manage_survey.js"></script>
 {% endblock %}
 {% block content %}

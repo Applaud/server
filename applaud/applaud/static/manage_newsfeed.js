@@ -1,4 +1,4 @@
-if (! apatapa.newsfeed) {
+if ( !apatapa.newsfeed) {
     apatapa.newsfeed = {};
 }
 
@@ -52,15 +52,15 @@ if (! apatapa.newsfeed) {
     var registerClickHandlers = function () {
 	$('.nf_delete_button').click( function () {
 	    feed = $(this).parent('.feed');
-	    showAlert('Are you sure you want to delete?',
-		      'This will erase this question\'s data permanently!',
+	    apatapa.showAlert('Are you sure you want to delete?',
+		      'This will erase this item\'s data permanently!',
 		      function() {
 			  feed.children('#should_delete').val('true');
 			  feed.hide(700);
 		      });
 	});
 	$('#save_newsfeed_button').click( function () {
-	    showAlert('Are you sure?', 'Saving changes!', saveChanges);
+	    apatapa.showAlert('Are you sure?', 'Saving changes!', saveChanges);
 	});
     };
     
@@ -68,7 +68,7 @@ if (! apatapa.newsfeed) {
      * Shows an alert with an OK and cancel button, kinda like on iOS. The OK button
      * runs the ok_func function.
      */
-    var showAlert = function (title, message, ok_func) {
+    apatapa.showAlert = function (title, message, ok_func) {
 	var alert = $('<div></div>');
 	alert.prop({'title': title});
 	alert.html('<p>' + message + '<p>');

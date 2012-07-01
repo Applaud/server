@@ -291,6 +291,9 @@ def manage_survey(request):
             for question in json.loads(request.POST['questions']):
                 # If it's a new question.
                 if int(question['question_id']) == 0:
+                    # If this is a new question that should be deleted, just keep on walking.
+                    if question['should_delete'] == 'true':
+                        continue
                     q = models.Question(survey=survey)
                 else:
                     q = models.Question.objects.get(id=question['question_id'])

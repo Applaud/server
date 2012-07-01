@@ -1,4 +1,4 @@
-if (! apatapa.survey ) {
+if ( !apatapa.survey ) {
     apatapa.survey = {};
 }
 
@@ -17,17 +17,15 @@ if (! apatapa.survey ) {
 	    questionOptions[index]=$(this).children(".question_option").length;
 	});
 	
-	$(".question_div").click(function() {
-	    var qnum = $(this).prop('id').split('_')[1];
-	    console.log(qnum);
-	    addOption(qnum);
-	    
-	});
-	
 	$('.deletebutton').click( function () {
 	    console.log('deleting');
-	    $(this).parent('.question').children('.should_delete').val('true');
-	    $(this).parent('.question').hide(1000);
+	    var parent = $(this).parent('.question');
+	    apatapa.showAlert('Are you sure you want to delete?',
+			      'This will this question\'s data forever!',
+			      function () {
+				  parent.children('.should_delete').val('true');
+				  parent.hide(1000);
+			      });
 	});
 	
 	$('.toggleactivebutton').click( function () {
@@ -41,11 +39,7 @@ if (! apatapa.survey ) {
 	    }
 	});
 	
-	$("#addquestion_button").click(function(event) {
-	    event.preventDefault();
-	    // A new question -- ID is 0.
-	    addQuestion('', 'CG', [], true, 0);
-	});
+
 	
 	$('#submit_button').click( function(event) {
 	    event.preventDefault();
@@ -60,13 +54,16 @@ if (! apatapa.survey ) {
 		    var shouldDelete = $(this).children('.should_delete').val();
 		    var question_active = $(this).children('.is_active').val();
 		    var question_options = [];
-		    $(this).children('.question_option').children('.option_field').each( function(ind, ele) {
+		    $(this).children('.question_option').find('.option_field').each( function(ind, ele) {
 			question_options.push(apatapa.util.escapeHTML( $(this).val()) );
+			console.log('adding option');
 		    });
 		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
 		    // If it's a check or radio, and we don't have options.
+		    console.log(question_options);
 		    if((question_type === "CG" || question_type === "RG") &&
-		       question_options.length === 0) {
+		       question_options.length === 0 &&
+		       shouldDelete === 'false') {
 			// Complain about it, and don't let the user create the survey.
 			alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
 			throw "no options";
@@ -114,6 +111,13 @@ if (! apatapa.survey ) {
 	$('#survey_title').val( survey.title );
 	$('#survey_description').val( survey['description'] );
 	
+	$("#addquestion_button").click(function(event) {
+	    event.preventDefault();
+	    // A new question -- ID is 0.
+	    addQuestion('', 'CG', [], true, 0, true);
+	    registerClickHandlers();
+	});
+	
 	for ( q in survey.questions ) {
 	    var question = survey.questions[q];
 	    
@@ -121,7 +125,8 @@ if (! apatapa.survey ) {
 			 question.type,
 			 question.options,
 			 question.active,
-			 question.id );
+			 question.id,
+			 false);
 	}
 	registerClickHandlers();
     }
@@ -146,17 +151,23 @@ if (! apatapa.survey ) {
 
 
 
-    function addQuestion( label, type, options, active, id ) {
+    function addQuestion( label, type, options, active, id, animated ) {
 	//Objects to instantiate:
 	//1.Question label
 	//2.Question type
 	//3.Option field (e.g. first entry of a radio button)
 	//4.Add option button
-
+	console.log('Adding question: ' + label + ' animated: ' + animated);
 	var questionDiv = $("<div></div>");
-	questionDiv.prop({'id':"question_"+i+"_div"});
-	questionDiv.prop({'class':"question"});
+	questionDiv.prop({'id':"question_"+i+"_div",
+			  'class':"question"});
+	if( animated ) {
+	    questionDiv.hide();
+	}
+	
 	$("#submit_button").before(questionDiv);
+	$('#submit_button').button();
+	$('#addquestion_button').button();
 	
 	// If ID is 0, it's a new question.
 	var questionId = $('<input />');
@@ -240,10 +251,11 @@ if (! apatapa.survey ) {
     			      'name':"question_"+i+"_optionbutton",
      			      'id':"question_"+i+"_optionbutton",
 			      'class': 'option_button'});
+	addOptionButton.button();
 	console.log("question number: "+questionNumber);
 	addOptionButton.click(function() {
     	    console.log("i is: "+i);
-            $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
+            addOption(questionNumber, true);
 	});
 	
 	// Add a delete button.
@@ -252,12 +264,14 @@ if (! apatapa.survey ) {
 			   'name': 'question_'+i+'_deletebutton',
 			   'id': 'question_'+i+'_deletebutton',
 			   'class': 'deletebutton'});
+	deleteButton.button();
 	
 	var toggleActiveButton = $('<button></button>');
 	toggleActiveButton.prop({'type': 'button',
 				 'name': 'question_'+i+'_toggleactivebutton',
 				 'id': 'question_'+i+'_toggleactivebutton',
 				 'class': 'toggleactivebutton'});
+	toggleActiveButton.button();
 	
 	var isActive = $('<input />');
 	isActive.prop({'type': 'hidden',
@@ -291,6 +305,10 @@ if (! apatapa.survey ) {
 	    .append(toggleActiveButton);
 	console.log(i);
 	
+	if( animated ) {
+	    questionDiv.show(700);
+	}
+	
 	// Hide the add option if we're a textfield or textarea.
 	if(type === 'TA' || type === 'TF') {
 	    addOptionButton.hide();
@@ -299,7 +317,7 @@ if (! apatapa.survey ) {
     }
 
 
-    function addOption(qindex) {
+    function addOption(qindex, animated) {
 	var questionOptionsDiv = $("#question_"+qindex+"_options");
 	var optionList = questionOptionsDiv.children('.question_optionlist');
 
@@ -316,6 +334,10 @@ if (! apatapa.survey ) {
 
 	var optionItem = $('<li></li>');
 	optionItem.addClass('question_item');
+	
+	if( animated ) {
+	    optionItem.hide();
+	}
 
 	optionItem
 	    .append(optionFieldLabel)
@@ -323,5 +345,8 @@ if (! apatapa.survey ) {
 
 	optionList.append( optionItem );
 	questionOptionsDiv.append( optionList );
+	if( animated ) {
+	    optionItem.show(500);
+	}
     }
 })(apatapa.survey);
