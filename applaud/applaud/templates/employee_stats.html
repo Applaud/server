@@ -43,6 +43,17 @@ function dateToJS( datestring ) {
     return new Date(components[2],components[1],components[0]);
 }
 
+/**
+ * dateCompare( rating1, rating2 )
+ *
+ * Compare two ratings based on the date they were submitted.
+ *
+ * rating1, rating2 = two ratings
+ */
+function dateCompare( rating1, rating2 ) {
+    return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
+}
+
 function buildTable(data) {
     
     var the_list = $('<ol></ol>');
