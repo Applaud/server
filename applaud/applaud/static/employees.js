@@ -1,3 +1,12 @@
+/* employees.js
+ * 
+ * Provides the javascript functionality for the 'manage employees'
+ * page for businesses. This file also supplies the function
+ * 'getEmployee( container, [callback] )', which can be used to list
+ * all the employees into a container.
+ *
+ */
+
 if (! apatapa.employee) {
     apatapa.employee = {};
 }

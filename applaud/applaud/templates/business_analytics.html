@@ -4,8 +4,8 @@
 Employee Information
 {% endblock %}
 {% block scripts %}
+{{ block.super }}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}employees.js"></script>
 <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawVisualization);
