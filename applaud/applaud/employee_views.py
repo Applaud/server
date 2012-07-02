@@ -54,7 +54,7 @@ def employee_stats(request):
     return_data = {}
     return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
     all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
-    all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
+    return_data['ratings'] = all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
     return_data['averages'] = {}
     for dim in dimensions:
         rating_vals = []

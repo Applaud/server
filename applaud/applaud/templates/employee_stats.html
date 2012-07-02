@@ -77,10 +77,12 @@ function buildTable(data) {
 }
 
 function buildDateSlider(data) {
+    var dateRange = dateToJS(data.ratings[data.ratings.length-1].date).getTime() -
+	dateToJS(data.ratings[0].date).getTime();
     $('#gt_dateslider').slider({ range: true,
 				 min: 0,
-				 max: 100,
-				 values:[0,100]});
+				 max: dateRange,
+				 values:[0,dateRange]});
 }
 
 var dimHandler = function( container ) {
