@@ -3,9 +3,9 @@
 {% block title %}
 Employee Information
 {% endblock %}
-
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
 <script type="text/javascript">
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawVisualization);
@@ -28,17 +28,21 @@ function drawVisualization(chartdata) {
 </script>
 <script type="text/javascript">
 
-var chartdata;
+var employee_ids = [];
+var rating_dimension_ids = [];
 
 $(document).ready( function(){
     console.log("Document.ready");
-    get_chart_data([1,2],[2,1]);
+    make_chart();
+    bind_employee_divs();
 });
 
-var get_chart_data = function(employee_ids, rating_dimension_ids){
-
-    var data = JSON.stringify({'employee_ids':[1,2],
-			       'rating_categories':[3,4]});
+var make_chart = function(){
+    console.log("employee ids: "+employee_ids);
+    console.log("rating dimension ids: "+rating_dimension_ids);
+    
+    var data = JSON.stringify({'employee_ids':employee_ids,
+			       'rating_categories':rating_dimension_ids});
 
     $.ajax({ url: "{% url business_get_analytics %}",
 	     type: 'POST',
@@ -51,15 +55,72 @@ var get_chart_data = function(employee_ids, rating_dimension_ids){
     });
 }
 
+var bind_employee_divs = function(){
+    apatapa.employee.getEmployees($('#employees'));
+/*
+    //When we hover over a div, it should be highlighted,
+    $('.employees').hover(employee_div_hover_in, employee_div_hover_out)
+    //When we click on a div it should remain permanently highlighted and also pass
+    //the updated employee id form the graph
+    $('.employees').click( function() {
+	var e_id = $(this).attr('id').split('_')[1]
+	$(this).toggleClass('selected');
+	
+	if( $(this).is('.selected') ) {
+	    add_employee_to_chart(e_id);
+	    $(this).css('background-color','#666666');
+	}
+	else {
+	    remove_employee_from_chart(e_id);
+	    $(this).css('background-color','#ffffff');
+	}
+
+    });
+*/
+}
+var employee_div_hover_in = function(){
+    $(this).css('background-color','#666666');
+}
+var employee_div_hover_out = function(){
+    if( !$(this).is('.selected')){
+	$(this).css('background-color','#ffffff');
+    }
+}
+var add_employee_to_chart = function(emp_id){
+    //First, make sure the employee isn't in the chart
+    var arr_index = employee_ids.indexOf(emp_id);
+    if( arr_index === -1 ) employee_ids.push(emp_id); 
+
+    make_chart()
+}
+var remove_employee_from_chart = function(emp_id){
+    console.log("employee is: "+emp_id);
+    var arr_index = employee_ids.indexOf(emp_id);
+    if( arr_index != -1 ) employee_ids.splice(arr_index, 1); 
+    
+    make_chart();
+}
+
+var add_rating_dimension_to_chart = function(rating_id){
+    var arr_index = rating_dimension_ids.indexOf(emp_id);
+    if( arr_index === -1 ) rating_dimension_ids.push(emp_id); 
+    
+    make_chart();
+}
+var remove_rating_dimension_from_chart = function(rating_id){
+    var arr_index = rating_dimension_ids.indexOf(emp_id);
+    if( arr_index != -1 ) rating_dimension_ids.splice(arr_index, 1);
+
+    make_chart();
+}
 </script>
 {% endblock %}
 {% block content %}
 {{ block.super }}
 <h1>Employees of {{ business.business_name }}</h1>
-<div id="visualization" style="width: 900px; height: 500px;"></div>
-
-<form>
+<div id="visualization"></div>
+<div id="employees"></div> 
+</div>
 {% csrf_token %}
-</form>
 
 {% endblock%}

@@ -401,8 +401,10 @@ def business_analytics(request):
     """To display various statistics for a business
     """
     profile = request.user.businessprofile
+    employee_list = profile.employeeprofile_set.all()
     return render_to_response('business_analytics_test.html',
-                              {'business':profile},
+                              {'business':profile,
+                               'employee_list':employee_list},
                               context_instance=RequestContext(request))
 @csrf_protect
 @business_view
@@ -417,39 +419,47 @@ def get_analytics(request):
     
     if request.method == 'GET' or request.method=='POST':
         data = json.loads(request.POST['data'])
-
-        print "Employee ids: "+str(data['employee_ids'])
-        print "Rating categories: "+str(data['rating_categories'])
-
-        # If more than one category
-        # include type(data['rating_categories'])
+        category_list = data['rating_categories']
+        # If no employees are passed in, select all employees
         if len(data['employee_ids'])==0:
             employee_ids = [ employee.id for employee in profile.employeeprofile_set.all() ]
         else:
+        # Otherwise, use exactly the employees passed in    
             employee_ids = data['employee_ids']
         
-        category_list = data['rating_categories']
+        # Are there multiple rating profiles amongst the selected employees?
+        # If there are, only display information on 'Quality'
+        if _is_multiple_rating_profiles(employee_ids):
+            chart_data = _get_only_quality_chart_data(employee_ids)
         
-        if len(data['rating_categories']) > 0:
-            first_row=["category"]
-            for category in data['rating_categories']:
-                dimension = models.RatedDimension.objects.get(pk=category)
-                first_row.append(dimension.title)
-                
-            chart_data = [first_row]
-            for employee in employee_ids:
-                chart_data.append(_get_average_employee_analytics(employee, category_list))
         else:
-        # If only one category
-            category = data['rating_categories'][0]
-            first_row=["rating","poor","fair","good","excellent","glorious"]
-            chart_data = [first_row]
-            for employee in employee_ids:
-                chart_data.append(_get_employee_analytics(employee,category))
+            if len(category_list)==0:
+                an_employee = models.EmployeeProfile.objects.get(id=employee_ids[0])
+                # There is only one rating profile, set category_list to all RatedDimensions in it
+                category_list = [rating.id for rating in an_employee.rating_profile.rateddimension_set.all()]    
 
+            # category_list has at least one category
+            if len(category_list) > 1:
+                first_row=["category"]
+                for category in category_list:
+                    dimension = models.RatedDimension.objects.get(pk=category)
+                    first_row.append(dimension.title)
+                
+                chart_data = [first_row]
+                for employee in employee_ids:
+                        chart_data.append(_get_average_employee_analytics(employee, category_list))
+        
+            else:
+                # If only one category
+                category = category_list[0]
+                first_row=["rating","poor","fair","good","excellent","glorious"]
+                chart_data = [first_row]
+                for employee in employee_ids:
+                    chart_data.append(_get_employee_analytics(employee,category))
+        
+            
         to_chart = _make_google_charts_data(chart_data)
-        print "About to print array"
-        print to_chart
+    
         return HttpResponse(json.dumps(to_chart),
                             mimetype="application/json")
 
@@ -471,9 +481,6 @@ def _get_average_employee_analytics(employee_id, category_ids):
     ratings = []
     profile = employee.rating_profile
  
-    if len(category_ids) == 0 or not category_ids:
-        category_ids = [rating.id for rating in employee.rating_profile.rateddimension_set.all()]
-   
     for category in category_ids:
          dimension = models.RatedDimension.objects.get(pk=category)
          rel_ratings = [rating.rating_value for rating in dimension.rating_set.filter(employee=employee)]
@@ -528,6 +535,31 @@ def average(the_list):
         return 0
     else:
         return float(sum(the_list))/len(the_list)
+
+#Determines if there is more than one rating profile amongst a set of employees
+def _is_multiple_rating_profiles(employee_ids):
+    rating_profiles=[]
+    for e in employee_ids:
+        try:
+            employee = models.EmployeeProfile.objects.get(id=e)
+            rating_profiles.append(employee.rating_profile)
+        except EmployeeProfile.DoesNotExist:
+            pass
+    if len(set(rating_profiles))==1:
+        return False
+
+    return True
+        
+# A function to assemble chart data for the single dimension quality for a list
+# of employees with disjoint rating_profiles
+def _get_only_quality_chart_data(employee_ids):
+    first_row=["rating","poor","fair","good","excellent","glorious"]
+    chart_data = [first_row]
+    for employee in employee_ids:
+        category = employee.rating_profile.rateddimension_set.filter(title="Quality").id
+        chart_data.append(_get_employee_analytics(employee,category))
+        
+    return chart_data
 
 ################################################
 # Everything newsfeed related for the business #

@@ -13,6 +13,7 @@
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			 success: function(data) {
 			     _ns.listEmployees(data, $('#employees_listing'));
+			     buildForms();
 			 },
 			 error: function() { alert("Something went wrong."); }
 		       });
@@ -20,7 +21,10 @@
     }
 
     /**
-     * you must have {% csrf_token %} on the page calling this somewhere.
+     * getEmployees
+     *
+     * NOTE: You MUST have {% csrf_token %} on the page calling this somewhere.
+     * fills 'container' with the list of employees for current business.
      */
     _ns.getEmployees = function( container ) {
 	$.ajax({url: list_employees_url,
@@ -36,6 +40,22 @@
     };
 
     /**
+     * buildForms()
+     *
+     * Creates forms on each employee listing.
+     */
+    function buildForms() {
+	$('.employee_item').each( function(index, element) {
+	    var id = $(this).children('.employee_id').val();
+	    $(this).append("<form action=\"\" method=\"post\">"
+			   +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
+			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
+	});
+
+	bind_delete_buttons();
+    }
+
+    /**
      * listEmployees(data)
      *
      * data - JSON data returned by AJAX call for deleting an employee.
@@ -43,28 +63,26 @@
      */
     _ns.listEmployees = function(data, container) {
 	// Clear the current list
-	$('#employees_listing').empty();
+	container.empty();
 	var listing = $('<ul></ul>');
 
 	for ( e in data.employee_list ) {
 	    employee = data.employee_list[e];
-	    var listitem = $('<li></li>');
+	    var listitem = $('<li class="employee_item"></li>');
 	    var employee_image = $('<img />');
 	    employee_image.prop({'src':employee.image,
 				 'alt':employee.first_name+" "+employee.last_name,
 				 'class':'profile_image'});
-
-	    // This is the way it's done per the EmployeeEncoder
-	    listitem.append( employee_image );
-	    listitem.append( '<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>'
-			     +"<form action=\"\" method=\"post\">"
-			     +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
-			     +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
+	    var employee_id = $('<input />');
+	    employee_id.prop({'type':'hidden',
+			      'value':employee.id});
+	    listitem.append( employee_image ).append(employee_id);
+	    listitem.append( $('<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>') );
 	    listing.append(listitem);
 	}
 	
-	$('#employees_listing').append(listing);
-	bind_delete_buttons();
+	container.append(listing);
+
     };
 
     /**
@@ -77,8 +95,9 @@
 	// Fetch the list of employees
 	$.ajax({'url':list_employees_url,
 		success: function(data) {
-			     _ns.listEmployees(data, $('#employees_listing'));
-			 },
+		    _ns.listEmployees(data, $('#employees_listing'));
+		    buildForms();
+		},
 		error:function(){alert("Something went wrong.");}});
     });
 })(apatapa.employee);
