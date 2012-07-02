@@ -4,6 +4,10 @@
 {{ block.super }}
 <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}manage_survey.js"></script>
 {% endblock %}
+{% block links %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" src="{{ STATIC_URL }}manage_survey.css" />
+{% endblock %}
 {% block content %}
 {{ block.super }}
 <h1>Questions</h1>
@@ -18,14 +22,20 @@
   <form action="" method="post" id="survey_form">
     <input type="hidden" value="{{ survey_id }}" id="survey_id" />
     {% csrf_token %}
-    
-    <label for="title">Title</label>
-    <input type="text" id="survey_title" name="title" />
-    <label for="description">Description</label>
-    <input type="text" id="survey_description" name="description" />
+   
+    <div id="surveyinfo" name="surveyinfo">
+      <div id="titlediv" name="titlediv">
+	<label for="title">Title</label>
+	<input type="text" id="survey_title" name="title" />
+      </div>
+      <div id="descriptiondiv" name="descriptiondiv">
+	<label for="description">Description</label>
+	<input type="text" id="survey_description" name="description" />
+      </div>
+    </div>
 
-    <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
     <input type="submit" id="addquestion_button" value="Add Question" />
+    <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
   </form>
 </div>
 {% endblock %}
