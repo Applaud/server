@@ -51,6 +51,9 @@ function buildTable(data) {
     the_list.selectable({
 	selected: function() {
 	    dimHandler($(this));
+	},
+	unselected: function() {
+	    dimHandler($(this));
 	}
     });
     $('#gt_dims').append(the_list);
