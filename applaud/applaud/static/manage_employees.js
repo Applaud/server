@@ -82,7 +82,6 @@
 	}
 	
 	container.append(listing);
-
     };
 
     /**
