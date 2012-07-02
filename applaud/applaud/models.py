@@ -104,7 +104,7 @@ class RatingProfile(models.Model):
             self.validate()
 
     def validate(self):
-        if not 'Quality' in [t.title for t in self.rateddimension_set.all()]:
+        if not 'Quality' in [t.title  for t in self.rateddimension_set.all()]:
             r = RatedDimension(title='Quality',
                                rating_profile=self)
             r.save()
