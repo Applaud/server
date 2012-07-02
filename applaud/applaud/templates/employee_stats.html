@@ -4,23 +4,36 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 google.load("visualization", "1", {packages:["corechart"]});
-google.setOnLoadCallback(drawVisualization);
-
 
 function drawVisualization( chartData ) {
-  // Create and populate the data table.
-  var data = google.visualization.arrayToDataTable(
-      chartData
-  );
+    var chart_list = [];
+    var row0 = [ 'Dimension' ];
+    for ( var m in chartData.dimensions ) {
+	row0.push( chartData.dimensions[m].title );
+    }
+    chart_list.push(row0);
+    var row1 = [""];
+    for ( var key in chartData.averages ) {
+	row1.push( chartData.averages[key] );
+    }
+    chart_list.push( row1 );
 
-  // Create and draw the visualization.
-  new google.visualization.ColumnChart(document.getElementById('emp_graph')).
-      draw(data,
-           {title:"Evaluations by Dimension",
-            width:600, height:400,
-            hAxis: {title: "Dimension"},
-            vAxis: {title: "Number of Ratings"}}
-      );
+    console.log(chart_list.length);
+    console.log(chart_list);
+
+    // Create and populate the data table.
+    var data = google.visualization.arrayToDataTable(
+	chart_list
+    );
+    
+    // Create and draw the visualization.
+    new google.visualization.ColumnChart(document.getElementById('emp_graph')).
+	draw(data,
+             {title:"Evaluations by Dimension",
+              width:600, height:400,
+              hAxis: {title: "Dimension"},
+              vAxis: {title: "Average Rating"}}
+	    );
 }
 
 $(document).ready( function() {
@@ -28,7 +41,7 @@ $(document).ready( function() {
 	    type:'POST',
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
-		drawVisualization(data);
+		drawVisualization(data.data);
 	    },
 	    error:function(){alert("Something went wrong.");}});
 });
@@ -41,7 +54,9 @@ $(document).ready( function() {
   <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 </div>
 
-<div id="emp_graph"></div>
+<div id="graph_table">
+    <div id="emp_graph"></div>
+</div>
 <form>
 {% csrf_token %}
 </form>

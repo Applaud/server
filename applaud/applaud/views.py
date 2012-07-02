@@ -13,7 +13,7 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
-from employee_views import _profile_picture
+import employee_views
 from registration import forms as registration_forms
 import settings
 import datetime
@@ -69,7 +69,7 @@ class EmployeeEncoder(json.JSONEncoder):
                                         'active':d.is_active,
                                         'id':d.id} )
 
-            image_url = settings.SERVER_URL+settings.MEDIA_URL+_profile_picture(o)
+            image_url = settings.SERVER_URL+settings.MEDIA_URL+employee_views._profile_picture(o)
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
@@ -82,6 +82,17 @@ class EmployeeEncoder(json.JSONEncoder):
 	    return res
 	else:
 	    return json.JSONEncoder.default(self, o)
+
+# Encodes a UserProfile into JSON format
+class UserProfileEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.UserProfile):
+            return {'first_name':o.user.first_name,
+                    'last_name':o.user.last_name,
+                    'birth':o.date_of_birth.strftime("%d/%m/%Y"),
+                    'id':o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
 
 # Encodes a BusinessProfile into JSON format
 class BusinessProfileEncoder(json.JSONEncoder):
@@ -144,7 +155,7 @@ class RatingEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.Rating):
             return {'value':o.rating_value,
-                    'user':o.user,
-                    'date':o.date_created}
+                    'user':UserProfileEncoder().default(o.user),
+                    'date':o.date_created.strftime("%d/%m/%Y")}
         else:
             return json.JSONEncoder.default(self, o)
