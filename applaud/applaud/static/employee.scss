@@ -7,11 +7,6 @@
  * stats view
  */
 #employee_welcome {
-    #employee_img {
-	vertical-align:text-top;
-	width:128px;
-	height:128px;
-    }
     p {
 	display:inline;
     }
@@ -25,4 +20,26 @@
 	left:auto;
 	right:auto;
     }
+}
+
+.profilepicture {
+    vertical-align:text-top;
+    width:128px;
+    height:128px;
+}
+
+#emp_profile_picture {
+    display:block;
+    height:160px;
+
+    img {
+	float:left;
+	vertical-align:text-bottom;
+	margin-right:10px;
+    }
+}
+
+#id_bio {
+    vertical-align:text-top;
+    margin-bottom:10px;
 }
