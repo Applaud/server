@@ -81,3 +81,15 @@ def view_previous_responses(request):
                                'rating':rating,
                                'responses':qs_responses},
                               context_instance=ReqeustContext(request))
+
+
+def analytics(request):
+    profile = request.user.userprofile
+
+    # Get all general response comments, along with the respective business.
+    general_feedback = {}
+    feedback_set = profile.generalfeedback_set.all()
+    for f in feedback_set:
+        general_feedback['business']=f.businessprofile
+        general_feedback['date']=f.date_created
+        general_feedback['feedback']=f
