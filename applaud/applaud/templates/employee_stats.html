@@ -28,7 +28,7 @@ function drawVisualization() {
 {{ block.super }}
 
 <div id="employee_welcome">
-  <img src="{{ MEDIA_URL }}{{ image }}" id="employee_img" alt="{{ user.first_name }} {{ user.last_name }}" />
+  <img src="{{ MEDIA_URL }}{{ image }}" id="employee_img" class="profilepicture" alt="{{ user.first_name }} {{ user.last_name }}" />
   <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 </div>
 <!-- list employee statistics by dimension -->
