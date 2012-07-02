@@ -5,16 +5,17 @@
 <script type="text/javascript">
 google.load("visualization", "1", {packages:["corechart"]});
 
-function drawVisualization( chartData ) {
+var chartData;
+
+function drawVisualization( dimList ) {
     var chart_list = [];
     var row0 = [ 'Dimension' ];
-    for ( var m in chartData.dimensions ) {
-	row0.push( chartData.dimensions[m].title );
-    }
+    row0 = row0.concat(dimList);
     chart_list.push(row0);
+
     var row1 = [""];
-    for ( var key in chartData.averages ) {
-	row1.push( chartData.averages[key] );
+    for ( var i in dimList ) {
+	row1.push( chartData.averages[dimList[i]] );
     }
     chart_list.push( row1 );
 
@@ -36,16 +37,52 @@ function drawVisualization( chartData ) {
 	    );
 }
 
+function buildTable(data) {
+    
+    var the_list = $('<ol></ol>');
+    for (d in data.dimensions) {
+	var dim = data.dimensions[d];
+	var list_item = $('<li></li>');
+	list_item.prop({'class':'ui-widget-content',
+			'id':'dim_'+dim.title});
+	list_item.text(dim.title);
+	the_list.append(list_item);
+    }
+    the_list.selectable({
+	selected: function() {
+	    dimHandler($(this));
+	}
+    });
+    $('#gt_dims').append(the_list);
+}
+
+var dimHandler = function( container ) {
+    var dims = []
+    container.children('.ui-selected').each(function(i,e){
+	dims.push($(this).text());
+    });
+    drawVisualization(dims);
+};
+
 $(document).ready( function() {
     $.ajax({url:"{% url employee_stats %}",
 	    type:'POST',
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
-		drawVisualization(data.data);
+		chartData = data.data;
+		dims = [];
+		for (var i=0; i<data.data.dimensions.length; i++) {
+		    dims.push(data.data.dimensions[i].title);
+		}
+		drawVisualization(dims);
+		buildTable(data.data);
 	    },
 	    error:function(){alert("Something went wrong.");}});
 });
 </script>
+{% endblock %}
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" />
 {% endblock %}
 {% block content %}
 
@@ -55,6 +92,7 @@ $(document).ready( function() {
 </div>
 
 <div id="graph_table">
+    <div id="gt_dims"></div>
     <div id="emp_graph"></div>
 </div>
 <form>
