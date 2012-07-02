@@ -31,10 +31,16 @@ function drawVisualization( dimList ) {
     new google.visualization.ColumnChart(document.getElementById('emp_graph')).
 	draw(data,
              {title:"Evaluations by Dimension",
-              width:600, height:400,
+              width:700, height:400,
               hAxis: {title: "Dimension"},
               vAxis: {title: "Average Rating"}}
 	    );
+}
+
+function dateToJS( datestring ) {
+    // This assumes that we are getting dates in the format dd/mm/YYYY
+    var components = datestring.split('/');
+    return new Date(components[2],components[1],components[0]);
 }
 
 function buildTable(data) {
@@ -59,6 +65,13 @@ function buildTable(data) {
     $('#gt_dims').append(the_list);
 }
 
+function buildDateSlider(data) {
+    $('#gt_dateslider').slider({ range: true,
+				 min: 0,
+				 max: 100,
+				 values:[0,100]});
+}
+
 var dimHandler = function( container ) {
     var dims = []
     container.children('.ui-selected').each(function(i,e){
@@ -79,6 +92,7 @@ $(document).ready( function() {
 		}
 		drawVisualization(dims);
 		buildTable(data.data);
+		buildDateSlider(data.data);
 	    },
 	    error:function(){alert("Something went wrong.");}});
 });
@@ -86,6 +100,7 @@ $(document).ready( function() {
 {% endblock %}
 {% block links %}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
 {% endblock %}
 {% block content %}
 
@@ -97,6 +112,9 @@ $(document).ready( function() {
 <div id="graph_table">
     <div id="gt_dims"></div>
     <div id="emp_graph"></div>
+
+    <label for="dateslider">Time range</label>
+    <div id="gt_dateslider" name="dateslider"></div>
 </div>
 <form>
 {% csrf_token %}

@@ -1,7 +1,9 @@
 /************
  * variables
  **/
-
+$contentwidth: 800px;		// width of main content div
+$graphwidth : 700px;
+$graphheight : 400px;
 
 /************
  * stats view
@@ -13,12 +15,16 @@
 }
 
 #emp_graph {
-    width:600;
-    height:400px;
+    width:$graphwidth;
+    height:$graphheight;
     overflow:hidden;
+    iframe {
+	width:$graphwidth;
+    }
     margin: {
 	left:auto;
 	right:auto;
+	bottom:30px;
     }
 }
 
