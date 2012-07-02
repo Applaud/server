@@ -14,12 +14,12 @@ function drawVisualization( chartData ) {
   );
 
   // Create and draw the visualization.
-  new google.visualization.BarChart(document.getElementById('emp_graph')).
+  new google.visualization.ColumnChart(document.getElementById('emp_graph')).
       draw(data,
            {title:"Evaluations by Dimension",
             width:600, height:400,
-            vAxis: {title: "Dimension"},
-            hAxis: {title: "Number of Ratings"}}
+            hAxis: {title: "Dimension"},
+            vAxis: {title: "Number of Ratings"}}
       );
 }
 
