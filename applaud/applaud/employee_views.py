@@ -65,12 +65,17 @@ def employee_stats(request):
         row.extend(rating_vals)
         success_chart.append(row)
 
-    # Return string for rendering in google charts
-    return render_to_response('employee_stats.html',
-                              {'chartdata':json.dumps( success_chart ),
-                               'employee':employee,
-                               'image':_profile_picture(profile)},
-                              context_instance=RequestContext(request))
+    if request.method == 'GET':
+        # Return string for rendering in google charts
+        return render_to_response('employee_stats.html',
+                                  {'chartdata':json.dumps( success_chart ),
+                                   'employee':employee,
+                                   'image':_profile_picture(profile)},
+                                  context_instance=RequestContext(request))
+    # Pure JSON, for POST
+    return HttpResponse(json.dumps(success_chart ),
+                        mimetype='application/json')
+
 
 def _profile_picture(em_profile, thumb=True):
     '''

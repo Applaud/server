@@ -3,14 +3,14 @@
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawVisualization);
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawVisualization);
 
 
-function drawVisualization() {
+function drawVisualization( chartData ) {
   // Create and populate the data table.
   var data = google.visualization.arrayToDataTable(
-    {{ chartdata|safe }} 
+      chartData
   );
 
   // Create and draw the visualization.
@@ -22,32 +22,28 @@ function drawVisualization() {
             hAxis: {title: "Number of Ratings"}}
       );
 }
+
+$(document).ready( function() {
+    $.ajax({url:"{% url employee_stats %}",
+	    type:'POST',
+	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+	    success:function(data) {
+		drawVisualization(data);
+	    },
+	    error:function(){alert("Something went wrong.");}});
+});
 </script>
 {% endblock %}
 {% block content %}
-{{ block.super }}
 
 <div id="employee_welcome">
   <img src="{{ MEDIA_URL }}{{ image }}" id="employee_img" class="profilepicture" alt="{{ user.first_name }} {{ user.last_name }}" />
   <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 </div>
-<!-- list employee statistics by dimension -->
-{% for success_map in success_map_list %}
-<strong>{{ success_map.dimension }}</strong> ( {{ success_map.values|length }} ratings }} )
-{% if success_map.values|length > 0 %}
-<!-- list ratings for a given dimension -->
-<ul>
-{% for rating in success_map.values %}
-<li>{{ rating.rating_value }}</li>
-{% endfor %}
-</ul>
-<!-- end list ratings for a given dimension -->
-{% else %}
-No statistics yet!
-{% endif %}
 
-{% endfor %}
 <div id="emp_graph"></div>
-<!-- end of employee statistics by dimension -->
+<form>
+{% csrf_token %}
+</form>
 
 {% endblock %}
