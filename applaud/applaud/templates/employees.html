@@ -3,20 +3,20 @@
 
 {% block scripts %}
 {{ block.super }}
-<script type="text/javascript" src="{{ STATIC_URL }}manage_ratingprofiles.js"></script>
 <script type="text/javascript">
 /**
  * This is executed after the page has fully loaded.
  */
 $(document).ready(function() {
+    var employees = apatapa.business.employees;
     // Bind the 'delete' buttons for employees to an AJAX call
-    apatapa.employee.bind_delete_buttons();
+    employees.bind_delete_buttons();
 
     // Fetch the list of employees
     $.ajax({'url':list_employees_url,
 	    success: function(data) {
-		apatapa.employee.listEmployees(data, $('#employees_listing'));
-		apatapa.employee.buildForms();
+		employees.listEmployees(data, $('#employees_listing'));
+		employees.buildForms();
 	    },
 	    error:function(){alert("Something went wrong.");}
 	   });

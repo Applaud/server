@@ -40,15 +40,21 @@ def index(request):
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.RatingProfile):
-            dim_list = [{'title':d.title,
-                         'active':d.is_active,
-                         'id':d.id} for d in o.rateddimension_set.all()]
-            
+            dim_enc = RatedDimensionEncoder()
 	    res = {'title':o.title,
-                   'dimensions':dim_list,
+                   'dimensions':[dim_enc.default(dim) for dim in o.rateddimension_set.all()],
                    'business_id':o.business.id,
                    'id':o.id }
 	    return res
+	else:
+	    return json.JSONEncoder.default(self, o)
+
+class RatedDimensionEncoder(json.JSONEncoder):
+    def default(self, o):
+	if isinstance(o, models.RatedDimension):
+            return {'title':o.title,
+                    'active':o.is_active,
+                    'id':o.id}
 	else:
 	    return json.JSONEncoder.default(self, o)
 
@@ -60,6 +66,7 @@ class EmployeeEncoder(json.JSONEncoder):
             dimension_list = []
             for d in dimensions:
                 dimension_list.append( {'title':d.title,
+                                        'active':d.is_active,
                                         'id':d.id} )
 
             image_url = settings.SERVER_URL+settings.MEDIA_URL+_profile_picture(o)
@@ -130,5 +137,14 @@ class NewsFeedItemEncoder(json.JSONEncoder):
                     'date': o.date.strftime('%m/%d/%Y'),
                     'business': o.business.business_name,
                     'date_edited':o.date_edited.strftime('%m/%d/%Y')}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+class RatingEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Rating):
+            return {'value':o.rating_value,
+                    'user':o.user,
+                    'date':o.date_created}
         else:
             return json.JSONEncoder.default(self, o)
