@@ -63,7 +63,7 @@ if (! apatapa.employee) {
      */
     _ns.listEmployees = function(data, container) {
 	// Clear the current list
-	$('#employees_listing').empty();
+	container.empty();
 	var listing = $('<ul></ul>');
 
 	for ( e in data.employee_list ) {
@@ -81,7 +81,7 @@ if (! apatapa.employee) {
 	    listing.append(listitem);
 	}
 	
-	$('#employees_listing').append(listing);
+	container.append(listing);
     };
 
     /**

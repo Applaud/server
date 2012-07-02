@@ -72,10 +72,12 @@ def employee_stats(request):
                                'image':_profile_picture(profile)},
                               context_instance=RequestContext(request))
 
-def _profile_picture(em_profile):
+def _profile_picture(em_profile, thumb=True):
     '''
     Returns the path to the profile picture for the given employee.
     Gives the default profile picture if no specific one exists.
+
+    thumb = True/False (whether or not to return a thumbnail version)
     '''
     employee = em_profile.user
 
@@ -87,6 +89,8 @@ def _profile_picture(em_profile):
                                employee.last_name,
                                em_profile.id,
                                em_profile.profile_picture.name.split('.')[-1])
+    if thumb:
+        imagename = 'thumb_'+imagename
 
     # Does this file exist?
     image_url = "%s/%s"%(imagepath,imagename)
@@ -134,7 +138,8 @@ def edit_profile(request):
     else:
         form = registration_forms.EmployeeProfileForm(instance=profile)
     return render_to_response('employee_profile.html',
-                              {'form':form},
+                              {'form':form,
+                               'image':_profile_picture(profile)},
                               context_instance=RequestContext(request))
 
 @employee_view
