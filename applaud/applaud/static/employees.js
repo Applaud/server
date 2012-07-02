@@ -26,12 +26,14 @@ if (! apatapa.employee) {
      * NOTE: You MUST have {% csrf_token %} on the page calling this somewhere.
      * fills 'container' with the list of employees for current business.
      */
-    _ns.getEmployees = function( container ) {
+    _ns.getEmployees = function( container, callback ) {
 	$.ajax({url: list_employees_url,
 		type: 'POST',
 		data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		success: function(data) {
 		    _ns.listEmployees(data, container);
+		    if ( callback )
+			callback();
 		},
 		error: function() {
 		    alert("Something went wrong.");
