@@ -349,60 +349,15 @@ def business_welcome(request):
 def business_home(request):
     return render_to_response('business.html')
 
-# Checking analytics.
-@business_view
-def analytics(request):
-    profile = request.user.businessprofile
 
-    # For each employee, get all their ratings and gather them into a dictionary.
-    employees = []
-    for employee in list(profile.employeeprofile_set.all()):
-        employee_dict = {}
-        ratings = {}
-        employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
-
-        # Make sure we have a dictionary entry for each dimension
-        for dimension in employee.rating_profile.rateddimension_set.all(): 
-            ratings[dimension.title] = [d.rating_value for d in dimension.rating_set.filter(employee=employee)]
-
-        # Calculate the average of that list or each dimension
-        for rating in ratings.keys():
-            ratings[rating] = 'N/A' if len(ratings[rating]) == 0 else sum(ratings[rating])/len(ratings[rating])
-        employee_dict['ratings'] = ratings
-        employees.append(employee_dict)
-
-    # Get all the surveys for this business.
-    survey_dict = {}
-    if len(profile.survey_set.all()) > 0:
-        survey = profile.survey_set.all()[0] # Just in case we've got more than one
-        survey_dict = {'title': survey.title,
-                       'description': survey.description,
-                       'questions': []}
-        # Gather all the question responses in a dict.
-        for question in list(survey.question_set.all()):
-            question_dict = {'label': question.label,
-                             'responses': [],
-                             'active': question.active}
-            for response in question.questionresponse_set.all():
-                question_dict['responses'].append(response.response)
-            survey_dict['questions'].append(question_dict)
-
-    # Get all the general feedback.
-    feedback = models.GeneralFeedback.objects.filter(business=profile)
-    return render_to_response('business_analytics.html',
-                              {'employees': employees,
-                               'survey': survey_dict,
-                               'feedback': feedback,
-                               'business': profile.user.businessprofile},
-                             context_instance=RequestContext(request))
 @csrf_protect
 @business_view
-def business_analytics(request):
+def analytics(request):
     """To display various statistics for a business
     """
     profile = request.user.businessprofile
     employee_list = profile.employeeprofile_set.all()
-    return render_to_response('business_analytics_test.html',
+    return render_to_response('business_analytics.html',
                               {'business':profile,
                                'employee_list':employee_list},
                               context_instance=RequestContext(request))
@@ -415,21 +370,24 @@ def get_analytics(request):
         'rating_categories': }
     """
     profile = request.user.businessprofile
-    print "Seeing something"
     
     if request.method == 'GET' or request.method=='POST':
         data = json.loads(request.POST['data'])
         category_list = data['rating_categories']
+       
         # If no employees are passed in, select all employees
         if len(data['employee_ids'])==0:
+            print "employee ids was empty, now setting it to all"
             employee_ids = [ employee.id for employee in profile.employeeprofile_set.all() ]
         else:
         # Otherwise, use exactly the employees passed in    
             employee_ids = data['employee_ids']
         
+        print "Employee ids are"+str(employee_ids)
         # Are there multiple rating profiles amongst the selected employees?
         # If there are, only display information on 'Quality'
         if _is_multiple_rating_profiles(employee_ids):
+            print "in multiple rating profiles"
             chart_data = _get_only_quality_chart_data(employee_ids)
         
         else:
