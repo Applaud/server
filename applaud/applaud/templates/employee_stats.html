@@ -99,6 +99,7 @@ $(document).ready( function() {
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
 		chartData = data.data;
+		console.log(chartData);
 		dims = [];
 		for (var i=0; i<data.data.dimensions.length; i++) {
 		    dims.push(data.data.dimensions[i].title);
