@@ -8,19 +8,8 @@
  * This is executed after the page has fully loaded.
  */
 $(document).ready(function() {
-    var employees = apatapa.business.employees;
-    // Bind the 'delete' buttons for employees to an AJAX call
-    employees.bind_delete_buttons();
-
-    // Fetch the list of employees
-    $.ajax({'url':list_employees_url,
-	    success: function(data) {
-		employees.listEmployees(data, $('#employees_listing'));
-		employees.buildForms();
-	    },
-	    error:function(){alert("Something went wrong.");}
-	   });
-});
+    apatapa.business.ratingprofiles.initRatingProfilesPage();
+    });
 </script>
 {% endblock %}
 
