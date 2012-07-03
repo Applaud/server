@@ -156,6 +156,7 @@ class RatingEncoder(json.JSONEncoder):
         if isinstance(o, models.Rating):
             return {'value':o.rating_value,
                     'user':UserProfileEncoder().default(o.user),
-                    'date':o.date_created.strftime("%d/%m/%Y")}
+                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'title':o.title}
         else:
             return json.JSONEncoder.default(self, o)

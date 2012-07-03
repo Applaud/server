@@ -7,17 +7,75 @@ google.load("visualization", "1", {packages:["corechart"]});
 
 var chartData;
 
-function drawVisualization( dimList ) {
+// function drawVisualization( dimList ) {
+//     var chart_list = [];
+//     var row0 = [ 'Dimension' ];
+//     row0 = row0.concat(dimList);
+//     chart_list.push(row0);
+
+//     var row1 = [""];
+//     for ( var i in dimList ) {
+// 	row1.push( chartData.averages[dimList[i]] );
+//     }
+//     chart_list.push( row1 );
+
+//     console.log(chart_list.length);
+//     console.log(chart_list);
+
+//     // Create and populate the data table.
+//     var data = google.visualization.arrayToDataTable(
+// 	chart_list
+//     );
+    
+//     // Create and draw the visualization.
+//     new google.visualization.ColumnChart(document.getElementById('emp_graph')).
+// 	draw(data,
+//              {title:"Evaluations by Dimension",
+//               width:700, height:400,
+//               hAxis: {title: "Dimension"},
+//               vAxis: {title: "Average Rating"}}
+// 	    );
+// }
+
+function drawVisualization(dimList, employeeList) {
+    // This is eventually the data fed into the chart
     var chart_list = [];
+    
+    // Build the axes
     var row0 = [ 'Dimension' ];
     row0 = row0.concat(dimList);
     chart_list.push(row0);
 
-    var row1 = [""];
-    for ( var i in dimList ) {
-	row1.push( chartData.averages[dimList[i]] );
+    // For each employee, calculate avg rating for each dimension
+    for ( e in employeeList ) {
+	var avgRatings = [];
+	var totalRatings = {};
+	var employee = employeeList[e];
+
+	// Sum up totals for each dimension
+	for ( r in employee.ratings ) {
+	    if (! totalRatings[employee.ratings[r].title] )
+		totalRatings[employee.ratings[r].title] = [];
+	    totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
+	}
+
+	// Compute averages
+	for ( i in dimList ) {
+	    var dimName = dimList[i];
+	    avgRatings[i] = 0;
+	    if ( totalRatings[dimList[i]].length > 0 ) {
+		var total = 0;
+		$.each(totalRatings[dimList[i]], function() {
+		    total += this;
+		});
+		avgRatings[i] = total / totalRatings[dimList[i]].length;
+	    }
+	}
+
+	var nextRow = [employee.first_name+' '+employee.last_name];
+	nextRow = nextRow.concat(avgRatings);
+	chart_list = chart_list.concat(nextRow);
     }
-    chart_list.push( row1 );
 
     console.log(chart_list.length);
     console.log(chart_list);
@@ -54,11 +112,11 @@ function dateCompare( rating1, rating2 ) {
     return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
 }
 
-function buildTable(data) {
+function buildTable( dimlist ) {
     
     var the_list = $('<ol></ol>');
-    for (d in data.dimensions) {
-	var dim = data.dimensions[d];
+    for (d in dimlist) {
+	var dim = dimlist[d];
 	var list_item = $('<li></li>');
 	list_item.prop({'class':'ui-widget-content',
 			'id':'dim_'+dim.title});
@@ -76,21 +134,41 @@ function buildTable(data) {
     $('#gt_dims').append(the_list);
 }
 
-function buildDateSlider(data) {
-    var dateRange = dateToJS(data.ratings[data.ratings.length-1].date).getTime() -
-	dateToJS(data.ratings[0].date).getTime();
-    $('#gt_dateslider').slider({ range: true,
-				 min: 0,
-				 max: dateRange,
-				 values:[0,dateRange]});
+/**
+ * filterRatings
+ *
+ * Filters the ratings displayed on the chart, given the min/max values
+ * from the double-handled slider.
+ */
+function filterRatings( min, max ) {
+    
 }
+
+// function buildDateSlider(data) {
+//     // This computes date range in milliseconds, using Unix epoch
+//     var dateRange = dateToJS(data.ratings[data.ratings.length-1].date).getTime() -
+// 	dateToJS(data.ratings[0].date).getTime();
+//     // Convert ms to days
+//     dateRange /= 86400000;
+
+//     var slider = $('#gt_dateslider');
+//     slider.slider({ range: true,
+// 		    min: 0,
+// 		    max: dateRange,
+// 		    values:[0,dateRange]});
+
+//     slider.bind( "slidechange", function(event, ui) {
+// 	filterRatings($(this).slider("values")[0],
+// 		      $(this).slider("values")[1]);
+//     });
+// }
 
 var dimHandler = function( container ) {
     var dims = []
     container.children('.ui-selected').each(function(i,e){
 	dims.push($(this).text());
     });
-    drawVisualization(dims);
+    drawVisualization(dims, );
 };
 
 $(document).ready( function() {
@@ -98,15 +176,9 @@ $(document).ready( function() {
 	    type:'POST',
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
-		chartData = data.data;
-		console.log(chartData);
-		dims = [];
-		for (var i=0; i<data.data.dimensions.length; i++) {
-		    dims.push(data.data.dimensions[i].title);
-		}
-		drawVisualization(dims);
+		drawVisualization(data.data.dimensions, data.data.employees);
 		buildTable(data.data);
-		buildDateSlider(data.data);
+//		buildDateSlider(data.data);
 	    },
 	    error:function(){alert("Something went wrong.");}});
 });
