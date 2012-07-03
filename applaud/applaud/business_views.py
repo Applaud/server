@@ -361,13 +361,33 @@ def analytics(request):
                               {'business':profile,
                                'employee_list':employee_list},
                               context_instance=RequestContext(request))
+
+@business_view
+def new_get_analytics(request):
+    """A view to retrieve all statistics for employees, surveys, and general feedback
+       associated with a particular business.
+       This should be done with a GET request.
+
+       Return is a dictionary of the form:
+       ret = {employees:{
+      
+    """
+    
+    profile = request.user.businessprofile
+    
+    if request.method == 'GET':
+        
+
+
 @csrf_protect
 @business_view
 def get_analytics(request):
     """A view to retrieve statistics for employees, surveys, and general feedback.
        Currently only implemented for employee statistics. Should receive a dictionary of the form:
        {'employee_ids':[%d, %d, %d, ....],
-        'rating_categories': }
+        'rating_categories':[],
+        'start': ,
+        'stop': }
     """
     profile = request.user.businessprofile
     
@@ -383,12 +403,22 @@ def get_analytics(request):
         # Otherwise, use exactly the employees passed in    
             employee_ids = data['employee_ids']
         
-        print "Employee ids are"+str(employee_ids)
+        # Determining approproate start and stop times
+        if data['start']:
+            start_time = data['start']
+        else:
+            start_time = 0
+
+        if data['stop']:
+            stop_time = data['stop']
+        else:
+            stop_time = 0
+        
         # Are there multiple rating profiles amongst the selected employees?
         # If there are, only display information on 'Quality'
         if _is_multiple_rating_profiles(employee_ids):
             print "in multiple rating profiles"
-            chart_data = _get_only_quality_chart_data(employee_ids)
+            chart_data = _get_only_quality_chart_data(employee_ids, start_time, stop_time)
         
         else:
             if len(category_list)==0:
@@ -447,7 +477,7 @@ def _get_average_employee_analytics(employee_id, category_ids):
     ret.extend(ratings)
     return ret              
 
-def _get_employee_analytics(employee_id, category):
+def _get_employee_analytics(employee_id, category, start_time, stop_time):
     """A function to return the number of ratings (1-5) of an employee for a single category
        employee_id is employee_id
        category is the RatedDimension id to use
@@ -510,12 +540,12 @@ def _is_multiple_rating_profiles(employee_ids):
         
 # A function to assemble chart data for the single dimension quality for a list
 # of employees with disjoint rating_profiles
-def _get_only_quality_chart_data(employee_ids):
+def _get_only_quality_chart_data(employee_ids, start_time, stop_time):
     first_row=["rating","poor","fair","good","excellent","glorious"]
     chart_data = [first_row]
     for employee in employee_ids:
         category = employee.rating_profile.rateddimension_set.filter(title="Quality").id
-        chart_data.append(_get_employee_analytics(employee,category))
+        chart_data.append(_get_employee_analytics(employee,category, start_time, stop_time))
         
     return chart_data
 

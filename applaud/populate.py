@@ -72,9 +72,6 @@ surliness = models.RatedDimension(title="Surliness",
 slipperiness.save()
 surliness.save()
 
-
-
-
 # Make a User.
 emp_user = User.objects.create_user('joe', 'joes@aol.com', 'apatapa')
 emp_user.first_name = 'joe'
@@ -92,6 +89,21 @@ emp_enduser = User.objects.create_user('josh', 'josh@gmail.com', 'apatapa')
 emp_enduser.first_name = 'josh'
 emp_enduser.last_name = 'jeff'
 emp_enduser.save()
+
+#Lots of employees for Boo Furgers!
+emp_user6 = User.objects.create_user('jordan', 'jordan@aol.com', 'apatapa')
+emp_user6.first_name = 'jordan'
+emp_user6.last_name = 'jyroscope'
+emp_user6.save()
+emp_user4 = User.objects.create_user('jack', 'jackjones@aol.com', 'apatapa')
+emp_user4.first_name = 'jack'
+emp_user4.last_name = 'jones'
+emp_user4.save()
+emp_user5 = User.objects.create_user('LaLa', 'lala@aol.com', 'apatapa')
+emp_user5.first_name = 'LaLa'
+emp_user5.last_name = 'Mississippi Love'
+emp_user5.save()
+
 
 # Make a few Employees.
 master = models.EmployeeProfile(business=business,
@@ -114,6 +126,26 @@ luke = models.EmployeeProfile(business=business2,
                               rating_profile=profile3,
                               bio='biology')
 luke.save()
+
+mystical2 = models.EmployeeProfile(business=business,
+                                  user=emp_user6,
+                                  rating_profile=profile1,
+                                  bio="Super super bio!!!!!")
+mystical2.save()
+
+mystical2 = models.EmployeeProfile(business=business,
+                                  user=emp_user4,
+                                  rating_profile=profile1,
+                                  bio='The bioiest of all bioed bios')
+mystical2.save()
+
+mystical2 = models.EmployeeProfile(business=business,
+                                  user=emp_user5,
+                                  rating_profile=profile1,
+                                  bio="Another lovely bio for another employee of the month! Ring the bell, hit the gong, we\'ve got a superstar on our hands! Remember back when you were just a kid??")
+mystical2.save()
+
+
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
