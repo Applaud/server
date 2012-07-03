@@ -129,7 +129,7 @@ class NewsFeedItem(models.Model):
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
         business = models.ForeignKey('BusinessProfile')
-
+        image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
         date_edited = models.DateTimeField()
 
         def change_parameters(self, d):

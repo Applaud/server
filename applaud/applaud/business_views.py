@@ -20,9 +20,11 @@ import urllib2
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension
 from applaud import forms, models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder, NewsFeedItemEncoder
+import views
 import re
 import csv
+import os
+import settings
 
 
 # 'business_view' decorator.
@@ -114,7 +116,7 @@ def manage_employees(request):
 def list_employees(request):
     return HttpResponse(json.dumps({'employee_list':
                                         _list_employees(request.user.businessprofile.id)},
-                                   cls=EmployeeEncoder),
+                                   cls=views.EmployeeEncoder),
                         mimetype='application/json')
 
 # List the employees for a business
@@ -211,14 +213,14 @@ def manage_ratingprofiles(request):
 
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 @business_view
 def list_rating_profiles(request):
     profile = request.user.businessprofile
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 # List the rating profiles for a business
@@ -258,7 +260,7 @@ def new_ratingprofile(request):
         i += 1
 
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 # Landing page for editing and creating surveys.
@@ -323,7 +325,7 @@ def manage_survey(request):
         # We're getting data for this business' survey.
         else:
             return HttpResponse(json.dumps({'survey':survey},
-                                           cls=SurveyEncoder),
+                                           cls=views.SurveyEncoder),
                                 mimetype='application/json')
 
 # A function to recieve a comma-separated email list, strip them
@@ -536,11 +538,9 @@ def manage_newsfeed(request):
                                   context_instance=RequestContext(request))
     # Otherwise, it's a POST.
     profile = request.user.businessprofile
-    print request.POST
     feeds = json.loads(request.POST['feeds'])
     for feed in feeds:
         # It's an old feed, just updated.
-        print feed['should_delete']
         if int(feed['id']):
             newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
             if feed['should_delete'] == 'true':
@@ -558,10 +558,40 @@ def manage_newsfeed(request):
                                            subtitle=feed['subtitle'],
                                            body=feed['body'],
                                            business=profile,
-                                           date=datetime.now().replace(tzinfo=utc),
-                                           date_edited=datetime.now().replace(tzinfo=utc))
+                                           date=datetime.utcnow().replace(tzinfo=utc),
+                                           date_edited=datetime.utcnow().replace(tzinfo=utc))
             if feed['should_delete'] != 'true':
                 newsfeed.save()
+        # Check for images.
+        print 'Holy shit!'
+        print request.FILES.keys()
+        print 'Yeah!'
+        if 'nf_image' in request.FILES:
+            # First off, make sure it's a actually an image, and that
+            # it's a filetype we will accept.
+            try:
+                image = Image.open(request.FILES['nf_image'])
+            except IOError:
+                # For now, we'll just ignore bad images.
+                continue
+            if not image.format in ['PNG', 'JPEG', 'JPG', 'BMP']:
+                continue
+            fileext = image.format
+            # imagedir = '%s%s.%d' % (settings.MEDIA_ROOT,
+            #                         profile.business_name.replace(' ', '-'),
+            #                         profile.id)
+            # if not os.path.exists(imagedir):
+            #     os.makedirs(imagedir)
+            imagename = '%s_%s.%s' % (newsfeed.title[:15],
+                                      newsfeed.id,
+                                      fileext)
+            print imagename
+            # imagepath = '%s/%s' % (imagedir, imagename)
+            # with open(imagepath, 'wb+') as destination:
+            #     for chunk in request.FILES['nf_image']:
+            #         destination.write(chunk)
+            newsfeed.image.save(imagename, File(request.FILES['nf_image']))
+            newsfeed.save()
     return HttpResponse('')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
@@ -571,5 +601,27 @@ def newsfeed_list(request):
     profile = request.user.businessprofile
 
     feed = json.dumps(list(profile.newsfeeditem_set.all()),
-                                   cls=NewsFeedItemEncoder)
+                                   cls=views.NewsFeedItemEncoder)
     return HttpResponse(feed, mimetype="application/json")
+
+# def _newsfeed_image(nfitem, thumb=True):
+#     ''' Returns the path to the image for nfitem. If none exists,
+#     gives the default profile picture.
+    
+#     Image names are based on the employee profile picture naming
+#     scheme, as documented in employee_views.py in edit_profile.
+    
+#     Note that the naming uses database ID, so don't send in any
+#     unsaved NewsFeedItems.
+#     '''
+#     imagedir = '%s.%d' % (nfitem.business.business_name.replace(' ', '-'),
+#                           nfitem.business.id)
+#     imagename = '%s_%s' % (nfitem.title[:15],
+#                            nfitem.id)
+    
+#     if thumb:
+#         imagename = 'thumb_%s' % imagename
+#     image_url = '%s/%s' % (imagedir, imagename)
+#     if not os.path.exists('%s%s' % (settings.MEDIA_ROOT, image_url)):
+#         imagedir = settings.DEFAULT_PROFILE_IMAGE
+#     return imagedir

@@ -14,6 +14,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 import employee_views
+import business_views
 from registration import forms as registration_forms
 import settings
 import datetime
@@ -141,12 +142,16 @@ class QuestionEncoder(json.JSONEncoder):
 class NewsFeedItemEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.NewsFeedItem):
+            image_url = '%s%s' % (settings.MEDIA_URL, settings.DEFAULT_PROFILE_IMAGE)
+            if o.image:
+                image_url = o.image.url
             return {'id': o.id,
                     'title': o.title,
                     'subtitle': o.subtitle,
                     'body': o.body,
                     'date': o.date.strftime('%m/%d/%Y'),
                     'business': o.business.business_name,
+                    'image': image_url,
                     'date_edited':o.date_edited.strftime('%m/%d/%Y')}
         else:
             return json.JSONEncoder.default(self, o)

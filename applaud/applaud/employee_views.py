@@ -116,6 +116,15 @@ def edit_profile(request):
             # imagename = employeefn_employeeln.employeeid.fileext
             # imagedir = MEDIA_ROOT/businessname.businessid
             if 'profile_picture' in request.FILES:
+                # First off, make sure it's a actually an image, and that
+                # it's a filetype we will accept.
+                try:
+                    image = Image.open(request.FILES['profile_picture'])
+                except IOError:
+                    # For now, we'll just ignore bad images.
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
+                if not image.format in ['PNG', 'JPEG', 'BMP']:
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
                 imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
                                       profile.business.user.username.replace(" ","_"),
@@ -151,3 +160,5 @@ def welcome(request):
     profile = request.user.employeeprofile
     return render_to_response("employee_welcome.html",
                               {"employee":profile})
+
+

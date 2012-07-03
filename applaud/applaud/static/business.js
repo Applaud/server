@@ -519,7 +519,7 @@ if (! apatapa.business) {
 				      'class': 'add_newsfeed_button'});
 	    add_newsfeed_button.html('Add New Item');
 	    add_newsfeed_button.click( function () {
-		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", true);
+		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
 		registerClickHandlers();
 	    });
 	    add_newsfeed_button.button();
@@ -541,6 +541,7 @@ if (! apatapa.business) {
 			feed.date_edited,
 			feed.subtitle,
 			feed.body,
+			feed.image,
 			false);
 	    }
 	    registerClickHandlers();
@@ -578,11 +579,17 @@ if (! apatapa.business) {
 				 'body': $(this).children('#body').val()};
 		newsfeeds.push(feed_dict);
 	    });
+	    var data = new FormData();
+	    $('.image_input').each(function(index, element) {
+		data.append('file_' + index, element.files);
+	    });
+	    data.append(JSON.stringify(newsfeeds));
+	    data.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
 	    $.ajax({url: manage_newsfeed_url,
 		    type: 'POST',
-		    dataType: 'json',
-		    data: {'feeds': JSON.stringify(newsfeeds),
-			   'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
+		    dataType: false,
+		    processData: false,
+		    data: data,
 		    error: function () { alert('Something went wrong.'); },
 		    success: function () {
 			alert('Great success!');
@@ -593,7 +600,7 @@ if (! apatapa.business) {
 	/*
 	 * Adds a single newsfeed item to the DOM. Called from handleNewsfeedData().
 	 */
-	var addFeed = function (id, title, date, date_edited, subtitle, body, animated) {
+	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
 	    
 	    var should_delete = $('<input />');
 	    should_delete.prop({'type': 'hidden',
@@ -616,6 +623,18 @@ if (! apatapa.business) {
 	    if( animated ) {
 		feed_div.hide();
 	    }
+	    
+	    var img = $('<img />');
+	    img.prop({'src': image,
+		      'class': 'nfimage',
+		      'alt': title});
+	    
+	    var img_input = $('<input />');
+	    img_input.prop({'type': 'file',
+			    'accept': 'image/*',
+			    'class': 'image_input',
+			    'name': 'nf_image_' + i,
+			    'id': 'nf_image_' + i});
 	    
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
@@ -648,7 +667,11 @@ if (! apatapa.business) {
 	    $('#save_newsfeed_button').before(feed_div.append('Title: ')
 					      .append(feed_id)
 					      .append(should_delete)
+					      .append(img)
 					      .append(title_text)
+					      .append('<br />')
+					      .append('Image: ')
+					      .append(img_input)
 					      .append(date_text)
 					      .append('Subtitle: ')
 					      .append(subtitle_text)

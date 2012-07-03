@@ -14,7 +14,7 @@ import urllib2
 from applaud import forms
 from applaud import models
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder
 from django.utils.timezone import utc
 
 # 'mobile_view' decorator.
@@ -166,6 +166,7 @@ def get_survey(request):
                                     'questions': questions}))
 
 # Posting survey response.
+@mobile_view
 @csrf_protect
 def survey_respond(request):
     '''survey_respond
@@ -236,12 +237,8 @@ def nfdata(request):
     business = models.BusinessProfile(id=business_id)
     nfitems = business.newsfeeditem_set.all()
     nfitem_list = []
-    for nfitem in nfitems :
-        nfitem_list.append({'title':nfitem.title,
-                            'subtitle':nfitem.subtitle,
-                            'body':nfitem.body,
-                            'date':nfitem.date.strftime('%Y-%m-%d %I:%M')})
-
-    ret = { 'newsfeed_items':nfitem_list }
-
+    encoder = NewsFeedItemEncoder()
+    for nfitem in nfitems:
+        nfitem_list.append(encoder.default(nfitem))
+    ret = {'newsfeed_items':nfitem_list}
     return HttpResponse(json.dumps(ret))
