@@ -53,19 +53,16 @@ def employee_stats(request):
 
     return_data = {}
     return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
-    return_data['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
-    return_data['averages'] = {}
-    for dim in dimensions:
-        rating_vals = []
+    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
 
-        ratings = profile.rating_set.filter(dimension=dim)
-        return_data['averages'][dim.title] = sum([r.rating_value for r in ratings])/float(len(ratings)) if len(ratings) > 0 else 0
-
+    encoded_employee = views.EmployeeEncoder().default(profile)
+    encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
+    return_data['employees'] = [encoded_employee]
+    
     if request.method == 'GET':
         # Return string for rendering in google charts
         return render_to_response('employee_stats.html',
-                                  {'data':json.dumps( return_data ),
-                                   'employee':employee,
+                                  {'employee':employee,
                                    'image':_profile_picture(profile)},
                                   context_instance=RequestContext(request))
 

@@ -120,8 +120,8 @@ if (! apatapa.business) {
     // apatapa.business.ratingprofiles //
     /////////////////////////////////////
 
-    if (! business.ratingprofile) {
-	business.ratingprofile = {};
+    if (! business.ratingprofiles) {
+	business.ratingprofiles = {};
     }
 
     (function (_ns) {
@@ -468,9 +468,9 @@ if (! apatapa.business) {
 	}
 
 	/**
-	 * This is executed after the page has fully loaded.
+	 * Initilialize the page for managing ratingprofiles.
 	 */
-	$(document).ready(function() {
+	_ns.initRatingProfilesPage = function() {
 	    // New profile form is invisible
 	    $('#new_ratingprofile').hide();
 	    
@@ -488,8 +488,9 @@ if (! apatapa.business) {
 	    bind_insert_buttons();		// Insert a dimension
 	    bind_remove_buttons();		// Remove a dimension
 	    bind_newprofile_button();	// Make a new ratingprofile
-	});
-    })(business.ratingprofile);
+	}	    
+
+    })(business.ratingprofiles);
 
 
 
@@ -685,14 +686,16 @@ if (! apatapa.business) {
 	    }
 	    i++;
 	}
-	
-	$(document).ready( function () {
+
+	_ns.initNewsfeedPage = function() {
 	    $.ajax({url: list_newsfeed_url,
 		    type: 'GET',
 		    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
 		    error: function () { alert('Something went wrong.'); },
-		    success: handleNewsfeedData});
-	});
+		    success: handleNewsfeedData
+		   });
+	};
+
     })(business.newsfeed);
 
 
@@ -858,20 +861,6 @@ if (! apatapa.business) {
 
 	// Start off with question 0 has 1 option
 	var questionOptions = [0];
-
-	$(document).ready(function() {
-	    // Pull down the survey
-	    $.ajax( {
-		url: manage_survey_url,
-		success: renderSurvey,
-		data: {'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-		type: 'POST',
-		error: function() { alert("Something went wrong."); }
-	    });
-
-	});
-
-
 
 	function addQuestion( label, type, options, active, id, animated ) {
 	    //Objects to instantiate:
@@ -1071,6 +1060,17 @@ if (! apatapa.business) {
 	    if( animated ) {
 		optionItem.show(500);
 	    }
+	}
+
+	_ns.initSurveyPage = function() {
+	    // Pull down the survey
+	    $.ajax( {
+		url: manage_survey_url,
+		success: renderSurvey,
+		data: {'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		type: 'POST',
+		error: function() { alert("Something went wrong."); }
+	    });
 	}
     })(business.survey);
 })(apatapa.business);

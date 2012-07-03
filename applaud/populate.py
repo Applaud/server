@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils.timezone import utc
 
 import os
@@ -11,6 +11,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 import applaud.settings
 from applaud import models
 from django.contrib.auth.models import User, Group
+from random  import random
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -117,35 +118,32 @@ luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
-rating1 = models.Rating(title='Awesomeness',
-                        rating_value=5,
-                        employee=master,
-                        id=1,
-                        date_created=datetime.utcnow().replace(tzinfo=utc),
-                        dimension=awesomeness,
-                        user=userprofile)
-rating1.save()
-rating2 = models.Rating(title='Slickness',
-                        rating_value=5,
-                        employee=master,
-                        date_created=datetime.utcnow().replace(tzinfo=utc),
-                        dimension=slickness,
-                        user=userprofile)
-rating2.save()
-rating3 = models.Rating(title='Slickness',
-                        rating_value=4,
-                        employee=master,
-                        date_created=datetime.utcnow().replace(tzinfo=utc),
-                        dimension=slickness,
-                        user=userprofile)
-rating3.save()
-rating4 = models.Rating(title='Slickness',
-                        rating_value=4,
-                        employee=master,
-                        date_created=datetime.utcnow().replace(tzinfo=utc),
-                        dimension=slickness,
-                        user=userprofile)
-rating4.save()
+quality_dim = profile1.rateddimension_set.get(title='Quality')
+for i in range(10):
+    today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
+    print today
+    rating1 = models.Rating(title='Awesomeness',
+                            rating_value=5*random(),
+                            employee=master,
+#                            id=1,
+                            date_created=today,
+                            dimension=awesomeness,
+                            user=userprofile)
+    rating1.save()
+    rating2 = models.Rating(title='Slickness',
+                            rating_value=5*random(),
+                            employee=master,
+                            date_created=today,
+                            dimension=slickness,
+                            user=userprofile)
+    rating2.save()
+    rating3 = models.Rating(title='Quality',
+                            rating_value=5*random(),
+                            employee=master,
+                            date_created=today,
+                            dimension=quality_dim,
+                            user=userprofile)
+    rating3.save()
 
 # Make a couple of NewsFeedItems.
 nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
