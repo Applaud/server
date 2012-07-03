@@ -1,9 +1,18 @@
+/* employees.js
+ * 
+ * Provides the javascript functionality for the 'manage employees'
+ * page for businesses. This file also supplies the function
+ * 'getEmployee( container, [callback] )', which can be used to list
+ * all the employees into a container.
+ *
+ */
+
 if (! apatapa.employee) {
     apatapa.employee = {};
 }
 
 (function (_ns) {
-    var bind_delete_buttons = function () {
+    _ns.bind_delete_buttons = function () {
 	$('.del_emp_button').click(
 	    function ( event ) {
 		event.preventDefault();
@@ -13,7 +22,7 @@ if (! apatapa.employee) {
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			 success: function(data) {
 			     _ns.listEmployees(data, $('#employees_listing'));
-			     buildForms();
+			     _ns.buildForms();
 			 },
 			 error: function() { alert("Something went wrong."); }
 		       });
@@ -26,12 +35,14 @@ if (! apatapa.employee) {
      * NOTE: You MUST have {% csrf_token %} on the page calling this somewhere.
      * fills 'container' with the list of employees for current business.
      */
-    _ns.getEmployees = function( container ) {
+    _ns.getEmployees = function( container, callback ) {
 	$.ajax({url: list_employees_url,
 		type: 'POST',
 		data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		success: function(data) {
 		    _ns.listEmployees(data, container);
+		    if ( callback )
+			callback();
 		},
 		error: function() {
 		    alert("Something went wrong.");
@@ -44,7 +55,7 @@ if (! apatapa.employee) {
      *
      * Creates forms on each employee listing.
      */
-    function buildForms() {
+    _ns.buildForms = function() {
 	$('.employee_item').each( function(index, element) {
 	    var id = $(this).children('.employee_id').val();
 	    $(this).append("<form action=\"\" method=\"post\">"
@@ -52,7 +63,7 @@ if (! apatapa.employee) {
 			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
 	});
 
-	bind_delete_buttons();
+	_ns.bind_delete_buttons();
     }
 
     /**
@@ -83,20 +94,4 @@ if (! apatapa.employee) {
 	
 	container.append(listing);
     };
-
-    /**
-     * This is executed after the page has fully loaded.
-     */
-    $(document).ready(function() {
-	// Bind the 'delete' buttons for employees to an AJAX call
-	bind_delete_buttons();
-
-	// Fetch the list of employees
-	$.ajax({'url':list_employees_url,
-		success: function(data) {
-		    _ns.listEmployees(data, $('#employees_listing'));
-		    buildForms();
-		},
-		error:function(){alert("Something went wrong.");}});
-    });
 })(apatapa.employee);

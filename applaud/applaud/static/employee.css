@@ -8,11 +8,14 @@
   display: inline; }
 
 #emp_graph {
-  width: 600;
+  width: 700px;
   height: 400px;
   overflow: hidden;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+  margin-bottom: 30px; }
+  #emp_graph iframe {
+    width: 700px; }
 
 .profilepicture {
   vertical-align: text-top;

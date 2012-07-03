@@ -2,7 +2,11 @@
 {% block title %}Create survey{% endblock %}
 {% block scripts %}
 {{ block.super }}
-<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}manage_survey.js"></script>
+<script language="javascript" type="text/javascript">
+$(document).ready(function() {
+    apatapa.business.survey.initSurveyPage();
+    });
+</script>
 {% endblock %}
 {% block content %}
 {{ block.super }}

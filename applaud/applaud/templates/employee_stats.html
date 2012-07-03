@@ -3,51 +3,134 @@
 {% block scripts %}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawVisualization);
+google.load("visualization", "1", {packages:["corechart"]});
 
+var chartData;
 
-function drawVisualization() {
-  // Create and populate the data table.
-  var data = google.visualization.arrayToDataTable(
-    {{ chartdata|safe }} 
-  );
+function drawVisualization( dimList ) {
+    var chart_list = [];
+    var row0 = [ 'Dimension' ];
+    row0 = row0.concat(dimList);
+    chart_list.push(row0);
 
-  // Create and draw the visualization.
-  new google.visualization.BarChart(document.getElementById('emp_graph')).
-      draw(data,
-           {title:"Evaluations by Dimension",
-            width:600, height:400,
-            vAxis: {title: "Dimension"},
-            hAxis: {title: "Number of Ratings"}}
-      );
+    var row1 = [""];
+    for ( var i in dimList ) {
+	row1.push( chartData.averages[dimList[i]] );
+    }
+    chart_list.push( row1 );
+
+    console.log(chart_list.length);
+    console.log(chart_list);
+
+    // Create and populate the data table.
+    var data = google.visualization.arrayToDataTable(
+	chart_list
+    );
+    
+    // Create and draw the visualization.
+    new google.visualization.ColumnChart(document.getElementById('emp_graph')).
+	draw(data,
+             {title:"Evaluations by Dimension",
+              width:700, height:400,
+              hAxis: {title: "Dimension"},
+              vAxis: {title: "Average Rating"}}
+	    );
 }
+
+function dateToJS( datestring ) {
+    // This assumes that we are getting dates in the format dd/mm/YYYY
+    var components = datestring.split('/');
+    return new Date(components[2],components[1],components[0]);
+}
+
+/**
+ * dateCompare( rating1, rating2 )
+ *
+ * Compare two ratings based on the date they were submitted.
+ *
+ * rating1, rating2 = two ratings
+ */
+function dateCompare( rating1, rating2 ) {
+    return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
+}
+
+function buildTable(data) {
+    
+    var the_list = $('<ol></ol>');
+    for (d in data.dimensions) {
+	var dim = data.dimensions[d];
+	var list_item = $('<li></li>');
+	list_item.prop({'class':'ui-widget-content',
+			'id':'dim_'+dim.title});
+	list_item.text(dim.title);
+	the_list.append(list_item);
+    }
+    the_list.selectable({
+	selected: function() {
+	    dimHandler($(this));
+	},
+	unselected: function() {
+	    dimHandler($(this));
+	}
+    });
+    $('#gt_dims').append(the_list);
+}
+
+function buildDateSlider(data) {
+    var dateRange = dateToJS(data.ratings[data.ratings.length-1].date).getTime() -
+	dateToJS(data.ratings[0].date).getTime();
+    $('#gt_dateslider').slider({ range: true,
+				 min: 0,
+				 max: dateRange,
+				 values:[0,dateRange]});
+}
+
+var dimHandler = function( container ) {
+    var dims = []
+    container.children('.ui-selected').each(function(i,e){
+	dims.push($(this).text());
+    });
+    drawVisualization(dims);
+};
+
+$(document).ready( function() {
+    $.ajax({url:"{% url employee_stats %}",
+	    type:'POST',
+	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+	    success:function(data) {
+		chartData = data.data;
+		dims = [];
+		for (var i=0; i<data.data.dimensions.length; i++) {
+		    dims.push(data.data.dimensions[i].title);
+		}
+		drawVisualization(dims);
+		buildTable(data.data);
+		buildDateSlider(data.data);
+	    },
+	    error:function(){alert("Something went wrong.");}});
+});
 </script>
 {% endblock %}
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
+{% endblock %}
 {% block content %}
-{{ block.super }}
 
 <div id="employee_welcome">
   <img src="{{ MEDIA_URL }}{{ image }}" id="employee_img" class="profilepicture" alt="{{ user.first_name }} {{ user.last_name }}" />
   <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
 </div>
-<!-- list employee statistics by dimension -->
-{% for success_map in success_map_list %}
-<strong>{{ success_map.dimension }}</strong> ( {{ success_map.values|length }} ratings }} )
-{% if success_map.values|length > 0 %}
-<!-- list ratings for a given dimension -->
-<ul>
-{% for rating in success_map.values %}
-<li>{{ rating.rating_value }}</li>
-{% endfor %}
-</ul>
-<!-- end list ratings for a given dimension -->
-{% else %}
-No statistics yet!
-{% endif %}
 
-{% endfor %}
-<div id="emp_graph"></div>
-<!-- end of employee statistics by dimension -->
+<div id="graph_table">
+    <div id="gt_dims"></div>
+    <div id="emp_graph"></div>
+
+    <label for="dateslider">Time range</label>
+    <div id="gt_dateslider" name="dateslider"></div>
+</div>
+<form>
+{% csrf_token %}
+</form>
 
 {% endblock %}

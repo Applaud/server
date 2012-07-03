@@ -10,6 +10,7 @@ import json
 import settings
 import sys
 from applaud.models import EmployeeProfile
+import views
 
 # 'employee_view' decorator.
 def employee_view(view):
@@ -46,31 +47,33 @@ def employee_stats(request):
     employee = request.user
     profile = employee.employeeprofile
     rating_profile = profile.rating_profile
-    ratings = profile.rating_set
 
     # List of valid dimensions for rating
     dimensions = list(rating_profile.rateddimension_set.all())
 
-    success_chart = []
-    axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
-    success_chart.append(axis)
-    for i in range(len(dimensions)):
-        row = [ dimensions[i].title ]
+    return_data = {}
+    return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
+    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
+    return_data['ratings'] = all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
+    return_data['averages'] = {}
+    for dim in dimensions:
         rating_vals = []
 
-        # Count how many ratings we have of a particular value for each dimension
-        for j in range(5):
-            rating_vals.append(len(ratings.filter(title=dimensions[i].title,
-                                                  rating_value=j+1)))
-        row.extend(rating_vals)
-        success_chart.append(row)
+        ratings = profile.rating_set.filter(dimension=dim)
+        return_data['averages'][dim.title] = sum([r.rating_value for r in ratings])/float(len(ratings)) if len(ratings) > 0 else 0
 
-    # Return string for rendering in google charts
-    return render_to_response('employee_stats.html',
-                              {'chartdata':json.dumps( success_chart ),
-                               'employee':employee,
-                               'image':_profile_picture(profile)},
-                              context_instance=RequestContext(request))
+    if request.method == 'GET':
+        # Return string for rendering in google charts
+        return render_to_response('employee_stats.html',
+                                  {'data':json.dumps( return_data ),
+                                   'employee':employee,
+                                   'image':_profile_picture(profile)},
+                                  context_instance=RequestContext(request))
+
+    # Pure JSON, for POST
+    return HttpResponse(json.dumps({'data':return_data}),
+                        mimetype='application/json')
+
 
 def _profile_picture(em_profile, thumb=True):
     '''
