@@ -241,9 +241,21 @@ h3 {
 /** forms that are prominent on the page.
     potentially the only thing on the page at all. **/
 .centerform {
+    float:left;
     margin: {
 	left:auto;
 	right:auto;
+    }
+    /* input { */
+    /* 	text-align:right; */
+    /* } */
+    p {
+	text-align:right;
+	display:block;
+	margin: {
+	    top: 3px;
+	    bottom: 3px
+	}
     }
     background-color:$lightpink;
     display:block;

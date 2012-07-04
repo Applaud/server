@@ -54,19 +54,15 @@ def employee_stats(request):
     return_data = {}
     return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
     all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
-    return_data['ratings'] = all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
-    return_data['averages'] = {}
-    for dim in dimensions:
-        rating_vals = []
 
-        ratings = profile.rating_set.filter(dimension=dim)
-        return_data['averages'][dim.title] = sum([r.rating_value for r in ratings])/float(len(ratings)) if len(ratings) > 0 else 0
-
+    encoded_employee = views.EmployeeEncoder().default(profile)
+    encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
+    return_data['employees'] = [encoded_employee]
+    
     if request.method == 'GET':
         # Return string for rendering in google charts
         return render_to_response('employee_stats.html',
-                                  {'data':json.dumps( return_data ),
-                                   'employee':employee,
+                                  {'employee':employee,
                                    'image':_profile_picture(profile)},
                                   context_instance=RequestContext(request))
 
@@ -117,6 +113,15 @@ def edit_profile(request):
             # imagename = employeefn_employeeln.employeeid.fileext
             # imagedir = MEDIA_ROOT/businessname.businessid
             if 'profile_picture' in request.FILES:
+                # First off, make sure it's a actually an image, and that
+                # it's a filetype we will accept.
+                try:
+                    image = Image.open(request.FILES['profile_picture'])
+                except IOError:
+                    # For now, we'll just ignore bad images.
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
+                if not image.format in ['PNG', 'JPEG', 'BMP']:
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
                 imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
                                       profile.business.user.username.replace(" ","_"),
@@ -152,3 +157,5 @@ def welcome(request):
     profile = request.user.employeeprofile
     return render_to_response("employee_welcome.html",
                               {"employee":profile})
+
+

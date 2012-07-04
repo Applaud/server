@@ -81,10 +81,12 @@ class Rating(models.Model):
         # End user who provided the response
         user = models.ForeignKey('UserProfile')
 
-        date_created = models.DateTimeField(auto_now=True)
+        date_created = models.DateTimeField()#(auto_now=True)
 
 	def __unicode__(self):
-		return "%s:%s"%(self.title,self.rating_value)
+		return "%s:%s (%s)"%(self.title,
+                                     self.rating_value,
+                                     self.date_created.strftime("%d/%m/%Y"))
 
 class RatingProfile(models.Model):
     '''Models what dimensions are relevant to a specific employee.
@@ -118,6 +120,9 @@ class RatedDimension(models.Model):
     is_active = models.BooleanField(default=1)
     rating_profile = models.ForeignKey('RatingProfile')
     
+    def __unicode__(self):
+        return self.title
+
 #
 # NEWSFEED
 #
@@ -129,7 +134,7 @@ class NewsFeedItem(models.Model):
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
         business = models.ForeignKey('BusinessProfile')
-
+        image = models.ImageField(blank=True, null=True, upload_to='newsfeed_pictures/')
         date_edited = models.DateTimeField()
 
         def change_parameters(self, d):

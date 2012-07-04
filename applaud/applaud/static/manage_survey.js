@@ -91,7 +91,6 @@ if ( !apatapa.survey ) {
 				  function () {/* Doesn't really need to do much. */ });
 		return;
 	    }
-	    console.log('returns are for noobs');
 	    var questions = [];
 	    // Get each question out of the DOM and put its info into a dictionary.
 	    // This is nasty! But we need some form of non-local exit, so a try/catch
@@ -181,7 +180,7 @@ if ( !apatapa.survey ) {
 	    questionDiv.hide();
 	}
 	
-	$("#submit_button").before(questionDiv);
+	$("#addquestion_button").before(questionDiv);
 	$('#submit_button').button();
 	$('#addquestion_button').button();
 	

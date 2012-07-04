@@ -1,18 +1,52 @@
+/************
+ * Variables
+ */
+/************
+ * Styles that apply to all pages
+ */
 form {
   display: inline; }
+
+h3 {
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+strong {
+  font-weight: bold; }
 
 #employees_listing li, #profiles_listing li ul li, .feed, .question {
   margin: 5px;
   background-color: #ffebfa;
   padding: 5px; }
 
+.profile_image {
+  width: 64px;
+  height: 64px;
+  vertical-align: middle; }
+
+/************
+ * Newsfeed
+ */
 .feed input {
   margin-bottom: 10px; }
 
-.delete_button {
+.nf_delete_button {
   margin-top: 10px;
   background-color: #ff6464; }
 
+.question_optionlist {
+  padding-top: 10px; }
+  .question_optionlist label {
+    padding-right: 5px; }
+  .question_optionlist .question_item {
+    padding-left: 20px;
+    padding-top: 5px; }
+
+/************
+ * Employee management
+ */
 #newemployeeform {
   margin-top: 30px;
   margin-bottom: 30px;
@@ -22,11 +56,18 @@ form {
   margin-right: 15px;
   display: inline; }
 
-h3 {
-  font-size: 16pt;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #2c1e1e; }
+.employee_name {
+  padding-left: 10px; }
+
+.del_emp_button {
+  background-color: #ff6464;
+  margin-left: 10px; }
+
+
+
+/******
+* Not sure if there are tables in any of the business related templates.
+*/
 
 strong {
   font-weight: bold; }

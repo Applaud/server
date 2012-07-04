@@ -1,6 +1,8 @@
-var ratingProfile = {};
+if (! apatapa.ratingprofile) {
+    apatapa.ratingprofile = {};
+}
 
-(function (ratingProfile) {
+(function (_ns) {
     // Keeps track of how many dimensions we have when creating
     // a new RatingProfile.
     var dimension_count = 0;
@@ -151,7 +153,7 @@ var ratingProfile = {};
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
-				'insert':escape(escapeHTML( $('#dimension_title').val() )),
+				'insert':escape(apatapa.util.escapeHTML( $('#dimension_title').val() )),
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			 success: listProfiles,
 			 error: function() { alert("Something went wrong."); }
@@ -365,4 +367,4 @@ var ratingProfile = {};
 	bind_remove_buttons();		// Remove a dimension
 	bind_newprofile_button();	// Make a new ratingprofile
     });
-})(ratingProfile);
+})(apatapa.ratingprofile);
