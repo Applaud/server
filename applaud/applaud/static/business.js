@@ -523,16 +523,17 @@ if (! apatapa.business) {
 		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
 		registerClickHandlers();
 	    });
-	    add_newsfeed_button.button();
-	    var save_newsfeed_button = $('<button></button>');
-	    save_newsfeed_button.prop({'type': 'button',
-				       'name': 'save_newsfeed_button',
-				       'id': 'save_newsfeed_button',
-				       'class': 'save_newsfeed_button'});
-	    save_newsfeed_button.html('Save Changes');
-	    save_newsfeed_button.button();
-	    $('#newsfeeds').append(save_newsfeed_button)
-		.append(add_newsfeed_button);
+	    $('#add_newsfeed_button').button();
+	    // var save_newsfeed_button = $('<button></button>');
+	    // save_newsfeed_button.prop({'type': 'button',
+	    // 			       'name': 'save_newsfeed_button',
+	    // 			       'id': 'save_newsfeed_button',
+	    // 			       'class': 'save_newsfeed_button'});
+	    // save_newsfeed_button.html('Save Changes');
+	    $('#save_newsfeed_button').button();
+	    // $('#newsfeeds').append(save_newsfeed_button)
+	    // 	.append(add_newsfeed_button);
+	    // $('#newsfeed_form').append(add_newsfeed_button);
 	    for(d in data) {
 		console.log(data[d]);
 		feed = data[d];
@@ -552,18 +553,25 @@ if (! apatapa.business) {
 	 * Registers click handlers for all buttons. Called from handleNewsfeedData().
 	 */
 	var registerClickHandlers = function () {
+	    $('#add_newsfeed_button').button();
+	    $('#add_newsfeed_button').click( function () {
+		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
+		registerClickHandlers();
+	    });
+	    $('#save_newsfeed_button').button();
+	    $('.nf_delete_button').button();
 	    $('.nf_delete_button').click( function () {
 		feed = $(this).parent('.feed');
 		apatapa.showAlert('Are you sure you want to delete?',
 				  'This will erase this item\'s data permanently!',
 				  function() {
-				      feed.children('#should_delete').val('true');
+				      feed.children('.should_delete').val('true');
 				      feed.hide(700);
 				  });
 	    });
-	    $('#save_newsfeed_button').click( function () {
+/*	    $('#save_newsfeed_button').click( function () {
 		apatapa.showAlert('Are you sure?', 'Saving changes!', saveChanges);
-	    });
+	    });*/
 	};
 	
 	/*
@@ -606,15 +614,15 @@ if (! apatapa.business) {
 	    var should_delete = $('<input />');
 	    should_delete.prop({'type': 'hidden',
 				'value': 'false',
-				'name': 'should_delete',
-				'id': 'should_delete'});
+				'name': 'should_delete_' + i,
+				'id': 'should_delete_' + i});
 	    
 	    var feed_id = $('<input />');
 	    feed_id.prop({'type': 'hidden',
 			  'value': id,
 			  'class': 'id',
-			  'id': 'feed_' + i + '_id',
-			  'name': 'feed_' + i + '_id'});
+			  'id': 'feed_id_' + i,
+			  'name': 'feed_id_' + i});
 	    
 	    var feed_div = $('<div></div>');
 	    feed_div.prop({'class': 'feed',
@@ -640,60 +648,71 @@ if (! apatapa.business) {
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
 			     'type': 'text',
-			     'id': 'title',
-			     'name': 'title'});
+			     'id': 'title_' + i,
+			     'name': 'title_' + i});
 	    
 	    var date_text = $('<p></p>');
 	    date_text.html(date + ' (last edited ' + date_edited + ')');
 
 	    var subtitle_text = $('<input />');
 	    subtitle_text.prop({'type': 'text',
-				'name': 'subtitle',
-				'id': 'subtitle',
+				'name': 'subtitle_' + i,
+				'id': 'subtitle_' + i,
 				'value': subtitle});
 	    
 	    var body_text = $('<textarea></textarea>');
 	    body_text.prop({'value': body,
-			    'name': 'body',
-			    'id': 'body'});
+			    'name': 'body_' + i,
+			    'id': 'body_' + i});
 	    
 	    var delete_button = $('<button></button>');
 	    delete_button.prop({'type': 'button',
 				'class': 'nf_delete_button',
-				'id': 'feed_' + i + '_delete_button',
-				'name': 'feed_' + i + '_delete_button'})
+				'id': 'feed_delete_button_' + i,
+				'name': 'feed_delete_button_' + i});
 	    delete_button.html('Delete');
 	    delete_button.button();
+	    // delete_button.click(function() {
+	    // 	feed = $(this).parent('.feed');
+	    // 	apatapa.showAlert('Are you sure you want to delete?',
+	    // 			  'This will erase this item\'s data permanently!',
+	    // 			  function() {
+	    // 			      feed.children('.should_delete').val('true');
+	    // 			      feed.hide(700);
+	    // 			  });
+	    // });
 	    
-	    $('#save_newsfeed_button').before(feed_div.append('Title: ')
-					      .append(feed_id)
-					      .append(should_delete)
-					      .append(img)
-					      .append(title_text)
-					      .append('<br />')
-					      .append('Image: ')
-					      .append(img_input)
-					      .append(date_text)
+	    $('#add_newsfeed_button').before(feed_div.append('Title: ')
+					     .append(feed_id)
+					     .append(should_delete)
+					     .append(img)
+					     .append(title_text)
+					     .append('<br />')
+					     .append('Image: ')
+					     .append(img_input)
+					     .append(date_text)
 					      .append('Subtitle: ')
-					      .append(subtitle_text)
-					      .append('<br />')
-					      .append('Body: ')
-					      .append(body_text)
-					      .append('<br />')
-					      .append(delete_button));
+					     .append(subtitle_text)
+					     .append('<br />')
+					     .append('Body: ')
+					     .append(body_text)
+					     .append('<br />')
+					     .append(delete_button));
 	    if( animated ) {
 		feed_div.show(700);
 	    }
 	    i++;
 	}
 
-	_ns.initNewsfeedPage = function() {
-	    $.ajax({url: list_newsfeed_url,
-		    type: 'GET',
-		    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
-		    error: function () { alert('Something went wrong.'); },
-		    success: handleNewsfeedData
-		   });
+	_ns.initNewsfeedPage = function(num_feeds) {
+	    i = num_feeds;
+	    // $.ajax({url: list_newsfeed_url,
+	    // 	    type: 'GET',
+	    // 	    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
+	    // 	    error: function () { alert('Something went wrong.'); },
+	    // 	    success: handleNewsfeedData
+	    // 	   });
+	    registerClickHandlers();
 	};
 
     })(business.newsfeed);

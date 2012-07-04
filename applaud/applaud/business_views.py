@@ -25,7 +25,9 @@ import re
 import csv
 import os
 import settings
-
+import Image
+import StringIO
+import hashlib
 
 # 'business_view' decorator.
 def business_view(view):
@@ -534,65 +536,103 @@ def manage_newsfeed(request):
         # Business is authenticated
         return render_to_response('manage_newsfeed.html',
                                   {'business':profile,
-                                   'list':newsfeed},
+                                   'feeds':newsfeed},
                                   context_instance=RequestContext(request))
     # Otherwise, it's a POST.
+    print request.POST.keys()
+    print request.FILES.keys()
     profile = request.user.businessprofile
-    feeds = json.loads(request.POST['feeds'])
-    for feed in feeds:
-        # It's an old feed, just updated.
-        if int(feed['id']):
-            newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
-            if feed['should_delete'] == 'true':
-                print 'WOO!'
-                newsfeed.delete()
+    i = 0
+    while 'title_%d' % i in request.POST:
+        feed_id = request.POST['feed_id_%d' % i]
+        print feed_id
+        if int(feed_id): # it's an old feed, updated.
+            feed = models.NewsFeedItem.objects.get(id=feed_id)
+            if request.POST['should_delete_%d' % i] == 'true':
+                feed.delete()
             else:
-                newsfeed.title = feed['title']
-                newsfeed.subtitle = feed['subtitle']
-                newsfeed.body = feed['body']
-                newsfeed.date_edited = datetime.utcnow().replace(tzinfo=utc)
-                newsfeed.save()
-        # It's a new feed item.
-        else:
-            newsfeed = models.NewsFeedItem(title=feed['title'],
-                                           subtitle=feed['subtitle'],
-                                           body=feed['body'],
-                                           business=profile,
-                                           date=datetime.utcnow().replace(tzinfo=utc),
-                                           date_edited=datetime.utcnow().replace(tzinfo=utc))
-            if feed['should_delete'] != 'true':
-                newsfeed.save()
-        # Check for images.
-        print 'Holy shit!'
-        print request.FILES.keys()
-        print 'Yeah!'
-        if 'nf_image' in request.FILES:
-            # First off, make sure it's a actually an image, and that
-            # it's a filetype we will accept.
-            try:
-                image = Image.open(request.FILES['nf_image'])
-            except IOError:
-                # For now, we'll just ignore bad images.
-                continue
-            if not image.format in ['PNG', 'JPEG', 'JPG', 'BMP']:
-                continue
-            fileext = image.format
-            # imagedir = '%s%s.%d' % (settings.MEDIA_ROOT,
-            #                         profile.business_name.replace(' ', '-'),
-            #                         profile.id)
-            # if not os.path.exists(imagedir):
-            #     os.makedirs(imagedir)
-            imagename = '%s_%s.%s' % (newsfeed.title[:15],
-                                      newsfeed.id,
-                                      fileext)
-            print imagename
-            # imagepath = '%s/%s' % (imagedir, imagename)
-            # with open(imagepath, 'wb+') as destination:
-            #     for chunk in request.FILES['nf_image']:
-            #         destination.write(chunk)
-            newsfeed.image.save(imagename, File(request.FILES['nf_image']))
-            newsfeed.save()
-    return HttpResponse('')
+                feed.title = request.POST['title_%d' % i]
+                feed.body = request.POST['body_%d' % i]
+                feed.subtitle = request.POST['subtitle_%d' % i]
+                feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+                print i
+                if 'nf_image_%d' % i in request.FILES:
+                    try:
+                        save_image(feed, profile, request.FILES['nf_image_%d' % i])
+                    except IOError:
+                        print 'balls'
+                feed.save()
+        else: # feed id is 0, must be new!
+            feed = models.NewsFeedItem(title=request.POST['title_%d' % i],
+                                       body=request.POST['body_%d' % i],
+                                       subtitle=request.POST['subtitle_%d' % i],
+                                       business=profile,
+                                       date=datetime.utcnow().replace(tzinfo=utc),
+                                       date_edited=datetime.utcnow().replace(tzinfo=utc))
+            
+            feed.save()
+            if 'nf_image_%d' % i in request.FILES:
+                    try:
+                        save_image(feed, profile, request.FILES['nf_image_%d' % i])
+                    except IOError:
+                        print 'balls'
+            if request.POST['should_delete_%d' % i] == 'true':
+                print 'haha, nope'
+                feed.delete()
+        i += 1
+        # It's an old feed, just updated.
+        # if int(feed['id']):
+        #     newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
+        #     if feed['should_delete'] == 'true':
+        #         print 'WOO!'
+        #         newsfeed.delete()
+        #     else:
+        #         newsfeed.title = feed['title']
+        #         newsfeed.subtitle = feed['subtitle']
+        #         newsfeed.body = feed['body']
+        #         newsfeed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+        #         newsfeed.save()
+        # # It's a new feed item.
+        # else:
+        #     newsfeed = models.NewsFeedItem(title=feed['title'],
+        #                                    subtitle=feed['subtitle'],
+        #                                    body=feed['body'],
+        #                                    business=profile,
+        #                                    date=datetime.utcnow().replace(tzinfo=utc),
+        #                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
+        #     if feed['should_delete'] != 'true':
+        #         newsfeed.save()
+        # # Check for images.
+        # print 'Holy shit!'
+        # print request.FILES.keys()
+        # print 'Yeah!'
+        # if 'nf_image' in request.FILES:
+        #     # First off, make sure it's a actually an image, and that
+        #     # it's a filetype we will accept.
+        #     try:
+        #         image = Image.open(request.FILES['nf_image'])
+        #     except IOError:
+        #         # For now, we'll just ignore bad images.
+        #         continue
+        #     if not image.format in ['PNG', 'JPEG', 'JPG', 'BMP']:
+        #         continue
+        #     fileext = image.format
+        #     # imagedir = '%s%s.%d' % (settings.MEDIA_ROOT,
+        #     #                         profile.business_name.replace(' ', '-'),
+        #     #                         profile.id)
+        #     # if not os.path.exists(imagedir):
+        #     #     os.makedirs(imagedir)
+        #     imagename = '%s_%s.%s' % (newsfeed.title[:15],
+        #                               newsfeed.id,
+        #                               fileext)
+        #     print imagename
+        #     # imagepath = '%s/%s' % (imagedir, imagename)
+        #     # with open(imagepath, 'wb+') as destination:
+        #     #     for chunk in request.FILES['nf_image']:
+        #     #         destination.write(chunk)
+        #     newsfeed.image.save(imagename, File(request.FILES['nf_image']))
+        #     newsfeed.save()
+    return HttpResponseRedirect('/business/')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect
@@ -604,24 +644,31 @@ def newsfeed_list(request):
                                    cls=views.NewsFeedItemEncoder)
     return HttpResponse(feed, mimetype="application/json")
 
-# def _newsfeed_image(nfitem, thumb=True):
-#     ''' Returns the path to the image for nfitem. If none exists,
-#     gives the default profile picture.
-    
-#     Image names are based on the employee profile picture naming
-#     scheme, as documented in employee_views.py in edit_profile.
-    
-#     Note that the naming uses database ID, so don't send in any
-#     unsaved NewsFeedItems.
-#     '''
-#     imagedir = '%s.%d' % (nfitem.business.business_name.replace(' ', '-'),
-#                           nfitem.business.id)
-#     imagename = '%s_%s' % (nfitem.title[:15],
-#                            nfitem.id)
-    
-#     if thumb:
-#         imagename = 'thumb_%s' % imagename
-#     image_url = '%s/%s' % (imagedir, imagename)
-#     if not os.path.exists('%s%s' % (settings.MEDIA_ROOT, image_url)):
-#         imagedir = settings.DEFAULT_PROFILE_IMAGE
-#     return imagedir
+# Blatantly stolen from a blog. Thanks!
+def scale_dimensions(width, height, longest_side):
+    ratio = 1.0
+    if width > height:
+        if width > longest_side:
+            ratio = longest_side * 1.0/width
+    elif height > width:
+        ratio = longest_side * 1.0/height
+    return (int(width*ratio), int(height*ratio))
+
+# Also stolen! This makes saving an image to MEDIA_ROOT a bit more sensible.
+def save_image(feed, profile, tmp_image):
+    feed_image = Image.open(tmp_image)
+    (width, height) = feed_image.size
+    (width, height) = scale_dimensions(width, height, 200)
+    feed_image = feed_image.resize((width, height))
+    imagefile = StringIO.StringIO()
+    feed_image.save(imagefile, 'JPEG')
+    filename = '%s_%s_%s_%s.jpg' % (profile.id,
+                                    profile.business_name,
+                                    feed.title[:10],
+                                    hashlib.md5(imagefile.getvalue()).hexdigest())
+    # save it to disk so we have a real file to work with
+    imagefile = open(os.path.join('/tmp', filename), 'w')
+    feed_image.save(imagefile,'JPEG')
+    imagefile = open(os.path.join('/tmp',filename), 'r')
+    content = File(imagefile)
+    feed.image.save(filename, content)
