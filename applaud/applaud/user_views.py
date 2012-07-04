@@ -69,15 +69,40 @@ def edit_user_profile(request):
                                   {'dob': dob},
                                   context_instance=RequestContext(request))
 
+
+# Trying to organize ratings by date created and grouping all ratings.
 @user_view
 def view_previous_responses(request):
     profile = request.user.userprofile
     feedback=profile.generalfeedback_set.all()
     rating=profile.rating_set.all()
+    
+    # rating_date is a dictionary of a list of all ratings on the same date
+    rating_date={}
+    for r in rating:
+
+        # Check to see if there already is a rating on that date. If so, then just append the current rating to that list. Otherwise, create a new list with key as string of date
+        date_string = r.date_created.strftime("%m/%d/%Y")
+        if date_string in rating_date.keys():
+            rating_date[date_string].append(r)
+            rating_date[date_string].sort()
+        else:
+            rating_date[date_string]=[r]
+
     qs_responses=profile.questionresponse_set.all()
+    response_date={}
+    for q in qs_responses:
+        date_string = q.date_created.strftime("%m/%d/%Y")
+        if date_string in response_date.keys():
+            response_date[date_string].append(q)
+            response_date[date_string].sort()
+        else:
+            response_date[date_string]=[q]
     
     return render_to_response('user.html',
                               {'feedback':feedback,
                                'rating':rating,
-                               'responses':qs_responses},
-                              context_instance=ReqeustContext(request))
+                               'rating_date':rating_date,
+                               'responses':qs_responses,
+                               'response_date':response_date},
+                              context_instance=RequestContext(request))
