@@ -20,6 +20,10 @@ urlpatterns = patterns('',
                            views.list_employees,
                            name="business_list_employees"),
                        
+                       url(r'^list_employee/$',
+                           views.list_employee,
+                           name="business_list_employee"),
+
                        # Survey stuff
                        url(r'^manage_survey/$', views.manage_survey,
                            name="business_manage_survey"),

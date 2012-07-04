@@ -17,10 +17,13 @@
 /**
  * URLS
  */
-// Employee URLs.
+// Business managing employee URLs.
 var manage_employees_url = "{% url business_manage_employees %}";
 var delete_employee_url = "{% url business_delete_employee %}";
 var list_employees_url = "{% url business_list_employees %}";
+
+// Employee URLs
+var employee_list_employee_url = "{% url employee_list_employee %}";
 
 // Rating profile URLs.
 var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
@@ -36,6 +39,8 @@ var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
 
 //Business Analytics URL
 var get_analytics_url ="{% url get_analytics %}"
+var business_list_employee_url = "{% url business_list_employee %}"
+
 
 </script>
   {% block scripts %}

@@ -117,6 +117,33 @@ def list_employees(request):
                                    cls=EmployeeEncoder),
                         mimetype='application/json')
 
+# A view which takes an employee id through get, checks if the requesting business has the authority
+# to view the specific employees stats and returns the data.
+# On errors, returns an error message
+@business_view
+def list_employee(request):
+    if request.method == 'GET':
+        profile = request.user.businessprofile
+        error = ""
+        if "employee" in request.GET:
+            emp_id = request.GET['employee']
+            
+            try:
+                employee = models.EmployeeProfile.objects.get(pk=emp_id)
+                if employee.business == profile:
+                    return HttpResponse(json.dumps({'employee':employee},
+                                                   cls=EmployeeEncoder),
+                                        mimetype='application/json')
+                else:
+                    error ="You are not authorized to see the statistics of that employee."
+                    return HttpResponse({'error':error})
+
+            except EmployeeProfile.DoesNotExist:
+                error = "Employee with id "+emp_id+" does not exist"
+                return HttpResponse({'error':error})
+    else:
+        return HttpResponse({'foo':"FOOO!"})
+
 # List the employees for a business
 def _list_employees(businessID):
     business_profile = BusinessProfile.objects.get(id=businessID)
@@ -373,11 +400,24 @@ def new_get_analytics(request):
       
     """
     
-    profile = request.user.businessprofile
+    
     
     if request.method == 'GET':
+        profile = request.user.businessprofile
         
+    # List of valid dimensions for rating
+    dimensions = list(rating_profile.rateddimension_set.all())
 
+    return_data = {}
+    return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
+    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
+    return_data['ratings'] = all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
+    return_data['averages'] = {}
+    for dim in dimensions:
+        rating_vals = []
+
+        ratings = profile.rating_set.filter(dimension=dim)
+        return_data['averages'][dim.title] = sum([r.rating_value for r in ratings])/float(len(ratings)) if len(ratings) > 0 else 0
 
 @csrf_protect
 @business_view

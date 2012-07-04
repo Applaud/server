@@ -70,6 +70,17 @@ def employee_stats(request):
     return HttpResponse(json.dumps({'data':return_data}),
                         mimetype='application/json')
 
+@employee_view
+def list_employee(request):
+    """This method is borrowed heavily from the list_employee method in business_view
+    """
+    if request.method == 'GET':
+        employee = request.user.employeeprofile
+        return HttpResponse(json.dumps({'employee':employee},
+                                       cls=views.EmployeeEncoder),
+                            mimetype='application/json')       
+    else:
+        return HttpResponse({'foo':"FOOO!"})
 
 def _profile_picture(em_profile, thumb=True):
     '''
