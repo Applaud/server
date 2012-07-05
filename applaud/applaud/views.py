@@ -13,7 +13,8 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
-from employee_views import _profile_picture
+import employee_views
+import business_views
 from registration import forms as registration_forms
 import settings
 import datetime
@@ -40,15 +41,21 @@ def index(request):
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
 	if isinstance(o, models.RatingProfile):
-            dim_list = [{'title':d.title,
-                         'active':d.is_active,
-                         'id':d.id} for d in o.rateddimension_set.all()]
-            
+            dim_enc = RatedDimensionEncoder()
 	    res = {'title':o.title,
-                   'dimensions':dim_list,
+                   'dimensions':[dim_enc.default(dim) for dim in o.rateddimension_set.all()],
                    'business_id':o.business.id,
                    'id':o.id }
 	    return res
+	else:
+	    return json.JSONEncoder.default(self, o)
+
+class RatedDimensionEncoder(json.JSONEncoder):
+    def default(self, o):
+	if isinstance(o, models.RatedDimension):
+            return {'title':o.title,
+                    'active':o.is_active,
+                    'id':o.id}
 	else:
 	    return json.JSONEncoder.default(self, o)
 
@@ -60,9 +67,10 @@ class EmployeeEncoder(json.JSONEncoder):
             dimension_list = []
             for d in dimensions:
                 dimension_list.append( {'title':d.title,
+                                        'active':d.is_active,
                                         'id':d.id} )
 
-            image_url = settings.SERVER_URL+settings.MEDIA_URL+_profile_picture(o)
+            image_url = settings.SERVER_URL+settings.MEDIA_URL+employee_views._profile_picture(o)
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
@@ -75,6 +83,17 @@ class EmployeeEncoder(json.JSONEncoder):
 	    return res
 	else:
 	    return json.JSONEncoder.default(self, o)
+
+# Encodes a UserProfile into JSON format
+class UserProfileEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.UserProfile):
+            return {'first_name':o.user.first_name,
+                    'last_name':o.user.last_name,
+                    'birth':o.date_of_birth.strftime("%d/%m/%Y"),
+                    'id':o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
 
 # Encodes a BusinessProfile into JSON format
 class BusinessProfileEncoder(json.JSONEncoder):
@@ -137,13 +156,29 @@ class RatingEncoder(json.JSONENcoder):
 class NewsFeedItemEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.NewsFeedItem):
+            image_url = '%s%s' % (settings.MEDIA_URL, settings.DEFAULT_PROFILE_IMAGE)
+            if o.image:
+                image_url = o.image.url
             return {'id': o.id,
                     'title': o.title,
                     'subtitle': o.subtitle,
                     'body': o.body,
                     'date': o.date.strftime('%m/%d/%Y'),
                     'business': o.business.business_name,
+                    'image': image_url,
                     'date_edited':o.date_edited.strftime('%m/%d/%Y')}
         else:
             return json.JSONEncoder.default(self, o)
 
+<<<<<<< HEAD
+=======
+class RatingEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Rating):
+            return {'value':o.rating_value,
+                    'user':UserProfileEncoder().default(o.user),
+                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'title':o.title}
+        else:
+            return json.JSONEncoder.default(self, o)
+>>>>>>> ce0c81fce8b2d90131aba2727b6659242887583c

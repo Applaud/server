@@ -29,12 +29,22 @@ strong {
 /************
  * Newsfeed
  */
-.feed input {
-  margin-bottom: 10px; }
-
-/*.nf_delete_button {
-  margin-top: 10px;
-  background-color: #ff6464; }*/
+.feed {
+  padding: 10px;
+  /* The date paragraph. */
+  /* Textareas look better when they match text field inputs. */ }
+  .feed input {
+    margin: 10px auto; }
+  .feed .nf_delete_button {
+    margin-top: 10px;
+    background-color: #ff6464; }
+  .feed p {
+    margin: 5px auto; }
+  .feed textarea {
+    font-family: 'Lucida Grande';
+    font-size: 11px; }
+  .feed .nfimage {
+    float: right; }
 
 .question_optionlist {
   padding-top: 10px; }
@@ -62,3 +72,6 @@ strong {
 .del_emp_button {
   background-color: #ff6464;
   margin-left: 10px; }
+
+
+

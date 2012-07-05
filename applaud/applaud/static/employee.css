@@ -1,2 +1,35 @@
-#employee_links	li	{ list-style-type: none; }
-#employee_links	{ float:left; }
+/************
+ * variables
+ **/
+/************
+ * stats view
+ */
+#employee_welcome p {
+  display: inline; }
+
+#emp_graph {
+  width: 700px;
+  height: 400px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px; }
+  #emp_graph iframe {
+    width: 700px; }
+
+.profilepicture {
+  vertical-align: text-top;
+  width: 128px;
+  height: 128px; }
+
+#emp_profile_picture {
+  display: block;
+  height: 160px; }
+  #emp_profile_picture img {
+    float: left;
+    vertical-align: text-bottom;
+    margin-right: 10px; }
+
+#id_bio {
+  vertical-align: text-top;
+  margin-bottom: 10px; }

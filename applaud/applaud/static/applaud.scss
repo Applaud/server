@@ -57,6 +57,8 @@ $pagefont: 'Arvo', serif;	// most page fonts
 $contentwidth: 800px;		// width of main content div
 $logocolor: rgb(110,155,255);	// color of logo
 $titlecolor: rgb(80,2,120);	// color of sub-section titles
+$browncolor: rgb(44,30,30);	// dark brown color for header/footer
+$lightpink: rgb(255,235,250);	// light color for minor elements
 $footerspacing: 7px;		// padding on footer
 $footerheight: 15px;		// height of footer region
 $mainpadding: 15px;		// padding for main content
@@ -85,7 +87,7 @@ html, body {
 /* very top and bottom caps */
 #header, #footer, #extra-content {
     color:rgb(255,255,255);
-    background-color:rgb(44,30,30);
+    background-color:$browncolor;
 }
 
 #header {
@@ -219,7 +221,7 @@ html, body {
 h1, h3 {
     font-weight:bold;
     text-transform:uppercase;
-    color:rgb(44,30,30);
+    color:$browncolor;
 }
 
 h1 {
@@ -234,4 +236,35 @@ h3 {
 .errorlist li {
     color:rgb(255,0,0);
     padding-bottom:10px;
+}
+
+/** forms that are prominent on the page.
+    potentially the only thing on the page at all. **/
+.centerform {
+    float:left;
+    margin: {
+	left:auto;
+	right:auto;
+    }
+    /* input { */
+    /* 	text-align:right; */
+    /* } */
+    p {
+	text-align:right;
+	display:block;
+	margin: {
+	    top: 3px;
+	    bottom: 3px
+	}
+    }
+    background-color:$lightpink;
+    display:block;
+    max-width:600px;
+    padding:20px;
+}
+
+.login_extra {
+    margin: {
+	top:20px;
+    }
 }

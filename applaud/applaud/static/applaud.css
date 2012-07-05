@@ -185,3 +185,25 @@ h3 {
 .errorlist li {
   color: red;
   padding-bottom: 10px; }
+
+/** forms that are prominent on the page.
+    potentially the only thing on the page at all. **/
+.centerform {
+  float: left;
+  margin-left: auto;
+  margin-right: auto;
+  /* input { */
+  /* 	text-align:right; */
+  /* } */
+  background-color: #ffebfa;
+  display: block;
+  max-width: 600px;
+  padding: 20px; }
+  .centerform p {
+    text-align: right;
+    display: block;
+    margin-top: 3px;
+    margin-bottom: 3px; }
+
+.login_extra {
+  margin-top: 20px; }

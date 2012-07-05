@@ -8,7 +8,12 @@ urlpatterns = patterns('',
                            {'url':'/user/edit_user_profile/'},
                            name="user_welcome"),
 
+<<<<<<< HEAD
                        url(r'^$', views.view_previous_responses,
+=======
+                       url(r'^$', 
+                           views.view_previous_responses,
+>>>>>>> ce0c81fce8b2d90131aba2727b6659242887583c
                            name="user_home"),
                        )
 

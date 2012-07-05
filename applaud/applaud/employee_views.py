@@ -10,6 +10,7 @@ import json
 import settings
 import sys
 from applaud.models import EmployeeProfile
+import views
 
 # 'employee_view' decorator.
 def employee_view(view):
@@ -46,36 +47,36 @@ def employee_stats(request):
     employee = request.user
     profile = employee.employeeprofile
     rating_profile = profile.rating_profile
-    ratings = profile.rating_set
 
     # List of valid dimensions for rating
     dimensions = list(rating_profile.rateddimension_set.all())
 
-    success_chart = []
-    axis = ['dimension', 'poor', 'fair', 'good', 'excellent', 'glorious']
-    success_chart.append(axis)
-    for i in range(len(dimensions)):
-        row = [ dimensions[i].title ]
-        rating_vals = []
+    return_data = {}
+    return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
+    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
 
-        # Count how many ratings we have of a particular value for each dimension
-        for j in range(5):
-            rating_vals.append(len(ratings.filter(title=dimensions[i].title,
-                                                  rating_value=j+1)))
-        row.extend(rating_vals)
-        success_chart.append(row)
+    encoded_employee = views.EmployeeEncoder().default(profile)
+    encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
+    return_data['employees'] = [encoded_employee]
+    
+    if request.method == 'GET':
+        # Return string for rendering in google charts
+        return render_to_response('employee_stats.html',
+                                  {'employee':employee,
+                                   'image':_profile_picture(profile)},
+                                  context_instance=RequestContext(request))
 
-    # Return string for rendering in google charts
-    return render_to_response('employee_stats.html',
-                              {'chartdata':json.dumps( success_chart ),
-                               'employee':employee,
-                               'image':_profile_picture(profile)},
-                              context_instance=RequestContext(request))
+    # Pure JSON, for POST
+    return HttpResponse(json.dumps({'data':return_data}),
+                        mimetype='application/json')
 
-def _profile_picture(em_profile):
+
+def _profile_picture(em_profile, thumb=True):
     '''
     Returns the path to the profile picture for the given employee.
     Gives the default profile picture if no specific one exists.
+
+    thumb = True/False (whether or not to return a thumbnail version)
     '''
     employee = em_profile.user
 
@@ -87,6 +88,8 @@ def _profile_picture(em_profile):
                                employee.last_name,
                                em_profile.id,
                                em_profile.profile_picture.name.split('.')[-1])
+    if thumb:
+        imagename = 'thumb_'+imagename
 
     # Does this file exist?
     image_url = "%s/%s"%(imagepath,imagename)
@@ -110,6 +113,15 @@ def edit_profile(request):
             # imagename = employeefn_employeeln.employeeid.fileext
             # imagedir = MEDIA_ROOT/businessname.businessid
             if 'profile_picture' in request.FILES:
+                # First off, make sure it's a actually an image, and that
+                # it's a filetype we will accept.
+                try:
+                    image = Image.open(request.FILES['profile_picture'])
+                except IOError:
+                    # For now, we'll just ignore bad images.
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
+                if not image.format in ['PNG', 'JPEG', 'BMP']:
+                    return HttpResponseRedirect(reverse('employee_profile_success'))
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
                 imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
                                       profile.business.user.username.replace(" ","_"),
@@ -134,7 +146,8 @@ def edit_profile(request):
     else:
         form = registration_forms.EmployeeProfileForm(instance=profile)
     return render_to_response('employee_profile.html',
-                              {'form':form},
+                              {'form':form,
+                               'image':_profile_picture(profile)},
                               context_instance=RequestContext(request))
 
 @employee_view
@@ -144,3 +157,5 @@ def welcome(request):
     profile = request.user.employeeprofile
     return render_to_response("employee_welcome.html",
                               {"employee":profile})
+
+

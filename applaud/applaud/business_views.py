@@ -20,10 +20,14 @@ import urllib2
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension
 from applaud import forms, models
 from registration import forms as registration_forms
-from views import SurveyEncoder, EmployeeEncoder, RatingProfileEncoder, QuestionEncoder, NewsFeedItemEncoder
+import views
 import re
 import csv
-
+import os
+import settings
+import Image
+import StringIO
+import hashlib
 
 # 'business_view' decorator.
 def business_view(view):
@@ -114,7 +118,7 @@ def manage_employees(request):
 def list_employees(request):
     return HttpResponse(json.dumps({'employee_list':
                                         _list_employees(request.user.businessprofile.id)},
-                                   cls=EmployeeEncoder),
+                                   cls=views.EmployeeEncoder),
                         mimetype='application/json')
 
 # List the employees for a business
@@ -211,14 +215,14 @@ def manage_ratingprofiles(request):
 
         
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(request.user.businessprofile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 @business_view
 def list_rating_profiles(request):
     profile = request.user.businessprofile
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 # List the rating profiles for a business
@@ -258,7 +262,7 @@ def new_ratingprofile(request):
         i += 1
 
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
-                                   cls=RatingProfileEncoder),
+                                   cls=views.RatingProfileEncoder),
                         mimetype='application/json')
 
 # Landing page for editing and creating surveys.
@@ -323,7 +327,7 @@ def manage_survey(request):
         # We're getting data for this business' survey.
         else:
             return HttpResponse(json.dumps({'survey':survey},
-                                           cls=SurveyEncoder),
+                                           cls=views.SurveyEncoder),
                                 mimetype='application/json')
 
 # A function to recieve a comma-separated email list, strip them
@@ -349,60 +353,17 @@ def business_welcome(request):
 def business_home(request):
     return render_to_response('business.html')
 
-# Checking analytics.
-@business_view
-def analytics(request):
-    profile = request.user.businessprofile
 
-    # For each employee, get all their ratings and gather them into a dictionary.
-    employees = []
-    for employee in list(profile.employeeprofile_set.all()):
-        employee_dict = {}
-        ratings = {}
-        employee_dict['name'] = '%s %s' % (employee.user.first_name, employee.user.last_name)
-
-        # Make sure we have a dictionary entry for each dimension
-        for dimension in employee.rating_profile.rateddimension_set.all(): 
-            ratings[dimension.title] = [d.rating_value for d in dimension.rating_set.filter(employee=employee)]
-
-        # Calculate the average of that list or each dimension
-        for rating in ratings.keys():
-            ratings[rating] = 'N/A' if len(ratings[rating]) == 0 else sum(ratings[rating])/len(ratings[rating])
-        employee_dict['ratings'] = ratings
-        employees.append(employee_dict)
-
-    # Get all the surveys for this business.
-    survey_dict = {}
-    if len(profile.survey_set.all()) > 0:
-        survey = profile.survey_set.all()[0] # Just in case we've got more than one
-        survey_dict = {'title': survey.title,
-                       'description': survey.description,
-                       'questions': []}
-        # Gather all the question responses in a dict.
-        for question in list(survey.question_set.all()):
-            question_dict = {'label': question.label,
-                             'responses': [],
-                             'active': question.active}
-            for response in question.questionresponse_set.all():
-                question_dict['responses'].append(response.response)
-            survey_dict['questions'].append(question_dict)
-
-    # Get all the general feedback.
-    feedback = models.GeneralFeedback.objects.filter(business=profile)
-    return render_to_response('business_analytics.html',
-                              {'employees': employees,
-                               'survey': survey_dict,
-                               'feedback': feedback,
-                               'business': profile.user.businessprofile},
-                             context_instance=RequestContext(request))
 @csrf_protect
 @business_view
-def business_analytics(request):
+def analytics(request):
     """To display various statistics for a business
     """
     profile = request.user.businessprofile
-    return render_to_response('business_analytics_test.html',
-                              {'business':profile},
+    employee_list = profile.employeeprofile_set.all()
+    return render_to_response('business_analytics.html',
+                              {'business':profile,
+                               'employee_list':employee_list},
                               context_instance=RequestContext(request))
 @csrf_protect
 @business_view
@@ -413,43 +374,54 @@ def get_analytics(request):
         'rating_categories': }
     """
     profile = request.user.businessprofile
-    print "Seeing something"
     
     if request.method == 'GET' or request.method=='POST':
         data = json.loads(request.POST['data'])
-
-        print "Employee ids: "+str(data['employee_ids'])
-        print "Rating categories: "+str(data['rating_categories'])
-
-        # If more than one category
-        # include type(data['rating_categories'])
+        category_list = data['rating_categories']
+       
+        # If no employees are passed in, select all employees
         if len(data['employee_ids'])==0:
+            print "employee ids was empty, now setting it to all"
             employee_ids = [ employee.id for employee in profile.employeeprofile_set.all() ]
         else:
+        # Otherwise, use exactly the employees passed in    
             employee_ids = data['employee_ids']
         
-        category_list = data['rating_categories']
+        print "Employee ids are"+str(employee_ids)
+        # Are there multiple rating profiles amongst the selected employees?
+        # If there are, only display information on 'Quality'
+        if _is_multiple_rating_profiles(employee_ids):
+            print "in multiple rating profiles"
+            chart_data = _get_only_quality_chart_data(employee_ids)
         
-        if len(data['rating_categories']) > 0:
-            first_row=["category"]
-            for category in data['rating_categories']:
-                dimension = models.RatedDimension.objects.get(pk=category)
-                first_row.append(dimension.title)
-                
-            chart_data = [first_row]
-            for employee in employee_ids:
-                chart_data.append(_get_average_employee_analytics(employee, category_list))
         else:
-        # If only one category
-            category = data['rating_categories'][0]
-            first_row=["rating","poor","fair","good","excellent","glorious"]
-            chart_data = [first_row]
-            for employee in employee_ids:
-                chart_data.append(_get_employee_analytics(employee,category))
+            if len(category_list)==0:
+                an_employee = models.EmployeeProfile.objects.get(id=employee_ids[0])
+                # There is only one rating profile, set category_list to all RatedDimensions in it
+                category_list = [rating.id for rating in an_employee.rating_profile.rateddimension_set.all()]    
 
+            # category_list has at least one category
+            if len(category_list) > 1:
+                first_row=["category"]
+                for category in category_list:
+                    dimension = models.RatedDimension.objects.get(pk=category)
+                    first_row.append(dimension.title)
+                
+                chart_data = [first_row]
+                for employee in employee_ids:
+                        chart_data.append(_get_average_employee_analytics(employee, category_list))
+        
+            else:
+                # If only one category
+                category = category_list[0]
+                first_row=["rating","poor","fair","good","excellent","glorious"]
+                chart_data = [first_row]
+                for employee in employee_ids:
+                    chart_data.append(_get_employee_analytics(employee,category))
+        
+            
         to_chart = _make_google_charts_data(chart_data)
-        print "About to print array"
-        print to_chart
+    
         return HttpResponse(json.dumps(to_chart),
                             mimetype="application/json")
 
@@ -471,9 +443,6 @@ def _get_average_employee_analytics(employee_id, category_ids):
     ratings = []
     profile = employee.rating_profile
  
-    if len(category_ids) == 0 or not category_ids:
-        category_ids = [rating.id for rating in employee.rating_profile.rateddimension_set.all()]
-   
     for category in category_ids:
          dimension = models.RatedDimension.objects.get(pk=category)
          rel_ratings = [rating.rating_value for rating in dimension.rating_set.filter(employee=employee)]
@@ -529,6 +498,31 @@ def average(the_list):
     else:
         return float(sum(the_list))/len(the_list)
 
+#Determines if there is more than one rating profile amongst a set of employees
+def _is_multiple_rating_profiles(employee_ids):
+    rating_profiles=[]
+    for e in employee_ids:
+        try:
+            employee = models.EmployeeProfile.objects.get(id=e)
+            rating_profiles.append(employee.rating_profile)
+        except EmployeeProfile.DoesNotExist:
+            pass
+    if len(set(rating_profiles))==1:
+        return False
+
+    return True
+        
+# A function to assemble chart data for the single dimension quality for a list
+# of employees with disjoint rating_profiles
+def _get_only_quality_chart_data(employee_ids):
+    first_row=["rating","poor","fair","good","excellent","glorious"]
+    chart_data = [first_row]
+    for employee in employee_ids:
+        category = employee.rating_profile.rateddimension_set.filter(title="Quality").id
+        chart_data.append(_get_employee_analytics(employee,category))
+        
+    return chart_data
+
 ################################################
 # Everything newsfeed related for the business #
 ################################################
@@ -542,37 +536,103 @@ def manage_newsfeed(request):
         # Business is authenticated
         return render_to_response('manage_newsfeed.html',
                                   {'business':profile,
-                                   'list':newsfeed},
+                                   'feeds':newsfeed},
                                   context_instance=RequestContext(request))
     # Otherwise, it's a POST.
+    print request.POST.keys()
+    print request.FILES.keys()
     profile = request.user.businessprofile
-    print request.POST
-    feeds = json.loads(request.POST['feeds'])
-    for feed in feeds:
-        # It's an old feed, just updated.
-        print feed['should_delete']
-        if int(feed['id']):
-            newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
-            if feed['should_delete'] == 'true':
-                print 'WOO!'
-                newsfeed.delete()
+    i = 0
+    while 'title_%d' % i in request.POST:
+        feed_id = request.POST['feed_id_%d' % i]
+        print feed_id
+        if int(feed_id): # it's an old feed, updated.
+            feed = models.NewsFeedItem.objects.get(id=feed_id)
+            if request.POST['should_delete_%d' % i] == 'true':
+                feed.delete()
             else:
-                newsfeed.title = feed['title']
-                newsfeed.subtitle = feed['subtitle']
-                newsfeed.body = feed['body']
-                newsfeed.date_edited = datetime.utcnow().replace(tzinfo=utc)
-                newsfeed.save()
-        # It's a new feed item.
-        else:
-            newsfeed = models.NewsFeedItem(title=feed['title'],
-                                           subtitle=feed['subtitle'],
-                                           body=feed['body'],
-                                           business=profile,
-                                           date=datetime.now().replace(tzinfo=utc),
-                                           date_edited=datetime.now().replace(tzinfo=utc))
-            if feed['should_delete'] != 'true':
-                newsfeed.save()
-    return HttpResponse('')
+                feed.title = request.POST['title_%d' % i]
+                feed.body = request.POST['body_%d' % i]
+                feed.subtitle = request.POST['subtitle_%d' % i]
+                feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+                print i
+                if 'nf_image_%d' % i in request.FILES:
+                    try:
+                        save_image(feed, profile, request.FILES['nf_image_%d' % i])
+                    except IOError:
+                        print 'balls'
+                feed.save()
+        else: # feed id is 0, must be new!
+            feed = models.NewsFeedItem(title=request.POST['title_%d' % i],
+                                       body=request.POST['body_%d' % i],
+                                       subtitle=request.POST['subtitle_%d' % i],
+                                       business=profile,
+                                       date=datetime.utcnow().replace(tzinfo=utc),
+                                       date_edited=datetime.utcnow().replace(tzinfo=utc))
+            
+            feed.save()
+            if 'nf_image_%d' % i in request.FILES:
+                    try:
+                        save_image(feed, profile, request.FILES['nf_image_%d' % i])
+                    except IOError:
+                        print 'balls'
+            if request.POST['should_delete_%d' % i] == 'true':
+                print 'haha, nope'
+                feed.delete()
+        i += 1
+        # It's an old feed, just updated.
+        # if int(feed['id']):
+        #     newsfeed = models.NewsFeedItem.objects.get(id=int(feed['id']))
+        #     if feed['should_delete'] == 'true':
+        #         print 'WOO!'
+        #         newsfeed.delete()
+        #     else:
+        #         newsfeed.title = feed['title']
+        #         newsfeed.subtitle = feed['subtitle']
+        #         newsfeed.body = feed['body']
+        #         newsfeed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+        #         newsfeed.save()
+        # # It's a new feed item.
+        # else:
+        #     newsfeed = models.NewsFeedItem(title=feed['title'],
+        #                                    subtitle=feed['subtitle'],
+        #                                    body=feed['body'],
+        #                                    business=profile,
+        #                                    date=datetime.utcnow().replace(tzinfo=utc),
+        #                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
+        #     if feed['should_delete'] != 'true':
+        #         newsfeed.save()
+        # # Check for images.
+        # print 'Holy shit!'
+        # print request.FILES.keys()
+        # print 'Yeah!'
+        # if 'nf_image' in request.FILES:
+        #     # First off, make sure it's a actually an image, and that
+        #     # it's a filetype we will accept.
+        #     try:
+        #         image = Image.open(request.FILES['nf_image'])
+        #     except IOError:
+        #         # For now, we'll just ignore bad images.
+        #         continue
+        #     if not image.format in ['PNG', 'JPEG', 'JPG', 'BMP']:
+        #         continue
+        #     fileext = image.format
+        #     # imagedir = '%s%s.%d' % (settings.MEDIA_ROOT,
+        #     #                         profile.business_name.replace(' ', '-'),
+        #     #                         profile.id)
+        #     # if not os.path.exists(imagedir):
+        #     #     os.makedirs(imagedir)
+        #     imagename = '%s_%s.%s' % (newsfeed.title[:15],
+        #                               newsfeed.id,
+        #                               fileext)
+        #     print imagename
+        #     # imagepath = '%s/%s' % (imagedir, imagename)
+        #     # with open(imagepath, 'wb+') as destination:
+        #     #     for chunk in request.FILES['nf_image']:
+        #     #         destination.write(chunk)
+        #     newsfeed.image.save(imagename, File(request.FILES['nf_image']))
+        #     newsfeed.save()
+    return HttpResponseRedirect('/business/')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect
@@ -581,5 +641,34 @@ def newsfeed_list(request):
     profile = request.user.businessprofile
 
     feed = json.dumps(list(profile.newsfeeditem_set.all()),
-                                   cls=NewsFeedItemEncoder)
+                                   cls=views.NewsFeedItemEncoder)
     return HttpResponse(feed, mimetype="application/json")
+
+# Blatantly stolen from a blog. Thanks!
+def scale_dimensions(width, height, longest_side):
+    ratio = 1.0
+    if width > height:
+        if width > longest_side:
+            ratio = longest_side * 1.0/width
+    elif height > width:
+        ratio = longest_side * 1.0/height
+    return (int(width*ratio), int(height*ratio))
+
+# Also stolen! This makes saving an image to MEDIA_ROOT a bit more sensible.
+def save_image(feed, profile, tmp_image):
+    feed_image = Image.open(tmp_image)
+    (width, height) = feed_image.size
+    (width, height) = scale_dimensions(width, height, 200)
+    feed_image = feed_image.resize((width, height))
+    imagefile = StringIO.StringIO()
+    feed_image.save(imagefile, 'JPEG')
+    filename = '%s_%s_%s_%s.jpg' % (profile.id,
+                                    profile.business_name,
+                                    feed.title[:10],
+                                    hashlib.md5(imagefile.getvalue()).hexdigest())
+    # save it to disk so we have a real file to work with
+    imagefile = open(os.path.join('/tmp', filename), 'w')
+    feed_image.save(imagefile,'JPEG')
+    imagefile = open(os.path.join('/tmp',filename), 'r')
+    content = File(imagefile)
+    feed.image.save(filename, content)

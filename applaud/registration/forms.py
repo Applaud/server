@@ -6,6 +6,7 @@ Forms and validation code for user registration.
 
 from django.contrib.auth.models import User
 from django import forms
+from django.forms.fields import ImageField
 from django.utils.translation import ugettext_lazy as _
 from applaud.models import EmployeeProfile, BusinessProfile, UserProfile
 from PIL import Image
@@ -175,7 +176,7 @@ class EmployeeProfileForm(forms.ModelForm):
 
     class Meta:
         model = EmployeeProfile
-        fields = ('bio','profile_picture',)
+        fields = ('bio',)
 
 
 class UserRegistrationForm(RegistrationForm):

@@ -181,3 +181,20 @@ h1 {
 
 h3 {
   font-size: 16pt; }
+
+.errorlist li {
+  color: red;
+  padding-bottom: 10px; }
+
+/** forms that are prominent on the page.
+    potentially the only thing on the page at all. **/
+.centerform {
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #ffebfa;
+  display: block;
+  max-width: 600px;
+  padding: 20px; }
+
+.login_extra {
+  margin-top: 20px; }

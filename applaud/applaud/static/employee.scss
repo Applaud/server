@@ -1,0 +1,51 @@
+/************
+ * variables
+ **/
+$contentwidth: 800px;		// width of main content div
+$graphwidth : 700px;
+$graphheight : 400px;
+
+/************
+ * stats view
+ */
+#employee_welcome {
+    p {
+	display:inline;
+    }
+}
+
+#emp_graph {
+    width:$graphwidth;
+    height:$graphheight;
+    overflow:hidden;
+    iframe {
+	width:$graphwidth;
+    }
+    margin: {
+	left:auto;
+	right:auto;
+	bottom:30px;
+    }
+}
+
+.profilepicture {
+    vertical-align:text-top;
+    width:128px;
+    height:128px;
+}
+
+#emp_profile_picture {
+    display:block;
+    height:160px;
+
+    img {
+	float:left;
+	vertical-align:text-bottom;
+	margin-right:10px;
+    }
+}
+
+#id_bio {
+    vertical-align:text-top;
+    margin-bottom:10px;
+}

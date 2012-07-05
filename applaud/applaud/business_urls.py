@@ -42,12 +42,12 @@ urlpatterns = patterns('',
                            name="business_home"),
                        
                        #analytics
-                       url(r'^business_analytics',
-                           views.business_analytics,
-                           name="business_analytics"),
+                       url(r'^analytics',
+                           views.analytics,
+                           name="analytics"),
                        url(r'^get_analytics/',
                            views.get_analytics,
-                           name="business_get_analytics"),
+                           name="get_analytics"),
                           
                        # Everything related to newsfeed
                        url(r'^manage_newsfeed/$',
@@ -57,6 +57,4 @@ urlpatterns = patterns('',
                            views.newsfeed_list,
                            name='business_newsfeed_list'),
                        
-                       # Checking analytics.
-                       url(r'^analytics/$', views.analytics, name="analytics"),
                        )

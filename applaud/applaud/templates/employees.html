@@ -2,8 +2,15 @@
 {% block title %}Welcome to Applaud!{% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{{ STATIC_URL }}manage_employees.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}manage_ratingprofiles.js"></script>
+{{ block.super }}
+<script type="text/javascript">
+/**
+ * This is executed after the page has fully loaded.
+ */
+$(document).ready(function() {
+    apatapa.business.ratingprofiles.initRatingProfilesPage();
+    });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -15,17 +22,6 @@
 </div>
 
 <div id="employees_listing">
-<!--   {% if employee_list|length > 0 %} -->
-<!--   <ul> -->
-<!--     {% for employee in employee_list %} -->
-<!--     <li>{{employee.user.first_name}} {{ employee.user.last_name }} -->
-<!--       <form action="/business/delete_employee/" method="post"> -->
-<!--       {% csrf_token %} -->
-<!--       <input type="submit" id="del_emp_{{employee.id}}" class="del_emp_button" value="Delete" /> -->
-<!--       </form> -->
-<!-- {% endfor %} -->
-<!--   </ul> -->
-<!-- {% endif %} -->
 </div>
 
 <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
