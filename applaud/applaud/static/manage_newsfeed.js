@@ -134,6 +134,8 @@ if ( !apatapa.newsfeed) {
 	
 	var body_text = $('<textarea></textarea>');
 	body_text.prop({'value': body,
+			'cols': '40',
+			'rows': '7',
 			'name': 'body',
 			'id': 'body'});
 	
@@ -153,7 +155,8 @@ if ( !apatapa.newsfeed) {
 					  .append('Subtitle: ')
 					  .append(subtitle_text)
 					  .append('<br />')
-					  .append('Body: ')
+					  .append('<p>Body:</p>')
+					  .append('<br />')
 					  .append(body_text)
 					  .append('<br />')
 					  .append(delete_button));

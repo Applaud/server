@@ -1,11 +1,17 @@
-manageSurvey = {};
+if ( !apatapa.survey ) {
+    apatapa.survey = {};
+}
 
-(function (manageSurvey) {
+(function ( _ns ) {
     var questionTypes = {"CG":"checkbox group",
 			 "RG":"radio group",
 			 "TA":"textarea",
 			 "TF":"textfield"};
-
+    
+    // To indicate that a question is inactive right now.
+    var inactive_color = 'rgb(200, 200, 200)';
+    
+    var question_div_bg_color = 'rgb(255, 235, 250)';
 
     var registerClickHandlers = function () {
 	
@@ -15,92 +21,34 @@ manageSurvey = {};
 	    questionOptions[index]=$(this).children(".question_option").length;
 	});
 	
-	$(".question_div").click(function() {
-	    var qnum = $(this).prop('id').split('_')[1];
-	    console.log(qnum);
-	    addOption(qnum);
-	    
-	});
-	
 	$('.deletebutton').click( function () {
 	    console.log('deleting');
-	    $(this).parent('.question').children('.should_delete').val('true');
-	    $(this).parent('.question').hide(1000);
+	    var parent = $(this).parent('.question');
+	    apatapa.showAlert('Are you sure you want to delete?',
+			      'This will this question\'s data forever!',
+			      function () {
+				  parent.children('.should_delete').val('true');
+				  parent.hide(1000);
+			      });
 	});
 	
 	$('.toggleactivebutton').click( function () {
 	    if($(this).parent('.question').children('.is_active').val() === 'true') {
 		$(this).parent('.question').children('.is_active').val('false');
 		$(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
+		$(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
+		console.log('made inactive');
 	    }
 	    else {
 		$(this).parent('.question').children('.is_active').val('true');
 		$(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
+		$(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		console.log('made active');
 	    }
 	});
 	
-	$("#addquestion_button").click(function(event) {
-	    event.preventDefault();
-	    // A new question -- ID is 0.
-	    addQuestion('', 'CG', [], true, 0);
-	});
-	
-	$('#submit_button').click( function(event) {
-	    event.preventDefault();
-	    var questions = [];
-	    // Get each question out of the DOM and put its info into a dictionary.
-	    // This is nasty! But we need some form of non-local exit, so a try/catch
-	    // block will have to do for now.
-	    try {
-		$('.question').each( function(index, element) {
-		    var question_id = $(this).children('.question_id').val();
-		    var question_label = escapeHTML( $(this).children('#question_'+index).val() );
-		    var shouldDelete = $(this).children('.should_delete').val();
-		    var question_active = $(this).children('.is_active').val();
-		    var question_options = [];
-		    $(this).children('.question_option').children('.option_field').each( function(ind, ele) {
-			question_options.push(escapeHTML( $(this).val()) );
-		    });
-		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
-		    // If it's a check or radio, and we don't have options.
-		    if((question_type === "CG" || question_type === "RG") &&
-		       question_options.length === 0) {
-			// Complain about it, and don't let the user create the survey.
-			alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
-			throw "no options";
-		    }
-		    var question_dict = {'question_id': question_id,
-					 'question_label': question_label,
-					 'question_active': question_active,
-					 'question_options': question_options,
-					 'should_delete': shouldDelete,
-					 'question_type': question_type};
-		    console.log(question_dict);
-		    questions.push(question_dict);
-		});
-	    }
-	    catch( err ) {
-		if(err === "no options") {
-		    console.log('caught the exception');
-		    return;
-		}
-	    }
-	    console.log(questions);
-	    // Send it all off.
-	    $.ajax({url: manage_survey_url,
-		    data: {'survey_id': $('#survey_id').val(),
-			   'survey_title': escapeHTML( $('#survey_title').val() ),
-			   'survey_description': escapeHTML( $('#survey_description').val() ),
-			   'questions': JSON.stringify(questions),
-			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
-			  },
-		    type: 'POST',
-		    error: function() { alert('Something went wrong.'); },
-		    success: function () { alert('Great success!');
-					   window.location.replace('/business/');
-					 }
-		   });
-	});
+
+
     }
 
     /*
@@ -112,6 +60,16 @@ manageSurvey = {};
 	$('#survey_title').val( survey.title );
 	$('#survey_description').val( survey['description'] );
 	
+	$("#addquestion_button").click(function(event) {
+	    event.preventDefault();
+	    // A new question -- ID is 0.
+	    addQuestion('', 'CG', [], true, 0, true);
+	    registerClickHandlers();
+	});
+	
+	
+	
+	
 	for ( q in survey.questions ) {
 	    var question = survey.questions[q];
 	    
@@ -119,9 +77,74 @@ manageSurvey = {};
 			 question.type,
 			 question.options,
 			 question.active,
-			 question.id );
+			 question.id,
+			 false);
 	}
 	registerClickHandlers();
+	$('#submit_button').click( function(event) {
+	    event.preventDefault();
+	    var title = apatapa.util.escapeHTML( $('#survey_title').val() );
+	    var description = apatapa.util.escapeHTML( $('#survey_description').val() )
+	    if( title === "" || description === "") {
+		apatapa.showAlert("You're missing something!",
+				  'You should fix that.',
+				  function () {/* Doesn't really need to do much. */ });
+		return;
+	    }
+	    console.log('returns are for noobs');
+	    var questions = [];
+	    // Get each question out of the DOM and put its info into a dictionary.
+	    // This is nasty! But we need some form of non-local exit, so a try/catch
+	    // block will have to do for now.
+	    try {
+		$('.question').each( function(index, element) {
+		    var question_id = $(this).children('.question_id').val();
+		    var question_label = apatapa.util.escapeHTML( $(this).children('#question_'+index).val() );
+		    var shouldDelete = $(this).children('.should_delete').val();
+		    var question_active = $(this).children('.is_active').val();
+		    var question_options = [];
+		    $(this).children('.question_option').find('.option_field').each( function(ind, ele) {
+			question_options.push(apatapa.util.escapeHTML( $(this).val()) );
+		    });
+		    var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
+		    // If it's a check or radio, and we don't have options.
+		    if((question_type === "CG" || question_type === "RG") &&
+		       question_options.length === 0 &&
+		       shouldDelete === 'false') {
+			// Complain about it, and don't let the user create the survey.
+			alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
+			throw "no options";
+		    }
+		    var question_dict = {'question_id': question_id,
+					 'question_label': question_label,
+					 'question_active': question_active,
+					 'question_options': question_options,
+					 'should_delete': shouldDelete,
+					 'question_type': question_type};
+		    questions.push(question_dict);
+		});
+	    }
+	    catch( err ) {
+		if(err === "no options") {
+		    console.log('caught the exception');
+		    return;
+		}
+	    }
+	    // Send it all off.
+	    $.ajax({url: manage_survey_url,
+		    data: {'survey_id': $('#survey_id').val(),
+			   'survey_title': title,
+			   'survey_description': description,
+			   'questions': JSON.stringify(questions),
+			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+			  },
+		    type: 'POST',
+		    error: function() { alert('Something went wrong.'); },
+		    success: function () { alert('Great success!');
+					   window.location.replace('/business/');
+					 }
+		   });
+	});
     }
 
     // Keeps track of # of questions
@@ -144,17 +167,23 @@ manageSurvey = {};
 
 
 
-    function addQuestion( label, type, options, active, id ) {
+    function addQuestion( label, type, options, active, id, animated ) {
 	//Objects to instantiate:
 	//1.Question label
 	//2.Question type
 	//3.Option field (e.g. first entry of a radio button)
 	//4.Add option button
-
+	console.log('Adding question: ' + label + ' animated: ' + animated);
 	var questionDiv = $("<div></div>");
-	questionDiv.prop({'id':"question_"+i+"_div"});
-	questionDiv.prop({'class':"question"});
+	questionDiv.prop({'id':"question_"+i+"_div",
+			  'class':"question"});
+	if( animated ) {
+	    questionDiv.hide();
+	}
+	
 	$("#submit_button").before(questionDiv);
+	$('#submit_button').button();
+	$('#addquestion_button').button();
 	
 	// If ID is 0, it's a new question.
 	var questionId = $('<input />');
@@ -209,7 +238,9 @@ manageSurvey = {};
 	optionDiv.prop({'id':"question_"+i+"_options",
 			'class':"question_option",
 		       });
-	
+	var optionList = $("<ul></ul>");
+	optionList.addClass("question_optionlist");
+
 	// Render each of the options for the question
 	for ( o in options ) {
 	    var optionLabel = $('<label>Option '+ (parseInt(o) + 1) +'</label>');
@@ -220,20 +251,27 @@ manageSurvey = {};
 			       'class':'option_field',
 			       'value':options[o]});
 	    
-	    optionDiv.append( optionLabel ).append( optionWidget ).append($( "<br />" ));
+	    var optionItem = $('<li></li>');
+	    optionItem.addClass('question_item');
+
+	    optionItem.append( optionLabel ).append( optionWidget );
+	    optionList.append( optionItem );
 	    questionOptions[i]++;
 	}
-	
+
+	optionDiv.append( optionList );
+
 	var questionNumber = i;
 	var addOptionButton = $("<button>Add Option</button>");
 	addOptionButton.prop({'type':"button",
     			      'name':"question_"+i+"_optionbutton",
      			      'id':"question_"+i+"_optionbutton",
 			      'class': 'option_button'});
+	addOptionButton.button();
 	console.log("question number: "+questionNumber);
 	addOptionButton.click(function() {
     	    console.log("i is: "+i);
-            $("#question_"+questionNumber+"_options").append(addOption(questionNumber));
+            addOption(questionNumber, true);
 	});
 	
 	// Add a delete button.
@@ -242,12 +280,14 @@ manageSurvey = {};
 			   'name': 'question_'+i+'_deletebutton',
 			   'id': 'question_'+i+'_deletebutton',
 			   'class': 'deletebutton'});
+	deleteButton.button();
 	
 	var toggleActiveButton = $('<button></button>');
 	toggleActiveButton.prop({'type': 'button',
 				 'name': 'question_'+i+'_toggleactivebutton',
 				 'id': 'question_'+i+'_toggleactivebutton',
 				 'class': 'toggleactivebutton'});
+	toggleActiveButton.button();
 	
 	var isActive = $('<input />');
 	isActive.prop({'type': 'hidden',
@@ -262,6 +302,7 @@ manageSurvey = {};
 	else {
 	    toggleActiveButton.html('Activate Question');
 	    isActive.prop({'value': 'false'});
+	    questionDiv.css('background-color', inactive_color);
 	}
 	
 	questionDiv
@@ -281,6 +322,10 @@ manageSurvey = {};
 	    .append(toggleActiveButton);
 	console.log(i);
 	
+	if( animated ) {
+	    questionDiv.show(700);
+	}
+	
 	// Hide the add option if we're a textfield or textarea.
 	if(type === 'TA' || type === 'TF') {
 	    addOptionButton.hide();
@@ -289,10 +334,10 @@ manageSurvey = {};
     }
 
 
-    function addOption(qindex) {
+    function addOption(qindex, animated) {
 	var questionOptionsDiv = $("#question_"+qindex+"_options");
-	questionOptionsDiv.addClass('question_option');
-	
+	var optionList = questionOptionsDiv.children('.question_optionlist');
+
 	var optionFieldLabel = $("<label>Option "+(questionOptions[qindex]+1)+"</label>");
 	optionFieldLabel.prop({"for":"question_"+qindex+"_option_"+questionOptions[qindex]});
 
@@ -303,8 +348,22 @@ manageSurvey = {};
 			   'id':'question_'+qindex+'_option_'+questionOptions[qindex]} );
 	console.log("qindex is :"+qindex);
 	questionOptions[qindex]++;
-	questionOptionsDiv
+
+	var optionItem = $('<li></li>');
+	optionItem.addClass('question_item');
+	
+	if( animated ) {
+	    optionItem.hide();
+	}
+
+	optionItem
 	    .append(optionFieldLabel)
 	    .append(optionField);
+
+	optionList.append( optionItem );
+	questionOptionsDiv.append( optionList );
+	if( animated ) {
+	    optionItem.show(500);
+	}
     }
-})(manageSurvey);
+})(apatapa.survey);

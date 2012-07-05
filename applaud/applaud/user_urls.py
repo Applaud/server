@@ -8,7 +8,8 @@ urlpatterns = patterns('',
                            {'url':'/user/edit_user_profile/'},
                            name="user_welcome"),
 
-                       url(r'^$', direct_to_template, {'template':'user.html'},
+                       url(r'^$', 
+                           views.view_previous_responses,
                            name="user_home"),
 
                        url(r'^edit_user_profile/$',
