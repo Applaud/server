@@ -17,6 +17,8 @@ var dimensions;
 var cur_employees=[];
 var cur_dimensions=[];
 
+var cur_dim_titles=[];
+
 //The first and last dates of ratings in cur_employees and cur_dimensions
 var first;
 var last;
@@ -90,9 +92,10 @@ function make_chart() {
 	    );
 }
 
-function dateToJS( datestring ) {
+function dateToJS( date ) {
     // This assumes that we are getting dates in the format dd/mm/YYYY
-    var components = datestring.split('/');
+    console.log("date is: "+date);
+    var components = date.split('/');
     return new Date(components[2],components[1],components[0]);
 }
 
@@ -102,12 +105,12 @@ function dateCompare( rating1, rating2 ) {
     return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
 }
 
-function buildTable( dimlist ) {
+function buildTable() {
     
     var the_list = $('<ol></ol>');
     the_list.prop({'id':"dimension_list"});
-    for (d in dimlist) {
-	var dim = dimlist[d];
+    for (d in dimensions) {
+	var dim = dimensions[d];
 	var list_item = $('<li></li>');
 	list_item.prop({'id':'dim_'+dim.title});
 	list_item.text(dim.title);
@@ -129,23 +132,52 @@ function filterRatings( min, max ) {
     
 }
 
-//This function assumes that ratings for a given employee are sorted by date
-function buildDateSlider(dimension_list, employee_list) {
-    for( e in employee_list ){
-	var e_ratings = employee_list[e].ratings;
-	var e_ratings_length = employee_list[e].ratings.length;
+//Builds a list of titles from the current dimensions
+function buildDimensionTitles(){
+    cur_dim_titles = []
+    for ( d in cur_dimensions ){
+	if(cur_dim_titles.indexOf(cur_dimensions[d].title)==-1){
+	    cur_dim_titles.push(cur_dimensions[d].title);
+	}
+    }
+}
+// A function to be called whenever cur_dimensions or cur_employees is changed
+// This will reset the slider, rebuild the rateable dimensions table, and perform
+// any other necessary cleanup necessary
+function refresh(){
+    console.log("refresh getting called");
+    buildDimensionTitles();
+}
+
+function sliderValueToString(sliderValue){
+    // This function will take a value from the slider (an integer from 0-n) and convert this to a date using, the 'first' global
+    // Convert days as an integer to miliseconds
+    var milliSinceFirst =sliderValue*86400000;
+    var firstAsDate = dateToJS(first);
+    var newDate = new Date( firstAsDate.getTime() + milliSinceFirst );
+    return newDate.toDateString();
+}
+
+// This function assumes that ratings for a given employee are sorted by date
+//
+// TODO: The dateSlider should have some way of indicating the current range selected
+// this could be simply a label at every 'step', another box displaying the range,
+// or another implementation
+function buildDateSlider() {
+    for( e in cur_employees ){
+	var e_ratings = cur_employees[e].ratings;
+	var e_ratings_length =  cur_employees[e].ratings.length;
 	var e_first;
 	var e_last;
-	
-	for( dim in e_ratings){
-	    if(e_ratings[dim].title in dimension_list){
-		e_first = e_ratings[dim].date;
+	for( r in e_ratings){
+	    if(cur_dim_titles.indexOf(e_ratings[r].title)!=-1){
+		e_first = e_ratings[r].date;
 		break;
 	    }
 	}
 
 	for( var i = e_ratings_length-1; i>=0; i--){
-	    if(e_ratings[dim].title in dimension_list){
+	    if(cur_dim_titles.indexOf(e_ratings[i].title)!=-1){
 		e_last = e_ratings[i].date;
 		break;
 	    }
@@ -161,6 +193,7 @@ function buildDateSlider(dimension_list, employee_list) {
 	    last = dateToJS(last) > dateToJS(e_last)? last : e_last;
 	}
     }
+    console.log(last+" "+first);
     var range = dateRange(last,first);
     console.log("range :"+range);
     var slider = $('#gt_dateslider');
@@ -168,18 +201,31 @@ function buildDateSlider(dimension_list, employee_list) {
 	            range: true,
 		    min: 0,
 		    max: range,
-		    values:[0,range]});
+		    values:[0,range]
+		  });
 
-    slider.bind( "slidechange", function(event, ui) {
-	filterRatings($(this).slider("values")[0],
-		      $(this).slider("values")[1]);
+    // Setting up various events for the slider
+
+    // TODO: Implement slidervalue to date
+    // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
+    slider.bind( "slide", function(event, ui) {
+	var firstAsString = sliderValueToString($(this).slider("values")[0]);
+	var lastAsString = sliderValueToString($(this).slider("values")[1]);
+	var range_as_text= firstAsString+" - "+lastAsString;
+	$("#dateslider_label").text("Time range: "+range_as_text);
+
+//	filterRatings(
     });
+    
 }
 
 // This computes date range in milliseconds, using Unix epoch between date_1 and date_2
 // It then converts this to days
 var dateRange = function(date_1, date_2){
-     var range = dateToJS(date_1).getTime() - dateToJS(date_2).getTime();
+    console.log("in dateRange");
+    var day1 = dateToJS(date_1);
+    var day2 = dateToJS(date_2);
+    var range = day1.getTime() - day2.getTime();
     // Convert ms to days
     range /= 86400000;
     return range;
@@ -285,10 +331,11 @@ $(document).ready( function() {
 		dimensions = data.data.dimensions;
 		cur_dimensions = dimensions;
 		cur_employees = employees;
+		refresh();
 		make_chart();
 
-//		buildTable(dimensions);
-//		buildDateSlider(dimensions, employees);
+		buildTable();
+		buildDateSlider();
 		
 		var emp_id = employees[0].id;
 		console.log("Employee id is: "+emp_id);
@@ -314,8 +361,9 @@ $(document).ready( function() {
 <div id="graph_table">
     <div id="gt_dims"></div>
     <div id="emp_graph"></div>
-
-    <label for="dateslider">Time range</label>
+    <div id="date_slider_text">
+    </div>
+    <p id="dateslider_label"></p>
     <div id="gt_dateslider" name="dateslider"></div>
 </div>
 <form>
