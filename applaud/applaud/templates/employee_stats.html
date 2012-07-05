@@ -1,89 +1,84 @@
 {% extends "employee.html" %}
 {% block title %}Your Statistics{% endblock %}
 {% block scripts %}
+{{ block.super }}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 google.load("visualization", "1", {packages:["corechart"]});
 
-var chartData;
+/************************************************
+ * Global variables used to construct the chart *
+ ************************************************/
+//Lists retrieved from the ajax call
+var employees;
+var dimensions;
 
-// function drawVisualization( dimList ) {
-//     var chart_list = [];
-//     var row0 = [ 'Dimension' ];
-//     row0 = row0.concat(dimList);
-//     chart_list.push(row0);
+//Lists who actually determine the composition of the chart
+var cur_employees=[];
+var cur_dimensions=[];
 
-//     var row1 = [""];
-//     for ( var i in dimList ) {
-// 	row1.push( chartData.averages[dimList[i]] );
-//     }
-//     chart_list.push( row1 );
+//The first and last dates of ratings in cur_employees and cur_dimensions
+var first;
+var last;
 
-//     console.log(chart_list.length);
-//     console.log(chart_list);
+//The first and last dates of ratings selected on the bar
+var range_start;
+var range_stop;
 
-//     // Create and populate the data table.
-//     var data = google.visualization.arrayToDataTable(
-// 	chart_list
-//     );
-    
-//     // Create and draw the visualization.
-//     new google.visualization.ColumnChart(document.getElementById('emp_graph')).
-// 	draw(data,
-//              {title:"Evaluations by Dimension",
-//               width:700, height:400,
-//               hAxis: {title: "Dimension"},
-//               vAxis: {title: "Average Rating"}}
-// 	    );
-// }
+/*************************
+ * CSS related variables *
+ *************************/
+var selected_background_color = "#bbbbbb";
 
-function drawVisualization(dimList, employeeList) {
+// This function should take a list of dimensions, dimList, a list of employees, employeeList
+// and two variables start & stop which should be datestrings (like in the ajax call)
+// TODO: Include time range in this function
+function make_chart() {
     // This is eventually the data fed into the chart
     var chart_list = [];
     
     // Build the axes
     var row0 = [ 'Dimension' ];
-    row0 = row0.concat(dimList);
+    for( d in cur_dimensions){
+	row0.push(cur_dimensions[d].title)
+    }
+    
     chart_list.push(row0);
 
     // For each employee, calculate avg rating for each dimension
-    for ( e in employeeList ) {
+    for ( e in cur_employees ) {
 	var avgRatings = [];
 	var totalRatings = {};
-	var employee = employeeList[e];
+	var employee = cur_employees[e];
 
 	// Sum up totals for each dimension
 	for ( r in employee.ratings ) {
-	    if (! totalRatings[employee.ratings[r].title] )
+	    if (! totalRatings[employee.ratings[r].title] ){
 		totalRatings[employee.ratings[r].title] = [];
+	    }
 	    totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
 	}
-
+	console.log(totalRatings);
 	// Compute averages
-	for ( i in dimList ) {
-	    var dimName = dimList[i];
+	for ( i in cur_dimensions ) {
+	    var dimName = cur_dimensions[i].title;
 	    avgRatings[i] = 0;
-	    if ( totalRatings[dimList[i]].length > 0 ) {
+	    if ( dimName in totalRatings && totalRatings[dimName].length > 0 ) {
 		var total = 0;
-		$.each(totalRatings[dimList[i]], function() {
-		    total += this;
-		});
-		avgRatings[i] = total / totalRatings[dimList[i]].length;
+		for( r in totalRatings[dimName]) {
+		    total += totalRatings[dimName][r];
+		}
+		avgRatings[i] = total / totalRatings[dimName].length;
 	    }
 	}
 
 	var nextRow = [employee.first_name+' '+employee.last_name];
 	nextRow = nextRow.concat(avgRatings);
-	chart_list = chart_list.concat(nextRow);
+	chart_list.push(nextRow);
     }
 
-    console.log(chart_list.length);
-    console.log(chart_list);
-
     // Create and populate the data table.
-    var data = google.visualization.arrayToDataTable(
-	chart_list
-    );
+    var data = google.visualization.arrayToDataTable( chart_list );
     
     // Create and draw the visualization.
     new google.visualization.ColumnChart(document.getElementById('emp_graph')).
@@ -101,13 +96,8 @@ function dateToJS( datestring ) {
     return new Date(components[2],components[1],components[0]);
 }
 
-/**
- * dateCompare( rating1, rating2 )
- *
- * Compare two ratings based on the date they were submitted.
- *
- * rating1, rating2 = two ratings
- */
+// Compare two ratings based on the date they were submitted.
+// rating1, rating2 = two ratings
 function dateCompare( rating1, rating2 ) {
     return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
 }
@@ -115,22 +105,17 @@ function dateCompare( rating1, rating2 ) {
 function buildTable( dimlist ) {
     
     var the_list = $('<ol></ol>');
+    the_list.prop({'id':"dimension_list"});
     for (d in dimlist) {
 	var dim = dimlist[d];
 	var list_item = $('<li></li>');
-	list_item.prop({'class':'ui-widget-content',
-			'id':'dim_'+dim.title});
+	list_item.prop({'id':'dim_'+dim.title});
 	list_item.text(dim.title);
+	list_item.hover(dimension_hover_in, dimension_hover_out);
+	list_item.click(dimension_click);
 	the_list.append(list_item);
     }
-    the_list.selectable({
-	selected: function() {
-	    dimHandler($(this));
-	},
-	unselected: function() {
-	    dimHandler($(this));
-	}
-    });
+
     $('#gt_dims').append(the_list);
 }
 
@@ -144,43 +129,177 @@ function filterRatings( min, max ) {
     
 }
 
-// function buildDateSlider(data) {
-//     // This computes date range in milliseconds, using Unix epoch
-//     var dateRange = dateToJS(data.ratings[data.ratings.length-1].date).getTime() -
-// 	dateToJS(data.ratings[0].date).getTime();
-//     // Convert ms to days
-//     dateRange /= 86400000;
+//This function assumes that ratings for a given employee are sorted by date
+function buildDateSlider(dimension_list, employee_list) {
+    for( e in employee_list ){
+	var e_ratings = employee_list[e].ratings;
+	var e_ratings_length = employee_list[e].ratings.length;
+	var e_first;
+	var e_last;
+	
+	for( dim in e_ratings){
+	    if(e_ratings[dim].title in dimension_list){
+		e_first = e_ratings[dim].date;
+		break;
+	    }
+	}
 
-//     var slider = $('#gt_dateslider');
-//     slider.slider({ range: true,
-// 		    min: 0,
-// 		    max: dateRange,
-// 		    values:[0,dateRange]});
+	for( var i = e_ratings_length-1; i>=0; i--){
+	    if(e_ratings[dim].title in dimension_list){
+		e_last = e_ratings[i].date;
+		break;
+	    }
+	}
+	// Check if first and last have been set yet
+	if(typeof(first) === 'undefined' && typeof(last) === 'undefined'){
+	    first = e_first;
+	    last = e_last;
+	}
+	else {
+	    // If not, determine whether a particular employees rating is the global first (last)
+	    first = dateToJS(first) > dateToJS(e_first)? first : e_first;
+	    last = dateToJS(last) > dateToJS(e_last)? last : e_last;
+	}
+    }
+    var range = dateRange(last,first);
+    console.log("range :"+range);
+    var slider = $('#gt_dateslider');
+    slider.slider({ animate: true,
+	            range: true,
+		    min: 0,
+		    max: range,
+		    values:[0,range]});
 
-//     slider.bind( "slidechange", function(event, ui) {
-// 	filterRatings($(this).slider("values")[0],
-// 		      $(this).slider("values")[1]);
-//     });
-// }
-
-var dimHandler = function( container ) {
-    var dims = []
-    container.children('.ui-selected').each(function(i,e){
-	dims.push($(this).text());
+    slider.bind( "slidechange", function(event, ui) {
+	filterRatings($(this).slider("values")[0],
+		      $(this).slider("values")[1]);
     });
-    drawVisualization(dims, );
-};
+}
+
+// This computes date range in milliseconds, using Unix epoch between date_1 and date_2
+// It then converts this to days
+var dateRange = function(date_1, date_2){
+     var range = dateToJS(date_1).getTime() - dateToJS(date_2).getTime();
+    // Convert ms to days
+    range /= 86400000;
+    return range;
+}
+
+var dimension_hover_in = function(){
+    $(this).css('background-color', selected_background_color);
+}
+var dimension_hover_out = function(){
+    if(!$(this).is(".selected")){
+	$(this).css('background-color', '#ffffff');
+    }
+}
+
+var dimension_click = function(){
+    var dim_title = $(this).text();
+    var dimension;
+    
+    for( i in dimensions){
+	if( dimensions[i].title == dim_title ){
+	    dimension = dimensions[i];
+	    break;
+	}
+    }
+
+    $(this).toggleClass('dim_selected');
+    
+    if( $(this).is('dim_selected') ){
+	add_dimension(dimension);
+	$(this).css('background-color',selected_background_color);
+    }
+    else {
+	remove_dimension(dimension);
+    	$(this).css('background-color',"#ffffff");
+    }
+}
+
+var employee_click = function(){
+    // TODO: Determine the structure of the html when there are multiple employees
+    // From this, we should grab the id.
+    var emp_id = $(this).attr('id');
+    var employee;
+    
+    //Is there a better (faster) way to do this?
+    for( i in employees ){
+	if( employees[i].id == emp_id ){
+	    employee = employees[i];
+	    break;
+	}
+    }
+
+    $(this).toggleClass('selected');
+    
+    if( $(this).is('selected') ){
+	add_employee(employee);
+	$(this).css('background-color',selected_background_color);
+    }
+    else {
+	remove_employee(employee);
+    }
+}
+
+
+// Takes an employee JSON object of the form passed from the view
+var add_employee = function(employee){
+    //First, make sure the employee isn't in the chart
+    var arr_index = cur_employees.indexOf(employee);
+    if( arr_index === -1 ) cur_employees.push(employee); 
+
+    make_chart();
+}
+// Takes an employee JSON object of the form passed from the view
+var remove_employee = function(employee){
+    var arr_index = cur_employees.indexOf(emp_id);
+    if( arr_index != -1 ) cur_employees.splice(arr_index, 1); 
+    
+    make_chart();
+}
+// Takes a dimension JSON object of the form passed from the view
+var add_dimension = function(dimension){
+    console.log("adding dimension");
+    //First, make sure the employee isn't in the chart
+    var arr_index = cur_dimensions.indexOf(dimension);
+    if( arr_index === -1 ) cur_dimensions.push(dimension); 
+
+    make_chart();
+}
+// Takes a dimension JSON object of the form passed from the view
+var remove_dimension = function(dimension){
+    var arr_index = cur_dimensions.indexOf(dimension);
+    if( arr_index != -1 ) cur_dimensions.splice(arr_index, 1); 
+    
+    make_chart();
+}
 
 $(document).ready( function() {
+
     $.ajax({url:"{% url employee_stats %}",
 	    type:'POST',
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
-		drawVisualization(data.data.dimensions, data.data.employees);
-		buildTable(data.data);
-//		buildDateSlider(data.data);
+		employees = data.data.employees;
+		dimensions = data.data.dimensions;
+		cur_dimensions = dimensions;
+		cur_employees = employees;
+		make_chart();
+
+//		buildTable(dimensions);
+//		buildDateSlider(dimensions, employees);
+		
+		var emp_id = employees[0].id;
+		console.log("Employee id is: "+emp_id);
+		apatapa.employee.getEmployee(emp_id, $("#employee_welcome"), function(){
+		    
+		});
+
 	    },
 	    error:function(){alert("Something went wrong.");}});
+
+
 });
 </script>
 {% endblock %}
@@ -190,10 +309,7 @@ $(document).ready( function() {
 {% endblock %}
 {% block content %}
 
-<div id="employee_welcome">
-  <img src="{{ MEDIA_URL }}{{ image }}" id="employee_img" class="profilepicture" alt="{{ user.first_name }} {{ user.last_name }}" />
-  <p>Hello, {{ employee.first_name }}! Let's see how you're doing.</p>
-</div>
+<div id="employee_welcome"></div>
 
 <div id="graph_table">
     <div id="gt_dims"></div>

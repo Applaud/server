@@ -11,6 +11,10 @@ TEMPLATE_DEBUG = DEBUG
 # Make sure the user gets logged out when the browser closes.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# Default colors for businesses.
+DEFAULT_PRIMARY_COLOR = [200, 200, 200]
+DEFAULT_SECONDARY_COLOR = [100, 100, 100]
+
 # How long a user has to activate their account
 ACCOUNT_ACTIVATION_DAYS = 7
 # Where to go after login

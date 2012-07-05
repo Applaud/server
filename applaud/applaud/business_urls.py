@@ -20,6 +20,10 @@ urlpatterns = patterns('',
                            views.list_employees,
                            name="business_list_employees"),
                        
+                       url(r'^list_employee/$',
+                           views.list_employee,
+                           name="business_list_employee"),
+
                        # Survey stuff
                        url(r'^manage_survey/$', views.manage_survey,
                            name="business_manage_survey"),
@@ -40,8 +44,12 @@ urlpatterns = patterns('',
                            redirect_to,
                            {'url':'analytics'},
                            name="business_home"),
+                       # Profile
+                       url(r'^profile/$',
+                           views.business_profile,
+                           name='business_profile'),
                        
-                       #analytics
+                       # Analytics
                        url(r'^analytics',
                            views.analytics,
                            name="analytics"),

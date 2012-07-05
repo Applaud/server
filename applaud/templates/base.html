@@ -4,7 +4,7 @@
 {% load i18n %}
 <head>
   <title>{% block title %}Apatapa{% endblock %}</title>
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL}}applaud.css" />
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
   <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
   <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css">
   {% block links %}
@@ -17,10 +17,13 @@
 /**
  * URLS
  */
-// Employee URLs.
+// Business managing employee URLs.
 var manage_employees_url = "{% url business_manage_employees %}";
 var delete_employee_url = "{% url business_delete_employee %}";
 var list_employees_url = "{% url business_list_employees %}";
+
+// Employee URLs
+var employee_list_employee_url = "{% url employee_list_employee %}";
 
 // Rating profile URLs.
 var manage_ratingprofiles_url = "{% url business_manage_ratingprofiles %}";
@@ -33,6 +36,12 @@ var manage_survey_url = "{% url business_manage_survey %}";
 // Newsfeed URLs.
 var list_newsfeed_url = "{% url business_newsfeed_list %}";
 var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
+
+//Business Analytics URL
+var get_analytics_url ="{% url get_analytics %}"
+var business_list_employee_url = "{% url business_list_employee %}"
+
+
 </script>
   {% block scripts %}
   {% endblock %}
@@ -57,7 +66,7 @@ var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
 	      {% elif user.employeeprofile %}
 	        <a href="{% url employee_home %}">
 	      {% elif user.businessprofile %}
-	        <a href="{% url business_home %}">
+	        <a href="{% url business_profile %}">
 	      {% endif %}
 	          View Account
 	        </a>

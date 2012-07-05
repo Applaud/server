@@ -12,6 +12,10 @@ urlpatterns = patterns('',
                            employee_views.employee_stats,
                            name='employee_stats'),
 
+                       url(r'^list_employee/$',
+                           employee_views.list_employee,
+                           name='employee_list_employee'),
+
                        # Welcome page. We visit this right after registering.
                        url(r'^welcome/$',
                            redirect_to,
@@ -32,4 +36,6 @@ urlpatterns = patterns('',
                            direct_to_template,
                            {'template':'profile_success.html'},
                            name="employee_profile_success"),
+
+
         )

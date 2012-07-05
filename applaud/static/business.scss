@@ -38,13 +38,27 @@ strong {
 /************
  * Newsfeed
  */
-.feed input {
-    margin-bottom:10px;
-}
-
-.nf_delete_button {
-    margin-top: 10px;
-    background-color:$deletecolor;
+.feed {
+    padding:10px;
+    input {
+	margin:10px auto;
+    }
+    .nf_delete_button {
+	margin-top: 10px;
+	background-color:$deletecolor;
+    }
+    /* The date paragraph. */
+    p {
+	margin:5px auto;
+    }
+    /* Textareas look better when they match text field inputs. */
+    textarea {
+	font-family:'Lucida Grande';
+	font-size:11px;
+    }
+    .nfimage {
+	float:right;
+    }
 }
 
 .question_optionlist {

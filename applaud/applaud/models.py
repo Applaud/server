@@ -1,13 +1,42 @@
-
-
 from django.contrib.auth.models import User
+from django.forms import ValidationError
 from django.db import models
 import json
 from applaud import settings
 
-# 
+#
 # CUSTOM MODEL FIELDS
-# 
+#
+
+class ColorField(models.CharField):
+    """Stores a color in the database as RGB values."""
+    
+    description = 'Stores a color in the database as RGB values.'
+    
+    __metaclass__ = models.SubfieldBase
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 15
+        super(ColorField, self).__init__(*args, **kwargs)
+    
+    def to_python(self, value):
+        if not value:
+            return []
+        if isinstance(value, list):
+            return value
+        return json.loads(value)
+
+    def get_prep_value(self, value):
+        if not value:
+            return '[]'
+        assert(isinstance(value, list) or isinstance(value, tuple))
+        if len(value) != 3:
+            raise ValidationError('Colors should be 3 RGB values!')
+        # Make sure we've got 3 ints, no more, no less.
+        for color in value:
+            assert(0 <= color <= 255)
+        return json.dumps(value)
+
 class SerializedStringsField(models.TextField):
     """Allows us to store a list of strings
     directly in the database using JSON to
@@ -223,6 +252,12 @@ class BusinessProfile(models.Model):
     user = models.OneToOneField(User)
     address = models.CharField(max_length=500)
     first_time = models.BooleanField(default=1)
+    logo = models.ImageField(blank=True, null=True, upload_to='business_logos/')
+    
+    # The colors for this business. Stored as a ColorField, which is documented
+    # up at the top of this file.
+    primary_color = ColorField(default=settings.DEFAULT_PRIMARY_COLOR)
+    secondary_color = ColorField(default=settings.DEFAULT_SECONDARY_COLOR)
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
