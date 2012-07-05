@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 
 {% block links %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}user.css" />
+{% endblock %}
+
+{% block scripts %}
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}/jquery.js"></script>
+
+<!-- <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}/user_analytics.js"></script> -->
+<script type="text/javascript">
+  $(document).ready( function() {
+  $(".plus").click( function() {
+  $(this).parent().parent().siblings(".hidden").show();
+  });
+
+  $(".minus").click( function() {
+  $(this).parent().parent().siblings(".hidden").hide();
+  });
+  });
+
+</script>
 {% endblock %}
 
 {% block title %}User{% endblock %}
@@ -13,36 +31,78 @@ Hello {{ user.username }}!
 <div id="user_links">
   <ul>
     <li><a href="{% url edit_user_profile %}">Edit Your Profile</a></li>
-<!--    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>-->
+    <!--    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>-->
   </ul>
 </div>
 
 <h1> My Previous Responses </h1>
 
 <div class="feedback">
- <h2>General Feedback</h2>
- {% for feed in feedback %}
- <p>{{ feed.business }}
-   {{ feed }}</p>
- {% endfor %}
+  <h2>General Feedback</h2>
+
+  {% for feed in feedback %}
+  <table>
+    <tr>
+      <td>{{ feed.business }}</td>
+      <td>{{ feed.feedback }}</td>
+    </tr>
+  </table>
+  {% endfor %}
+
 </div>
 
+<br />
+<h2>My Ratings</h2>
 <div class="rating">
-  <h2>My Ratings</h2>
-  {% for r in rating %}
-  <p>{{ r.employee.business }}
-    {{ r.employee }}
-    {{ r }}</p>
+
+  
+
+  {% for key,value in rating_date.items %}
+  <table>
+    <tr class="visible" id="row_number_{{ forloop.counter }}">
+      <td><button class="plus">+</button><button class="minus">-</button></td>
+      <td>{{ key }}</td>
+      <td>{{ value.0.employee.business.business_name }}</td>       
+      <td>{{ value.0.employee.user.first_name }} {{ value.0.employee.user.last_name }}</td>
+
+      
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      {% for r in value %}
+
+      <td> {{ r }}</td>
+      {% endfor %}
+    </tr>
+  </table>
   {% endfor %}
 </div>
 
+<br />
 <div class="responses">
   <h2>Responses to Questions</h2>
-  {% for r in responses %}
-  <p>{{ r.question.survey.business %}
-    {{ r.question }}
-    {{ r }}</p>
-  {% endfor %}
+  {% for key,value in response_date.items %}
+
+  <table>
+    <tr class="visible" id="row_number_{{ forloop.counter }}">
+      <td><button class="plus">+</button><button class="minus">-</button></td>
+      <td>{{ key }}</td>
+      <td>{{ value.0.question.survey.business.business_name }}</td>       
+
+    </tr>
+    <tr class="hidden">
+      <td></td>
+      <td>{{ value.0.question.survey.title }}</td>
+      <td>{{ value.0.question.survey.description }}</td>
+    <tr class="hidden">
+      <td></td>
+    {% for q in value %}
+      <td>{{ q.question }}</td>
+      <td>{{ q }}</td>
+    {% endfor %}
+    </tr>
+ </table> 
+ {% endfor %}
 </div>
 
 {% endblock %}

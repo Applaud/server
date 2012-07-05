@@ -54,7 +54,7 @@ if (! apatapa.business) {
 		    type: 'POST',
 		    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 		    success: function(data) {
-			_ns.listEmployees(data, container);
+			_ns.listEmployee(data, container);
 			if ( callback )
 			    callback();
 		    },
@@ -63,6 +63,8 @@ if (! apatapa.business) {
 		    }
 		   });
 	};
+
+
 
 	/**
 	 * buildForms()
@@ -83,7 +85,7 @@ if (! apatapa.business) {
 	/**
 	 * listEmployees(data)
 	 *
-	 * data - JSON data returned by AJAX call for deleting an employee.
+	 * data - JSON data returned by AJAX call
 	 * Re-builds the list of employees.
 	 */
 	_ns.listEmployees = function(data, container) {
@@ -94,26 +96,34 @@ if (! apatapa.business) {
 	    for ( e in data.employee_list ) {
 		employee = data.employee_list[e];
 		var listitem = $('<li class="employee_item"></li>');
-		var employee_image = $('<img />');
-		employee_image.prop({'src':employee.image,
-				     'alt':employee.first_name+" "+employee.last_name,
-				     'class':'profile_image'});
-		var employee_id = $('<input />');
-		employee_id.prop({'type':'hidden',
-				  'value':employee.id});
-		listitem.append( employee_image ).append(employee_id);
-		listitem.append( $('<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>') );
+		listitem.append( _ns.listEmployee(employee));
 		listing.append(listitem);
 	    }
 	    
 	    container.append(listing);
 	};
+	
+	///////////////////////////////////////////////////
+        // Returns a div containing employee information //
+        ///////////////////////////////////////////////////
+	_ns.listEmployee = function(employee){
+	    var employee_div = $('<div></div>');
+	    employee_div.prop({'id':'employee_'+employee.id+'_div'});
+
+	    var employee_image = $('<img />');
+	    employee_image.prop({'src':employee.image,
+				 'alt':employee.first_name+" "+employee.last_name,
+				 'class':'profile_image'});
+	    var employee_id = $('<input />');
+	    employee_id.prop({'type':'hidden',
+			      'value':employee.id});
+	    listitem.append( employee_image ).append(employee_id);
+	    listitem.append( $('<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>') );
+	    
+	    return listitem;
+
+	}
     })(business.employees);
-
-
-
-
-
 
 
     /////////////////////////////////////

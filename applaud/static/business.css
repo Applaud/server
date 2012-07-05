@@ -72,3 +72,20 @@ strong {
 .del_emp_button {
   background-color: #ff6464;
   margin-left: 10px; }
+
+
+
+/******
+* Not sure if there are tables in any of the business related templates.
+*/
+
+strong {
+  font-weight: bold; }
+
+table, td, th {
+border:1px solid black;
+}
+
+td {
+padding:30px;
+}
