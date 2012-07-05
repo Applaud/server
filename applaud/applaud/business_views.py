@@ -359,15 +359,27 @@ def business_profile(request):
     profile = request.user.businessprofile
     if request.method == "GET":
         return render_to_response('business_profile.html',
-                                  {'business': profile},
+                                  {'business': profile,
+                                   'primary': ', '.join([str(color) for color in profile.primary_color]),
+                                   'secondary': ', '.join([str(color) for color in profile.secondary_color])},
                                   context_instance=RequestContext(request))
     # Else it's a POST.
-    print request.FILES.keys()
+    try:
+        primary = [int(color) for color in request.POST['primary_color'].split(',')]
+        profile.primary_color = primary
+    except ValueError, ValidationError:
+        pass
+    try:
+        secondary = [int(color) for color in request.POST['secondary_color'].split(',')]
+        profile.secondary_color = secondary
+    except ValueError, ValidationError:
+        pass
+    profile.save()
     if 'logo_image' in request.FILES:
         filename = '%s_%s_logo.jpg' % (profile.id,
                                   profile.business_name)
         save_image(profile.logo, filename, profile, request.FILES['logo_image'])
-        messages.add_message(request, messages.SUCCESS, 'Profile picture changed!')
+    messages.add_message(request, messages.SUCCESS, 'Profile updated!')
     return HttpResponseRedirect(reverse('business_home'))
 
 @csrf_protect
