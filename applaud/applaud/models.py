@@ -222,6 +222,7 @@ class BusinessProfile(models.Model):
     user = models.OneToOneField(User)
     address = models.CharField(max_length=500)
     first_time = models.BooleanField(default=1)
+    logo = models.ImageField(blank=True, null=True, upload_to='business_logos/')
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.

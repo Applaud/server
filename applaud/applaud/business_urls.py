@@ -40,8 +40,12 @@ urlpatterns = patterns('',
                            redirect_to,
                            {'url':'analytics'},
                            name="business_home"),
+                       # Profile
+                       url(r'^profile/$',
+                           views.business_profile,
+                           name='business_profile'),
                        
-                       #analytics
+                       # Analytics
                        url(r'^analytics',
                            views.analytics,
                            name="analytics"),
