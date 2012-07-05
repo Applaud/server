@@ -100,12 +100,16 @@ class BusinessProfileEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.BusinessProfile):
             bus_user = o.user
-            res = {'name':bus_user.username,
-                   'goog_id':o.goog_id,
-                   'business_id':o.id,
-                   'latitude':o.latitude,
-                   'longitude':o.longitude,
-                   'phone':o.phone}
+            logo_url = '%s%s' % (settings.MEDIA_URL, settings.DEFAULT_PROFILE_IMAGE)
+            if o.logo:
+                logo_url = o.logo.url
+            res = {'name': bus_user.username,
+                   'goog_id': o.goog_id,
+                   'business_id': o.id,
+                   'latitude': o.latitude,
+                   'longitude': o.longitude,
+                   'phone': o.phone,
+                   'logo': logo_url}
             return res
         else:
             return json.JSONEncoder.default(self, o)

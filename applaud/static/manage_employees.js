@@ -1,20 +1,69 @@
-var manageEmployees = {};
+/* employees.js
+ * 
+ * Provides the javascript functionality for the 'manage employees'
+ * page for businesses. This file also supplies the function
+ * 'getEmployee( container, [callback] )', which can be used to list
+ * all the employees into a container.
+ *
+ */
 
-(function (manageEmployees) {
-    var bind_delete_buttons = function () {
-	console.log('binding to buttons');
+if (! apatapa.employee) {
+    apatapa.employee = {};
+}
+
+(function (_ns) {
+    _ns.bind_delete_buttons = function () {
 	$('.del_emp_button').click(
 	    function ( event ) {
-		console.log("Handler called for clik: "+$(this).attr('id').split('_')[2]);
 		event.preventDefault();
 		$.ajax({ url: delete_employee_url,
 			 type: 'POST',
 			 data: {'employee_id':$(this).attr('id').split('_')[2],
 				'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-			 success: listEmployees,
+			 success: function(data) {
+			     _ns.listEmployees(data, $('#employees_listing'));
+			     _ns.buildForms();
+			 },
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
+    }
+
+    /**
+     * getEmployees
+     *
+     * NOTE: You MUST have {% csrf_token %} on the page calling this somewhere.
+     * fills 'container' with the list of employees for current business.
+     */
+    _ns.getEmployees = function( container, callback ) {
+	$.ajax({url: list_employees_url,
+		type: 'POST',
+		data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		success: function(data) {
+		    _ns.listEmployees(data, container);
+		    if ( callback )
+			callback();
+		},
+		error: function() {
+		    alert("Something went wrong.");
+		}
+	       });
+    };
+
+    /**
+     * buildForms()
+     *
+     * Creates forms on each employee listing.
+     */
+    _ns.buildForms = function() {
+	$('.employee_item').each( function(index, element) {
+	    var id = $(this).children('.employee_id').val();
+	    $(this).append("<form action=\"\" method=\"post\">"
+			   +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
+			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
+	});
+
+	_ns.bind_delete_buttons();
     }
 
     /**
@@ -23,33 +72,26 @@ var manageEmployees = {};
      * data - JSON data returned by AJAX call for deleting an employee.
      * Re-builds the list of employees.
      */
-    var listEmployees = function(data) {
-	console.log("listing employees now.");
+    _ns.listEmployees = function(data, container) {
 	// Clear the current list
-	$('#employees_listing').empty();
+	container.empty();
 	var listing = $('<ul></ul>');
 
 	for ( e in data.employee_list ) {
 	    employee = data.employee_list[e];
-	    var listitem = $('<li></li>');
-
-	    // This is the way it's done per the EmployeeEncoder
-	    listitem.html( employee.first_name+" "+employee.last_name
-			   +"<form action=\"\" method=\"post\">"
-			   +"<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\""+$('input[name=csrfmiddlewaretoken]').val()+"\" />"
-			   +"<input type=\"submit\" id=\"del_emp_"+employee.id+"\" class=\"del_emp_button\" value=\"Delete\" />");
+	    var listitem = $('<li class="employee_item"></li>');
+	    var employee_image = $('<img />');
+	    employee_image.prop({'src':employee.image,
+				 'alt':employee.first_name+" "+employee.last_name,
+				 'class':'profile_image'});
+	    var employee_id = $('<input />');
+	    employee_id.prop({'type':'hidden',
+			      'value':employee.id});
+	    listitem.append( employee_image ).append(employee_id);
+	    listitem.append( $('<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>') );
 	    listing.append(listitem);
 	}
 	
-	$('#employees_listing').append(listing);
-	bind_delete_buttons();
-    }
-
-    /**
-     * This is executed after the page has fully loaded.
-     */
-    $(document).ready(function() {
-	// Bind the 'delete' buttons for employees to an AJAX call
-	bind_delete_buttons();
-    });
-})(manageEmployees);
+	container.append(listing);
+    };
+})(apatapa.employee);
