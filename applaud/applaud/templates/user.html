@@ -1,14 +1,8 @@
 {% extends "base.html" %}
 
 {% block links %}
-<<<<<<< HEAD
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
-{% endblock %}
 
-{% block scripts %}
-<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
-<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}user_analytics.js"></script>
-=======
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}user.css" />
 {% endblock %}
 
@@ -28,7 +22,6 @@
   });
 
 </script>
->>>>>>> ce0c81fce8b2d90131aba2727b6659242887583c
 {% endblock %}
 
 
@@ -41,10 +34,6 @@ Hello {{ user.username }}!
 <div id="user_links">
   <ul>
     <li><a href="{% url edit_user_profile %}">Edit Your Profile</a></li>
-<<<<<<< HEAD
-=======
-    <!--    <li><a href="{% url business_manage_employees %}">Manage Employees</a></li>-->
->>>>>>> ce0c81fce8b2d90131aba2727b6659242887583c
   </ul>
 </div>
 
