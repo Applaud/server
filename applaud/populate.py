@@ -56,7 +56,8 @@ awesomeness.save()
 profile2 = models.RatingProfile(title='Profile 2', business=business2)
 profile2.save()
 efficiency = models.RatedDimension(title="Efficiency",
-                           rating_profile=profile2)
+                                   rating_profile=profile2,
+                                   is_text=True)
 enthusiasm = models.RatedDimension(title="Enthusiasm",
                              rating_profile=profile2)
 efficiency.save()
@@ -109,7 +110,7 @@ emp_user5.save()
 # Make a few Employees.
 master = models.EmployeeProfile(business=business,
                                 user=emp_user,
-                                rating_profile=profile1,
+                                rating_profile=profile2,
                                 bio='foo')
 master.save()
 mystical = models.EmployeeProfile(business=business2,

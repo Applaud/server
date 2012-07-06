@@ -102,16 +102,19 @@ class Rating(models.Model):
         dimension = models.ForeignKey('RatedDimension')
 
 	# Numeric value (response) for the question or dimension
-	rating_value = models.FloatField()
-
+	rating_value = models.FloatField(blank=True, null=True)
+        
+        # Text value (response)
+        rating_text = models.TextField(blank=True, null=True)
+        
 	# Employee to which this Rating corresponds
 	employee = models.ForeignKey('EmployeeProfile')
 
         # End user who provided the response
         user = models.ForeignKey('UserProfile')
 
-        date_created = models.DateTimeField()#(auto_now=True)
-
+        date_created = models.DateTimeField()
+        
 	def __unicode__(self):
 		return "%s:%s (%s)"%(self.title,
                                      self.rating_value,
@@ -148,6 +151,7 @@ class RatedDimension(models.Model):
     title = models.CharField(max_length=200)
     is_active = models.BooleanField(default=1)
     rating_profile = models.ForeignKey('RatingProfile')
+    is_text = models.BooleanField(default=0)
     
     def __unicode__(self):
         return self.title
