@@ -1,0 +1,16 @@
+/* Being used for user analytics. Will swith to user.css page in a while */		
+table, td, th {
+    border:1px;
+}
+td
+{
+padding:6px;
+}
+
+.visible {
+    background-color: rgb(250, 200, 200);
+}
+.hidden {
+    display:none;
+    background-color: rgb(240,150,150);
+}
