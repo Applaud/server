@@ -35,21 +35,18 @@ google.load("visualization", "1", {packages:["corechart"]});
  *         - Takes the data from the ajax call and performs necessary setup. Should perform necessary bindings, setting global variables, etc.
  *         - After everything else, calls refresh()
  *
- *     refresh():
- *         - To be called any time the chart data changes (i.e. a change in the list of viewable employees, dimensions, etc.)
- *         - Takes a single parameter - optionArgument - which is 1 if buildDateSlider should be called and 0 otherwise (the only event that shouldn't rebuild it is the 'slidechange' event on the slider itself
- *
  *     buildDateSlider():
- *         - Rebuilds the date slider according to the the viewable range. The viewable range is the range from the earliest date to the latest date in which any of the current employees have data
+e *         - Rebuilds the date slider according to the the viewable range. The viewable range is the range from the earliest date to the latest date in which any of the current employees have data
  *
  * TODO -
  *     Remove employee from chart depiction when there are no ratings for him/her in the chart range
+ *     Optimize! This is waaaayyy tooo slow
  */
 
 
-/************************************************
- * Global variables used to construct the chart *
- ************************************************/
+/********************
+ * Global variables *
+ ********************/
 //Lists retrieved from the ajax call
 var employees;
 var dimensions;
@@ -65,28 +62,31 @@ var last;
 // The range between first & last
 var range;
 
-// The first and last dates of ratings selected on the bar
-// These will be JS date objects
+// The first and last dates of ratings selected on the bar (JS date objects)
 var range_start;
 var range_stop;
+
+// Boolean variable to check if user has clicked on a specific employee or dimension yet
+// 1 - user hasn't clicked anything
+// 0 - user has clicked on something
+var isFirstClick = 1;
+
 
 /*************************
  * CSS related variables *
  *************************/
 var selected_background_color = "#bbbbbb";
 
+
 // This function will take the current 'selected' data and assemble the google chart for it.
 // TODO: Include time range in this function
 function make_chart() {
-    console.log("in make_chart");
     // This is eventually the data fed into the chart
     var chart_list = [];
 
     // Build the axes
     var row0 = [ 'Dimension' ];
-    console.log('dimensions are');
     for( d in cur_dimensions){
-	console.log(cur_dimensions[d]);
 	row0.push(cur_dimensions[d])
     }
     
@@ -126,7 +126,6 @@ function make_chart() {
 	nextRow = nextRow.concat(avgRatings);
 	chart_list.push(nextRow);
     }
-    console.log(chart_list);
     // Create and populate the data table.
     var data = google.visualization.arrayToDataTable( chart_list );
     
@@ -134,7 +133,7 @@ function make_chart() {
     new google.visualization.ColumnChart(document.getElementById('emp_graph')).
 	draw(data,
              {title:"Evaluations by Dimension",
-              width:700, height:400,
+              width:"400", height:"400",
               hAxis: {title: "Dimension"},
               vAxis: {title: "Average Rating",
 		      viewWindowMode:'explicit',
@@ -149,17 +148,6 @@ function make_chart() {
 // and return whether or not it falls in the range of the dateslider
 function isRatingInRange(rating){
     var rating_date = dateToJS(rating.date);
-/*    console.log("rating_date");
-    console.log(rating_date);
-    console.log("range_start");
-    console.log(range_start);
-    console.log("range_stop");
-    console.log(range_stop);
-    console.log("is rating_date >= range_start_date?");
-    console.log(rating_date >= range_start);
-    console.log("is rating_date <= range_stop_date?");
-    console.log(rating_date <= range_stop);
-*/
     if(rating_date >= range_start && rating_date <= range_stop)
 	return true;
     return false;
@@ -181,13 +169,14 @@ function dateCompare( rating1, rating2 ) {
 // This function should set up the table of clickable dimensions
 // Should only be called once
 function buildTable() {
-    
+    console.log("table built");
     var the_list = $('<ol></ol>');
     the_list.prop({'id':"dimension_list"});
     for (d in dimensions) {
 	var dim = dimensions[d];
 	var list_item = $('<li></li>');
-	list_item.prop({'id':'dim_'+dim});
+        list_item.prop({'id':'dim_'+dim,
+	                'class':'dimension'});
 	list_item.text(dim);
 	list_item.hover(dimension_hover_in, dimension_hover_out);
 	list_item.click(dimension_click);
@@ -204,20 +193,30 @@ function sliderValueToDate(sliderValue){
     return new Date( firstAsDate.getTime() + milliSinceFirst );
 }
 
+function dateToSliderValue(date){
+    var firstAsDate = dateToJS(first);
+    milliSinceFirst = date.getTime() - firstAsDate.getTime();
+    return milliSinceFirst/86400000;
+}
+
 // This function will build a slider which will represent the range of viewable data
 // It assumes that ratings for each employee are sorted by date
-function buildDateSlider() {
+var buildDateSlider = function() {
    
     var slider = $('#gt_dateslider');
     slider.slider({ animate: true,
 	            range: true,
 		    min: 0,
 		    max: range,
-		    values:[0,range]
+		    values:[0,range],
 		  });
 
-    // Setting up various events for the slider
+    range_start = sliderValueToDate(0);
+    range_stop = sliderValueToDate(range);
+}
 
+var bindDateSlider = function(){
+    var slider = $('#gt_dateslider');
     // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
     slider.bind( "slide", function(event, ui) {
 	range_start = sliderValueToDate($(this).slider("values")[0]);
@@ -229,13 +228,23 @@ function buildDateSlider() {
 
     // Any time the user finishes the selection, construct the new graph
     slider.bind( "slidechange", function(event, ui){
-	refresh(0);
+	//Not programatically called - from reconstructing the date slider
+	if(event.originalEvent!=undefined)
+	    make_chart();
     });
-    
+}
+
+// Changes the range of the date slider
+// Should be called after setDateRange
+var changeDateSlider = function() {
+    var slider = $('#gt_dateslider');
+    slider.slider("option", "max", range);
 }
 
 // This calculates and returns the viewable range in days
 // This also sets the global variables first & last
+//
+// TODO: Optimize this. Is there a better way to achieve the same thing?
 var setDateRange = function(){
     
     for( e in cur_employees ){
@@ -270,42 +279,35 @@ var setDateRange = function(){
 
     var day1 = dateToJS(last);
     var day2 = dateToJS(first);
-    var range = day1.getTime() - day2.getTime();
+    range = day1.getTime() - day2.getTime();
     // Convert ms to days
     range /= 86400000;
-    return range;
 }
 
 var dimension_hover_in = function(){
     $(this).css('background-color', selected_background_color);
 }
 var dimension_hover_out = function(){
-    if(!$(this).is(".selected")){
+    if(!$(this).is(".dim_selected")){
 	$(this).css('background-color', '#ffffff');
     }
 }
 
 var dimension_click = function(){
     var dim_title = $(this).text();
-    var dimension;
     
-    for( i in dimensions){
-	if( dimensions[i] == dim_title ){
-	    dimension = dimensions[i];
-	    break;
-	}
-    }
-
     $(this).toggleClass('dim_selected');
-    
-    if( $(this).is('dim_selected') ){
-	add_dimension(dimension);
+
+    // Check if it's selected
+    if( $(this).hasClass('dim_selected') ){
+	add_dimension(dim_title);
 	$(this).css('background-color',selected_background_color);
     }
     else {
-	remove_dimension(dimension);
+	remove_dimension(dim_title);
     	$(this).css('background-color',"#ffffff");
     }
+    processNewData();
 }
 
 var employee_click = function(){
@@ -333,36 +335,50 @@ var employee_click = function(){
     }
 }
 
-
 // Takes an employee JSON object of the form passed from the view
 var add_employee = function(employee){
-    //First, make sure the employee isn't in the chart
-    var arr_index = cur_employees.indexOf(employee);
-    if( arr_index === -1 ) cur_employees.push(employee); 
-
-    refresh(1);
+    if( isFirstClick ){
+	cur_employees=[employee];
+	isFirstClick=0;
+    }
+    else{
+	//First, make sure the employee isn't in the chart
+	var arr_index = cur_employees.indexOf(employee);
+	if( arr_index === -1 ) cur_employees.push(employee); 
+    }
 }
+
 // Takes an employee JSON object of the form passed from the view
 var remove_employee = function(employee){
-    var arr_index = cur_employees.indexOf(emp_id);
-    if( arr_index != -1 ) cur_employees.splice(arr_index, 1); 
-    
-    refresh(1);
+    if( ! isFirstClick){
+	var arr_index = cur_employees.indexOf(emp_id);
+	if( arr_index != -1 ) cur_employees.splice(arr_index, 1); 
+    }
 }
+
 // Takes a dimension JSON object of the form passed from the view
 var add_dimension = function(dimension){
-    //First, make sure the employee isn't in the chart
-    var arr_index = cur_dimensions.indexOf(dimension);
-    if( arr_index === -1 ) cur_dimensions.push(dimension); 
-
-    refresh(1);
+    if( isFirstClick ){
+	isFirstClick=0;
+	cur_dimensions=[dimension];
+    }
+    else{
+	//First, make sure the employee isn't in the chart
+	var arr_index = cur_dimensions.indexOf(dimension);
+	if( arr_index === -1 ) cur_dimensions.push(dimension); 
+    }
 }
+
 // Takes a dimension JSON object of the form passed from the view
 var remove_dimension = function(dimension){
-    var arr_index = cur_dimensions.indexOf(dimension);
-    if( arr_index != -1 ) cur_dimensions.splice(arr_index, 1); 
-    
-    refresh(1);
+    if( ! isFirstClick ){
+	var arr_index = cur_dimensions.indexOf(dimension);
+	if( arr_index != -1 ){
+	    cur_dimensions.splice(arr_index, 1); 
+	    if(cur_dimensions.length === 0)
+		cur_dimensions = dimensions;
+	}
+    }
 }
 
 // Using the employees list, assembles a list of dimension titles
@@ -383,31 +399,23 @@ var buildDimensions = function(){
 var initialize = function(data){
     employees = data.data.employees;
     buildDimensions();
+    buildTable();
     cur_dimensions = dimensions;
     cur_employees = employees;
-
-    refresh(1);
-}
-
-
-// This will reset the slider, rebuild the rateable dimensions table, and perform
-// any other necessary cleanup
-//
-// optionArgument is 1 if buildDateSlider should be called and 0 otherwise
-//
-// TODO: Pass refresh optional parameters to indicate what has changed and which methods need to be called accordingly
-function refresh(optionArgument){
-    range = setDateRange();
-
-    if(optionArgument === 1){
-	buildDateSlider();
-	range_start = sliderValueToDate(0);
-	range_stop= sliderValueToDate(range);
-    }
+    setDateRange();
+    buildDateSlider();
+    bindDateSlider();
 
     make_chart();
 }
 
+// To be called anytime cur_dimensions or cur_employees is changed
+var processNewData = function(){
+    setDateRange();
+    changeDateSlider();
+
+    make_chart();
+}
 
 $(document).ready( function() {
 
