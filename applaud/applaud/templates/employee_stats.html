@@ -434,8 +434,20 @@ $(document).ready( function() {
 
 	    },
 	    error:function(){alert("Something went wrong.");}});
+      $(".hidden").hide();
+      $(".visible").click( function () {
+      $(this).siblings(".hidden").show();
+});
 
-
+      $(".table_view").hide();
+      $("#graph").click( function () {
+      $(".graph_view").show();
+      $(".table_view").hide();
+});
+      $("#table").click( function () {
+      $(".table_view").show();
+      $(".graph_view").hide();
+});
 });
 </script>
 {% endblock %}
@@ -447,7 +459,10 @@ $(document).ready( function() {
 
 <div id="employee_welcome"></div>
 
-<div id="graph_table">
+<div id="graph_vs_table">
+<button id="graph"> Graph </button>
+<button id="table"> Table </button>
+<div id="graph_table" class="graph_view">
     <div id="gt_dims"></div>
     <div id="emp_graph"></div>
     <div id="date_slider_text">
@@ -459,4 +474,23 @@ $(document).ready( function() {
 {% csrf_token %}
 </form>
 
+<table class="table_view">
+      {% for date,dict in rating_dict.items %}
+      {% for user,ratings in dict.items %}
+  <tr class="visible">
+    <td>
+      {{ user.user.first_name }}
+      {{ user.user.last_name }}
+    </td>
+    <td>{{ ratings.0.date_created }} </td>
+  </tr>
+  {% for rating in ratings %}
+  <tr class="hidden">
+    <td></td>
+    <td>{{ rating.dimension }}</td>
+    <td>{% if rating.dimension.is_text %} {{ rating.rating_text }} {% else %}{{rating.rounded_rating }} {% endif %} </td></tr>
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+</table>
 {% endblock %}

@@ -114,6 +114,10 @@ class Rating(models.Model):
         user = models.ForeignKey('UserProfile')
 
         date_created = models.DateTimeField()
+
+        def rounded_rating(self):
+            
+            return float('%.1f' % round(self.rating_value,1)) if self.rating_value else 0
         
 	def __unicode__(self):
 		return "%s:%s (%s)"%(self.title,

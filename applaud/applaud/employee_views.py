@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from PIL import Image as PImage
 import registration.forms as registration_forms
 import os
@@ -59,11 +60,26 @@ def employee_stats(request):
     encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
     return_data['employees'] = [encoded_employee]
     
+    rating=profile.rating_set.all()
+    rating_dict={}
+    for r in rating:
+        date_string = r.date_created.strftime("%m/%d/%Y")
+        if date_string in rating_dict.keys():
+            rating_dict[date_string][r.user].append(r)
+        else:
+            rating_dict[date_string]={r.user:[r]}
+            
+
+
+
+    # emp_ordered_list=profile.rating_set.values('user__user__username','date_created').order_by().annotate(Count('user__user__username'), Count('date_created'))
+
     if request.method == 'GET':
         # Return string for rendering in google charts
         return render_to_response('employee_stats.html',
                                   {'employee':employee,
-                                   'image':_profile_picture(profile)},
+                                   'image':_profile_picture(profile),
+                                   'rating_dict':rating_dict},
                                   context_instance=RequestContext(request))
 
     # Pure JSON, for POST
