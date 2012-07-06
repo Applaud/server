@@ -27,15 +27,22 @@
 
 {% block title %}User Landing{% endblock %}
 
+{% block navigation_links %}
+{{ block.super }}
+<!-- functional links for end users -->
+  <ul id="nav_link">
+    <li> My Apatapa: </li>
+    <li><a href="{% url user_home %}"> Responses </a></li>
+    <li><a href="{% url edit_user_profile %}">Profile</a></li>
+    
+  </ul>
+
+
+{% endblock %}
+
 {% block content %}
 Hello {{ user.username }}!
 
-<!-- functional links for end users -->
-<div id="user_links">
-  <ul>
-    <li><a href="{% url edit_user_profile %}">Edit Your Profile</a></li>
-  </ul>
-</div>
 
 <h1> My Previous Responses </h1>
 

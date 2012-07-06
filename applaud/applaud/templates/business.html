@@ -11,7 +11,9 @@
 {% block title %}Business{% endblock %}
 
 {% block navigation_links %}
-<ul>
+{{ block.super }}
+<ul id="nav_link">
+  <li> My Apatapa:</li>
   <li><a href="{% url analytics %}">Stats</a></li>
   <li><a href="{% url business_manage_employees %}">Employees</a></li>
   <li><a href="{% url business_manage_newsfeed %}">News Items</a></li>

@@ -14,3 +14,9 @@ padding:6px;
     display:none;
     background-color: rgb(240,150,150);
 }
+
+#nav_link {
+    text-align:left;
+    position:relative;
+    bottom:0;
+}
