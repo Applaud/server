@@ -380,12 +380,23 @@ if (! apatapa.business) {
 	    var dimLabel = $('<label>Quality '+(dimension_count+1)+'</label>');
 	    dimLabel.attr({'for':'dimension_'+dimension_count});
 	    $('#newprofile_form').append(dimLabel);
-
+	    
+	    var is_text = $('<input />');
+	    is_text.prop({'type': 'checkbox',
+			  'class': 'is_text',
+			  'name': 'is_text'});
+	    
+	    var is_text_label = $('<label>Text rating</label>');
+	    is_text_label.prop({'for': 'is_text'});
+	    
 	    var dimText = $('<input />');
 	    dimText.attr({'type':'text',
 			  'name':'dimension_'+dimension_count,
 			  'class':'rp_dimension'});
-	    newDimSpan.append($('<br />')).append( dimLabel ).append( dimText);
+	    newDimSpan.append($('<br />')).append( dimLabel )
+		.append( dimText)
+		.append(is_text)
+		.append(is_text_label);
 
 	    $('#newprofile_form').append( newDimSpan );
 	    dimension_count++;
@@ -420,13 +431,16 @@ if (! apatapa.business) {
 			// Hide the new profile form
 			$('#new_ratingprofile').slideUp(100);
 			
-			data = {'title':$('#profile_title').val()}
+			data = {'title':$('#profile_title').val()};
 			// Grab all dimensions
+			dimensions = []
 			$('.rp_dimension').each( function(index, element) {
-			    data['dim'+index] = $(this).val();
+			    dim_dict = {'dimension': $(this).val(),
+					'is_text': $(this).siblings('.is_text').is(':checked')};
+			    dimensions.push(dim_dict);
 			});
 			data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
-
+			data['dimensions'] = JSON.stringify(dimensions);
 			// Make the call to the db
 			$.ajax({ url: new_ratingprofile_url,
 				 type: 'POST',

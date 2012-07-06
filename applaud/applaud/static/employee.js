@@ -60,7 +60,8 @@ if (! apatapa.employee) {
 
     employee.listEmployee = function(emp){
 	var employee_div = $('<div></div>');
-	employee_div.prop({'id':'employee_'+emp.id+'_div'});
+	employee_div.prop({'id':'employee_'+emp.id+'_div',
+			   'class':'employee_div'});
 
 	var employee_image = $('<img />');
 	employee_image.prop({'src':emp.image,
@@ -71,6 +72,9 @@ if (! apatapa.employee) {
 			  'value':emp.id});
 	employee_div.append( employee_image ).append(employee_id);
 	employee_div.append( $('<span class="employee_name">'+emp.first_name+" "+emp.last_name+'</span>') );
+	employee_div.append( $('<p>'+emp.bio+'</p>') );
+
+	
 	
 	return employee_div;
     }
