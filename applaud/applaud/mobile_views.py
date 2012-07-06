@@ -117,20 +117,22 @@ def evaluate(request):
             e = EmployeeProfile.objects.get(id=rating_data['employee']['id'])
         except EmployeeProfile.DoesNotExist:
             pass
-
-        print rating_data['ratings']
-
-        # key = id of RatedDimension
-        # value = value of the rating
         for key, value in rating_data['ratings'].iteritems():
-            print "K,V = %s, %s"%(key,value)
             rated_dimension = RatedDimension.objects.get(id=key)
-            r = Rating(title=rated_dimension.title,
-                       rating_value=float(value),
-                       employee=e,
-                       dimension=rated_dimension,
-                       date_created=datetime.utcnow().replace(tzinfo=utc),
-                       user=request.user.userprofile)
+            if rated_dimension.is_text:
+                r = Rating(title=rated_dimension.title,
+                           rating_text=value,
+                           employee=e,
+                           dimension=rated_dimension,
+                           date_created=datetime.utcnow().replace(tzinfo=utc),
+                           user=request.user.userprofile)
+            else:
+                r = Rating(title=rated_dimension.title,
+                           rating_value=float(value),
+                           employee=e,
+                           dimension=rated_dimension,
+                           date_created=datetime.utcnow().replace(tzinfo=utc),
+                           user=request.user.userprofile)
             r.save()
     return HttpResponse("") # Empty response = all went well
 

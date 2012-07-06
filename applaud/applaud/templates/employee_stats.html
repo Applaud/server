@@ -6,6 +6,44 @@
 <script type="text/javascript">
 google.load("visualization", "1", {packages:["corechart"]});
 
+/* README 
+ *
+ * Notes:
+ * This file is for the display of any and all analytics across the website. It is ONLY for display.
+ * That is, it assumes that any particular page makes an initial ajax call to the server, retrieves relevant and consistently formatted data.
+ * This ajax function should make a single call to the function initialize, which should take the retrieved data as the sole parameter.
+ * 
+ * Complications in the display of these charts arise when we consider viewing data between employees with different RatingProfiles
+ * The current implementation is to display averages across the time range for all rateable dimensions (e.g. if 'Quickness' is not a
+ * relevant paramter for a 'Host', it will still be displayed when viewing a 'Host' and 'Waiter' together, but not when viewing only 'Waiter's)
+ * This can be altered later.
+ * 
+ * Ideally, in the case where the chart range is limited so that there are no ratings for a selected employee, that employee is removed from the chart altogether.
+ *
+ * Definitions -
+ *
+ *     Viewable Range: The range of days on which a particular set of employees can be viewed. Specifically, the range is identified by a start and stop date.
+ *      The start date will be the date of the earliest rating by any employee to the date of the lastest rating of any employee.
+ * 
+ *     Chart Range: The range of days which are actually displayed on the graph.
+ *
+ * Important Functions -
+ *
+ *     initialize(data):
+ *         - Takes the data from the ajax call and performs necessary setup. Should perform necessary bindings, setting global variables, etc.
+ *         - After everything else, calls refresh()
+ *
+ *     refresh():
+ *         - To be called any time the chart data changes (i.e. a change in the list of viewable employees, dimensions, etc.)
+ *
+ *     buildDateSlider():
+ *         - Rebuilds the date slider according to the the viewable range. The viewable range is the earliest date in which aemployees have data
+ *
+ * TODO -
+ *     Remove employee from chart depiction when there are no ratings for him/her in the chart range
+ */
+
+
 /************************************************
  * Global variables used to construct the chart *
  ************************************************/
@@ -17,11 +55,14 @@ var dimensions;
 var cur_employees=[];
 var cur_dimensions=[];
 
+var cur_dim_titles=[];
+
 //The first and last dates of ratings in cur_employees and cur_dimensions
 var first;
 var last;
 
 //The first and last dates of ratings selected on the bar
+//These should be of the form submitted in JS (a string with dd/mm/yyy)
 var range_start;
 var range_stop;
 
@@ -30,13 +71,12 @@ var range_stop;
  *************************/
 var selected_background_color = "#bbbbbb";
 
-// This function should take a list of dimensions, dimList, a list of employees, employeeList
-// and two variables start & stop which should be datestrings (like in the ajax call)
+// This function will take the current 'selected' data and assemble the google chart for it.
 // TODO: Include time range in this function
 function make_chart() {
     // This is eventually the data fed into the chart
     var chart_list = [];
-    
+
     // Build the axes
     var row0 = [ 'Dimension' ];
     for( d in cur_dimensions){
@@ -44,7 +84,8 @@ function make_chart() {
     }
     
     chart_list.push(row0);
-
+    
+    // Is this all too slow?? Brainstorm efficiencies in here
     // For each employee, calculate avg rating for each dimension
     for ( e in cur_employees ) {
 	var avgRatings = [];
@@ -53,10 +94,12 @@ function make_chart() {
 
 	// Sum up totals for each dimension
 	for ( r in employee.ratings ) {
-	    if (! totalRatings[employee.ratings[r].title] ){
-		totalRatings[employee.ratings[r].title] = [];
+	    if( isRatingInRange(employee.ratings[r])){
+		if (! totalRatings[employee.ratings[r].title] ){
+		    totalRatings[employee.ratings[r].title] = [];
+		}
+		totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
 	    }
-	    totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
 	}
 	console.log(totalRatings);
 	// Compute averages
@@ -90,9 +133,20 @@ function make_chart() {
 	    );
 }
 
-function dateToJS( datestring ) {
+// This function should take a rating object (of type retrieved with the JSON call)
+// and return whether or not it falls in the range of the dateslider
+function isRatingInRange(rating){
+    var rating_date = dateToJS(rating.date);
+    if(rating_date > range_start && rating_date < range_stop)
+	return true;
+    return false;
+}
+
+function dateToJS( date ) {
     // This assumes that we are getting dates in the format dd/mm/YYYY
-    var components = datestring.split('/');
+    // As in those passed via the ajax call
+    console.log("date is: "+date);
+    var components = date.split('/');
     return new Date(components[2],components[1],components[0]);
 }
 
@@ -102,12 +156,14 @@ function dateCompare( rating1, rating2 ) {
     return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
 }
 
-function buildTable( dimlist ) {
+// This function should set up the table of clickable dimensions
+// Should only be called once
+function buildTable() {
     
     var the_list = $('<ol></ol>');
     the_list.prop({'id':"dimension_list"});
-    for (d in dimlist) {
-	var dim = dimlist[d];
+    for (d in dimensions) {
+	var dim = dimensions[d];
 	var list_item = $('<li></li>');
 	list_item.prop({'id':'dim_'+dim.title});
 	list_item.text(dim.title);
@@ -129,38 +185,69 @@ function filterRatings( min, max ) {
     
 }
 
-//This function assumes that ratings for a given employee are sorted by date
-function buildDateSlider(dimension_list, employee_list) {
-    for( e in employee_list ){
-	var e_ratings = employee_list[e].ratings;
-	var e_ratings_length = employee_list[e].ratings.length;
+//Builds a list of titles of the current dimensions
+function buildDimensionTitles(){
+    console.log("building titles");
+    cur_dim_titles = []
+    for ( d in cur_dimensions ){
+	if(cur_dim_titles.indexOf(cur_dimensions[d].title)==-1){
+	    cur_dim_titles.push(cur_dimensions[d].title);
+	}
+    }
+}
+// A function to be called whenever cur_dimensions or cur_employees is changed
+// This will reset the slider, rebuild the rateable dimensions table, and perform
+// any other necessary cleanup necessary
+function refresh(){
+    console.log("in refresh");
+    buildDimensionTitles();
+    buildDateSlider();
+
+    make_chart();
+}
+
+function sliderValueToDate(sliderValue){
+    // This function will take a value from the slider (an integer from 0-n) and convert this to a date using, the 'first' global
+    var milliSinceFirst =sliderValue*86400000;
+    var firstAsDate = dateToJS(first);
+    return new Date( firstAsDate.getTime() + milliSinceFirst );
+}
+
+// This function will build a slider which will represent the range of viewable data
+// It assumes that ratings for each employee are sorted by date
+function buildDateSlider() {
+    for( e in cur_employees ){
+	var e_ratings = cur_employees[e].ratings;
+	var e_ratings_length =  cur_employees[e].ratings.length;
 	var e_first;
 	var e_last;
-	
-	for( dim in e_ratings){
-	    if(e_ratings[dim].title in dimension_list){
-		e_first = e_ratings[dim].date;
+	console.log(cur_dim_titles)
+	for( r in e_ratings){
+	    if(cur_dim_titles.indexOf(e_ratings[r].title)!=-1){
+		e_first = e_ratings[r].date;
 		break;
 	    }
 	}
 
 	for( var i = e_ratings_length-1; i>=0; i--){
-	    if(e_ratings[dim].title in dimension_list){
+	    if(cur_dim_titles.indexOf(e_ratings[i].title)!=-1){
 		e_last = e_ratings[i].date;
 		break;
 	    }
 	}
 	// Check if first and last have been set yet
 	if(typeof(first) === 'undefined' && typeof(last) === 'undefined'){
+	    console.log("they're undefined");
 	    first = e_first;
 	    last = e_last;
 	}
 	else {
 	    // If not, determine whether a particular employees rating is the global first (last)
-	    first = dateToJS(first) > dateToJS(e_first)? first : e_first;
+	    first = dateToJS(first) < dateToJS(e_first)? first : e_first;
 	    last = dateToJS(last) > dateToJS(e_last)? last : e_last;
 	}
     }
+    console.log(last+" "+first);
     var range = dateRange(last,first);
     console.log("range :"+range);
     var slider = $('#gt_dateslider');
@@ -168,18 +255,35 @@ function buildDateSlider(dimension_list, employee_list) {
 	            range: true,
 		    min: 0,
 		    max: range,
-		    values:[0,range]});
+		    values:[0,range]
+		  });
 
-    slider.bind( "slidechange", function(event, ui) {
-	filterRatings($(this).slider("values")[0],
-		      $(this).slider("values")[1]);
+    // Setting up various events for the slider
+
+    // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
+    slider.bind( "slide", function(event, ui) {
+	range_start = sliderValueToDate($(this).slider("values")[0]);
+	range_stop = sliderValueToDate($(this).slider("values")[1]);
+
+	var range_as_text= range_start.toDateString()+" - "+range_stop.toDateString();
+	$("#dateslider_label").text("Time range: "+range_as_text);
+	
     });
+
+    // Any time the user finishes the selection, construct the new graph
+    slider.bind( "slidechange", function(event, ui){
+	refresh();
+    });
+    
 }
 
 // This computes date range in milliseconds, using Unix epoch between date_1 and date_2
 // It then converts this to days
 var dateRange = function(date_1, date_2){
-     var range = dateToJS(date_1).getTime() - dateToJS(date_2).getTime();
+    console.log("in dateRange");
+    var day1 = dateToJS(date_1);
+    var day2 = dateToJS(date_2);
+    var range = day1.getTime() - day2.getTime();
     // Convert ms to days
     range /= 86400000;
     return range;
@@ -249,14 +353,14 @@ var add_employee = function(employee){
     var arr_index = cur_employees.indexOf(employee);
     if( arr_index === -1 ) cur_employees.push(employee); 
 
-    make_chart();
+    refresh();
 }
 // Takes an employee JSON object of the form passed from the view
 var remove_employee = function(employee){
     var arr_index = cur_employees.indexOf(emp_id);
     if( arr_index != -1 ) cur_employees.splice(arr_index, 1); 
     
-    make_chart();
+    refresh();
 }
 // Takes a dimension JSON object of the form passed from the view
 var add_dimension = function(dimension){
@@ -265,14 +369,30 @@ var add_dimension = function(dimension){
     var arr_index = cur_dimensions.indexOf(dimension);
     if( arr_index === -1 ) cur_dimensions.push(dimension); 
 
-    make_chart();
+    refresh();
 }
 // Takes a dimension JSON object of the form passed from the view
 var remove_dimension = function(dimension){
     var arr_index = cur_dimensions.indexOf(dimension);
     if( arr_index != -1 ) cur_dimensions.splice(arr_index, 1); 
     
+    refresh();
+}
+
+var initialize = function(data){
+    employees = data.data.employees;
+    dimensions = data.data.dimensions;
+    cur_dimensions = dimensions;
+    cur_employees = employees;
+    
+    buildDimensionTitles();
+    buildDateSlider();
+    buildTable();
+
+    //Should refresh be called within initialize?
+    console.log("before refresh");
     make_chart();
+    //refresh();
 }
 
 $(document).ready( function() {
@@ -281,15 +401,10 @@ $(document).ready( function() {
 	    type:'POST',
 	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 	    success:function(data) {
-		employees = data.data.employees;
-		dimensions = data.data.dimensions;
-		cur_dimensions = dimensions;
-		cur_employees = employees;
-		make_chart();
 
-//		buildTable(dimensions);
-//		buildDateSlider(dimensions, employees);
+		initialize(data);
 		
+		//TODO: Cleanup employee listing and retrieval
 		var emp_id = employees[0].id;
 		console.log("Employee id is: "+emp_id);
 		apatapa.employee.getEmployee(emp_id, $("#employee_welcome"), function(){
@@ -314,8 +429,9 @@ $(document).ready( function() {
 <div id="graph_table">
     <div id="gt_dims"></div>
     <div id="emp_graph"></div>
-
-    <label for="dateslider">Time range</label>
+    <div id="date_slider_text">
+    </div>
+    <p id="dateslider_label"></p>
     <div id="gt_dateslider" name="dateslider"></div>
 </div>
 <form>
