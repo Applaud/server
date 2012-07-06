@@ -262,32 +262,27 @@ def _list_rating_profiles(businessID):
 def new_ratingprofile(request):
     '''
     {'title':"thetitle",
-     'dim0':"firstdimensiontext",
-     'dim1':"seconddimensiontext",
+    'dimensions':[
+     {'dimension' :"firstdimensiontext", 'is_text': boolean},
+     {'dimension':"seconddimensiontext", 'is_text': boolean},
+    ]
      ...}
     '''
 
     # Profiles must have titles
     if 'title' not in request.POST:
         return HttpResponse("")
-
     profile = request.user.businessprofile
     if request.method != 'POST':
         return HttpResponseRedirect(reverse("business_manage_employees"))
-
-    dimensions = []
-    i = 0
-
     rp = RatingProfile(title=request.POST['title'],
                        business=profile)
     rp.save()
-
-    while 'dim%d'%i in request.POST:
-        dim = RatedDimension(title=request.POST['dim%d'%i],
+    for dim in json.loads(request.POST['dimensions']):
+        dim = RatedDimension(title=dim['dimension'],
+                             is_text=dim['is_text'],
                              rating_profile=rp)
         dim.save()
-        i += 1
-
     return HttpResponse(json.dumps({'rating_profiles':_list_rating_profiles(profile.id)},
                                    cls=views.RatingProfileEncoder),
                         mimetype='application/json')
