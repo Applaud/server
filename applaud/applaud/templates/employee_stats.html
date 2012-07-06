@@ -20,6 +20,8 @@ google.load("visualization", "1", {packages:["corechart"]});
  * 
  * Ideally, in the case where the chart range is limited so that there are no ratings for a selected employee, that employee is removed from the chart altogether.
  *
+ * The AJAX call should only pull down the employees. Using this, we can assemble the dimensions list
+ *
  * Definitions -
  *
  *     Viewable Range: The range of days on which a particular set of employees can be viewed. Specifically, the range is identified by a start and stop date.
@@ -38,7 +40,7 @@ google.load("visualization", "1", {packages:["corechart"]});
  *         - Takes a single parameter - optionArgument - which is 1 if buildDateSlider should be called and 0 otherwise (the only event that shouldn't rebuild it is the 'slidechange' event on the slider itself
  *
  *     buildDateSlider():
- *         - Rebuilds the date slider according to the the viewable range. The viewable range is the earliest date in which aemployees have data
+ *         - Rebuilds the date slider according to the the viewable range. The viewable range is the range from the earliest date to the latest date in which any of the current employees have data
  *
  * TODO -
  *     Remove employee from chart depiction when there are no ratings for him/her in the chart range
@@ -56,14 +58,15 @@ var dimensions;
 var cur_employees=[];
 var cur_dimensions=[];
 
-var cur_dim_titles=[];
-
-//The first and last dates of ratings in cur_employees and cur_dimensions
+// The first and last dates of ratings in cur_employees and cur_dimensions
 var first;
 var last;
 
-//The first and last dates of ratings selected on the bar
-//These should be of the form submitted in JS (a string with dd/mm/yyy)
+// The range between first & last
+var range;
+
+// The first and last dates of ratings selected on the bar
+// These will be JS date objects
 var range_start;
 var range_stop;
 
@@ -81,8 +84,10 @@ function make_chart() {
 
     // Build the axes
     var row0 = [ 'Dimension' ];
+    console.log('dimensions are');
     for( d in cur_dimensions){
-	row0.push(cur_dimensions[d].title)
+	console.log(cur_dimensions[d]);
+	row0.push(cur_dimensions[d])
     }
     
     chart_list.push(row0);
@@ -94,19 +99,19 @@ function make_chart() {
 	var totalRatings = {};
 	var employee = cur_employees[e];
 
+
 	// Sum up totals for each dimension
 	for ( r in employee.ratings ) {
 	    if( isRatingInRange(employee.ratings[r])){
 		if (! totalRatings[employee.ratings[r].title] ){
 		    totalRatings[employee.ratings[r].title] = [];
 		}
-		console.log(employee.ratings[r]);
 		totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
 	    }
 	}
 	// Compute averages
 	for ( i in cur_dimensions ) {
-	    var dimName = cur_dimensions[i].title;
+	    var dimName = cur_dimensions[i];
 	    avgRatings[i] = 0;
 	    if ( dimName in totalRatings && totalRatings[dimName].length > 0 ) {
 		var total = 0;
@@ -121,7 +126,7 @@ function make_chart() {
 	nextRow = nextRow.concat(avgRatings);
 	chart_list.push(nextRow);
     }
-
+    console.log(chart_list);
     // Create and populate the data table.
     var data = google.visualization.arrayToDataTable( chart_list );
     
@@ -131,15 +136,31 @@ function make_chart() {
              {title:"Evaluations by Dimension",
               width:700, height:400,
               hAxis: {title: "Dimension"},
-              vAxis: {title: "Average Rating"}}
-	    );
+              vAxis: {title: "Average Rating",
+		      viewWindowMode:'explicit',
+		      viewWindow:{
+		          max:6.0,
+		          min:0}
+		     }
+	     });
 }
 
 // This function should take a rating object (of type retrieved with the JSON call)
 // and return whether or not it falls in the range of the dateslider
 function isRatingInRange(rating){
     var rating_date = dateToJS(rating.date);
-    if(rating_date > range_start && rating_date < range_stop)
+/*    console.log("rating_date");
+    console.log(rating_date);
+    console.log("range_start");
+    console.log(range_start);
+    console.log("range_stop");
+    console.log(range_stop);
+    console.log("is rating_date >= range_start_date?");
+    console.log(rating_date >= range_start);
+    console.log("is rating_date <= range_stop_date?");
+    console.log(rating_date <= range_stop);
+*/
+    if(rating_date >= range_start && rating_date <= range_stop)
 	return true;
     return false;
 }
@@ -166,37 +187,14 @@ function buildTable() {
     for (d in dimensions) {
 	var dim = dimensions[d];
 	var list_item = $('<li></li>');
-	list_item.prop({'id':'dim_'+dim.title});
-	list_item.text(dim.title);
+	list_item.prop({'id':'dim_'+dim});
+	list_item.text(dim);
 	list_item.hover(dimension_hover_in, dimension_hover_out);
 	list_item.click(dimension_click);
 	the_list.append(list_item);
     }
 
     $('#gt_dims').append(the_list);
-}
-
-//Builds a list of titles of the current dimensions
-function buildDimensionTitles(){
-    console.log("building titles");
-    cur_dim_titles = []
-    for ( d in cur_dimensions ){
-	if(cur_dim_titles.indexOf(cur_dimensions[d].title)==-1){
-	    cur_dim_titles.push(cur_dimensions[d].title);
-	}
-    }
-}
-// A function to be called whenever cur_dimensions or cur_employees is changed
-// This will reset the slider, rebuild the rateable dimensions table, and perform
-// any other necessary cleanup necessary
-//
-// optionArgument is 1 if buildDateSlider should be called and 0 otherwise
-function refresh(optionArgument){
-    if(optionArgument === 1)
-	buildDateSlider();
-
-    buildDimensionTitles();
-    make_chart();
 }
 
 function sliderValueToDate(sliderValue){
@@ -210,7 +208,6 @@ function sliderValueToDate(sliderValue){
 // It assumes that ratings for each employee are sorted by date
 function buildDateSlider() {
    
-    var range = getDateRange(last,first);
     var slider = $('#gt_dateslider');
     slider.slider({ animate: true,
 	            range: true,
@@ -221,13 +218,13 @@ function buildDateSlider() {
 
     // Setting up various events for the slider
 
-    slider.bind( "slidecreate", function(event, ui) {
-	setSliderLabel();
-    });
-
     // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
     slider.bind( "slide", function(event, ui) {
-	setSliderLabel();
+	range_start = sliderValueToDate($(this).slider("values")[0]);
+	range_stop = sliderValueToDate($(this).slider("values")[1]);
+	
+	var range_as_text= range_start.toDateString()+" - "+range_stop.toDateString();
+	$("#dateslider_label").text("Time range: "+range_as_text);
     });
 
     // Any time the user finishes the selection, construct the new graph
@@ -237,32 +234,24 @@ function buildDateSlider() {
     
 }
 
-// Sets the slider label (and the global range_start & range_stop variables) using the values of the slider itself
-var setSliderLabel = function(){
-	range_start = sliderValueToDate($(this).slider("values")[0]);
-	range_stop = sliderValueToDate($(this).slider("values")[1]);
-
-	var range_as_text= range_start.toDateString()+" - "+range_stop.toDateString();
-	$("#dateslider_label").text("Time range: "+range_as_text);
-}
-
 // This calculates and returns the viewable range in days
-var getDateRange = function(){
-    console.log("in buildDateSlider");
+// This also sets the global variables first & last
+var setDateRange = function(){
+    
     for( e in cur_employees ){
 	var e_ratings = cur_employees[e].ratings;
 	var e_ratings_length =  cur_employees[e].ratings.length;
 	var e_first;
 	var e_last;
 	for( r in e_ratings){
-	    if(cur_dim_titles.indexOf(e_ratings[r].title)!=-1){
+	    if(cur_dimensions.indexOf(e_ratings[r].title)!=-1){
 		e_first = e_ratings[r].date;
 		break;
 	    }
 	}
 
 	for( var i = e_ratings_length-1; i>=0; i--){
-	    if(cur_dim_titles.indexOf(e_ratings[i].title)!=-1){
+	    if(cur_dimensions.indexOf(e_ratings[i].title)!=-1){
 		e_last = e_ratings[i].date;
 		break;
 	    }
@@ -301,7 +290,7 @@ var dimension_click = function(){
     var dimension;
     
     for( i in dimensions){
-	if( dimensions[i].title == dim_title ){
+	if( dimensions[i] == dim_title ){
 	    dimension = dimensions[i];
 	    break;
 	}
@@ -376,19 +365,49 @@ var remove_dimension = function(dimension){
     refresh(1);
 }
 
+// Using the employees list, assembles a list of dimension titles
+var buildDimensions = function(){
+    dimensions = [];
+    for ( e in employees ){
+	var ratings = employees[e].ratings
+	for ( r in ratings ){
+	    var curRating = ratings[r];
+	    if ( dimensions.indexOf(curRating.title) == -1 ){
+		dimensions.push(curRating.title);
+	    }
+	}
+    }
+}
+
+// This should just set variables
 var initialize = function(data){
     employees = data.data.employees;
-    dimensions = data.data.dimensions;
+    buildDimensions();
     cur_dimensions = dimensions;
     cur_employees = employees;
-    
-    buildDimensionTitles();
-    buildDateSlider();
-    buildTable();
 
-    //Should refresh be called within initialize?
     refresh(1);
 }
+
+
+// This will reset the slider, rebuild the rateable dimensions table, and perform
+// any other necessary cleanup
+//
+// optionArgument is 1 if buildDateSlider should be called and 0 otherwise
+//
+// TODO: Pass refresh optional parameters to indicate what has changed and which methods need to be called accordingly
+function refresh(optionArgument){
+    range = setDateRange();
+
+    if(optionArgument === 1){
+	buildDateSlider();
+	range_start = sliderValueToDate(0);
+	range_stop= sliderValueToDate(range);
+    }
+
+    make_chart();
+}
+
 
 $(document).ready( function() {
 
