@@ -35,6 +35,7 @@ google.load("visualization", "1", {packages:["corechart"]});
  *
  *     refresh():
  *         - To be called any time the chart data changes (i.e. a change in the list of viewable employees, dimensions, etc.)
+ *         - Takes a single parameter - optionArgument - which is 1 if buildDateSlider should be called and 0 otherwise (the only event that shouldn't rebuild it is the 'slidechange' event on the slider itself
  *
  *     buildDateSlider():
  *         - Rebuilds the date slider according to the the viewable range. The viewable range is the earliest date in which aemployees have data
@@ -74,6 +75,7 @@ var selected_background_color = "#bbbbbb";
 // This function will take the current 'selected' data and assemble the google chart for it.
 // TODO: Include time range in this function
 function make_chart() {
+    console.log("in make_chart");
     // This is eventually the data fed into the chart
     var chart_list = [];
 
@@ -98,10 +100,10 @@ function make_chart() {
 		if (! totalRatings[employee.ratings[r].title] ){
 		    totalRatings[employee.ratings[r].title] = [];
 		}
+		console.log(employee.ratings[r]);
 		totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
 	    }
 	}
-	console.log(totalRatings);
 	// Compute averages
 	for ( i in cur_dimensions ) {
 	    var dimName = cur_dimensions[i].title;
@@ -145,7 +147,6 @@ function isRatingInRange(rating){
 function dateToJS( date ) {
     // This assumes that we are getting dates in the format dd/mm/YYYY
     // As in those passed via the ajax call
-    console.log("date is: "+date);
     var components = date.split('/');
     return new Date(components[2],components[1],components[0]);
 }
@@ -175,16 +176,6 @@ function buildTable() {
     $('#gt_dims').append(the_list);
 }
 
-/**
- * filterRatings
- *
- * Filters the ratings displayed on the chart, given the min/max values
- * from the double-handled slider.
- */
-function filterRatings( min, max ) {
-    
-}
-
 //Builds a list of titles of the current dimensions
 function buildDimensionTitles(){
     console.log("building titles");
@@ -198,11 +189,13 @@ function buildDimensionTitles(){
 // A function to be called whenever cur_dimensions or cur_employees is changed
 // This will reset the slider, rebuild the rateable dimensions table, and perform
 // any other necessary cleanup necessary
-function refresh(){
-    console.log("in refresh");
-    buildDimensionTitles();
-    buildDateSlider();
+//
+// optionArgument is 1 if buildDateSlider should be called and 0 otherwise
+function refresh(optionArgument){
+    if(optionArgument === 1)
+	buildDateSlider();
 
+    buildDimensionTitles();
     make_chart();
 }
 
@@ -216,12 +209,51 @@ function sliderValueToDate(sliderValue){
 // This function will build a slider which will represent the range of viewable data
 // It assumes that ratings for each employee are sorted by date
 function buildDateSlider() {
+   
+    var range = getDateRange(last,first);
+    var slider = $('#gt_dateslider');
+    slider.slider({ animate: true,
+	            range: true,
+		    min: 0,
+		    max: range,
+		    values:[0,range]
+		  });
+
+    // Setting up various events for the slider
+
+    slider.bind( "slidecreate", function(event, ui) {
+	setSliderLabel();
+    });
+
+    // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
+    slider.bind( "slide", function(event, ui) {
+	setSliderLabel();
+    });
+
+    // Any time the user finishes the selection, construct the new graph
+    slider.bind( "slidechange", function(event, ui){
+	refresh(0);
+    });
+    
+}
+
+// Sets the slider label (and the global range_start & range_stop variables) using the values of the slider itself
+var setSliderLabel = function(){
+	range_start = sliderValueToDate($(this).slider("values")[0]);
+	range_stop = sliderValueToDate($(this).slider("values")[1]);
+
+	var range_as_text= range_start.toDateString()+" - "+range_stop.toDateString();
+	$("#dateslider_label").text("Time range: "+range_as_text);
+}
+
+// This calculates and returns the viewable range in days
+var getDateRange = function(){
+    console.log("in buildDateSlider");
     for( e in cur_employees ){
 	var e_ratings = cur_employees[e].ratings;
 	var e_ratings_length =  cur_employees[e].ratings.length;
 	var e_first;
 	var e_last;
-	console.log(cur_dim_titles)
 	for( r in e_ratings){
 	    if(cur_dim_titles.indexOf(e_ratings[r].title)!=-1){
 		e_first = e_ratings[r].date;
@@ -237,7 +269,6 @@ function buildDateSlider() {
 	}
 	// Check if first and last have been set yet
 	if(typeof(first) === 'undefined' && typeof(last) === 'undefined'){
-	    console.log("they're undefined");
 	    first = e_first;
 	    last = e_last;
 	}
@@ -247,42 +278,9 @@ function buildDateSlider() {
 	    last = dateToJS(last) > dateToJS(e_last)? last : e_last;
 	}
     }
-    console.log(last+" "+first);
-    var range = dateRange(last,first);
-    console.log("range :"+range);
-    var slider = $('#gt_dateslider');
-    slider.slider({ animate: true,
-	            range: true,
-		    min: 0,
-		    max: range,
-		    values:[0,range]
-		  });
 
-    // Setting up various events for the slider
-
-    // Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
-    slider.bind( "slide", function(event, ui) {
-	range_start = sliderValueToDate($(this).slider("values")[0]);
-	range_stop = sliderValueToDate($(this).slider("values")[1]);
-
-	var range_as_text= range_start.toDateString()+" - "+range_stop.toDateString();
-	$("#dateslider_label").text("Time range: "+range_as_text);
-	
-    });
-
-    // Any time the user finishes the selection, construct the new graph
-    slider.bind( "slidechange", function(event, ui){
-	refresh();
-    });
-    
-}
-
-// This computes date range in milliseconds, using Unix epoch between date_1 and date_2
-// It then converts this to days
-var dateRange = function(date_1, date_2){
-    console.log("in dateRange");
-    var day1 = dateToJS(date_1);
-    var day2 = dateToJS(date_2);
+    var day1 = dateToJS(last);
+    var day2 = dateToJS(first);
     var range = day1.getTime() - day2.getTime();
     // Convert ms to days
     range /= 86400000;
@@ -353,30 +351,29 @@ var add_employee = function(employee){
     var arr_index = cur_employees.indexOf(employee);
     if( arr_index === -1 ) cur_employees.push(employee); 
 
-    refresh();
+    refresh(1);
 }
 // Takes an employee JSON object of the form passed from the view
 var remove_employee = function(employee){
     var arr_index = cur_employees.indexOf(emp_id);
     if( arr_index != -1 ) cur_employees.splice(arr_index, 1); 
     
-    refresh();
+    refresh(1);
 }
 // Takes a dimension JSON object of the form passed from the view
 var add_dimension = function(dimension){
-    console.log("adding dimension");
     //First, make sure the employee isn't in the chart
     var arr_index = cur_dimensions.indexOf(dimension);
     if( arr_index === -1 ) cur_dimensions.push(dimension); 
 
-    refresh();
+    refresh(1);
 }
 // Takes a dimension JSON object of the form passed from the view
 var remove_dimension = function(dimension){
     var arr_index = cur_dimensions.indexOf(dimension);
     if( arr_index != -1 ) cur_dimensions.splice(arr_index, 1); 
     
-    refresh();
+    refresh(1);
 }
 
 var initialize = function(data){
@@ -390,9 +387,7 @@ var initialize = function(data){
     buildTable();
 
     //Should refresh be called within initialize?
-    console.log("before refresh");
-    make_chart();
-    //refresh();
+    refresh(1);
 }
 
 $(document).ready( function() {
@@ -406,7 +401,6 @@ $(document).ready( function() {
 		
 		//TODO: Cleanup employee listing and retrieval
 		var emp_id = employees[0].id;
-		console.log("Employee id is: "+emp_id);
 		apatapa.employee.getEmployee(emp_id, $("#employee_welcome"), function(){
 		    
 		});
