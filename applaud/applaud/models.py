@@ -114,6 +114,10 @@ class Rating(models.Model):
         user = models.ForeignKey('UserProfile')
 
         date_created = models.DateTimeField()
+
+        def rounded_rating(self):
+            
+            return float('%.1f' % round(self.rating_value,1)) if self.rating_value else 0
         
 	def __unicode__(self):
 		return "%s:%s (%s)"%(self.title,
@@ -236,6 +240,7 @@ class QuestionResponse(models.Model):
     
     # The end user who provided the response
     user = models.ForeignKey('UserProfile')
+
     date_created=models.DateTimeField()
     def __unicode__(self):
         return json.dumps(self.response)
@@ -300,6 +305,13 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     first_time = models.BooleanField(default=1)
     
+    # Other valuable information that we can get from the user.
+    SEX_TYPES = (
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+        )
+    sex = models.CharField(max_length=6, choices=SEX_TYPES, blank=True, null=True)
 
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
@@ -308,3 +320,4 @@ class UserProfile(models.Model):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
+                

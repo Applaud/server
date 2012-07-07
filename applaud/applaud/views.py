@@ -140,6 +140,20 @@ class QuestionEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, o)
 
+
+
+# Encodes a rating into JSON
+class RatingEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Rating):
+            return {'business': o.employee.businessprofile,
+                    'date': o.date_created,
+                    'profile': o.profile,
+                    'rating_value': o.rating_value,
+                    'user': user}
+        else:
+            return json.JSONEncdoder.default(self, o)
+
 # Encodes a NewsFeedItem into JSON.
 class NewsFeedItemEncoder(json.JSONEncoder):
     def default(self, o):
@@ -167,3 +181,4 @@ class RatingEncoder(json.JSONEncoder):
                     'title':o.title}
         else:
             return json.JSONEncoder.default(self, o)
+

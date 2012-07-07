@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from applaud.models import BusinessProfile, EmployeeProfile
 from django.template import RequestContext, Template
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.views.decorators.csrf import csrf_protect
 from django.middleware.csrf import get_token
@@ -55,18 +56,24 @@ def edit_user_profile(request):
         u.last_name=request.POST['last_name']
         datestring = request.POST['date_of_birth']
         u.userprofile.date_of_birth = datetime.strptime(datestring, '%m/%d/%Y').date()
-        sys.stderr.write('date: %s\n\n' % str(u.userprofile.date_of_birth))
+        if request.POST['sex']:
+            u.userprofile.sex=request.POST['sex']
         u.save()
         u.userprofile.save()
-
+        
+        # Success message
+        messages.add_message(request, messages.SUCCESS, "You have successfully updated your profile!")
+        
         return HttpResponseRedirect(reverse("user_home"))
 
     else:
         n = request.user
         f = UserChangeForm()
         dob = n.userprofile.date_of_birth.strftime("%m/%d/%Y") if n.userprofile.date_of_birth else ""
+        sex=n.userprofile.sex if n.userprofile.sex else ""
         return render_to_response('edit_user_profile.html',
-                                  {'dob': dob},
+                                  {'dob': dob,
+                                   'sex':sex},
                                   context_instance=RequestContext(request))
 
 
@@ -102,7 +109,8 @@ def view_previous_responses(request):
     return render_to_response('user.html',
                               {'feedback':feedback,
                                'rating':rating,
-                               'rating_date':rating_date,
-                               'responses':qs_responses,
-                               'response_date':response_date},
+                               'responses':qs_responses},
                               context_instance=RequestContext(request))
+
+
+

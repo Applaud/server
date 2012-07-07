@@ -11,8 +11,12 @@ urlpatterns = patterns('',
                        url(r'^$', 
                            views.view_previous_responses,
                            name="user_home"),
-
+                    
                        url(r'^edit_user_profile/$',
                            views.edit_user_profile,
                            name="edit_user_profile"),
                        )
+
+
+
+                   
