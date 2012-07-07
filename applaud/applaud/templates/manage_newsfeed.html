@@ -1,6 +1,9 @@
 {% extends "business.html" %}
 {% block title %}Welcome to Applaud!{% endblock %}
 
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business.css" />
 {% block scripts %}
 {{ block.super }}
 <script language="javascript" type="text/javascript">
@@ -16,6 +19,7 @@
 <div id="newsfeeds" name="newsfeeds" class="newsfeeds">
   <form id="newsfeed_form" name="newsfeed_form" action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <button type="button" id="add_newsfeed_button" name="add_newsfeed_button" class="add_newsfeed_button">Add Newsfeed Item</button>
     {% for feed in feeds %}
     <div class="feed" id="feed_{{ forloop.counter0 }}" name="feed_{{ forloop.counter0 }}">
       <input type="hidden" value="false" class="should_delete" name="should_delete_{{ forloop.counter0 }}" id="should_delete_{{ forloop.counter0 }}" />
@@ -29,7 +33,7 @@
       <button type="button" class="nf_delete_button" id="feed_delete_button_{{ forloop.counter0 }}" name="feed_delete_button_{{ forloop.counter0 }}">Delete</button>
     </div>
     {% endfor %}
-    <button type="button" id="add_newsfeed_button" name="add_newsfeed_button" class="add_newsfeed_button">Add newsfeed</button>
+   
     <button type="submit" id="save_newsfeed_button" name="save_newsfeed_button" class="save_newsfeed_button">Save Changes</button>
   </form>
 </div>

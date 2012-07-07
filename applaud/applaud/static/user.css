@@ -4,7 +4,8 @@ table, td, th {
 }
 td
 {
-padding:6px;
+padding:1px;
+text-align:center;
 }
 
 .visible {
@@ -14,9 +15,8 @@ padding:6px;
     display:none;
     background-color: rgb(240,150,150);
 }
-
-#nav_link {
-    text-align:left;
-    position:relative;
-    bottom:0;
+.table_date {
+    width:15%;
 }
+table{
+    width:100%;}
