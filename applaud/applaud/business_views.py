@@ -121,6 +121,14 @@ def list_employees(request):
                                    cls=views.EmployeeEncoder),
                         mimetype='application/json')
 
+# List the employees for a business
+# Helper function for above
+def _list_employees(businessID):
+    business_profile = BusinessProfile.objects.get(id=businessID)
+    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
+
+    return employee_list
+
 # A view which takes an employee id through get, checks if the requesting business has the authority
 # to view the specific employees stats and returns the data.
 # On errors, returns an error message
@@ -148,12 +156,6 @@ def list_employee(request):
     else:
         return HttpResponse({'foo':"FOOO!"})
 
-# List the employees for a business
-def _list_employees(businessID):
-    business_profile = BusinessProfile.objects.get(id=businessID)
-    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
-
-    return employee_list
 
 @business_view
 @csrf_protect

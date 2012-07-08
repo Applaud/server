@@ -46,20 +46,19 @@ if (! apatapa.business) {
 	/**
 	 * getEmployees
 	 *
-	 * NOTE: You MUST have {% csrf_token %} on the page calling this somewhere.
 	 * fills 'container' with the list of employees for current business.
 	 */
 	_ns.getEmployees = function( container, callback ) {
 	    $.ajax({url: list_employees_url,
-		    type: 'POST',
-		    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
+		    type: 'GET',
+		    data:{},
 		    success: function(data) {
 			_ns.listEmployee(data, container);
 			if ( callback )
 			    callback();
 		    },
 		    error: function() {
-			alert("Something went wrong.");
+			alert("Something went wrong....");
 		    }
 		   });
 	};
@@ -103,9 +102,11 @@ if (! apatapa.business) {
 	    container.append(listing);
 	};
 	
-	///////////////////////////////////////////////////
-        // Returns a div containing employee information //
-        ///////////////////////////////////////////////////
+	/*
+         * Returns a div containing employee information
+	 * 
+	 * TODO: Pass this a parameter list detailing which information the div should hold
+	 */
 	_ns.listEmployee = function(employee){
 	    var employee_div = $('<div></div>');
 	    employee_div.prop({'id':'employee_'+employee.id+'_div'});
@@ -117,10 +118,26 @@ if (! apatapa.business) {
 	    var employee_id = $('<input />');
 	    employee_id.prop({'type':'hidden',
 			      'value':employee.id});
-	    listitem.append( employee_image ).append(employee_id);
-	    listitem.append( $('<span class="employee_name">'+employee.first_name+" "+employee.last_name+'</span>') );
+
+
+	    var employee_info_div = $('<div></div>');
+	    employee_info_div.prop({'class':'employee_info'});
+
+	    var employee_name = $('<span></span>');
+	    employee_name.prop({'class':'employee_name'});
+	    employee_name.text(employee.first_name+" "+employee.last_name);
 	    
-	    return listitem;
+	    var employee_info = $('<div></div>')
+	    employee_info.prop({'bio':employee.bio});
+
+	    employee_info_div.append(employee_name)
+		.append(employee_info);
+
+	    employee_div.append(employee_image)
+		.append(employee_id)
+	        .append(employee_info_div);
+	    
+	    return employee_div;
 
 	}
     })(business.employees);

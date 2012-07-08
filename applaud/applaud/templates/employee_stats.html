@@ -3,51 +3,16 @@
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}employee_stats.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
-<script type="text/javascript">
-google.load("visualization", "1", {packages:["corechart"]});
-
-$(document).ready( function() {
-
-    $.ajax({url:"{% url employee_stats %}",
-	    type:'POST',
-	    data:{'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-	    success:function(data) {
-
-		apatapa.stats.initialize(data);
-		
-		//TODO: Cleanup employee listing and retrieval
-		var emp_id = employees[0].id;
-		apatapa.employee.getEmployee(emp_id, $("#employee_welcome"), function(){
-		    
-		});
-
-	    },
-	    error:function(){alert("Something went wrong.");}});
-      $(".hidden").hide();
-      $(".visible").click( function () {
-      $(this).siblings(".hidden").show();
-});
-
-      $(".table_view").hide();
-      $("#graph").click( function () {
-      $(".graph_view").show();
-      $(".table_view").hide();
-});
-      $("#table").click( function () {
-      $(".table_view").show();
-      $(".graph_view").hide();
-});
-});
-</script>
 {% endblock %}
 {% block links %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" />
+<!-- <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" /> -->
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
 {% endblock %}
 {% block content %}
  
-<div id="employee_welcome"></div>
+<div id="employee"></div>
 
 <div id="graph_vs_table">
 <button id="graph"> Graph </button>

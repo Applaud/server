@@ -13,6 +13,7 @@
   <link type="text/css" href="{{ STATIC_URL }}jquery-ui/css/custom-theme/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />
   <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui/js/jquery-ui-1.8.21.custom.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}functions.js"></script>
   <script type="text/javascript" >
 /**
  * URLS
@@ -23,6 +24,7 @@ var delete_employee_url = "{% url business_delete_employee %}";
 var list_employees_url = "{% url business_list_employees %}";
 
 // Employee URLs
+var employee_stats_url = "{% url employee_stats %}";
 var employee_list_employee_url = "{% url employee_list_employee %}";
 
 // Rating profile URLs.
