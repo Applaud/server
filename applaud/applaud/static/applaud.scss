@@ -54,7 +54,7 @@ table {
 
 /******** variables ********/
 $pagefont: 'Arvo', serif;	// most page fonts
-$contentwidth: 800px;		// width of main content div
+$contentwidth: 1000px;		// width of main content div
 $logocolor: rgb(110,155,255);	// color of logo
 $titlecolor: rgb(80,2,120);	// color of sub-section titles
 $browncolor: rgb(44,30,30);	// dark brown color for header/footer
@@ -88,6 +88,24 @@ html, body {
 #header, #footer, #extra-content {
     color:rgb(255,255,255);
     background-color:$browncolor;
+}
+
+#extra-extra-content{
+background: rgb(0, 0, 0) transparent;
+/* RGBa with 0.6 opacity */
+background: rgba(0, 0, 0, 0);
+/* For IE 5.5 - 7*/
+filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+/* For IE 8*/
+-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+}
+
+
+iframe{ 
+    text-align:center;
+    margin-left:100px;
+    margin-right:100px;
+    padding:15px;
 }
 
 #header {
@@ -263,7 +281,7 @@ h3 {
     padding:20px;
 }
 
-.login_extra {
+.login_ {
     margin: {
 	top:20px;
     }

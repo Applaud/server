@@ -108,12 +108,17 @@ var business_list_employee_url = "{% url business_list_employee %}"
 	{% endif %}
       </div>
     </div>
+	
 
     <div id="extra-content">
       {% block header %}
       {% endblock %}
     </div>
 
+    <div id="extra-extra-content">
+      {% block video %}
+      {% endblock %}
+    </div>
     <div id="main">
       {% block content %}
       {% endblock %}

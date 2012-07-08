@@ -71,11 +71,25 @@ html, body {
 /* very top and bottom caps */
 #header, #footer, #extra-content {
   color: white;
-  position: relative;
   background-color: #2c1e1e; }
 
+#extra-extra-content {
+  background: black transparent;
+  /* RGBa with 0.6 opacity */
+  background: rgba(0, 0, 0, 0);
+  /* For IE 5.5 - 7*/
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+  /* For IE 8*/
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)"; }
+
+iframe {
+  text-align: center;
+  margin-left: 100px;
+  margin-right: 100px;
+  padding: 15px; }
+
 #header {
-  height: 200px; }
+  height: 150px; }
 
 #main {
   overflow: auto;
@@ -86,7 +100,7 @@ html, body {
 /* very bottom div */
 #footer {
   position: relative;
-  width: 786px;
+  width: 986px;
   height: 15px;
   line-height: 15px;
   font-family: 'PT Sans Caption', sans-serif;
@@ -152,7 +166,7 @@ html, body {
   display: block;
   text-align: right;
   position: relative;
-  top: 100px; }
+  top: 60px; }
   #navigation li {
     display: inline;
     padding: 5px; }
@@ -161,17 +175,9 @@ html, body {
     text-decoration: none; }
     #navigation a:hover {
       text-decoration: underline; }
+
 #copyright {
   float: left; }
-
-/* These are the sub navigation links, specific to business, user or employee */
-#nav_link {
-    text-align:left;
-    position:relative;
-    bottom:0;
-    padding-top:10px;
-}
-
 
 #contact {
   float: right; }
@@ -214,12 +220,8 @@ h3 {
     margin-top: 3px;
     margin-bottom: 3px; }
 
-.login_extra {
+.login_ {
   margin-top: 20px; }
 
 #messages {
   margin-left: 10px; }
-
-
-
-
