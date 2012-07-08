@@ -1,0 +1,29 @@
+{% extends "business.html" %}
+{% block title %}
+Employee Information
+{% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}business_stats.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
+
+{% endblock %}
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_analytics.css" />
+{% endblock %}
+{% block content %}
+{{ block.super }}
+<h1>Employee Analytics</h1>
+<div id="employees"></div> 
+</div>
+
+<div id="graph_table">
+    <div id="gt_dims"></div>
+    <div id="emp_graph"></div>
+    <div id="date_slider_text">
+    </div>
+    <p id="dateslider_label"></p>
+    <div id="gt_dateslider" name="dateslider"></div>
+</div>
+{% endblock%}
