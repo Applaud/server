@@ -712,3 +712,30 @@ def save_image(model_image, filename, profile, tmp_image):
     imagefile = open(os.path.join('/tmp',filename), 'r')
     content = File(imagefile)
     model_image.save(filename, content)
+
+
+
+# The view that calls the control panel center, where a business can manage their employees, surveys and newsfeeds.
+@business_view
+def control_panel(request):
+    
+    profile = request.user.businessprofile
+    
+    if request.method == 'GET':
+        # First all the employeees
+        employee_list = profile.employeeprofile_set.all()
+        
+        # All the newsfeed items that have been created so far.
+        newsfeed_list = profile.newsfeeditem_set.all()
+
+        # The survey is a list of questions. Survey_list will be a list of surveys.
+        survey_list = profile.survey_set.all()
+
+        return render_to_response('business_control_panel.html',
+                                  {'employee_list':employee_list,
+                                   'feeds':newsfeed_list,
+                                   'survey_list':survey_list},
+                                  context_instance=RequestContext(request))
+    # Method is post.
+    else:
+        return HttpResponseRedirect('/business')
