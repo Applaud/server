@@ -42,49 +42,31 @@ def employee_view(view):
 
 @employee_view
 def employee_stats(request):
+    return render_to_response('employee_stats.html', {}, context_instance=RequestContext(request))
+
+
+@employee_view
+def get_stats(request):
     '''Gives statistics for a particular employee (given in request). This
     is accessed through the apatapa website when an employee is logged in.
     '''
-    employee = request.user
-    profile = employee.employeeprofile
-    rating_profile = profile.rating_profile
-
-    # List of valid dimensions for rating
-    dimensions = list(rating_profile.rateddimension_set.all())
-
-    return_data = {}
-    return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
-    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
-
-    encoded_employee = views.EmployeeEncoder().default(profile)
-    encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in profile.rating_set.all()]
-    return_data['employees'] = [encoded_employee]
-    
-    rating=profile.rating_set.all()
-    rating_dict={}
-    for r in rating:
-        date_string = r.date_created.strftime("%m/%d/%Y")
-        if date_string in rating_dict.keys():
-            rating_dict[date_string][r.user].append(r)
-        else:
-            rating_dict[date_string]={r.user:[r]}
-            
-
-
-
-    # emp_ordered_list=profile.rating_set.values('user__user__username','date_created').order_by().annotate(Count('user__user__username'), Count('date_created'))
+    profile = request.user
+    employee = profile.employeeprofile
+    rating_profile = employee.rating_profile
 
     if request.method == 'GET':
-        # Return string for rendering in google charts
-        return render_to_response('employee_stats.html',
-                                  {'employee':employee,
-                                   'image':_profile_picture(profile),
-                                   'rating_dict':rating_dict},
-                                  context_instance=RequestContext(request))
+        return_data={}
 
-    # Pure JSON, for POST
-    return HttpResponse(json.dumps({'data':return_data}),
-                        mimetype='application/json')
+        all_ratings = sorted(list(employee.rating_set.all()),key=lambda e:e.date_created)
+        encoded_employee = views.EmployeeEncoder().default(employee)
+        encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in all_ratings]
+    
+        return_data['employees']=[encoded_employee]
+    
+        return HttpResponse(json.dumps({'data':return_data}),
+                            mimetype='application/json')
+
+    return render_to_response('employee_stats.html', {}, context_instance=RequestContext(request))
 
 @employee_view
 def list_employee(request):
