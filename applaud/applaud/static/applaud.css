@@ -64,7 +64,6 @@ html, body {
 #content {
   width: 1000px;
   min-height: 100%;
-  background-color: white;
   margin-left: auto;
   margin-right: auto; }
 
@@ -74,9 +73,8 @@ html, body {
   background-color: #2c1e1e; }
 
 #extra-extra-content {
-  background: black transparent;
-  /* RGBa with 0.6 opacity */
   background: rgba(0, 0, 0, 0);
+  background: black transparent;
   /* For IE 5.5 - 7*/
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
   /* For IE 8*/
@@ -95,6 +93,7 @@ iframe {
   overflow: auto;
   padding-bottom: 15px;
   height: 90%;
+  background-color: white;
   padding: 15px; }
 
 /* very bottom div */

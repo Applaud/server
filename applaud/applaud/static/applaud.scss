@@ -76,8 +76,6 @@ html, body {
 #content {
     width: $contentwidth;
     min-height:100%;
-    background-color:rgb(255,255,255);
-
     margin: {
 	left: auto;
 	right: auto;
@@ -91,13 +89,12 @@ html, body {
 }
 
 #extra-extra-content{
-background: rgb(0, 0, 0) transparent;
-/* RGBa with 0.6 opacity */
-background: rgba(0, 0, 0, 0);
-/* For IE 5.5 - 7*/
-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
-/* For IE 8*/
--ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+    background: rgba(0, 0, 0, 0);
+    background: rgb(0, 0, 0) transparent;
+    /* For IE 5.5 - 7*/
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+    /* For IE 8*/
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
 }
 
 
@@ -116,7 +113,7 @@ iframe{
     overflow:auto;
     padding-bottom:$footerheight;
     height:90%;
-
+    background-color:rgb(255, 255, 255);
     padding: $mainpadding;
 }
 
