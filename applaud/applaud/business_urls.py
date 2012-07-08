@@ -56,7 +56,12 @@ urlpatterns = patterns('',
                        url(r'^get_analytics/',
                            views.get_analytics,
                            name="get_analytics"),
-                          
+
+                       url(r'^stats/',
+                           views.stats,
+                           name="business_stats"),
+
+ 
                        # Everything related to newsfeed
                        url(r'^manage_newsfeed/$',
                            views.manage_newsfeed,

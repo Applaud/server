@@ -121,6 +121,14 @@ def list_employees(request):
                                    cls=views.EmployeeEncoder),
                         mimetype='application/json')
 
+# List the employees for a business
+# Helper function for above
+def _list_employees(businessID):
+    business_profile = BusinessProfile.objects.get(id=businessID)
+    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
+
+    return employee_list
+
 # A view which takes an employee id through get, checks if the requesting business has the authority
 # to view the specific employees stats and returns the data.
 # On errors, returns an error message
@@ -148,12 +156,6 @@ def list_employee(request):
     else:
         return HttpResponse({'foo':"FOOO!"})
 
-# List the employees for a business
-def _list_employees(businessID):
-    business_profile = BusinessProfile.objects.get(id=businessID)
-    employee_list = list(EmployeeProfile.objects.filter(business=business_profile))
-
-    return employee_list
 
 @business_view
 @csrf_protect
@@ -410,41 +412,38 @@ def analytics(request):
     """To display various statistics for a business
     """
     profile = request.user.businessprofile
-    employee_list = profile.employeeprofile_set.all()
-    return render_to_response('business_analytics.html',
-                              {'business':profile,
-                               'employee_list':employee_list},
+    return render_to_response('business_analytics_test.html',
+                              {},
                               context_instance=RequestContext(request))
 
 @business_view
-def new_get_analytics(request):
-    """A view to retrieve all statistics for employees, surveys, and general feedback
-       associated with a particular business.
+def stats(request):
+    """A view to retrieve all statistics for employees  associated with a particular business.
        This should be done with a GET request.
-
-       Return is a dictionary of the form:
-       ret = {employees:{
-      
     """
-    
-    
-    
+    profile = request.user.businessprofile
+
     if request.method == 'GET':
-        profile = request.user.businessprofile
-        
-    # List of valid dimensions for rating
-    dimensions = list(rating_profile.rateddimension_set.all())
+        business_profile = request.user.businessprofile
+        return_data = {}
 
-    return_data = {}
-    return_data['dimensions'] = [views.RatedDimensionEncoder().default(dim) for dim in dimensions]
-    all_ratings = sorted(list(profile.rating_set.all()),key=lambda e:e.date_created)
-    return_data['ratings'] = all_ratings = [views.RatingEncoder().default(r) for r in all_ratings]
-    return_data['averages'] = {}
-    for dim in dimensions:
-        rating_vals = []
+        for employee in profile.employeeprofile_set.all():
+            all_ratings = sorted(list(employee.rating_set.all()),key=lambda e:e.date_created)
 
-        ratings = profile.rating_set.filter(dimension=dim)
-        return_data['averages'][dim.title] = sum([r.rating_value for r in ratings])/float(len(ratings)) if len(ratings) > 0 else 0
+            encoded_employee = views.EmployeeEncoder().default(employee)
+            encoded_employee['ratings'] = [views.RatingEncoder().default(r) for r in all_ratings]
+
+            if not 'employees' in return_data:
+                return_data['employees']=[encoded_employee]
+            else:
+                return_data['employees'].append(encoded_employee)
+            
+        return HttpResponse(json.dumps({'data':return_data}),
+                            mimetype='application/json')
+            
+    return render_to_response('business_stats.html',
+                              {},
+                              context_instance=RequestContext(request))
 
 @csrf_protect
 @business_view
