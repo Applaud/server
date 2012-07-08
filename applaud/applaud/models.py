@@ -115,8 +115,8 @@ class Rating(models.Model):
 
         date_created = models.DateTimeField()
 
+        # Gives the rating rounded to one decimal place
         def rounded_rating(self):
-            
             return float('%.1f' % round(self.rating_value,1)) if self.rating_value else 0
         
 	def __unicode__(self):

@@ -174,6 +174,7 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
+	    $('.del_rp_button').button();
 	}
 
 	/**
@@ -195,6 +196,7 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
+	    $('.del_rp_dim_button').button();
 	}
 
 	/**
@@ -216,6 +218,7 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
+	    $('.deactivate_rp_dim_button').button();
 	}
 
 	/**
@@ -236,6 +239,7 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
+	    $('.activate_rp_dim_button').button();
 	}
 
 	/**
@@ -277,6 +281,7 @@ if (! apatapa.business) {
 			   });
 		});
 	    });
+	    $('.edit_rp_dim_button').button();
 	}
 
 	/**
@@ -316,6 +321,7 @@ if (! apatapa.business) {
 		    .append( submit );
 		$(this).parent().append(newdimdiv);
 	    });
+	    $('.ins_rp_button').button();
 	}
 
 
@@ -427,27 +433,21 @@ if (! apatapa.business) {
 	}
 
 	var bind_newprofile_button = function() {
-
 	    $('#new_ratingprofile_button').click(
 		function( event ) {
 		    // Toggle visibility
-		    $('#new_ratingprofile').slideToggle(100);
-
-		    
+		    $('#new_ratingprofile').slideToggle(300);
 		    // Don't allow more than one 'new ratingprofile' form at a time
 		    if ( $('#new_ratingprofile').children().length > 0 )
 			return;
-
-
 		    // Create the form for adding a ratingprofile
 		    var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
 		    var submit_button = $('<input type="submit" class="rp_okbutton" value="OK" />');
+		    submit_button.button();
 		    submit_button.click( function( event ) {
 			event.preventDefault();
-
 			// Hide the new profile form
 			$('#new_ratingprofile').slideUp(100);
-			
 			data = {'title':$('#profile_title').val()};
 			// Grab all dimensions
 			dimensions = []
@@ -465,7 +465,6 @@ if (! apatapa.business) {
 				 success: listProfiles,
 				 error: function() { alert("Something went wrong."); }
 			       });
-			
 			$('#new_ratingprofile').empty();
 		    });
 		    var cancel_button = $('<input />');
@@ -473,16 +472,17 @@ if (! apatapa.business) {
 					'id':"newprofile_cancel_button",
 					'value':"Cancel",
 					'class':"rp_cancel"});
+		    cancel_button.button();
 		    cancel_button.click( function( event ) {
 			event.preventDefault();
 			$('#newprofile_form').remove();
 			dimension_count=0;
 		    });
-
 		    // Add insert/delete dimension buttons
 		    var dim_insert_button = $('<button class="rp_add" type="button">+</button>');
 		    var dim_remove_button = $('<button class="rp_minus" type="button">-</button>');
-
+		    dim_insert_button.button();
+		    dim_remove_button.button();
 		    // Register click handlers on each of the insert/delete buttons
 		    dim_insert_button.click( function() {
 			handle_insert_dimension();
@@ -490,7 +490,6 @@ if (! apatapa.business) {
 		    dim_remove_button.click( function() {
 			handle_remove_dimension();
 		    });
-
 		    var new_title = $('<div class="profile_title"></div>');
 		    new_title.append( $('<label for="title">Title</label>') );
 		    new_title.append( $('<input type="text" name="title" id="profile_title" />') );
@@ -499,13 +498,10 @@ if (! apatapa.business) {
 		    newprofile_form.append( dim_remove_button );
 		    newprofile_form.append( submit_button );
 		    newprofile_form.append( cancel_button );
-
-
-
-		    
 		    // Add the form to the ratingprofile div
 		    $('#new_ratingprofile').append( newprofile_form );
 		});
+	    $('#new_ratingprofile_button').button();
 	}
 
 	/**

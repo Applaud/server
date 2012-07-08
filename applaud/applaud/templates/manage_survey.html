@@ -10,19 +10,20 @@ $(document).ready(function() {
 {% endblock %}
 {% block links %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" src="{{ STATIC_URL }}manage_survey.css" />
+<link rel="stylesheet" type="text/css" src="{{ STATIC_URL }}business.css" />
 {% endblock %}
 {% block content %}
 {{ block.super }}
 <h1>Questions</h1>
-<div id="survey_div">
 
+<div id="survey_div">
   {% if title_err %}
   <h2>{{ title_err }}</h2>
   {% endif %}
   {% if questions_err %}
   <h2>{{ dimensions_err }}</h2>
   {% endif %}
+
   <form action="" method="post" id="survey_form">
     <input type="hidden" value="{{ survey_id }}" id="survey_id" />
     {% csrf_token %}
@@ -36,9 +37,10 @@ $(document).ready(function() {
 	<label for="description">Description</label>
 	<input type="text" id="survey_description" name="description" />
       </div>
+    <input type="submit" id="addquestion_button" value="Add Question" />
     </div>
 
-    <input type="submit" id="addquestion_button" value="Add Question" />
+
     <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
   </form>
 </div>

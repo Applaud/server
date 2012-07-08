@@ -73,18 +73,15 @@ Hello {{ user.username }}!
   {% for key,value in rating_date.items %}
   <table>
     <tr class="visible" id="row_number_{{ forloop.counter }}">
-      <td><button class="plus">+</button><button class="minus">-</button></td>
-      <td>{{ key }}</td>
-      <td>{{ value.0.employee.business.business_name }}</td>       
+      <td class="table_date">{{ key }}</td>
+      <td class="table_business">{{ value.0.employee.business.business_name }}</td>       
       <td>{{ value.0.employee.user.first_name }} {{ value.0.employee.user.last_name }}</td>
-
+      <td style="width:15%"><button class="plus">+</button><button class="minus">-</button></td>
       
     </tr>
     <tr class="hidden">
-      <td></td>
       {% for r in value %}
-
-      <td> {{ r }}</td>
+      <td class="table_rating"> {{ r.dimension }}: {{ r.rounded_rating }}</td>
       {% endfor %}
     </tr>
   </table>
@@ -96,24 +93,25 @@ Hello {{ user.username }}!
   <h2>Responses to Questions</h2>
   {% for key,value in response_date.items %}
 
-  <table>
+  <table width="100%">
     <tr class="visible" id="row_number_{{ forloop.counter }}">
       <td><button class="plus">+</button><button class="minus">-</button></td>
-      <td>{{ key }}</td>
-      <td>{{ value.0.question.survey.business.business_name }}</td>       
+      <td class="table_date">{{ key }}</td>
+      <td class="table_business">{{ value.0.question.survey.business.business_name }}</td>       
 
     </tr>
     <tr class="hidden">
-      <td></td>
       <td>{{ value.0.question.survey.title }}</td>
       <td>{{ value.0.question.survey.description }}</td>
+
+    </tr>
+      {% for q in value %}
     <tr class="hidden">
-      <td></td>
-    {% for q in value %}
       <td>{{ q.question }}</td>
       <td>{{ q }}</td>
-    {% endfor %}
     </tr>
+    {% endfor %}
+
  </table> 
  {% endfor %}
 </div>

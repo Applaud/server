@@ -105,11 +105,12 @@ def view_previous_responses(request):
             response_date[date_string].sort()
         else:
             response_date[date_string]=[q]
-    
     return render_to_response('user.html',
                               {'feedback':feedback,
                                'rating':rating,
-                               'responses':qs_responses},
+                               'responses':qs_responses,
+                               'rating_date':rating_date,
+                               'response_date':response_date},
                               context_instance=RequestContext(request))
 
 
