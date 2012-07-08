@@ -353,6 +353,7 @@ if (! apatapa.business) {
 		    var dimension = profile.dimensions[d];
 		    var dim_title = dimension.title;
 		    var dim_id = dimension.id;
+		    var is_text = dimension.is_text;
 		    var innerlistitem = $('<li></li>');
 		    var innerlistform = $('<form></form>');
 		    
@@ -770,8 +771,8 @@ if (! apatapa.business) {
     (function ( _ns ) {
 	var questionTypes = {"CG":"checkbox group",
 			     "RG":"radio group",
-			     "TA":"textarea",
-			     "TF":"textfield"};
+			     "TA":"long text",
+			     "TF":"short text"};
 	
 	// To indicate that a question is inactive right now.
 	var inactive_color = 'rgb(200, 200, 200)';
