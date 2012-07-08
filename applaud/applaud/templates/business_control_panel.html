@@ -1,0 +1,187 @@
+{% extends "business.html" %}
+{% block title %}Control Panel {% endblock %}
+
+
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+/**
+ * This is executed after the page has fully loaded.
+ */
+$(document).ready(function() {
+    apatapa.business.ratingprofiles.initRatingProfilesPage();
+    apatapa.business.newsfeed.initNewsfeedPage({{ feeds|length }});
+    apatapa.business.survey.initSurveyPage();
+
+    // This creates the sub-tabs for the control panel
+    $("#manage_employees").hide();
+    $("#newsfeeds").hide();
+    $("#survey_div").hide();
+
+    $(".employee_link").click( function() {
+	employee_display();
+    });
+
+
+    $(".newsfeed_link").click( function() {
+	newsfeed_display();
+    });
+
+
+    $(".survey_link").click( function() {
+	survey_display()
+    });
+
+    $(".home_link").click( function() {
+	home_display();
+    });
+
+});
+
+var employee_display = function(){
+	$(".control_panel_div").hide();
+	$("#manage_employees").show();
+}
+
+var newsfeed_display = function(){
+	$(".control_panel_div").hide();
+	$("#newsfeeds").show();
+}
+
+var survey_display = function(){
+	$(".control_panel_div").hide();
+	$("#survey_div").show();
+}
+
+var home_display = function(){
+	$(".control_panel_div").hide();
+        $("#home_div").show();
+}
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+{% block content %}
+<div id="control_panel_nav" name="control_panel_nav">
+
+    <button id="home_button" class="home_link"  name="home_button">Home</button>
+  <button id="employee_button" class="employee_link">Employees</button>
+<button id="newsfeed_button" class="newsfeed_link">News Items</button>
+    <button id="survey_button" class="survey_link">Questions</button>
+
+</div>
+
+<div id="home_div" class="control_panel_div" name="home_div" >
+  <h1>Home</h1>
+  <p>Welcome to your control panel. Here, ou can look at and edit the display of apatapa when a user is located on your premises. Use the above to navigate to the various features that you can customize. These include:</p>
+<ul>
+  <li>
+    <h3><a href="" class="employee_link">Employee Rating Management</a></h3>
+  </li>
+  <li>
+    <h3><a href="" class="newsfeed_link">Newsfeed Management</a></h3>
+  </li>
+  <li>
+    <h3><a href="" class="survey_link">Question Management</a></h3>
+  </pli>  
+</ul>  
+
+
+
+</div
+
+<div id="manage_employees" class="control_panel_div" name="manage_employees">
+  <h1>Employees</h1>
+
+  <div class="content-title">
+    <h2>Management</h2>
+  </div>
+
+  <div id="employees_listing">
+  </div>
+
+  <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
+    <h3>Add Employees</h3>
+    {% csrf_token %}
+    <label for="emails">Email List</label>
+    <input type="text" name="emails" >
+    <br />
+    <label for="csv"> Upload .csv File </label>
+    <input type="file" name="csv" />
+    <input type="submit" value="Submit" />
+  </form>
+
+  <div class="content-title">
+    <h2>Rating Profiles</h2>
+  </div>
+
+  <div id="profiles_listing">
+  </div>
+  <!-- new rating profile form -->
+  <button type="button" class="ratingprofile_new_profile" id="new_ratingprofile_button">Add Profile</button>
+  <div id="new_ratingprofile">
+    
+  </div>
+
+</div>
+
+<div id="newsfeeds" name="newsfeeds" class="control_panel_div">
+<h1>NEWSFEED</h1>
+  <form id="newsfeed_form" name="newsfeed_form" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <button type="button" id="add_newsfeed_button" name="add_newsfeed_button" class="add_newsfeed_button">Add Newsfeed Item</button>
+    {% for feed in feeds %}
+    <div class="feed" id="feed_{{ forloop.counter0 }}" name="feed_{{ forloop.counter0 }}">
+      <input type="hidden" value="false" class="should_delete" name="should_delete_{{ forloop.counter0 }}" id="should_delete_{{ forloop.counter0 }}" />
+      <input type="hidden" value={{ feed.id }} name="feed_id_{{ forloop.counter0 }}" id="feed_id_{{ forloop.counter0 }}" />
+      {% if feed.image %}<img src="{{ feed.image.url }}" class="nfimage" alt="{{ feed.title }}" />{% endif %}
+      Title: <input type="text" id="title_{{ forloop.counter0 }}" name="title_{{ forloop.counter0 }}" value="{{ feed.title }}" /><br />
+      Image: <input type="file" accept="image/*" class="image_input" name="nf_image_{{ forloop.counter0 }}" id="nf_image_{{ forloop.counter0 }}" />
+      <p>{{ feed.date }} (last edited {{ feed.date_edited }})</p>
+      Subtitle: <input type="text" id="subtitle_{{ forloop.counter0 }}" name="subtitle_{{ forloop.counter0 }}" value="{{ feed.subtitle }}" /><br />
+      Body: <textarea name="body_{{ forloop.counter0 }}" id="body_{{ forloop.counter0 }}">{{ feed.body }}</textarea><br />
+      <button type="button" class="nf_delete_button" id="feed_delete_button_{{ forloop.counter0 }}" name="feed_delete_button_{{ forloop.counter0 }}">Delete</button>
+    </div>
+    {% endfor %}
+   
+    <button type="submit" id="save_newsfeed_button" name="save_newsfeed_button" class="save_newsfeed_button">Save Changes</button>
+  </form>
+</div>
+
+<div id="survey_div" class="control_panel_div">
+<h1>Questions</h1>
+  {% if title_err %}
+  <h2>{{ title_err }}</h2>
+  {% endif %}
+  {% if questions_err %}
+  <h2>{{ dimensions_err }}</h2>
+  {% endif %}
+
+  <form action="" method="post" id="survey_form">
+    <input type="hidden" value="{{ survey_id }}" id="survey_id" />
+    {% csrf_token %}
+   
+    <div id="surveyinfo" name="surveyinfo">
+      <div id="titlediv" name="titlediv">
+	<label for="title">Title</label>
+	<input type="text" id="survey_title" name="title" />
+      </div>
+      <div id="descriptiondiv" name="descriptiondiv">
+	<label for="description">Description</label>
+	<input type="text" id="survey_description" name="description" />
+      </div>
+    <input type="submit" id="addquestion_button" value="Add Question" />
+    </div>
+
+
+    <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
+  </form>
+</div>
+
+{% endblock %}
