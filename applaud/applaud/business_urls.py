@@ -48,7 +48,11 @@ urlpatterns = patterns('',
                        url(r'^profile/$',
                            views.business_profile,
                            name='business_profile'),
-                       
+                       url(r'^controlpanel/$',
+                           direct_to_template,
+                           {'template':'business_control_panel.html'},
+                           name='business_control_panel'),
+
                        # Analytics
                        url(r'^analytics',
                            views.analytics,
