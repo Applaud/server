@@ -108,7 +108,7 @@ def _add_employee(emails, biz_name, biz_goog_id):
 @business_view
 def manage_employees(request):
     profile = request.user.businessprofile
-    return render_to_response('employees.html',
+    return render_to_response('manage_employees.html',
                               {'employee_list':_list_employees(profile.id),
                                'rating_profiles':_list_rating_profiles(profile.id)},
                                   context_instance=RequestContext(request))

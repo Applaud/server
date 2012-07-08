@@ -1,9 +1,0 @@
-{ "nearby_businesses":
-  [
-      {"name":"Boo Furgers",
-       "type":"Burgers",
-       "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
-       "latitude":39.981634,
-       "longitude":-83.004617}
-  ]
-}
