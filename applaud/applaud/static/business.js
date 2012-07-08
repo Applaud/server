@@ -356,11 +356,18 @@ if (! apatapa.business) {
 		    var is_text = dimension.is_text;
 		    var innerlistitem = $('<li></li>');
 		    var innerlistform = $('<form></form>');
-		    
+		    var is_text_text;
+		    if(is_text) {
+			is_text_text = " (text response) ";
+		    }
+		    else {
+			is_text_text = "";
+		    }
 		    // Regular dimensions
 		    if ( "Quality" != dim_title ) {
 			if (! dimension.active ) {
-			    innerlistform.append($('<span class="deactivated">(not active)</span>'
+			    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+						   +'<span>'+is_text_text+'</span>'
 						   +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 						   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 						   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
@@ -369,6 +376,7 @@ if (! apatapa.business) {
 			}
 			else {
 			    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+						   +'<span class="deactivated">'+is_text_text+'</span>'
 						   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 						   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 						   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
@@ -601,7 +609,7 @@ if (! apatapa.business) {
 	    $('.nf_delete_button').click( function () {
 		feed = $(this).parent('.feed');
 		apatapa.showAlert('Are you sure you want to delete?',
-				  'This will erase this item\'s data permanently!',
+				  '',
 				  function() {
 				      feed.children('.should_delete').val('true');
 				      feed.hide(700);
