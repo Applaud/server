@@ -34,7 +34,7 @@ apatapa.showAlert = function (title, message, ok_func) {
     alert.html('<p>' + message + '<p>');
     alert.dialog({buttons: [
 	{text: "OK",
-	 click: function () { ok_func();
+	 click: function () { if( ok_func ) ok_func();
 			      alert.dialog('close'); }},
 	{text: "Cancel",
 	 click: function () { alert.dialog('close'); }},

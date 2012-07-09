@@ -309,13 +309,17 @@ if (! apatapa.business) {
 		var label = $("<label for=\"dimension_title\">New dimension name</label>");
 		var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
 		var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" class=\"ratingprofile_submit\" value=\"OK\" />");
+		var is_text = $('<input type="checkbox" id="is_text" name="is_text"></input>');
+		var is_text_label = $('<label for="is_text">text response?</label>');
 		submit.click( function( event ) {
 		    event.preventDefault();
 		    var profile_id = $(this).siblings('.profileid').val();
+		    console.log($(this).siblings('#is_text').is(':checked'));
 		    $.ajax({ url: manage_ratingprofiles_url,
 			     type: 'POST',
 			     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
 				    'insert':escape(apatapa.util.escapeHTML( $('#dimension_title').val() )),
+				    'is_text': $(this).siblings('#is_text').is(':checked') ? 'true' : 'false',
 				    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			     success: listProfiles,
 			     error: function() { alert("Something went wrong."); }
@@ -326,6 +330,8 @@ if (! apatapa.business) {
 		    .append( '<br />' )
 		    .append( label )
 		    .append( textfield )
+		    .append( is_text )
+		    .append( is_text_label )
 		    .append( submit );
 		$(this).parent().append(newdimdiv);
 	    });
@@ -376,7 +382,6 @@ if (! apatapa.business) {
 			if (! dimension.active ) {
 			    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 						   +'<span>'+is_text_text+'</span>'
-						   +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
 						   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 						   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 						   +'<input type="submit" class="activate_rp_dim_button" value="activate" />'
@@ -463,9 +468,6 @@ if (! apatapa.business) {
 		    submit_button.button();
 		    submit_button.click( function( event ) {
 			event.preventDefault();
-			// Hide the new profile form
-			$('#new_ratingprofile').slideUp(100);
-			data = {'title':$('#profile_title').val()};
 			// Grab all dimensions
 			dimensions = []
 			$('.rp_dimension').each( function(index, element) {
@@ -473,6 +475,13 @@ if (! apatapa.business) {
 					'is_text': $(this).siblings('.is_text').is(':checked')};
 			    dimensions.push(dim_dict);
 			});
+			if(dimensions.length === 0) {
+			    apatapa.showAlert('Hold on!', 'You should maybe add some dimensions before submitting.', null);
+			    return;
+			}
+			// Hide the new profile form
+			$('#new_ratingprofile').slideUp(100);
+			data = {'title':$('#profile_title').val()};
 			data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
 			data['dimensions'] = JSON.stringify(dimensions);
 			// Make the call to the db
@@ -527,7 +536,6 @@ if (! apatapa.business) {
 	_ns.initRatingProfilesPage = function() {
 	    // New profile form is invisible
 	    $('#new_ratingprofile').hide();
-	    
 	    // Get all the rating profiles
 	    $.ajax( {
 		url: list_ratingprofiles_url,
