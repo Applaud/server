@@ -59,7 +59,7 @@
   <h1>Employees</h1>
 
   <div id="view_employees_div" class="employee_management">
-<table>
+    <table>
   <tr>
     <th></th>
     <th>Employee Name</th>
@@ -68,7 +68,6 @@
   </tr>
   {% for e in employee_list %}
   <tr>
-    <td> <button id="employee_row_{{ forloop.counter }}" class="expand_employee_button">+</button>
     <td> {{ e.user.first_name }}</td>
     <td> {{ e.user.last_name }}</td>
     <td> 
@@ -79,8 +78,15 @@
       </select>
       <input type="hidden" value="{{ e.id }}"/>
     </td>
+    <td> 
+      <button id="employee_row_{{ forloop.counter }}" class="expand_employee_button">+</button>
+      <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
+    </td>
   </tr>
-  <tr id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><td colspan="4" id="expand_row_{{ e.id }}"></td></tr>
+
+  <!-- This is the row that will be displayed with the standard employee div. -->
+
+  <tr id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><td colspan="4" id="expand_row_{{ e.id }}"> <input </td></tr>
   {% endfor %}
 </table>
 <button id="rating_profile_changes_button">Save Rating Profiles</button>
