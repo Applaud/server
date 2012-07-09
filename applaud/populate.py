@@ -120,7 +120,7 @@ mystical = models.EmployeeProfile(business=business2,
 mystical.save()
 mystical2 = models.EmployeeProfile(business=business,
                                   user=emp_user3,
-                                  rating_profile=profile1,
+                                  rating_profile=profile3,
                                   bio='bio')
 mystical2.save()
 luke = models.EmployeeProfile(business=business2,
@@ -143,7 +143,7 @@ mystical2.save()
 
 mystical2 = models.EmployeeProfile(business=business,
                                   user=emp_user5,
-                                  rating_profile=profile1,
+                                  rating_profile=profile3,
                                   bio="Another lovely bio for another employee of the month! Ring the bell, hit the gong, we\'ve got a superstar on our hands! Remember back when you were just a kid??")
 mystical2.save()
 

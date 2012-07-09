@@ -729,8 +729,11 @@ def control_panel(request):
     
     if request.method == 'GET':
         # First all the employeees
-        employee_list = profile.employeeprofile_set.all()
+        employee_list = profile.employeeprofile_set.order_by('user__last_name')
         
+        # All the rating profiles for the business.
+        rating_profile_list = profile.ratingprofile_set.all()
+
         # All the newsfeed items that have been created so far.
         newsfeed_list = profile.newsfeeditem_set.all()
 
@@ -739,6 +742,7 @@ def control_panel(request):
 
         return render_to_response('business_control_panel.html',
                                   {'employee_list':employee_list,
+                                   'rating_profile_list':rating_profile_list,
                                    'feeds':newsfeed_list,
                                    'survey_list':survey_list},
                                   context_instance=RequestContext(request))
