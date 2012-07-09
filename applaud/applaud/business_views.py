@@ -226,6 +226,9 @@ def manage_ratingprofiles(request):
         dim = RatedDimension.objects.get(id=int(request.POST['replace_dim']))
         for rating in dim.rating_set.all():
             rating.title = request.POST['with_dim']
+            # Convert to using rating_text, if there wasn't already something there
+            if request.POST['is_text'] == 'true' and not rating.rating_text:
+                rating.rating_text = str(rating.rating_value)
             rating.save()
 
         # Step 2: Change the ratingprofile itself
