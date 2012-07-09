@@ -1,42 +1,29 @@
 {% extends "business.html" %}
-
 {% block title %}
 Employee Information
 {% endblock %}
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawVisualization);
+<script type="text/javascript" src="{{ STATIC_URL }}business_stats.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
 
-
-function drawVisualization(chartdata) {
-  // Create and populate the data table.
-    console.log(chartdata);  
-  var data = google.visualization.arrayToDataTable(chartdata);
-
-  // Create and draw the visualization.
-  new google.visualization.ColumnChart(document.getElementById('visualization')).
-      draw(data,
-           {title:"Evaluations by Dimension",
-            width:350, height:400,
-            vAxis: {title: "Average Rating"},
-            hAxis: {title: "Rating Category"}}
-      );
-}
-</script>
-<script type="text/javascript" src="{{ STATIC_URL }}business_analytics.js"></script>
 {% endblock %}
 {% block links %}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_analytics.css" />
 {% endblock %}
 {% block content %}
 {{ block.super }}
-<h1>Employees of {{ business.business_name }}</h1>
-<div id="visualization"></div>
+<h1>Employee Analytics</h1>
 <div id="employees"></div> 
 </div>
-{% csrf_token %}
 
+<div id="graph_table">
+    <div id="gt_dims"></div>
+    <div id="emp_graph"></div>
+    <div id="date_slider_text">
+    </div>
+    <p id="dateslider_label"></p>
+    <div id="gt_dateslider" name="dateslider"></div>
+</div>
 {% endblock%}
