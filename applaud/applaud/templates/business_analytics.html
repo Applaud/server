@@ -16,6 +16,19 @@ Employee Information
 {{ block.super }}
 <h1>Employee Analytics</h1>
 
+<div id="analytics_nav_button">
+<button id="analytics_home_button" class="analytics_nav_button">Home</button>
+<button id="analytics_employee_button" class="analytics_nav_button">Employees</button>
+<button id="analytics_survey_button" class="analytics_nav_button">Questions</button>
+<button id="analytics_feedback_button" class="analytics_nav_button">Feedback</button>
+</div>
+
+
+<div id="analytics_emloyee_div">
+<div id="analytics_employee_nav">
+<button id="employee_graph_button" class="employee_button">Graph</button>
+<button id="employee_table_button" class="employee_button">Table</button>
+</div>
 <div id="employeees_table" class="table_data">
 
 
@@ -31,5 +44,6 @@ Employee Information
     </div>
     <p id="dateslider_label"></p>
     <div id="gt_dateslider" name="dateslider"></div>
+</div>
 </div>
 {% endblock%}
