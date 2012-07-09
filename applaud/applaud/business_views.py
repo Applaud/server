@@ -749,3 +749,36 @@ def control_panel(request):
     # Method is post.
     else:
         return HttpResponseRedirect('/business')
+
+
+@csrf_protect
+@business_view
+def rating_profile_changes(request):
+    profile = request.user.businessprofile
+    
+    if request.method == 'POST':
+        print json.loads(request.POST['emp_profile_change'])
+        for emp_key, rating_val in json.loads(request.POST['emp_profile_change']).items():
+            e = profile.employeeprofile_set.get(id=int(emp_key))
+            p = profile.ratingprofile_set.get(id=int(rating_val))
+            e.rating_profile=p
+            e.save()
+            
+        messages.add_message(request, messages.SUCCESS, "The Rating Profiles have been successfully updated!")
+    return HttpResponse('')
+
+
+@csrf_protect
+@business_view
+def get_employee_info(request):
+    profile = request.user.businessprofile
+
+    if request.method == 'GET':
+        employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
+        encoded_employee = views.EmployeeEncoder().default(employee)
+        return HttpResponse(json.dumps({'employee':encoded_employee}),
+                            mimetype='application/json')
+            
+    return render_to_response('business_control_panel.html',
+                              {'employee':encoded_employee},
+                              context_instance=RequestContext(request))

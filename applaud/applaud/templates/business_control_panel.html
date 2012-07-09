@@ -7,6 +7,8 @@
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript" src="{{ STATIC_URL }}control_panel.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}business.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}employee.js"></script>
 <script type="text/javascript">
   $(document).ready(function() {
   apatapa.business.control_panel.init_control_panel( {{ feeds|length }});
@@ -59,21 +61,29 @@
   <div id="view_employees_div" class="employee_management">
 <table>
   <tr>
-  <th>Employee Name</th>
-  <th>Current Rating Profile</th>
+    <th></th>
+    <th>Employee Name</th>
+    <th>Employee last name</th>
+    <th>Current Rating Profile</th>
   </tr>
   {% for e in employee_list %}
   <tr>
+    <td> <button id="employee_row_{{ forloop.counter }}" class="expand_employee_button">+</button>
     <td> {{ e.user.first_name }}</td>
     <td> {{ e.user.last_name }}</td>
-    <td> <select>
-	{% for rat_prof in rating_profile_list %}
-	<option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof.id }}  {{ e.rating_profile.id }}</option>
+    <td> 
+      <select>{% for rat_prof in rating_profile_list %}
+	<option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
+	</option>
 	{% endfor %}
-    </select></td>
+      </select>
+      <input type="hidden" value="{{ e.id }}"/>
+    </td>
   </tr>
+  <tr id="employee_div_{{ forloop.counter }}" class="hidden"><td colspan="4" id="expand_row_{{ forloop.counter }}"></td></tr>
   {% endfor %}
 </table>
+<button id="rating_profile_changes_button">Save Rating Profiles</button>
   </div>
 
   <div id="add_employees_div" class="employee_management">

@@ -31,18 +31,21 @@ if (! apatapa.employee) {
 
 
     })(employee.stats);
+
+
  
     /**
-     * getEmployee - Singular version of getEmployees. Request done with a GET instead
+     * getEmployee - Singular version of getEmployees. Request done with a GET instead. Returns the employee div.
      *
      */
     employee.getEmployee = function( employee_id, container, callback ) {
+	var emp_div;
 	$.ajax({url: employee_list_employee_url,
 		type: 'GET',
 		data: {'employee':employee_id},
 		success: function(data) {
 		    var emp = data.employee;
-		    var emp_div = employee.listEmployee(emp);
+		    emp_div = employee.listEmployee(emp);
 
 		    if ( container ){
 			container.empty();
@@ -56,6 +59,7 @@ if (! apatapa.employee) {
 		    alert("Something went wrong.");
 		}
 	       });
+	return emp_div;
     }
 
     employee.listEmployee = function(emp){
