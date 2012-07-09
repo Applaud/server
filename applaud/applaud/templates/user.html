@@ -95,10 +95,9 @@ Hello {{ user.username }}!
 
   <table width="100%">
     <tr class="visible" id="row_number_{{ forloop.counter }}">
-      <td><button class="plus">+</button><button class="minus">-</button></td>
       <td class="table_date">{{ key }}</td>
       <td class="table_business">{{ value.0.question.survey.business.business_name }}</td>       
-
+      <td><button class="plus">+</button><button class="minus">-</button></td>
     </tr>
     <tr class="hidden">
       <td>{{ value.0.question.survey.title }}</td>

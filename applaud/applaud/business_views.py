@@ -757,7 +757,6 @@ def rating_profile_changes(request):
     profile = request.user.businessprofile
     
     if request.method == 'POST':
-        print json.loads(request.POST['emp_profile_change'])
         for emp_key, rating_val in json.loads(request.POST['emp_profile_change']).items():
             e = profile.employeeprofile_set.get(id=int(emp_key))
             p = profile.ratingprofile_set.get(id=int(rating_val))
