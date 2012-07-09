@@ -412,7 +412,7 @@ def analytics(request):
     """To display various statistics for a business
     """
     profile = request.user.businessprofile
-    return render_to_response('business_analytics_test.html',
+    return render_to_response('business_analytics.html',
                               {},
                               context_instance=RequestContext(request))
 

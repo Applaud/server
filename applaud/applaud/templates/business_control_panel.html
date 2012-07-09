@@ -6,38 +6,6 @@
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript">
-/**
- * This is executed after the page has fully loaded.
- */
-$(document).ready(function() {
-    apatapa.business.ratingprofiles.initRatingProfilesPage();
-    apatapa.business.newsfeed.initNewsfeedPage({{ feeds|length }});
-    apatapa.business.survey.initSurveyPage();
-
-    // This creates the sub-tabs for the control panel
-    $("#manage_employees").hide();
-    $("#newsfeeds").hide();
-    $("#survey_div").hide();
-
-    $(".employee_link").click( function() {
-	employee_display();
-    });
-
-
-    $(".newsfeed_link").click( function() {
-	newsfeed_display();
-    });
-
-
-    $(".survey_link").click( function() {
-	survey_display()
-    });
-
-    $(".home_link").click( function() {
-	home_display();
-    });
-
-});
 
 var employee_display = function(){
 	$(".control_panel_div").hide();
@@ -58,6 +26,39 @@ var home_display = function(){
 	$(".control_panel_div").hide();
         $("#home_div").show();
 }
+
+/**
+ * This is executed after the page has fully loaded.
+ */
+$(document).ready(function() {
+    apatapa.business.ratingprofiles.initRatingProfilesPage();
+    apatapa.business.newsfeed.initNewsfeedPage({{ feeds|length }});
+    apatapa.business.survey.initSurveyPage();
+
+    console.log($(".control_panel_div"));
+    // This creates the sub-tabs for the control panel
+    $(".control_panel_div").hide();
+    $("#home_div").show();
+    
+    $(".employee_link").click( function() {
+	employee_display();
+    });
+
+
+    $(".newsfeed_link").click( function() {
+	newsfeed_display();
+    });
+
+
+    $(".survey_link").click( function() {
+	survey_display()
+    });
+
+    $(".home_link").click( function() {
+	home_display();
+    });
+
+});
 
 </script>
 {% endblock %}
@@ -94,7 +95,7 @@ var home_display = function(){
 
 
 
-</div
+</div>
 
 <div id="manage_employees" class="control_panel_div" name="manage_employees">
   <h1>Employees</h1>
