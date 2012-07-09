@@ -62,9 +62,8 @@ html, body {
 
 /* main content style */
 #content {
-  width: 800px;
+  width: 1000px;
   min-height: 100%;
-  background-color: white;
   margin-left: auto;
   margin-right: auto; }
 
@@ -73,6 +72,20 @@ html, body {
   color: white;
   background-color: #2c1e1e; }
 
+#extra-extra-content {
+  background: rgba(0, 0, 0, 0);
+  background: black transparent;
+  /* For IE 5.5 - 7*/
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+  /* For IE 8*/
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)"; }
+
+iframe {
+  text-align: center;
+  margin-left: 100px;
+  margin-right: 100px;
+  padding: 15px; }
+
 #header {
   height: 150px; }
 
@@ -80,12 +93,13 @@ html, body {
   overflow: auto;
   padding-bottom: 15px;
   height: 90%;
+  background-color: white;
   padding: 15px; }
 
 /* very bottom div */
 #footer {
   position: relative;
-  width: 786px;
+  width: 986px;
   height: 15px;
   line-height: 15px;
   font-family: 'PT Sans Caption', sans-serif;
@@ -205,7 +219,7 @@ h3 {
     margin-top: 3px;
     margin-bottom: 3px; }
 
-.login_extra {
+.login_ {
   margin-top: 20px; }
 
 #messages {

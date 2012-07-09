@@ -186,6 +186,8 @@ def manage_ratingprofiles(request):
      'remove':--,
      'remove_dim':dimid,
 
+     'is_text': 'true' | 'false',
+     
      'replace_dim':dimid,
      'with_dim':"newtext"
 
@@ -195,15 +197,15 @@ def manage_ratingprofiles(request):
     if len(set(['insert','remove','replace_dim','remove_dim','deactivate_dim', 'activate_dim'])
            & set(request.POST.keys()))==0:
         return HttpResponse(json.dumps({'error':"No valid JSON dictionary key sent to this view."}))
-
     try:
         rating_profile = RatingProfile.objects.get(id=int(request.POST['profile_id']))
     except RatingProfile.DoesNotExist:
         return HttpResponse(json.dumps({'error':"Rating profile did not exist."}))
 
     # Insert one dimension
-    if 'insert' in request.POST:
+    if 'insert' in request.POST and request.POST['insert']:
         dim = RatedDimension(title=request.POST['insert'],
+                             is_text=True if request.POST['is_text'] == 'true' else False,
                              rating_profile=rating_profile)
         dim.save()
 
@@ -221,15 +223,19 @@ def manage_ratingprofiles(request):
         dim = RatedDimension.objects.get(id=int(request.POST['remove_dim']))
         dim.delete()
 
-    if 'replace_dim' in request.POST:
+    if 'replace_dim' in request.POST and request.POST['with_dim']:
         # Step 1: Change the title in all the ratings for this dimension
         dim = RatedDimension.objects.get(id=int(request.POST['replace_dim']))
         for rating in dim.rating_set.all():
             rating.title = request.POST['with_dim']
+            # Convert to using rating_text, if there wasn't already something there
+            if request.POST['is_text'] == 'true' and not rating.rating_text:
+                rating.rating_text = str(rating.rating_value)
             rating.save()
 
         # Step 2: Change the ratingprofile itself
         dim.title = request.POST['with_dim']
+        dim.is_text = True if request.POST['is_text'] == 'true' else False
         dim.save()
 
     if 'deactivate_dim' in request.POST:

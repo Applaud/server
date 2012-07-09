@@ -31,6 +31,7 @@ strong {
  */
 .feed {
   padding: 10px;
+  font-family: 'Lucida Grande';
   /* The date paragraph. */
   /* Textareas look better when they match text field inputs. */ }
   .feed input {
@@ -41,8 +42,8 @@ strong {
   .feed p {
     margin: 5px auto; }
   .feed textarea {
-    font-family: 'Lucida Grande';
-    font-size: 11px; }
+      
+    font-size: 12px; }
   .feed .nfimage {
     float: right; }
 
@@ -75,17 +76,24 @@ strong {
 
 
 
-/******
-* Not sure if there are tables in any of the business related templates.
-*/
+/*****
+ * Questions section
+ */ 
 
-strong {
-  font-weight: bold; }
+#surveyinfo {
+    color:#500278;
+    margin-bottom:20px;
+    border-bottom: solid 1px #500278;
+    padding-bottom:20px;
+    padding-top:15px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto; }
+textarea {
+    vertical-align:text-top;}
+.question{
+    background-color:#ded3e6;}
 
-table, td, th {
-border:1px solid black;
-}
-
-td {
-padding:30px;
-}
+#titlediv {
+  margin-top: 5px;
+  margin-bottom: 5px; }

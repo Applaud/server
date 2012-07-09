@@ -253,11 +253,14 @@ if (! apatapa.business) {
 
 		// Turn dimension text into text field
 		var dimdom = $(this).siblings('.dimension_text');
+		var edit_span = $('<span class="edit_span"></span>');
 		var dimfield = $('<input />');
 		dimfield.prop({'type':'text',
 			       'value':	dimdom.text(),
 			       'class':'dimfield_edit'});
-		dimdom.replaceWith( dimfield );
+		dimdom.replaceWith( edit_span.append(dimfield)
+				    .append($('<input type="checkbox" id="is_text" name="is_text"></input>'))
+				    .append($('<label for="is_text">text response?</label>')));
 		
 		// Turn edit button into "done" button
 		$(this).val("done");
@@ -269,12 +272,17 @@ if (! apatapa.business) {
 		// Bind click handler to "done" button to one which submits the edit
 		$(this).click( function( event ) {
 		    event.preventDefault();
-
+		    console.log({'profile_id':$(this).siblings('.profileid').val(),
+				 'replace_dim':dimdom.prop('id'),
+				 'is_text': $(this).siblings('.edit_span').children('#is_text').is(':checked') ? 'true' : 'false',
+				 'with_dim': $(this).siblings('.edit_span').children('.dimfield_edit').val(),
+				 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()});
 		    $.ajax({url: manage_ratingprofiles_url,
 			    type:'POST',
 			    data:{'profile_id':$(this).siblings('.profileid').val(),
 				  'replace_dim':dimdom.prop('id'),
-				  'with_dim': $(this).siblings('.dimfield_edit').val(),
+				  'is_text': $(this).siblings('.edit_span').children('#is_text').is(':checked') ? 'true' : 'false',
+				  'with_dim': $(this).siblings('.edit_span').children('.dimfield_edit').val(),
 				  'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			    success: listProfiles,
 			    error: function() { alert("Something went wrong."); }
@@ -301,13 +309,17 @@ if (! apatapa.business) {
 		var label = $("<label for=\"dimension_title\">New dimension name</label>");
 		var textfield = $("<input type=\"text\" name=\"dimension_title\" id=\"dimension_title\" />");
 		var submit = $("<input type=\"submit\" id=\"submit_"+$(this).attr('id').split('_')[3]+"\" class=\"ratingprofile_submit\" value=\"OK\" />");
+		var is_text = $('<input type="checkbox" id="is_text" name="is_text"></input>');
+		var is_text_label = $('<label for="is_text">text response?</label>');
 		submit.click( function( event ) {
 		    event.preventDefault();
 		    var profile_id = $(this).siblings('.profileid').val();
+		    console.log($(this).siblings('#is_text').is(':checked'));
 		    $.ajax({ url: manage_ratingprofiles_url,
 			     type: 'POST',
 			     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
 				    'insert':escape(apatapa.util.escapeHTML( $('#dimension_title').val() )),
+				    'is_text': $(this).siblings('#is_text').is(':checked') ? 'true' : 'false',
 				    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
 			     success: listProfiles,
 			     error: function() { alert("Something went wrong."); }
@@ -318,6 +330,8 @@ if (! apatapa.business) {
 		    .append( '<br />' )
 		    .append( label )
 		    .append( textfield )
+		    .append( is_text )
+		    .append( is_text_label )
 		    .append( submit );
 		$(this).parent().append(newdimdiv);
 	    });
@@ -353,14 +367,21 @@ if (! apatapa.business) {
 		    var dimension = profile.dimensions[d];
 		    var dim_title = dimension.title;
 		    var dim_id = dimension.id;
+		    var is_text = dimension.is_text;
 		    var innerlistitem = $('<li></li>');
 		    var innerlistform = $('<form></form>');
-		    
+		    var is_text_text;
+		    if(is_text) {
+			is_text_text = " (text response) ";
+		    }
+		    else {
+			is_text_text = "";
+		    }
 		    // Regular dimensions
 		    if ( "Quality" != dim_title ) {
 			if (! dimension.active ) {
-			    innerlistform.append($('<span class="deactivated">(not active)</span>'
-						   +'<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+			    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+						   +'<span>'+is_text_text+'</span>'
 						   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 						   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 						   +'<input type="submit" class="activate_rp_dim_button" value="activate" />'
@@ -368,6 +389,7 @@ if (! apatapa.business) {
 			}
 			else {
 			    innerlistform.append($('<span class="dimension_text" id="'+dim_id+'">'+dim_title+'</span>'
+						   +'<span class="deactivated">'+is_text_text+'</span>'
 						   +'<input type="hidden" class="profileid" value="'+profile.id+'" />'
 						   +'<input type="submit" class="edit_rp_dim_button" value="edit" />'
 						   +'<input type="submit" class="deactivate_rp_dim_button" value="deactivate" />'
@@ -446,9 +468,6 @@ if (! apatapa.business) {
 		    submit_button.button();
 		    submit_button.click( function( event ) {
 			event.preventDefault();
-			// Hide the new profile form
-			$('#new_ratingprofile').slideUp(100);
-			data = {'title':$('#profile_title').val()};
 			// Grab all dimensions
 			dimensions = []
 			$('.rp_dimension').each( function(index, element) {
@@ -456,6 +475,13 @@ if (! apatapa.business) {
 					'is_text': $(this).siblings('.is_text').is(':checked')};
 			    dimensions.push(dim_dict);
 			});
+			if(dimensions.length === 0) {
+			    apatapa.showAlert('Hold on!', 'You should maybe add some dimensions before submitting.', null);
+			    return;
+			}
+			// Hide the new profile form
+			$('#new_ratingprofile').slideUp(100);
+			data = {'title':$('#profile_title').val()};
 			data['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val();
 			data['dimensions'] = JSON.stringify(dimensions);
 			// Make the call to the db
@@ -510,7 +536,6 @@ if (! apatapa.business) {
 	_ns.initRatingProfilesPage = function() {
 	    // New profile form is invisible
 	    $('#new_ratingprofile').hide();
-	    
 	    // Get all the rating profiles
 	    $.ajax( {
 		url: list_ratingprofiles_url,
@@ -600,7 +625,7 @@ if (! apatapa.business) {
 	    $('.nf_delete_button').click( function () {
 		feed = $(this).parent('.feed');
 		apatapa.showAlert('Are you sure you want to delete?',
-				  'This will erase this item\'s data permanently!',
+				  '',
 				  function() {
 				      feed.children('.should_delete').val('true');
 				      feed.hide(700);
@@ -770,8 +795,8 @@ if (! apatapa.business) {
     (function ( _ns ) {
 	var questionTypes = {"CG":"checkbox group",
 			     "RG":"radio group",
-			     "TA":"textarea",
-			     "TF":"textfield"};
+			     "TA":"long text",
+			     "TF":"short text"};
 	
 	// To indicate that a question is inactive right now.
 	var inactive_color = 'rgb(200, 200, 200)';
