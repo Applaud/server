@@ -1,8 +1,9 @@
 {% extends "business.html" %}
 {% block title %}Control Panel {% endblock %}
-
-
-
+{% block links %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}controlpanel.css" />
+{% endblock %}
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript">
@@ -79,6 +80,7 @@ $(document).ready(function() {
 </div>
 
 <div id="home_div" class="control_panel_div" name="home_div" >
+ 
   <h1>Home</h1>
   <p>Welcome to your control panel. Here, ou can look at and edit the display of apatapa when a user is located on your premises. Use the above to navigate to the various features that you can customize. These include:</p>
 <ul>
@@ -92,9 +94,6 @@ $(document).ready(function() {
     <h3><a href="" class="survey_link">Question Management</a></h3>
   </pli>  
 </ul>  
-
-
-
 </div>
 
 <div id="manage_employees" class="control_panel_div" name="manage_employees">
