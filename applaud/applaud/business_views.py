@@ -230,6 +230,7 @@ def manage_ratingprofiles(request):
 
         # Step 2: Change the ratingprofile itself
         dim.title = request.POST['with_dim']
+        dim.is_text = True if request.POST['is_text'] == 'true' else False
         dim.save()
 
     if 'deactivate_dim' in request.POST:
