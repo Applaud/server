@@ -1,0 +1,50 @@
+{% extends "business.html" %}
+{% block title %}Welcome to Applaud!{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+/**
+ * This is executed after the page has fully loaded.
+ */
+$(document).ready(function() {
+    apatapa.business.ratingprofiles.initRatingProfilesPage();
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<h1>Employees</h1>
+
+<div class="content-title">
+  <h2>Management</h2>
+</div>
+
+<div id="employees_listing">
+</div>
+
+<form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
+  <h3>Add Employees</h3>
+  {% csrf_token %}
+  <label for="emails">Email List</label>
+  <input type="text" name="emails" >
+  <br />
+  <label for="csv"> Upload .csv File </label>
+  <input type="file" name="csv" />
+  <input type="submit" value="Submit" />
+</form>
+
+<div class="content-title">
+  <h2>Rating Profiles</h2>
+</div>
+
+<div id="profiles_listing">
+</div>
+<!-- new rating profile form -->
+<button type="button" class="ratingprofile_new_profile" id="new_ratingprofile_button">Add Profile</button>
+<div id="new_ratingprofile">
+  
+</div>
+
+{% endblock %}
