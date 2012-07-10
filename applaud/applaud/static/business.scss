@@ -50,6 +50,7 @@ strong {
 	background-color:cyan;
 	width:320px;
 	height:411px;
+	overflow:hidden;
 
 	.navbar {
 	    position:relative;
@@ -69,9 +70,9 @@ strong {
 	.listitem {
 	    height:44px;
 	    width:100%;
+	    display:block;
 	    border: {
 		top:1px solid #e0e0e0;
-		bottom:1px solid #e0e0e0;
 	    }
 	    .heading{
 		position:relative;

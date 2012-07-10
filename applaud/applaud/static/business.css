@@ -38,7 +38,8 @@ strong {
     top: 135px;
     background-color: cyan;
     width: 320px;
-    height: 411px; }
+    height: 411px;
+    overflow: hidden; }
     #iphone_preview #iphone_screen .navbar {
       position: relative;
       left: 0px;
@@ -55,8 +56,8 @@ strong {
     #iphone_preview #iphone_screen .listitem {
       height: 44px;
       width: 100%;
-      border-top: 1px solid #e0e0e0;
-      border-bottom: 1px solid #e0e0e0; }
+      display: block;
+      border-top: 1px solid #e0e0e0; }
       #iphone_preview #iphone_screen .listitem .heading {
         position: relative;
         top: 6px;
