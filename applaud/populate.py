@@ -49,7 +49,7 @@ business2 = models.BusinessProfile(user=user2, phone='0-987-654-3210', latitude=
 business2.save()
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         latitude='14.3', longitude='12.34',
-                                        goog_id='23l;asdr4ajiaf', business_name="Resort Equities")
+                                        goog_id='23l;asdr4ajiaf', business_name="Pacific Catch")
 
 # Business and Customer groups.
 business_group = Group(name='Business')
@@ -303,7 +303,7 @@ s3.save()
 # Make Questions.
 q1 = models.Question(label='Would you join us for live jazz on Thursday nights?', type='RG', options=['yes', 'no'], survey=s3)
 q1.save()
-q2 = models.Question(label='Are these good locations for the next Pacific Catch', type='CG', options=['Burlingame', 'Orinda', 'Lucas Valley'], survey=s3)
+q2 = models.Question(label='Are these good locations for the next Pacific Catch?', type='CG', options=['Burlingame', 'Orinda', 'Lucas Valley'], survey=s3)
 q2.save()
 q3 = models.Question(label='What do you wish we served?', type='TF', options=[], survey=s3)
 q3.save()

@@ -101,7 +101,7 @@ class BusinessProfileEncoder(json.JSONEncoder):
             logo_url = '%s%s' % (settings.MEDIA_URL, settings.DEFAULT_PROFILE_IMAGE)
             if o.logo:
                 logo_url = o.logo.url
-            res = {'name': bus_user.username,
+            res = {'name': o.business_name,
                    'goog_id': o.goog_id,
                    'business_id': o.id,
                    'latitude': o.latitude,
