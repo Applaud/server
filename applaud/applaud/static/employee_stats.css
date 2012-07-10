@@ -1,0 +1,19 @@
+/******** variables ********/
+/***************************/
+#graph_table {
+  margin-top: 20px;
+  border: solid 2px #2c1e1e;
+  background-color: #ffebfa; }
+  #graph_table #gt_dims {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px; }
+    #graph_table #gt_dims .ui-selecting {
+      background: #FECA40; }
+    #graph_table #gt_dims .ui-selected {
+      background: #F39814;
+      color: white; }
+    #graph_table #gt_dims li {
+      display: inline;
+      padding: 5px;
+      border-style: none; }
