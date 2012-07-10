@@ -125,7 +125,7 @@ if (! apatapa.business) {
 
 	    var employee_name = $('<span></span>');
 	    employee_name.prop({'class':'employee_name'});
-            employee_name.text(employee.first_name+" "+employee.last_name);
+	    employee_name.text(employee.first_name+" "+employee.last_name);
 	    
 	    var employee_info = $('<div></div>')
 	    employee_info.prop({'bio':employee.bio});

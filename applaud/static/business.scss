@@ -35,6 +35,64 @@ strong {
     vertical-align:middle;
 }
 
+/* iphone preview */
+#iphone_preview {
+    background-image:url('/static/iphoneTemplate.png');
+    width:362px;
+    height:710px;
+
+    font-family:"Helvetica", sans-serif;
+
+    #iphone_screen {
+	position:relative;
+	left:21px;
+	top:135px;
+	background-color:green;
+	width:320px;
+	height:411px;
+
+	.navbar {
+	    position:relative;
+	    left:0px;
+	    top:0px;
+	    text-align:center;
+	    height:44px;
+	    background-color:orange;
+	    p {
+		font-size:20px;
+		font-weight:bold;
+		color:#ffffff;
+		position:relative;
+		top:12px;
+	    }
+	}
+	.listitem {
+	    height:44px;
+	    width:100%;
+	    border: {
+		top:1px solid #e0e0e0;
+		bottom:1px solid #e0e0e0;
+	    }
+	    .heading{
+		position:relative;
+		top:6px;
+		left:10px;
+
+		font-size:18px;
+		font-weight:bold;
+		display:block;
+	    }
+	    .subtitle {
+		display:relative;
+		top:24px;
+		left:10px;
+
+		font-size:14px;
+	    }
+	}
+    }
+}
+
 /************
  * Newsfeed
  */

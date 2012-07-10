@@ -31,8 +31,6 @@ if (! apatapa.employee) {
 
 
     })(employee.stats);
-
-
  
     /**
      * getEmployee - Singular version of getEmployees. Request done with a GET instead. Returns the employee div.

@@ -107,7 +107,9 @@ class BusinessProfileEncoder(json.JSONEncoder):
                    'latitude': o.latitude,
                    'longitude': o.longitude,
                    'phone': o.phone,
-                   'logo': logo_url}
+                   'logo': logo_url,
+                   'primary': o.primary_color,
+                   'secondary': o.secondary_color}
             return res
         else:
             return json.JSONEncoder.default(self, o)

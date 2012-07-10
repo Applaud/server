@@ -1,43 +1,59 @@
 /* README 
  *
- * Notes:
- * This file is for the display of any and all analytics across the website. It is ONLY for display.
- * That is, it assumes that any particular page makes an initial ajax call to the server, retrieves relevant and consistently formatted data.
- * Then it should make a single call to the function initialize, which should take the retrieved data as the sole parameter.
+ * Notes: This file is for the display of any and all analytics across
+ * the website. It is ONLY for display.  That is, it assumes that any
+ * particular page makes an initial ajax call to the server, retrieves
+ * relevant and consistently formatted data.  Then it should make a
+ * single call to the function initialize, which should take the
+ * retrieved data as the sole parameter.
  * 
- * Complications in the display of these charts arise when we consider viewing data between employees with different RatingProfiles
- * The current implementation is to display averages across the time range for all rateable dimensions (e.g. if 'Quickness' is not a
- * relevant paramter for a 'Host', it will still be displayed when viewing a 'Host' and 'Waiter' together, but not when viewing only 'Waiter's)
+ * Complications in the display of these charts arise when we consider
+ * viewing data between employees with different RatingProfiles The
+ * current implementation is to display averages across the time range
+ * for all rateable dimensions (e.g. if 'Quickness' is not a relevant
+ * paramter for a 'Host', it will still be displayed when viewing a
+ * 'Host' and 'Waiter' together, but not when viewing only 'Waiter's)
  * This can be altered later.
  * 
- * Ideally, in the case where the chart range is limited so that there are no ratings for a selected employee, that employee is removed from the chart altogether.
+ * Ideally, in the case where the chart range is limited so that there
+ * are no ratings for a selected employee, that employee is removed
+ * from the chart altogether.
  *
- * The AJAX call should only pull down the employees. Using this, we can assemble the dimensions list
+ * The AJAX call should only pull down the employees. Using this, we
+ * can assemble the dimensions list
  *
  * Definitions -
  *
- *     Viewable Range: The range of days on which a particular set of employees can be viewed. Specifically, the range is identified by a start and stop date.
- *      The start date will be the date of the earliest rating by any employee to the date of the lastest rating of any employee.
+ *     Viewable Range: The range of days on which a particular set of
+ *      employees can be viewed. Specifically, the range is identified
+ *      by a start and stop date.  The start date will be the date of
+ *      the earliest rating by any employee to the date of the lastest
+ *      rating of any employee.
  * 
- *     Chart Range: The range of days which are actually displayed on the graph.
+ *     Chart Range: The range of days which are actually displayed on
+ *      the graph. This is subset of the viewable range.
  *
  * Important Functions -
  *
  *     initialize(data):
- *         - Takes the data from the ajax call and performs necessary setup. Should perform necessary bindings, setting global variables, etc.
- *         - After everything else, calls refresh()
+ *	- Takes the data from the ajax call and performs necessary
+ *           setup. Should perform necessary bindings, setting global
+ *           variables, etc.
+ *      - After everything else, calls refresh()
  *
  *     buildDateSlider():
- e *         - Rebuilds the date slider according to the the viewable range. The viewable range is the range from the earliest date to the latest date in which any of the current employees have data
+ * 	- Rebuilds the date slider according to the the viewable
+ * 		range. The viewable range is the range from the earliest date to the
+ * 		latest date in which any of the current employees have data
  *
  * TODO -
  *     Remove employee from chart depiction when there are no ratings for him/her in the chart range
  *     Optimize! This is waaaayyy tooo slow
  */
 
-    if( ! apatapa.stats ){
+if( ! apatapa.stats ){
 	apatapa.stats = {};
-    }
+}
 
 (function (_ns) {
 
