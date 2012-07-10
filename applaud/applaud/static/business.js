@@ -272,11 +272,6 @@ if (! apatapa.business) {
 		// Bind click handler to "done" button to one which submits the edit
 		$(this).click( function( event ) {
 		    event.preventDefault();
-		    console.log({'profile_id':$(this).siblings('.profileid').val(),
-				 'replace_dim':dimdom.prop('id'),
-				 'is_text': $(this).siblings('.edit_span').children('#is_text').is(':checked') ? 'true' : 'false',
-				 'with_dim': $(this).siblings('.edit_span').children('.dimfield_edit').val(),
-				 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()});
 		    $.ajax({url: manage_ratingprofiles_url,
 			    type:'POST',
 			    data:{'profile_id':$(this).siblings('.profileid').val(),
@@ -314,7 +309,6 @@ if (! apatapa.business) {
 		submit.click( function( event ) {
 		    event.preventDefault();
 		    var profile_id = $(this).siblings('.profileid').val();
-		    console.log($(this).siblings('#is_text').is(':checked'));
 		    $.ajax({ url: manage_ratingprofiles_url,
 			     type: 'POST',
 			     data: {'profile_id':$(this).parent('#insert_dimension_div').siblings('.profileid').val(),
@@ -598,7 +592,6 @@ if (! apatapa.business) {
 	    // 	.append(add_newsfeed_button);
 	    // $('#newsfeed_form').append(add_newsfeed_button);
 	    for(d in data) {
-		console.log(data[d]);
 		feed = data[d];
 		addFeed(feed.id,
 			feed.title,
@@ -738,7 +731,6 @@ if (! apatapa.business) {
 	    delete_button.html('Delete');
 	    delete_button.button();
 	    delete_button.click( function () {
-	    	console.log("delete button clicked");
 	    	feed = $(this).parents('.feed');
 	    	apatapa.showAlert('Are you sure you want to delete?',
 	    			  '',
@@ -810,40 +802,46 @@ if (! apatapa.business) {
 	var question_div_bg_color = 'rgb(255, 235, 250)';
 
 	var registerClickHandlers = function () {
-	    
-	    // Set up buttons and click handlers.
-	    $(".question_div").each( function(index, ele){
-		console.log($(this).children(".question_option").length + 'asdfasdf');
-		questionOptions[index]=$(this).children(".question_option").length;
-	    });
-	    
-	    $('.deletebutton').click( function () {
-		console.log('deleting');
-		var parent = $(this).parent('.question');
-		apatapa.showAlert('Are you sure you want to delete?',
-				  'This will this question\'s data forever!',
-				  function () {
-				      parent.children('.should_delete').val('true');
-				      parent.hide(1000);
-				  });
-	    });
-	    
-	    $('.toggleactivebutton').click( function () {
-		if($(this).parent('.question').children('.is_active').val() === 'true') {
-		    $(this).parent('.question').children('.is_active').val('false');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
-		    $(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
-		    console.log('made inactive');
-		}
-		else {
-		    $(this).parent('.question').children('.is_active').val('true');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
-		    $(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
-		    console.log('made active');
-		}
-	    });
-	    
 
+	    // Set up buttons and click handlers.
+	    	    
+	    $("#submit_button").click ( function (event) {
+		event.preventDefault();
+		var survey_title = $("#survey_title").val();
+		var survey_description = $("#survey_description").val();
+		var survey_id = $("#survey_id").val();
+		var questions = [];
+	
+		$(".question").each( function( index, element ) {
+		    var question_dict={};
+		    question_dict['question_id']=$(this).children(".question_id").val();
+		    question_dict['label'] = $(this).find("textarea").val();
+		    question_dict['options'] = [];
+		    $(this).find(".option_field").each( function (ind, ele) {
+			question_dict['options'].push($(this).val());
+		    });
+		    
+		    question_dict['active'] = $(this).find(".is_active").val();
+		    question_dict['type'] = $(this).find("option:selected").val();
+		    question_dict['should_delete'] = $(this).find(".should_delete").val();
+
+		    questions.push(question_dict);
+
+		});
+	
+
+		$.ajax({url: manage_survey_url,
+			type: 'POST',
+			dataType: 'json',
+			data: {'survey_id':survey_id,
+			       'survey_title':survey_title,
+			       'survey_description':survey_description,
+			       'questions':JSON.stringify(questions),
+			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
+			success: function() { window.location.replace("/business/controlpanel")},
+			error: function() {alert("something went wrong.")}
+		       });
+	    });
 
 	}
 
@@ -852,15 +850,13 @@ if (! apatapa.business) {
 	 */
 	renderSurvey = function( data ) {
 	    var survey = data.survey;
-	    console.log("Title = "+survey['title']);
+	    $("#survey_id").val(survey['id']);
 	    $('#survey_title').val( survey.title );
 	    $('#survey_description').val( survey['description'] );
-	    
 	    $("#addquestion_button").click(function(event) {
 		event.preventDefault();
 		// A new question -- ID is 0.
-		addQuestion('', 'CG', [], true, 0, true);
-		registerClickHandlers();
+		addQuestion('', 'CG', [], true, 0, false);
 	    });
 	    
 	    
@@ -868,7 +864,6 @@ if (! apatapa.business) {
 	    
 	    for ( q in survey.questions ) {
 		var question = survey.questions[q];
-		
 		addQuestion( question.label,
 			     question.type,
 			     question.options,
@@ -877,70 +872,7 @@ if (! apatapa.business) {
 			     false);
 	    }
 	    registerClickHandlers();
-	    $('#submit_button').click( function(event) {
-		event.preventDefault();
-		var title = apatapa.util.escapeHTML( $('#survey_title').val() );
-		var description = apatapa.util.escapeHTML( $('#survey_description').val() )
-		if( title === "" || description === "") {
-		    apatapa.showAlert("You're missing something!",
-				      'You should fix that.',
-				      function () {/* Doesn't really need to do much. */ });
-		    return;
-		}
-		console.log('returns are for noobs');
-		var questions = [];
-		// Get each question out of the DOM and put its info into a dictionary.
-		// This is nasty! But we need some form of non-local exit, so a try/catch
-		// block will have to do for now.
-		try {
-		    $('.question').each( function(index, element) {
-			var question_id = $(this).children('.question_id').val();
-			var question_label = apatapa.util.escapeHTML( $(this).children('#question_'+index).val() );
-			var shouldDelete = $(this).children('.should_delete').val();
-			var question_active = $(this).children('.is_active').val();
-			var question_options = [];
-			$(this).children('.question_option').find('.option_field').each( function(ind, ele) {
-			    question_options.push(apatapa.util.escapeHTML( $(this).val()) );
-			});
-			var question_type = $(this).children('.questionTypeMenu').children(':selected').val();
-			// If it's a check or radio, and we don't have options.
-			if((question_type === "CG" || question_type === "RG") &&
-			   question_options.length === 0 &&
-			   shouldDelete === 'false') {
-			    // Complain about it, and don't let the user create the survey.
-			    alert('Question ' + question_label + ' has question type ' + question_type +' but no options!');
-			    throw "no options";
-			}
-			var question_dict = {'question_id': question_id,
-					     'question_label': question_label,
-					     'question_active': question_active,
-					     'question_options': question_options,
-					     'should_delete': shouldDelete,
-					     'question_type': question_type};
-			questions.push(question_dict);
-		    });
-		}
-		catch( err ) {
-		    if(err === "no options") {
-			console.log('caught the exception');
-			return;
-		    }
-		}
-		// Send it all off.
-		$.ajax({url: manage_survey_url,
-			data: {'survey_id': $('#survey_id').val(),
-			       'survey_title': title,
-			       'survey_description': description,
-			       'questions': JSON.stringify(questions),
-			       'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
-			      },
-			type: 'POST',
-			error: function() { alert('Something went wrong.'); },
-			success: function () { alert('Great success!');
-					       window.location.replace('/business/');
-					     }
-		       });
-	    });
+	    
 	}
 
 	// Keeps track of # of questions
@@ -955,7 +887,7 @@ if (! apatapa.business) {
 	    //2.Question type
 	    //3.Option field (e.g. first entry of a radio button)
 	    //4.Add option button
-	    console.log('Adding question: ' + label + ' animated: ' + animated);
+
 	    var questionDiv = $("<div></div>");
 	    questionDiv.prop({'id':"question_"+i+"_div",
 			      'class':"question"});
@@ -963,9 +895,6 @@ if (! apatapa.business) {
 		questionDiv.hide();
 	    }
 	    
-	    $("#submit_button").before(questionDiv);
-	    $('#submit_button').button();
-	    $('#addquestion_button').button();
 	    
 	    // If ID is 0, it's a new question.
 	    var questionId = $('<input />');
@@ -994,32 +923,18 @@ if (! apatapa.business) {
 	    var expand_button = $("<button>+</button>");
 	    expand_button.prop({'id':"survey_expand_button_"+(i+1),
 				'class': "expand_button visible"});
-	    expand_button.button();
 
 	    var contract_button = $("<button>-</button>");
 	    contract_button.prop({'id':"survey_contract_button_"+(i+1),
-				  'class': "contract_button hidden"});
-	    contract_button.button();
-	    contract_button.hide();
+				  'class': "contract_button"});
 	    
-	    expand_button.click( function () {
-		$(this).parent().siblings(".hidden").show();
-		$(this).siblings(".contract_button").show();
-		$(this).hide();
-	    });
-
-	    contract_button.click( function () {
-		$(this).parent().siblings(".hidden").hide();
-		$(this).siblings(".expand_button").show();
-		$(this).hide();
-	    });
 
 	    question_visible_div.append(questionAreaLabel).append(questionArea).append(expand_button).append(contract_button);
 
 	    // All the other fields will initially be hidden, and in this div
 	    var question_hidden_div = $("<div></div>");
 	    question_hidden_div.prop({'id':"question_hidden_"+(i+1)+"_div",
-				      'class':"question_hidden_div hidden"});
+				      'class':"question_hidden_div"});
 
 	    var questionTypeLabel = $("<label>Question type </label>");
 	    questionTypeLabel.prop({"for":"question_"+i+"_type"});
@@ -1031,7 +946,6 @@ if (! apatapa.business) {
 	    questionType.change( function() {
 		if( $(this).children(':selected').val() === 'TA' ||
 		    $(this).children(':selected').val() === 'TF') {
-		    console.log('changing question type');
 		    $(this).siblings('.question_option').hide(1000);
 		    $(this).siblings('.option_button').hide(1000);
 		}
@@ -1086,9 +1000,8 @@ if (! apatapa.business) {
      				  'id':"question_"+i+"_optionbutton",
 				  'class': 'option_button'});
 	    addOptionButton.button();
-	    console.log("question number: "+questionNumber);
+
 	    addOptionButton.click(function() {
-    		console.log("i is: "+i);
 		addOption(questionNumber, true);
 	    });
 	    
@@ -1113,9 +1026,7 @@ if (! apatapa.business) {
 			  });
 	    if(active) {
 		toggleActiveButton.html('Deactivate Question');
-		console.log('setting to true');
 		isActive.prop({'value': 'true'});
-		console.log(isActive.val());
 	    }
 	    else {
 		toggleActiveButton.html('Activate Question');
@@ -1135,7 +1046,6 @@ if (! apatapa.business) {
 		.append(deleteButton)
 		.append(toggleActiveButton);
 
-	    
 	    questionDiv
 		.append(questionId)
 		.append(shouldDelete)
@@ -1151,9 +1061,54 @@ if (! apatapa.business) {
 	    if(type === 'TA' || type === 'TF') {
 		addOptionButton.hide();
 	    }
-
+	    
+	    $("#survey_questions_div").append(questionDiv);
+	    
 	    // Hide the hidden div for each question.
 	    question_hidden_div.hide();
+
+	    // Click handlers that were moved from registerClickHandlers because they were being called more than once.
+
+	    $("#question_"+i+"_div").find('.deletebutton').click( function () {
+		var parent = $(this).parents('.question');
+		apatapa.showAlert('Are you sure you want to delete?',
+				  'This will this question\'s data forever!',
+				  function () {
+				      parent.children('.should_delete').val('true');
+				      parent.hide(1000);
+				  });
+	    });
+
+	    $("#question_"+i+"_div").find(".expand_button").click( function (event) {
+		event.preventDefault();
+		$(this).parent().siblings(".question_hidden_div").show();
+		$(this).siblings(".contract_button").show();
+		$(this).hide();
+	    });
+	    
+	    $("#question_"+i+"_div").find(".contract_button").hide();
+	    $("#question_"+i+"_div").find(".contract_button").click( function (event) {
+		event.preventDefault();
+		$(this).parent().siblings(".question_hidden_div").hide();
+		$(this).siblings(".expand_button").show();
+		$(this).hide();
+	    });
+	    
+	    
+	    $("#question_"+i+"_div").find('.toggleactivebutton').click( function () {
+		if($(this).parent('.question').children('.is_active').val() === 'true') {
+		    $(this).parent('.question').children('.is_active').val('false');
+		    $(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
+		    $(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
+		}
+		else {
+		    $(this).parent('.question').children('.is_active').val('true');
+		    $(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
+		    $(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		}
+	    });
+
+
 	    i++;
 	}
 
@@ -1170,7 +1125,7 @@ if (! apatapa.business) {
 			       'class':'option_field',
 			       'name':'question_'+qindex+'_option_'+questionOptions[qindex],
 			       'id':'question_'+qindex+'_option_'+questionOptions[qindex]} );
-	    console.log("qindex is :"+qindex);
+
 	    questionOptions[qindex]++;
 
 	    var optionItem = $('<li></li>');
@@ -1200,7 +1155,7 @@ if (! apatapa.business) {
 		type: 'GET',
 		error: function() { alert("Something went wrong."); }
 	    });
-	    
+   
 	}
     })(business.survey);
 })(apatapa.business);

@@ -318,17 +318,15 @@ def manage_survey(request):
         survey = profile.survey_set.get(pk=1)
     except models.Survey.DoesNotExist:
         survey = models.Survey(title="",description="",business=profile)
-    # Return the survey page.
-    if request.method == 'GET':
-        return render_to_response('business_control_panel.html',
-                                  {'survey_id': survey.id},
-                                  context_instance=RequestContext(request))
+
     if request.method == 'POST':
+        print type(json.loads(request.POST['questions']))
         # If we're POSTing survey data.
         if 'survey_id' in request.POST:
             survey.title = request.POST['survey_title']
             survey.description = request.POST['survey_description']
             for question in json.loads(request.POST['questions']):
+                print question
                 # If it's a new question.
                 if int(question['question_id']) == 0:
                     # If this is a new question that should be deleted, just keep on walking.
@@ -337,12 +335,12 @@ def manage_survey(request):
                     q = models.Question(survey=survey)
                 else:
                     q = models.Question.objects.get(id=question['question_id'])
-                q.label = question['question_label']
-                q.options = question['question_options']
-                q.type = question['question_type']
+                q.label = question['label']
+                q.options = question['options']
+                q.type = question['type']
 
                 # Set whether this question is visible to users or not.
-                if question['question_active'] == 'true':
+                if question['active'] == 'true':
                     q.active = True
                 else:
                     q.active = False
@@ -355,10 +353,10 @@ def manage_survey(request):
             messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
             return HttpResponse("") # Empty response = all went well
         # We're getting data for this business' survey.
-        else:
-            return HttpResponse(json.dumps({'survey':survey},
-                                           cls=views.SurveyEncoder),
-                                mimetype='application/json')
+    else:
+        return HttpResponse(json.dumps({'survey':survey},
+                                       cls=views.SurveyEncoder),
+                            mimetype='application/json')
 
 # A function to recieve a comma-separated email list, strip them
 # and check them for validity
@@ -746,7 +744,7 @@ def control_panel(request):
                                   context_instance=RequestContext(request))
     # Method is post.
     else:
-        return HttpResponseRedirect('/business')
+        return HttpResponseRedirect('/business/controlpanel')
 
 
 @csrf_protect
