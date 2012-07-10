@@ -320,7 +320,7 @@ def manage_survey(request):
         survey = models.Survey(title="",description="",business=profile)
     # Return the survey page.
     if request.method == 'GET':
-        return render_to_response('manage_survey.html',
+        return render_to_response('business_control_panel.html',
                                   {'survey_id': survey.id},
                                   context_instance=RequestContext(request))
     if request.method == 'POST':
@@ -629,7 +629,7 @@ def manage_newsfeed(request):
     if request.method == 'GET':
         newsfeed = profile.newsfeeditem_set.all()
         # Business is authenticated
-        return render_to_response('manage_newsfeed.html',
+        return render_to_response('business_control_panel.html',
                                   {'business':profile,
                                    'feeds':newsfeed},
                                   context_instance=RequestContext(request))
@@ -665,6 +665,7 @@ def manage_newsfeed(request):
                                        date_edited=datetime.utcnow().replace(tzinfo=utc))
             
             feed.save()
+            print feed
             if 'nf_image_%d' % i in request.FILES:
                     try:
                         filename = '%s_%s_%s.jpg' % (profile.id,
@@ -676,7 +677,7 @@ def manage_newsfeed(request):
             if request.POST['should_delete_%d' % i] == 'true':
                 feed.delete()
         i += 1
-    return HttpResponseRedirect('/business/')
+    return HttpResponse('')
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect

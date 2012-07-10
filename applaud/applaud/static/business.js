@@ -631,6 +631,18 @@ if (! apatapa.business) {
 				      feed.hide(700);
 				  });
 	    });
+	    
+	    $(".nf_contract_button").hide();
+	    $(".nf_expand_button").click( function () {
+		$(this).parent().siblings(".hidden").show();
+		$(this).siblings(".nf_contract_button").show()
+		$(this).hide();
+	    });
+	    $(".nf_contract_button").click( function () {
+		$(this).parent().siblings(".hidden").hide();
+		$(this).siblings(".nf_expand_button").show()
+		$(this).hide();
+	    });
 /*	    $('#save_newsfeed_button').click( function () {
 		apatapa.showAlert('Are you sure?', 'Saving changes!', saveChanges);
 	    });*/
@@ -775,6 +787,8 @@ if (! apatapa.business) {
 	    // 	    success: handleNewsfeedData
 	    // 	   });
 	    registerClickHandlers();
+
+	    $(".hidden").hide();
 	};
 
     })(business.newsfeed);
@@ -972,6 +986,11 @@ if (! apatapa.business) {
 			       'class': 'should_delete',
 			       'value': 'false'});
 	    
+	    // This div will contain the parts that are visible (there will be an expand button)
+	    var question_visible_div = $("<div></div>");
+	    question_visible_div.prop({'id':"question_visible_"+(i+1)+"_div",
+				       'class':"question_visible_div visible"});
+
 	    var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
 	    questionAreaLabel.prop({"for":"question_"+i});
 	    
@@ -979,6 +998,37 @@ if (! apatapa.business) {
 	    questionArea.prop({'name':"question_"+i,
 			       'id':"question_"+i});
 	    questionArea.text( label );
+
+	    var expand_button = $("<button>+</button>");
+	    expand_button.prop({'id':"survey_expand_button_"+(i+1),
+				'class': "expand_button visible"});
+	    expand_button.button();
+
+	    var contract_button = $("<button>-</button>");
+	    contract_button.prop({'id':"survey_contract_button_"+(i+1),
+				  'class': "contract_button hidden"});
+	    contract_button.button();
+	    contract_button.hide();
+	    
+	    expand_button.click( function () {
+		$(this).parent().siblings(".hidden").show();
+		$(this).siblings(".contract_button").show();
+		$(this).hide();
+	    });
+
+	    contract_button.click( function () {
+		$(this).parent().siblings(".hidden").hide();
+		$(this).siblings(".expand_button").show();
+		$(this).hide();
+	    });
+
+	    question_visible_div.append(questionAreaLabel).append(questionArea).append(expand_button).append(contract_button);
+
+	    // All the other fields will initially be hidden, and in this div
+	    var question_hidden_div = $("<div></div>");
+	    question_hidden_div.prop({'id':"question_hidden_"+(i+1)+"_div",
+				      'class':"question_hidden_div hidden"});
+
 	    var questionTypeLabel = $("<label>Question type </label>");
 	    questionTypeLabel.prop({"for":"question_"+i+"_type"});
 	    
@@ -1080,12 +1130,8 @@ if (! apatapa.business) {
 		isActive.prop({'value': 'false'});
 		questionDiv.css('background-color', inactive_color);
 	    }
-	    
-	    questionDiv
-		.append(questionId)
-		.append(shouldDelete)
-		.append(questionAreaLabel)
-		.append(questionArea)
+
+	    question_hidden_div
 		.append(isActive)
 		.append(questionTypeLabel)
 		.append(questionType)
@@ -1096,7 +1142,14 @@ if (! apatapa.business) {
 		.append($("<br />"))
 		.append(deleteButton)
 		.append(toggleActiveButton);
-	    console.log(i);
+
+	    
+	    questionDiv
+		.append(questionId)
+		.append(shouldDelete)
+		.append(question_visible_div)
+		.append(question_hidden_div)
+
 	    
 	    if( animated ) {
 		questionDiv.show(700);
@@ -1106,6 +1159,9 @@ if (! apatapa.business) {
 	    if(type === 'TA' || type === 'TF') {
 		addOptionButton.hide();
 	    }
+
+	    // Hide the hidden div for each question.
+	    question_hidden_div.hide();
 	    i++;
 	}
 

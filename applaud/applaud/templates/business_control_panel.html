@@ -56,45 +56,45 @@
   <h1>Employees</h1>
 
   <!-- The sub-navigation-links: first to view employees and assign rating profiles. Second to add employees (email or csv), the last to edit rating profiles. -->
-<div id="cp_employee_nav" name="cp_employee_nav" class="employee_management">
-  <button id="view_employees_button" class="employees_nav_button">View Employees</button>
-  <button id="add_employees_button" class="employees_nav_button">Add Employees</button>
-  <button id="edit_rating_profiles_button" class="employees_nav_button">Edit Rating Profiles</button>
-</div>
-
+  <div id="cp_employee_nav" name="cp_employee_nav" class="employee_management">
+    <button id="view_employees_button" class="employees_nav_button">View Employees</button>
+    <button id="add_employees_button" class="employees_nav_button">Add Employees</button>
+    <button id="edit_rating_profiles_button" class="employees_nav_button">Edit Rating Profiles</button>
+  </div>
+  
 
   <div id="view_employees_div" class="employee_management">
-    <table>
-  <tr>
-    <th></th>
-    <th>Employee Name</th>
-    <th>Employee last name</th>
-    <th>Current Rating Profile</th>
-  </tr>
-  {% for e in employee_list %}
-  <tr>
-    <td> {{ e.user.first_name }}</td>
-    <td> {{ e.user.last_name }}</td>
-    <td> 
-      <select>{% for rat_prof in rating_profile_list %}
-	<option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
-	</option>
-	{% endfor %}
-      </select>
-      <input type="hidden" value="{{ e.id }}"/>
-    </td>
-    <td> 
-      <button id="employee_row_{{ forloop.counter }}" class="expand_employee_button">+</button>
+    <div class="table">
+    <div id="cp_employee_header_row" class="table_row">
+      <div>Employee Name</div>
+      <div>Employee last name</div>
+      <div>Current Rating Profile</div>
+    </div>
+    {% for e in employee_list %}
+    <div id="cp_employee_row_{{ forloop.counter }}" class="cp_employee_row">
+      <div> {{ e.user.first_name }}</div>
+      <div> {{ e.user.last_name }}</div>
+      <div> 
+	<select>{% for rat_prof in rating_profile_list %}
+	  <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
+	  </option>
+	  {% endfor %}
+	</select>
+	<input type="hidden" value="{{ e.id }}"/>
+      </div>
+
+    <div> 
+      <button id="employee_contract_button_{{ forloop.counter }}" class="expand_employee_button">+</button>
       <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
-    </td>
-  </tr>
+    </div>
+  </div>
 
-  <!-- This is the row that will be displayed with the standard employee div. -->
+    <!-- This is the row that will be displayed with the standard employee div. -->
 
-  <tr id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><td colspan="4" id="expand_row_{{ e.id }}"> <input </td></tr>
-  {% endfor %}
-</table>
-<button id="rating_profile_changes_button">Save Rating Profiles</button>
+    <div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><div id="expand_row_{{ e.id }}"> </div> </div>
+    {% endfor %}
+    </div>
+    <button id="rating_profile_changes_button">Save Rating Profiles</button>
   </div>
 
   <div id="add_employees_div" class="employee_management">
@@ -142,13 +142,21 @@
     <div class="feed" id="feed_{{ forloop.counter0 }}" name="feed_{{ forloop.counter0 }}">
       <input type="hidden" value="false" class="should_delete" name="should_delete_{{ forloop.counter0 }}" id="should_delete_{{ forloop.counter0 }}" />
       <input type="hidden" value={{ feed.id }} name="feed_id_{{ forloop.counter0 }}" id="feed_id_{{ forloop.counter0 }}" />
-      {% if feed.image %}<img src="{{ feed.image.url }}" class="nfimage" alt="{{ feed.title }}" />{% endif %}
-      Title: <input type="text" id="title_{{ forloop.counter0 }}" name="title_{{ forloop.counter0 }}" value="{{ feed.title }}" /><br />
-      Image: <input type="file" accept="image/*" class="image_input" name="nf_image_{{ forloop.counter0 }}" id="nf_image_{{ forloop.counter0 }}" />
-      <p>{{ feed.date }} (last edited {{ feed.date_edited }})</p>
-      Subtitle: <input type="text" id="subtitle_{{ forloop.counter0 }}" name="subtitle_{{ forloop.counter0 }}" value="{{ feed.subtitle }}" /><br />
-      Body: <textarea name="body_{{ forloop.counter0 }}" id="body_{{ forloop.counter0 }}">{{ feed.body }}</textarea><br />
-      <button type="button" class="nf_delete_button" id="feed_delete_button_{{ forloop.counter0 }}" name="feed_delete_button_{{ forloop.counter0 }}">Delete</button>
+
+      <div id="cp_newsfeed_item_{{ forloop.counter }}" class="visible cp_newsfeed_item">
+	Title: <input type="text" id="title_{{ forloop.counter0 }}" name="title_{{ forloop.counter0 }}" value="{{ feed.title }}" />
+	<button type="button" class="nf_delete_button" id="feed_delete_button_{{ forloop.counter0 }}" name="feed_delete_button_{{ forloop.counter0 }}">Delete</button>
+	<button type="button" id="nf_expand_button_{{ forloop.counter }}" class="nf_expand_button">+</button>
+	<button type="button" id="nf_contract_button_{{ forloop.counter }}" class="nf_contract_button">-</button>
+      </div>
+
+      <div id="cp_newsfeed_expand_{{ forloop.counter }}" class="hidden cp_newsfeed_expand">
+	{% if feed.image %}<img src="{{ feed.image.url }}" class="nfimage" alt="{{ feed.title }}" />{% endif %}
+	Image: <input type="file" accept="image/*" class="image_input" name="nf_image_{{ forloop.counter0 }}" id="nf_image_{{ forloop.counter0 }}" />
+	<p>{{ feed.date }} (last edited {{ feed.date_edited }})</p>
+	Subtitle: <input type="text" id="subtitle_{{ forloop.counter0 }}" name="subtitle_{{ forloop.counter0 }}" value="{{ feed.subtitle }}" /><br />
+	Body: <textarea name="body_{{ forloop.counter0 }}" id="body_{{ forloop.counter0 }}">{{ feed.body }}</textarea><br />
+      </div>
     </div>
     {% endfor %}
     
