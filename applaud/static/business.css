@@ -1,0 +1,125 @@
+/************
+ * Variables
+ */
+/************
+ * Styles that apply to all pages
+ */
+form {
+  display: inline; }
+
+h3 {
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+strong {
+  font-weight: bold; }
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
+  margin: 5px;
+  background-color: #ffebfa;
+  padding: 5px; }
+
+.profile_image {
+  width: 64px;
+  height: 64px;
+  vertical-align: middle; }
+
+/* iphone preview */
+#iphone_preview {
+  background-image: url("/static/iphoneTemplate.png");
+  width: 362px;
+  height: 710px;
+  float: right;
+  font-family: "Helvetica", sans-serif; }
+  #iphone_preview #iphone_screen {
+    position: relative;
+    left: 21px;
+    top: 135px;
+    background-color: cyan;
+    width: 320px;
+    height: 411px;
+    overflow: hidden; }
+    #iphone_preview #iphone_screen .navbar {
+      position: relative;
+      left: 0px;
+      top: 0px;
+      text-align: center;
+      height: 44px;
+      background-color: orange; }
+      #iphone_preview #iphone_screen .navbar p {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        position: relative;
+        top: 12px; }
+    #iphone_preview #iphone_screen .listitem {
+      height: 44px;
+      width: 100%;
+      display: block;
+      border-top: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: #7d7d7d;
+        font-size: 14px; }
+
+/************
+ * Newsfeed
+ */
+.feed {
+  padding: 10px;
+  /* The date paragraph. */
+  /* Textareas look better when they match text field inputs. */ }
+  .feed input {
+    margin: 10px auto; }
+  .feed .nf_delete_button {
+    margin-top: 10px; }
+  .feed p {
+    margin: 5px auto; }
+  .feed textarea {
+    font-family: 'Lucida Grande';
+    font-size: 11px; }
+  .feed .nfimage {
+    float: right; }
+  .feed .nftitle {
+    font-weight: bold; }
+
+.question_optionlist {
+  padding-top: 10px; }
+  .question_optionlist label {
+    padding-right: 5px; }
+  .question_optionlist .question_item {
+    padding-left: 20px;
+    padding-top: 5px; }
+
+/************
+ * Employee management
+ */
+/* #newemployeeform { */
+/*     margin: { */
+/* 	top: 30px; */
+/* 	bottom: 30px; */
+/*     } */
+/*     display:block; */
+/* } */
+/* .profile_title { */
+/*     margin-right: 15px; */
+/*     display: inline; */
+/* } */
+/* .employee_name { */
+/*     padding-left:10px; */
+/* } */
+/* .del_emp_button { */
+/*     background-color:$deletecolor; */
+/*     margin-left:10px; */
+/* } */

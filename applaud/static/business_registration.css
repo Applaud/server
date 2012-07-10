@@ -1,0 +1,24 @@
+#registrationform	{ width:800px;
+			  background-color:#99CCFF;
+			  padding:10px; }
+
+#registrationform div	{ margin:10px; }
+
+#registrationform label	{ font-weight:bold; }
+
+#user_info		{ float:left;
+			  width:300px; }
+
+#business_info		{ width:300px;
+			  overflow:hidden; }
+
+#business_search	{ width:800px;
+			  background-color:rgb(100, 110, 255);
+			  color:rgb(255,255,255);
+			  padding:10px; }
+
+div .searchform_element	{ display:block; }
+
+#business_results li	{ list-style-type:none;
+			  padding:5px; }
+#business_results li:hover	{ background-color:rgb(255,255,100); }
