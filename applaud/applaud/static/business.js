@@ -623,13 +623,14 @@ if (! apatapa.business) {
 	    $('#save_newsfeed_button').button();
 	    $('.nf_delete_button').button();
 	    $('.nf_delete_button').click( function () {
-		feed = $(this).parent('.feed');
-		apatapa.showAlert('Are you sure you want to delete?',
-				  '',
-				  function() {
-				      feed.children('.should_delete').val('true');
-				      feed.hide(700);
-				  });
+	    	console.log("delete button clicked");
+	    	feed = $(this).parents('.feed');
+	    	apatapa.showAlert('Are you sure you want to delete?',
+	    			  '',
+	    			  function() {
+	    			      feed.children('.should_delete').val('true');
+	    			      feed.hide(700);
+	    			  });
 	    });
 	    
 	    $(".nf_contract_button").hide();

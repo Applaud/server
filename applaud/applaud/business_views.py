@@ -677,7 +677,7 @@ def manage_newsfeed(request):
             if request.POST['should_delete_%d' % i] == 'true':
                 feed.delete()
         i += 1
-    return HttpResponse('')
+    return HttpResponseRedirect(reverse("business_control_panel"))
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect
