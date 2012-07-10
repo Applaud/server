@@ -22,7 +22,12 @@ if (! apatapa.business.iphone ) {
 	    'filter':'progid:DXImageTransform.Microsoft.gradient(startColorstr='+brightRgbString+'), endColorstr='+rgbString+'))',
 	    'background-image':'-webkit-gradient(linear, left bottom, left top, from('+brightRgbString+'), to('+rgbString+'))',
 	    'background-image':'-moz-linear-gradient(90deg, '+brightRgbString+',  '+rgbString+')'});
-    }
+    };
+
+    _ns.refreshSecondary = function() {
+	var rgbString = $("#secondary_color").val();
+	$("#iphone_preview .listitem").css('background-color','rgb('+rgbString+')');
+    };
 
     function rgbConvert(str) {
 	str = str.replace(/rgb\(|\)/g, "").split(",");

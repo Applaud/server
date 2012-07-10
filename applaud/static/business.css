@@ -47,16 +47,28 @@ strong {
       height: 44px;
       background-color: orange; }
       #iphone_preview #iphone_screen .navbar p {
-        font-size: 14pt;
+        font-size: 20px;
         font-weight: bold;
         color: #ffffff;
         position: relative;
         top: 12px; }
-    #iphone_preview #iphone_screen .listitem .heading {
-      font-size: 20pt;
-      font-weight: bold; }
-    #iphone_preview #iphone_screen .listitem .subtitle {
-      font-size: 14pt; }
+    #iphone_preview #iphone_screen .listitem {
+      height: 44px;
+      width: 100%;
+      border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        display: relative;
+        top: 24px;
+        left: 10px;
+        font-size: 14px; }
 
 /************
  * Newsfeed
