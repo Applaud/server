@@ -51,7 +51,11 @@ if(! apatapa.business.control_panel ){
 	    event.preventDefault();
 	    employee_display();
 	});
-
+	
+	$('.cp_nav_button').click( function(event) {
+	    $('.cp_nav_button').removeClass('selected');
+	    $(this).addClass('selected');
+	})
 
 	$(".newsfeed_link").click( function(event) {
 	    event.preventDefault();
@@ -113,7 +117,7 @@ if(! apatapa.business.control_panel ){
 		    data: {'emp_id':emp_id,
 			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
 
-		    error: function() { alert("There was an error!"); },
+		    error: function() { alert("There was an ungodly error!"); },
 		    success: function (data) {
 			emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
 

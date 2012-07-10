@@ -108,8 +108,7 @@ if(! apatapa.business.control_panel ){
 	});
 
 	$(".expand_employee_button").click( function () {
-	    var emp_expand_div;
-	    var emp_id = $(this).parent().siblings().children("input").val();
+	    var emp_id = $(this).siblings("input").val();
 	    if ($("#employee_div_"+emp_id).prop("shown")!="true"){
 	    $.ajax({url: get_employee_info_url,
 		    type:'GET',
@@ -117,11 +116,12 @@ if(! apatapa.business.control_panel ){
 		    data: {'emp_id':emp_id,
 			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
 
-		    error: function() { alert("There was an error!"); },
+		    error: function() { alert("There was an ungodly error!"); },
 		    success: function (data) {
-			emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
-
-			$("#expand_row_"+emp_id).append(emp_expand_div);
+			// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
+			var emp_expand = $("<div>"+data['bio']+"</div>");
+			console.log(data['bio']);
+			$("#employee_div_"+emp_id).append(data['bio']);
 			$("#employee_div_"+emp_id).show();
 			$("#employee_div_"+emp_id).prop("shown", "true");
 			    
@@ -136,8 +136,7 @@ if(! apatapa.business.control_panel ){
 	});
 	   
 	$(".contract_employee_button").click( function () {
-	    var emp_id = $(this).parent().siblings().children("input").val();
-	    $("#employee_div_"+emp_id).hide();
+	    $(this).parent().siblings(".hidden").hide();
 
 	});
 	

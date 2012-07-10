@@ -1,9 +1,48 @@
+#control_panel {
+  padding-top: 8px;
+  overflow: auto;
+  width: 550px;
+  -moz-box-shadow: 0px px 8px #aaa;
+  -webkit-box-shadow: 0px 0px 8px #aaa;
+  box-shadow: 0px 0px 8px #aaa; }
+  #control_panel #control_panel_heading {
+    margin-left: 10px; }
+
 #control_panel_nav {
-  width: 600px;
-  background-color: #333333; }
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding-left: 25px;
+  padding-bottom: 0px;
+  padding-top: 5px; }
+  #control_panel_nav li {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: inline;
+    border: 2px solid;
+    border-color: #e0e0e0;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff)";
+    background: -webkit-linear-gradient(bottom, #e0e0e0, white);
+    background: -moz-linear-gradient(90deg, #e0e0e0, white);
+    padding: 0 10px;
+    cursor: pointer; }
+  #control_panel_nav li.selected {
+    background: #ffffff;
+    border-bottom-color: #ffffff;
+    z-index: 1; }
 
 .control_panel_div {
-  height: 600px; }
+  height: 600px;
+  border: 2px solid;
+  border-color: #e0e0e0;
+  border-top-radius: 15px;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  padding: 20px;
+  margin-top: -8px; }
+  .control_panel_div #employee_button {
+    height: 5px; }
 
 #manage_employees #newemployeeform {
   margin-top: 30px;
@@ -18,5 +57,61 @@
   background-color: #ff6464;
   margin-left: 10px; }
 
-#control_panel_survey_div .question {
-  width: 580px; }
+#iphone_preview {
+  background-image: url("/static/iphoneTemplate.png");
+  width: 362px;
+  height: 710px;
+  float: right;
+  font-family: "Helvetica", sans-serif;
+  -moz-box-shadow: 0px 3px 8px #aaa;
+  -webkit-box-shadow: 0px 3px 8px #aaa;
+  box-shadow: 0px 3px 8px #aaa;
+  border-radius: 50px; }
+  #iphone_preview #iphone_screen {
+    position: relative;
+    left: 21px;
+    top: 135px;
+    background-color: cyan;
+    width: 320px;
+    height: 411px;
+    overflow: hidden; }
+    #iphone_preview #iphone_screen .navbar {
+      position: relative;
+      left: 0px;
+      top: 0px;
+      text-align: center;
+      height: 44px;
+      background-color: orange; }
+      #iphone_preview #iphone_screen .navbar p {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        position: relative;
+        top: 12px; }
+    #iphone_preview #iphone_screen .listitem {
+      width: 100%;
+      height: 44px;
+      display: block;
+      border-top: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: #7d7d7d;
+        font-size: 14px; }
+
+#sticky {
+  background-color: #fff490;
+  width: 200px;
+  heigth: 250px;
+  padding: 20px;
+  -webkit-box-shadow: 0px 0px 10px #aaa;
+  box-shadow: 0px 10px 10px #aaa;
+  -moz-transform: rotate(-2deg); }
