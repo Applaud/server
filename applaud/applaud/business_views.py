@@ -389,21 +389,18 @@ def business_profile(request):
     profile = request.user.businessprofile
     if request.method == "GET":
         return render_to_response('business_profile.html',
-                                  {'business': profile,
-                                   'primary': ', '.join([str(color) for color in profile.primary_color]),
-                                   'secondary': ', '.join([str(color) for color in profile.secondary_color])},
+                                  {'business': profile},
                                   context_instance=RequestContext(request))
     # Else it's a POST.
     try:
-        primary = [int(color) for color in request.POST['primary_color'].split(',')]
-        profile.primary_color = primary
+        profile.primary_color = request.POST['primary_color']
     except ValueError, ValidationError:
-        pass
+        print "value/validation error (primary)"
     try:
-        secondary = [int(color) for color in request.POST['secondary_color'].split(',')]
-        profile.secondary_color = secondary
+        profile.secondary_color = request.POST['secondary_color']
     except ValueError, ValidationError:
-        pass
+        print "value/validation error (secondary)"
+
     profile.save()
     if 'logo_image' in request.FILES:
         filename = '%s_%s_logo.jpg' % (profile.id,

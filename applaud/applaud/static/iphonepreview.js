@@ -5,19 +5,11 @@ if (! apatapa.business.iphone ) {
 (function(_ns) {
     _ns.refreshPrimary = function() {
 	var rgbString = $("#primary_color").val();
-	var colorList = rgbString.split(",");
-	var brighterColorList = brighterPrimary(colorList);
-	var brightRgbString = brighterColorList.join();
+	console.log('primary color: ' + $('#primary_color').val());
+	var brightRgbString = brighterPrimary(rgbString);
 
-	// convert to hex
-	rgbString = rgbConvert(rgbString);
-	brightRgbString = rgbConvert(brightRgbString);
 	console.log("hexes: "+rgbString+" - "+brightRgbString);
 	
-	console.log('filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='+brightRgbString+', endColorstr='+rgbString+')');
-	console.log('background:-webkit-gradient(linear, left top, left bottom, from('+brightRgbString+'), to('+rgbString+'))');
-	console.log('background:-moz-linear-gradient(top, '+rgbString+',  '+brightRgbString+')');
-
 	$("#iphone_preview .navbar").css({
 	    'filter':'progid:DXImageTransform.Microsoft.gradient(startColorstr='+brightRgbString+'), endColorstr='+rgbString+'))',
 	    'background-image':'-webkit-gradient(linear, left bottom, left top, from('+brightRgbString+'), to('+rgbString+'))',
@@ -26,7 +18,7 @@ if (! apatapa.business.iphone ) {
 
     _ns.refreshSecondary = function() {
 	var rgbString = $("#secondary_color").val();
-	$("#iphone_preview .listitem").css('background-color','rgb('+rgbString+')');
+	$("#iphone_preview .listitem").css('background-color',rgbString);
     };
 
     function rgbConvert(str) {
@@ -40,7 +32,24 @@ if (! apatapa.business.iphone ) {
 	return ('#' + str.join(""));
     }
 
-    function brighterPrimary(colorList) {
-	return [0.64*colorList[0],0.71*colorList[1],0.78*colorList[2]];
+    function brighterPrimary(hexColor) {
+	hexColor = hexColor.replace(/#/g,"");
+	console.log("brighter of "+hexColor);
+	var red = Math.round(0.64*parseInt(hexColor.substring(0,2),16)).toString(16).toLowerCase();
+	var green = Math.round(0.71*parseInt(hexColor.substring(2,4),16)).toString(16).toLowerCase();
+	var blue = Math.round(0.78*parseInt(hexColor.substring(4),16)).toString(16).toLowerCase();
+	red = (red.length == 1) ? '0' + red : red;
+	green = (green.length == 1) ? '0' + green : green;
+	blue = (blue.length == 1) ? '0' + blue : blue;
+
+	// hexify this
+	return "#"+red+green+blue;
     }
 })(apatapa.business.iphone);
+
+$(document).ready(function() {
+    console.log("primary: "+$("#primary_color").val());
+    console.log("secondary: "+$("#secondary_color").val());
+    apatapa.business.iphone.refreshPrimary();
+    apatapa.business.iphone.refreshSecondary();
+});

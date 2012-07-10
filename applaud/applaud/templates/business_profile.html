@@ -2,8 +2,8 @@
 {% block title %}My Profile{% endblock %}
 {% block scripts %}
 <script type="text/javascript" rel="javascript" src="{{ STATIC_URL }}business.js"></script>
-<script type="text/javascript" rel="javascript" src="{{ STATIC_URL }}iphonepreview.js">
-</script>
+<script type="text/javascript" rel="javascript" src="{{ STATIC_URL }}iphonepreview.js"></script>
+<script type="text/javascript" rel="javascript" src="{{ STATIC_URL }}jscolor/jscolor.js"></script>
 {% endblock %}
 {% block content %}
 <h1>{{ business.business_name }}</h1>
@@ -13,8 +13,8 @@
 <form name="logo" action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   Upload a logo! <input type="file" accept="image/*" name="logo_image" id="logo_image" /><br />
-  Your primary colors (comma-separated!) <input type="text" name="primary_color" id="primary_color" value="{{ primary }}" onblur="apatapa.business.iphone.refreshPrimary();" /><br />
-  Your secondary colors (likewise!) <input type="text" name="secondary_color" id="secondary_color" value="{{ secondary }}" onblur="apatapa.business.iphone.refreshSecondary();" /><br />
+  Your primary colors (comma-separated!) <input type="text" class="color {hash:true,caps:false}" name="primary_color" id="primary_color" value="{{ business.primary_color }}" onchange="apatapa.business.iphone.refreshPrimary();" /><br />
+  Your secondary colors (likewise!) <input type="text" class="color {hash:true,caps:false}" name="secondary_color" id="secondary_color" value="{{ business.secondary_color }}" onchange="apatapa.business.iphone.refreshSecondary();" /><br />
   <button type="submit" id="save_profile_button" name="save_profile_button">Save Changes</button>
 </form>
 
