@@ -1,65 +1,18 @@
 {% extends "business.html" %}
 {% block title %}Control Panel {% endblock %}
-
-
-
+{% block links %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}control_panel.css" />
+{% endblock %}
 {% block scripts %}
 {{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}control_panel.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}business.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}employee.js"></script>
 <script type="text/javascript">
-
-var employee_display = function(){
-	$(".control_panel_div").hide();
-	$("#manage_employees").show();
-}
-
-var newsfeed_display = function(){
-	$(".control_panel_div").hide();
-	$("#newsfeeds").show();
-}
-
-var survey_display = function(){
-	$(".control_panel_div").hide();
-	$("#survey_div").show();
-}
-
-var home_display = function(){
-	$(".control_panel_div").hide();
-        $("#home_div").show();
-}
-
-/**
- * This is executed after the page has fully loaded.
- */
-$(document).ready(function() {
-    apatapa.business.ratingprofiles.initRatingProfilesPage();
-    apatapa.business.newsfeed.initNewsfeedPage({{ feeds|length }});
-    apatapa.business.survey.initSurveyPage();
-
-    console.log($(".control_panel_div"));
-    // This creates the sub-tabs for the control panel
-    $(".control_panel_div").hide();
-    $("#home_div").show();
-    
-    $(".employee_link").click( function() {
-	employee_display();
-    });
-
-
-    $(".newsfeed_link").click( function() {
-	newsfeed_display();
-    });
-
-
-    $(".survey_link").click( function() {
-	survey_display()
-    });
-
-    $(".home_link").click( function() {
-	home_display();
-    });
-
-});
-
+  $(document).ready(function() {
+  apatapa.business.control_panel.init_control_panel( {{ feeds|length }}, {{ employee_list|length }});
+  });
 </script>
 {% endblock %}
 
@@ -71,69 +24,117 @@ $(document).ready(function() {
 {% block content %}
 <div id="control_panel_nav" name="control_panel_nav">
 
-    <button id="home_button" class="home_link"  name="home_button">Home</button>
+  <button id="home_button" class="home_link"  name="home_button">Home</button>
   <button id="employee_button" class="employee_link">Employees</button>
-<button id="newsfeed_button" class="newsfeed_link">News Items</button>
-    <button id="survey_button" class="survey_link">Questions</button>
+  <button id="newsfeed_button" class="newsfeed_link">News Items</button>
+  <button id="survey_button" class="survey_link">Questions</button>
 
+</div>
+
+<div id="control_panel_heading" name="control_panel_heading">
+  <h1>Control Panel</h1>
 </div>
 
 <div id="home_div" class="control_panel_div" name="home_div" >
-  <h1>Home</h1>
-  <p>Welcome to your control panel. Here, ou can look at and edit the display of apatapa when a user is located on your premises. Use the above to navigate to the various features that you can customize. These include:</p>
-<ul>
-  <li>
-    <h3><a href="" class="employee_link">Employee Rating Management</a></h3>
-  </li>
-  <li>
-    <h3><a href="" class="newsfeed_link">Newsfeed Management</a></h3>
-  </li>
-  <li>
-    <h3><a href="" class="survey_link">Question Management</a></h3>
-  </pli>  
-</ul>  
+  
 
-
-
+  <p>Welcome to your control panel. Here, you can look at and edit the display of apatapa when a user is located on your premises. Use the above to navigate to the various features that you can customize. These include:</p>
+  <ul>
+    <li>
+      <a href="" class="employee_link">Employee Rating Management</a>
+    </li>
+    <li>
+      <a href="" class="newsfeed_link">Newsfeed Management</a>
+    </li>
+    <li>
+      <a href="" class="survey_link">Question Management</a>
+    </li>  
+  </ul>  
 </div>
 
-<div id="manage_employees" class="control_panel_div" name="manage_employees">
+<div id="control_panel_employees_div" class="control_panel_div" name="control_panel_employees_div">
   <h1>Employees</h1>
 
-  <div class="content-title">
-    <h2>Management</h2>
-  </div>
-
-  <div id="employees_listing">
-  </div>
-
-  <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
-    <h3>Add Employees</h3>
-    {% csrf_token %}
-    <label for="emails">Email List</label>
-    <input type="text" name="emails" >
-    <br />
-    <label for="csv"> Upload .csv File </label>
-    <input type="file" name="csv" />
-    <input type="submit" value="Submit" />
-  </form>
-
-  <div class="content-title">
-    <h2>Rating Profiles</h2>
-  </div>
-
-  <div id="profiles_listing">
-  </div>
-  <!-- new rating profile form -->
-  <button type="button" class="ratingprofile_new_profile" id="new_ratingprofile_button">Add Profile</button>
-  <div id="new_ratingprofile">
-    
-  </div>
-
+  <!-- The sub-navigation-links: first to view employees and assign rating profiles. Second to add employees (email or csv), the last to edit rating profiles. -->
+<div id="cp_employee_nav" name="cp_employee_nav" class="employee_management">
+  <button id="view_employees_button" class="employees_nav_button">View Employees</button>
+  <button id="add_employees_button" class="employees_nav_button">Add Employees</button>
+  <button id="edit_rating_profiles_button" class="employees_nav_button">Edit Rating Profiles</button>
 </div>
 
-<div id="newsfeeds" name="newsfeeds" class="control_panel_div">
-<h1>NEWSFEED</h1>
+
+  <div id="view_employees_div" class="employee_management">
+    <table>
+  <tr>
+    <th></th>
+    <th>Employee Name</th>
+    <th>Employee last name</th>
+    <th>Current Rating Profile</th>
+  </tr>
+  {% for e in employee_list %}
+  <tr>
+    <td> {{ e.user.first_name }}</td>
+    <td> {{ e.user.last_name }}</td>
+    <td> 
+      <select>{% for rat_prof in rating_profile_list %}
+	<option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
+	</option>
+	{% endfor %}
+      </select>
+      <input type="hidden" value="{{ e.id }}"/>
+    </td>
+    <td> 
+      <button id="employee_row_{{ forloop.counter }}" class="expand_employee_button">+</button>
+      <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
+    </td>
+  </tr>
+
+  <!-- This is the row that will be displayed with the standard employee div. -->
+
+  <tr id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><td colspan="4" id="expand_row_{{ e.id }}"> <input </td></tr>
+  {% endfor %}
+</table>
+<button id="rating_profile_changes_button">Save Rating Profiles</button>
+  </div>
+
+  <div id="add_employees_div" class="employee_management">
+    <div class="content-title">
+      <h2>Employee Management</h2>
+    </div>
+
+    <div id="employees_listing">
+    </div>
+
+    <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
+      <h3>Add Employees</h3>
+      {% csrf_token %}
+      <label for="emails">Email List</label>
+      <input type="text" name="emails" >
+      <br />
+      <label for="csv"> Upload .csv File </label>
+      <input type="file" name="csv" />
+      <input type="submit" value="Submit" />
+    </form>
+  </div>
+
+  <div id="edit_rating_profiles_div" class="employee_management">
+    <div class="content-title">
+      <h2>Rating Profiles</h2>
+    </div>
+
+    <div id="profiles_listing">
+    </div>
+    <!-- new rating profile form -->
+    <button type="button" class="ratingprofile_new_profile" id="new_ratingprofile_button">Add Profile</button>
+    <div id="new_ratingprofile">
+      
+    </div>
+
+  </div>
+</div>
+
+<div id="control_panel_newsfeeds_div" name="control_panel_newsfeeds_div" class="control_panel_div">
+  <h1>NEWSFEED</h1>
   <form id="newsfeed_form" name="newsfeed_form" action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <button type="button" id="add_newsfeed_button" name="add_newsfeed_button" class="add_newsfeed_button">Add Newsfeed Item</button>
@@ -150,13 +151,13 @@ $(document).ready(function() {
       <button type="button" class="nf_delete_button" id="feed_delete_button_{{ forloop.counter0 }}" name="feed_delete_button_{{ forloop.counter0 }}">Delete</button>
     </div>
     {% endfor %}
-   
+    
     <button type="submit" id="save_newsfeed_button" name="save_newsfeed_button" class="save_newsfeed_button">Save Changes</button>
   </form>
 </div>
 
-<div id="survey_div" class="control_panel_div">
-<h1>Questions</h1>
+<div id="control_panel_survey_div" name="control_panel_survey_div" class="control_panel_div">
+  <h1>Questions</h1>
   {% if title_err %}
   <h2>{{ title_err }}</h2>
   {% endif %}
@@ -167,7 +168,7 @@ $(document).ready(function() {
   <form action="" method="post" id="survey_form">
     <input type="hidden" value="{{ survey_id }}" id="survey_id" />
     {% csrf_token %}
-   
+    
     <div id="surveyinfo" name="surveyinfo">
       <div id="titlediv" name="titlediv">
 	<label for="title">Title</label>
@@ -177,7 +178,7 @@ $(document).ready(function() {
 	<label for="description">Description</label>
 	<input type="text" id="survey_description" name="description" />
       </div>
-    <input type="submit" id="addquestion_button" value="Add Question" />
+      <input type="submit" id="addquestion_button" value="Add Question" />
     </div>
 
 
