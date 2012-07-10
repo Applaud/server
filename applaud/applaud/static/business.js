@@ -1205,9 +1205,10 @@ if (! apatapa.business) {
 		url: manage_survey_url,
 		success: renderSurvey,
 		data: {'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()},
-		type: 'POST',
+		type: 'GET',
 		error: function() { alert("Something went wrong."); }
 	    });
+	    
 	}
     })(business.survey);
 })(apatapa.business);
