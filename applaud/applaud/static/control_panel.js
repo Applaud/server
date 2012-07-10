@@ -107,36 +107,42 @@ if(! apatapa.business.control_panel ){
 	    
 	});
 
-	$(".expand_employee_button").click( function () {
+ 	$(".expand_employee_button").click( function () {
 	    var emp_id = $(this).siblings("input").val();
-	    if ($("#employee_div_"+emp_id).prop("shown")!="true"){
-	    $.ajax({url: get_employee_info_url,
-		    type:'GET',
-		    dataType: 'json',
-		    data: {'emp_id':emp_id,
-			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
+	    if($(this).html() === '+') {
+		if ($("#employee_div_"+emp_id).prop("shown")!="true"){
+		    $.ajax({url: get_employee_info_url,
+			    type:'GET',
+			    dataType: 'json',
+			    data: {'emp_id':emp_id,
+				   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
 
-		    error: function() { alert("There was an ungodly error!"); },
-		    success: function (data) {
-			// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
-			var emp_expand = $("<div>"+data['bio']+"</div>");
-			console.log(data['bio']);
-			$("#employee_div_"+emp_id).append(data['bio']);
-			$("#employee_div_"+emp_id).show();
-			$("#employee_div_"+emp_id).prop("shown", "true");
+			    error: function() { alert("There was an ungodly error!"); },
+			    success: function (data) {
+				// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
+				var emp_expand = $("<div>"+data['bio']+"</div>");
+				$("#employee_div_"+emp_id).append(data['bio']);
+				$("#employee_div_"+emp_id).show();
+				$("#employee_div_"+emp_id).prop("shown", "true");
+				
+			    }
 			    
-		    }
-		    
-		   });
+			   });
+		    $(this).html('-');
+		}
+		else {
+		    $("#employee_div_"+emp_id).show();
+		    $(this).html('-');
+		}
 	    }
 	    else {
-		$("#employee_div_"+emp_id).show();
+		$(this).html('+');
+		$(this).parent().siblings(".hidden").hide();
 	    }
-
 	});
-	   
+	
 	$(".contract_employee_button").click( function () {
-	    $(this).parent().siblings(".hidden").hide();
+	   
 
 	});
 	

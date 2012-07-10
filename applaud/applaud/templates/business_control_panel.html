@@ -70,8 +70,8 @@
 	    {% endfor %}
 	  </select>
 	  <input type="hidden" value="{{ e.id }}"/>
-	  <button id="employee_expand_button_{{ e.id }}" class="expand_employee_button">+</button>
-	  <button id="employee_contract_button_{{ e.id }}" class="contract_employee_button">-</button>
+	  <button id="employee_expand_button_{{ e.id }}" class="expand_employee_button" value="true">+</button>
+
 	</div>
 	<!-- This is the row that will be displayed with the standard employee div. -->
 	<div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"> </div> 

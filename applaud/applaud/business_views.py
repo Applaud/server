@@ -845,8 +845,6 @@ def get_employee_info(request):
     if request.method == 'GET':
         employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
         # encoded_employee = views.EmployeeEncoder().default(employee)
-        print employee
-        print employee.bio
         return HttpResponse(json.dumps({'bio':employee.bio}),
                             mimetype='application/json')
             
