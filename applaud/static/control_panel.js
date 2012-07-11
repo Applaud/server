@@ -111,6 +111,10 @@ if(! apatapa.business.control_panel ){
 		    success: function (data) {
 			emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
 
+<<<<<<< HEAD
+=======
+			console.log("#expand_row_"+emp_id)
+>>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 			$("#expand_row_"+emp_id).append(emp_expand_div);
 			$("#employee_div_"+emp_id).show();
 			$("#employee_div_"+emp_id).prop("shown", "true");
