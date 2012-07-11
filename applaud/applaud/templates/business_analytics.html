@@ -7,8 +7,6 @@ Employee Information
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}business_stats.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
-
-
 {% endblock %}
 {% block links %}
 {{ block.super }}
@@ -29,16 +27,26 @@ Employee Information
 </div>
 </div>
 
-
 <div id="stats_choice_div">
-  
-  <div class="choice_div" id="employees"></div>
-  <div class="choice_div" id="survey"></div>
-  <div class="choice_div" id="employee_filters"></div>
-  <div class="choice_div" id="survey_filters"></div>
-
-  <div id="filter_choice_div">
-      <button class="filter_link">Filter</button>
+  <div id="employee_stats_choice_div" class="choice_div">
+    <h3><a href="#">Employees</a></h3>
+    <div>
+      <div id="employees"></div>
+    </div>
+    <h3><a href="#">Dimensions</a></h3>
+    <div>
+      <div class="choice_div" id="employee_filters"></div>    
+    </div>
+  </div>
+  <div id="survey_stats_choice_div" class="choice_div">
+    <h3><a href="#">Question</a></h3>
+    <div>
+      <div id="survey"></div>
+    </div>
+    <h3><a href="#">User</a></h3>
+    <div>
+      <div id="survey_filters"></div>
+    </div>
   </div>
 </div>
 <div id="info">

@@ -68,6 +68,7 @@ if( ! apatapa.stats ){
     //Lists who actually determine the composition of the chart
     _ns.cur_employees=[];
     _ns.cur_dimensions=[];
+    _ns.cur_questions = [];
 
     // The first and last dates of ratings in cur_employees and cur_dimensions
     _ns.first;
@@ -82,14 +83,6 @@ if( ! apatapa.stats ){
 
     // The data with which to assemble the table or chart
     _ns.goog_data;
-    
-    // Boolean variable to check if the cur_employees and cur_dimension variables are equivalent to 
-    // employees and dimensions respectively (i.e. if the user hasn't yet clicked on a dimension or
-    // has since removed it.
-    // 1 - cur_(employees, dimensions) === (employees, dimensions)
-    // 0 - They're not (or at least one isn't)
-    _ns.isCurEmployeesFull = 1;
-    _ns.isCurDimensionsFull = 1;
 
     // Boolean variables to check which variables to use when constructing the goog_data
     // Generally set by the js particular to the page in which the chart is rendered
@@ -162,53 +155,54 @@ if( ! apatapa.stats ){
 
     // Takes an employee JSON object of the form passed from the view
     _ns.add_employee = function(employee){
-	if( _ns.isCurEmployeesFull ){
-	    _ns.cur_employees=[employee];
-	    _ns.isCurEmployeesFull=0;
-	}
-	else{
-	    //First, make sure the employee isn't in the chart
-	    var arr_index = _ns.cur_employees.indexOf(employee);
-        if( arr_index === -1 ) _ns.cur_employees.push(employee); 
-	}
+	//First, make sure the employee isn't in the chart
+	var arr_index = _ns.cur_employees.indexOf(employee);
+        if( arr_index === -1 ) _ns.cur_employees.push(employee);
+	else _ns.cur_employees = [employee];
     }
     
     // Takes an employee JSON object of the form passed from the view
     _ns.remove_employee = function(employee){
-	if( ! _ns.isCurEmployeesFull){
-	    var arr_index = _ns.cur_employees.indexOf(employee);
-	    if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1); 
+	var arr_index = _ns.cur_employees.indexOf(employee);
+	if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1); 
         if( _ns.cur_employees.length === 0){
-            _ns.cur_employees=_ns.employees;
-            _ns.isCurEmployeesFull = 1;
+	    _ns.cur_employees=_ns.employees;
         }
-	}
     }
 
     // Takes a dimension JSON object of the form passed from the view
     _ns.add_dimension = function(dimension){
-	if( _ns.isCurDimensionsFull ){
-	    _ns.isCurDimensionsFull=0;
-	    _ns.cur_dimensions=[dimension];
-	}
-	else{
-	    //First, make sure the employee isn't in the chart
-	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
-	    if( arr_index === -1 ) _ns.cur_dimensions.push(dimension); 
-	}
+	var arr_index = _ns.cur_dimensions.indexOf(dimension);
+	if( arr_index === -1 ) _ns.cur_dimensions.push(dimension);
+	else _ns.cur_dimensions = [dimension];
     }
 
     // Takes a dimension JSON object of the form passed from the view
     _ns.remove_dimension = function(dimension){
-	if( ! _ns.isCurDimensionsFull ){
-	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
-	    if( arr_index != -1 ){
-            _ns.cur_dimensions.splice(arr_index, 1);
-		if(_ns.cur_dimensions.length === 0){
-		    _ns.cur_dimensions = _ns.dimensions;
-            _ns.isCurDimensionsFull = 1;
-        }
+	var arr_index = _ns.cur_dimensions.indexOf(dimension);
+	if( arr_index != -1 ){
+	    _ns.cur_dimensions.splice(arr_index, 1);
+	    if(_ns.cur_dimensions.length === 0){
+		_ns.cur_dimensions = _ns.dimensions;
 	    }
+	}
+    }
+
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.addQuestion = function(question) {
+	if (_ns.cur_questions.indexOf(question) < 0)
+	    _ns.cur_questions.push(question);
+	else
+	    _ns.cur_questions = [question];
+    };
+
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.removeQuestion = function(question) {
+	var index = _ns.cur_questions.indexOf(question);
+	if ( index >= 0 ) {
+	    _ns.cur_questions.splice(index, 1);
+	    if (_ns.cur_questions.length === 0)
+		_ns.cur_questions = _ns.questions;
 	}
     }
 
@@ -223,7 +217,7 @@ if( ! apatapa.stats ){
             var row0 = [ 'Dimension' ];
             for( d in _ns.cur_dimensions){
                 row0.push(_ns.cur_dimensions[d])
-                    }
+            }
 	
             chart_list.push(row0);
 	
@@ -269,15 +263,15 @@ if( ! apatapa.stats ){
             chart_list = [];
             first_row = ["Question","Response"];
             chart_list.push(first_row);
-            for(q in _ns.questions){
-                var label = _ns.questions[q].label;
-                for( r in _ns.questions[q].ratings){
+            for(q in _ns.cur_questions){
+                var label = _ns.cur_questions[q].label;
+                for( r in _ns.cur_questions[q].ratings){
                     if(r == 0)
                         next_row = [label];
                     else
                        next_row = [""];
                     
-                    next_row.push(_ns.questions[q].ratings[r].response[0]);
+                    next_row.push(_ns.cur_questions[q].ratings[r].response[0]);
                     chart_list.push(next_row);
                 }
             }
@@ -287,8 +281,6 @@ if( ! apatapa.stats ){
     
     // Populates the corresponding div with formatted data from goog_data
     _ns.makeTable = function(){
-        console.log("in makeTable.....");
-
         var container;
         if( _ns.isSurvey ){
             console.log("survey");
@@ -300,6 +292,7 @@ if( ! apatapa.stats ){
             _ns.assembleEmployeeData();
             container = $("#employee_table");
         }
+	container.empty();
                 
         for ( row in _ns.goog_data ){
             var newdiv = $("<div></div>");
@@ -312,7 +305,7 @@ if( ! apatapa.stats ){
             else if ( row % 2 === 0 )
                 oddevenclass='even';
             else
-                oddevenclass='odd';            
+                oddevenclass='odd';
             newdiv.addClass(oddevenclass);
             
             var divWidth = parseInt($("#table_div").css("width"));
@@ -402,17 +395,18 @@ if( ! apatapa.stats ){
 	
 	_ns.range_start = _ns.sliderValueToDate(0);
 	_ns.range_stop = _ns.sliderValueToDate(_ns.range);
+
+	updateSliderLabels();
     }
 
     _ns.bindDateSlider = function(){
 	var slider = $('#gt_dateslider');
 	// Also, it seems as if the jQuery ui value method is slightly broken.... maybe change this? Or look for alternative
-	slider.bind( "slide", function(event, ui) {
+	slider.bind( "slidestop", function(event, ui) {
 	    _ns.range_start = _ns.sliderValueToDate($(this).slider("values")[0]);
 	    _ns.range_stop = _ns.sliderValueToDate($(this).slider("values")[1]);
-	    
-	    var range_as_text= _ns.range_start.toDateString()+" - "+_ns.range_stop.toDateString();
-	    $("#dateslider_label").text("Time range: "+range_as_text);
+
+	    updateSliderLabels();
 	});
 
 	// Any time the user finishes the selection, construct the new graph
@@ -421,6 +415,11 @@ if( ! apatapa.stats ){
 	    if(event.originalEvent!=undefined)
 		_ns.make_chart();
 	});
+    }
+
+    function updateSliderLabels() {
+	var range_as_text= _ns.range_start.toDateString()+" - "+_ns.range_stop.toDateString();
+	$("#dateslider_label").text("Time range: "+range_as_text);
     }
 
     // Changes the range of the date slider
@@ -498,7 +497,7 @@ if( ! apatapa.stats ){
 	    _ns.remove_dimension(dim_title);
     	    $(this).css('background-color',"#ffffff");
 	}
-	_ns.processNewData();
+	_ns.processNewEmployeeData();
     }
 
     _ns.bind_employee_click = function(container, employee){
@@ -507,16 +506,13 @@ if( ! apatapa.stats ){
 	
                 if( $(this).hasClass('selected') ){
                     _ns.add_employee(employee);
-                    $(this).css('background-color',_ns.selected_background_color);
                 }
                 else {
                     _ns.remove_employee(employee);
-                    $(this).css('background-color',"#ffffff");
                 }
-           _ns.processNewData();
+            _ns.processNewEmployeeData();
        });
     }
-
 
     // Using the employees list, assembles a list of dimension titles
     _ns.buildDimensions = function(){
@@ -540,6 +536,7 @@ if( ! apatapa.stats ){
         _ns.buildTable();
         _ns.cur_dimensions = _ns.dimensions;
         _ns.cur_employees = _ns.employees;
+	_ns.cur_questions = _ns.questions;
         _ns.setDateRange();
         _ns.buildDateSlider();
         _ns.bindDateSlider();
@@ -553,9 +550,15 @@ if( ! apatapa.stats ){
     }
 
     // To be called anytime cur_dimensions or cur_employees is changed
-    _ns.processNewData = function(){
+    _ns.processNewEmployeeData = function(){
         _ns.setDateRange();
         _ns.changeDateSlider();
         _ns.make_chart();
-    }
+	_ns.makeTable();
+    };
+
+    // To be called anytime cur_questions changes
+    _ns.processNewSurveyData = function() {
+	_ns.makeTable();
+    };
 })(apatapa.stats);

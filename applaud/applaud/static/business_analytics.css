@@ -1,86 +1,52 @@
-#employees li{
-    padding-top: 25px;
-    
-}
+#employees li {
+  padding-top: 25px; }
 
 #nav_bar {
-    display:block;
-}
-
-#choice_nav_bar{
-
-}
+  display: block; }
 
 #stats_choice_div {
-    float: right;
-
-}
-
-#stats_choice_div {
-    border: thin dotted gray;
-    width: 400px;
-}
-
-.choice_div {
-    height: 450px;
-    overflow: scroll;
-
-}
+  float: right;
+  width: 400px;
+  height: 550px; }
 
 #info {
-    width: 550px;
-    float: left;
-}
+  width: 550px;
+  height: 550px;
+  float: left; }
 
 #graph_div {
-    border: thin dotted gray;
-}
+  border: thin dotted gray; }
 
 #survey_div {
-    border: thin dotted gray;
-}
+  border: thin dotted gray; }
 
-#employee_graph iframe{
-    text-align:left;
-    margin:0px;
-    padding:0px;
-}
-
-
-#info_nav_bar {
-}
+#employee_graph iframe {
+  text-align: left;
+  margin: 0px;
+  padding: 0px; }
 
 #choice_nav_bar {
-    float: right;
-}
+  float: right; }
 
-////////////////////////////
-// Styling for the tables //
-////////////////////////////
+.selected {
+  background-color: #646464; }
+
 #table_div {
-    overflow: scroll;
-
-}
+  overflow: scroll; }
 
 .odd {
-    background-color:#FFFFFF;
- }
+  background-color: #FFFFFF; }
 
 .even {
-    background-color:#CCCCCC;
-
- }
+  background-color: #CCCCCC; }
 
 .table_row {
-    padding: 10px;
-    height: 40px;
-}
+  padding: 10px;
+  height: 40px; }
 
 .table_row span {
-    display: inline-block;
+  display: inline-block; }
 
-}
 .first_row {
-    background-color: #6666BB;
-    font-weight: bold;
-}
+  background-color: #6666BB;
+  font-weight: bold; }

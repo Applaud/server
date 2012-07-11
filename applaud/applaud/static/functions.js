@@ -61,7 +61,7 @@ if( ! apatapa.functions ){
 	    .append(employee_id)
 	    .append(employee_info_div);
     
-    apatapa.stats.bind_employee_click(employee_div, employee);
+	apatapa.stats.bind_employee_click(employee_div, employee);
 	
 	return employee_div;
     }
@@ -95,6 +95,16 @@ if( ! apatapa.functions ){
         
         var para = $("<p></p>");
         para.text(question.label);
+
+	question_div.click(function() {
+	    $(this).toggleClass('selected');
+	    if ( $(this).hasClass('selected') ) {
+		apatapa.stats.addQuestion(question);
+	    } else {
+		apatapa.stats.removeQuestion(question);
+	    }
+	    apatapa.stats.processNewSurveyData();
+	});
 
         question_div.append(para);
         

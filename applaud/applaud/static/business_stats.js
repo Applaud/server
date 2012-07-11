@@ -2,23 +2,13 @@ google.load("visualization", "1", {packages:["corechart"]});
 
 
 var display_employees = function(){
-    $(".choice_div").hide();
-    $("#employees").show();
+    $("#survey_stats_choice_div").hide();
+    $("#employee_stats_choice_div").show();
 }
 
     var display_survey = function(){
-        $(".choice_div").hide();
-        $("#survey").show();
-    }
-
-    var display_employee_filters = function(){
-        $(".choice_div").hide();
-        $("#employee_filters").show();
-    }
-
-    var display_survey_filters = function() {
-        $(".choice_div").hide();
-        $("#survey_filters").show();
+        $("#employee_stats_choice_div").hide();
+        $("#survey_stats_choice_div").show();
     }
 
     var display_employee_graph = function(){
@@ -58,15 +48,6 @@ $(document).ready( function(){
             display_survey_table();
     });
 
-    $(".filter_link").click( function(){
-            console.log("isEmployee is.....");
-            console.log(apatapa.stats.isEmployee);
-            if ( apatapa.stats.isEmployee )
-                display_employee_filters();
-            else
-                display_survey_filters();
-    });
-    
     $(".graph_link").click( function(){
             if ( apatapa.stats.isEmployees )
                 display_employee_graph();
@@ -87,14 +68,16 @@ $(document).ready( function(){
 		console.log('success!');
 		apatapa.stats.initialize(data);
 		apatapa.functions.listEmployees($('#employees'), data);
-        apatapa.functions.listQuestions($('#survey'), data);
-	    display_employees();
-        display_employee_graph();
-        },
+		apatapa.functions.listQuestions($('#survey'), data);
+		display_employees();
+		display_employee_graph();
+            },
 	    error:function(){alert("Something went wrong.");}
 	   });
     console.log("is employee is....");
     console.log(apatapa.stats.isEmployees);
+
+    // Create accordions
+    $("#employee_stats_choice_div").accordion({fillSpace: true});
+    $("#survey_stats_choice_div").accordion({fillSpace: true});
 });
-
-
