@@ -623,9 +623,39 @@ def _get_only_quality_chart_data(employee_ids, start_time, stop_time):
 ################################################
 @csrf_protect
 @business_view
+def add_newsfeeditem(request):
+    '''
+    This view allows a business to add a single newsfeed item. This view CANNOT BE AJAX'D,
+    since we are uploading filey bits (image).
+    '''
+    
+    # Business' profile
+    profile = request.user.businessprofile
+    nfitem = models.NewsFeedItem(title=request.POST['title'],
+                                 subtitle=request.POST['subtitle'],
+                                 body=request.POST['body'],
+                                 date=datetime.now(),
+                                 date_edited=datetime.now(),
+                                 business=profile)
+    nfitem.save()
+    if 'image' in request.FILES:
+        try:
+            filename = '%s_%s_%s.jpg' % (profile.id,
+                                         profile.business_name,
+                                         feed.title[:10])
+            save_image(feed.image, filename, request.FILES['image' % i])
+        except IOError:
+            pass
+
+    nfitem.save()
+    return HttpResponse("")
+    
+    
+@csrf_protect
+@business_view
 def manage_newsfeed(request):
     '''
-    This view will check allow a business to create, edit, and delete
+    This view will check allow a business to edit and delete
     items from their newsfeed.
 
     Format of JSON in POST requests:
@@ -642,6 +672,8 @@ def manage_newsfeed(request):
                                   {'business':profile,
                                    'feeds':newsfeed},
                                   context_instance=RequestContext(request))
+
+
     # Otherwise, it's a POST.
     print str(request.POST)
     profile = request.user.businessprofile
@@ -656,54 +688,44 @@ def manage_newsfeed(request):
             print "deleted!"
         except:
             pass
-    print "So far so good"
-    # i = 0
-    # print str(request.POST)
-    # while 'title_%d' % i in request.POST:
-    #     feed_id = request.POST['feed_id_%d' % i]
-    #     if int(feed_id): # it's an old feed, updated.
-    #         feed = models.NewsFeedItem.objects.get(id=feed_id)
-    #         if request.POST['should_delete_%d' % i] == 'true':
-    #             print "Deleting %s"%str(feed)
-    #             feed.delete()
-    #         else:
-    #             feed.title = request.POST['title_%d' % i]
-    #             feed.body = request.POST['body_%d' % i]
-    #             feed.subtitle = request.POST['subtitle_%d' % i]
-    #             feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
-    #             if 'nf_image_%d' % i in request.FILES:
-    #                 try:
-    #                     filename = '%s_%s_%s.jpg' % (profile.id,
-    #                                                  profile.business_name,
-    #                                                  feed.title[:10])
-    #                     save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
-    #                 except IOError:
-    #                     pass
-    #             feed.save()
-    #     else: # feed id is 0, must be new!
-    #         feed = models.NewsFeedItem(title=request.POST['title_%d' % i],
-    #                                    body=request.POST['body_%d' % i],
-    #                                    subtitle=request.POST['subtitle_%d' % i],
-    #                                    business=profile,
-    #                                    date=datetime.utcnow().replace(tzinfo=utc),
-    #                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
-            
-    #         feed.save()
-    #         print feed
-    #         if 'nf_image_%d' % i in request.FILES:
-    #                 try:
-    #                     filename = '%s_%s_%s.jpg' % (profile.id,
-    #                                                  profile.business_name,
-    #                                                  feed.title[:10])
-    #                     save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
-    #                 except IOError:
-    #                     pass
-    #         if request.POST['should_delete_%d' % i] == 'true':
-    #             feed.delete()
-    #     i += 1
-#    return HttpResponseRedirect(reverse("business_control_panel"))
+        return HttpResponse("")
+
+    # Modify a newsfeed item
+    print str(request.POST)
+    # If we are modifying a feed...
+    feed_id = int(request.POST['feed_id'])
+    if feed_id > 0:
+        feed = models.NewsFeedItem.objects.get(id=feed_id)
+        feed.title = request.POST['title']
+        feed.body = request.POST['body']
+        feed.subtitle = request.POST['subtitle']
+        feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+        feed.save()
+
+    # Saving a new newsfeed item
+    else: 
+        feed = models.NewsFeedItem(title=request.POST['title'],
+                                   body=request.POST['body'],
+                                   subtitle=request.POST['subtitle'],
+                                   business=profile,
+                                   date=datetime.utcnow().replace(tzinfo=utc),
+                                   date_edited=datetime.utcnow().replace(tzinfo=utc))
+        feed.save()
+
+    # Whether dealing with a new NewsFeedItem or not, deal with any uploaded
+    # images.
+    if 'image' in request.FILES:
+        try:
+            filename = '%s_%s_%s.jpg' % (profile.id,
+                                         profile.business_name,
+                                         feed.title[:10])
+            save_image(feed.image, filename, request.FILES['image'])
+        except IOError:
+            pass
+        feed.save()
+
     print "About to be ok..."
-    return HttpResponse("")
+    return HttpResponseRedirect(reverse("business_control_panel"))
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect
@@ -726,7 +748,15 @@ def scale_dimensions(width, height, longest_side):
     return (int(width*ratio), int(height*ratio))
 
 # Also stolen! This makes saving an image to MEDIA_ROOT a bit more sensible.
-def save_image(model_image, filename, profile, tmp_image):
+def save_image(model_image, filename, tmp_image):
+    '''
+    Saves an image to a NewsFeedItem.
+
+    model_image = Reference to the "image" field in a NewsFeedItem.
+    filename = Filename to use when saving the actual file
+    tmp_image = The file that currently exists from uploading.
+    '''
+
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
     (width, height) = scale_dimensions(width, height, 200)

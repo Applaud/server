@@ -587,16 +587,8 @@ if (! apatapa.business) {
 		registerClickHandlers();
 	    });
 
-	    // var save_newsfeed_button = $('<button></button>');
-	    // save_newsfeed_button.prop({'type': 'button',
-	    // 			       'name': 'save_newsfeed_button',
-	    // 			       'id': 'save_newsfeed_button',
-	    // 			       'class': 'save_newsfeed_button'});
-	    // save_newsfeed_button.html('Save Changes');
 	    $('#save_newsfeed_button').button();
-	    // $('#newsfeeds').append(save_newsfeed_button)
-	    // 	.append(add_newsfeed_button);
-	    // $('#newsfeed_form').append(add_newsfeed_button);
+
 	    for(d in data) {
 		console.log(data[d]);
 		feed = data[d];
@@ -634,9 +626,9 @@ if (! apatapa.business) {
 		$(this).siblings(".nf_expand_button").show()
 		$(this).hide();
 	    });
-	    $('#save_newsfeed_button').click( function () {
-		saveChanges();
-	    });
+	    // $('#save_newsfeed_button').click( function () {
+	    // 	saveChanges();
+	    // });
 	};
 	
 	/**
@@ -651,8 +643,11 @@ if (! apatapa.business) {
 	    $.ajax({url: manage_newsfeed_url,
 		    type:'POST',
 		    data: {'delete_newsfeed':'true',
-			   'id':$("#feed_id_"+index).val()},
-		    error:function(){alert("Something went wrong.");}});
+			   'id':$("#feed_id_"+index).val(),
+			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+			  },
+		    error: function(){alert("Something went wrong.");}
+		   });
 	}
 
 
@@ -660,36 +655,37 @@ if (! apatapa.business) {
 	 * Save the newsfeed -- just collects all the information from the DOM and
 	 * sends it off through AJAX.
 	 */
-	var saveChanges = function () {
-	    var newsfeeds = [];
-	    $('.feed').each( function (index, element) {
-		var feed_dict = {'title': $(this).find('.nftitle').val()[0],
-				 'id': $(this).find('.id').val(),
-				 'should_delete': $(this).find('.should_delete').val()[0],
-				 'subtitle': $(this).find('.nfsubtitle').val()[0],
-				 'body': $(this).find('.nfbody').val()[0]};
-		newsfeeds.push(feed_dict);
-	    });
-	    var data = new FormData();
-	    $('.image_input').each(function(index, element) {
-		data.append('file_' + index, element.files);
-	    });
-	    var jsondResults = JSON.stringify(newsfeeds);
-	    console.log("JSONed results are: "+jsondResults);
-	    data.append("newsfeeds",jsondResults);
-	    data.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
-	    console.log("Sending data to server: "+data);
-	    $.ajax({url: manage_newsfeed_url,
-		    type: 'POST',
-		    dataType: false,
-		    processData: false,
-		    data: data,
-		    error: function () { alert('Something went wrong.'); },
-		    success: function () {
-			alert('Great success!');
-			window.location.replace('/business/');
-		    }});
-	};
+	// var saveChanges = function () {
+	//     var newsfeeds = [];
+	//     $('.feed').each( function (index, element) {
+	// 	var feed_dict = {'title': $(this).find('.nftitle').val()[0],
+	// 			 'id': $(this).find('.id').val(),
+	// 			 'should_delete': $(this).find('.should_delete').val()[0],
+	// 			 'subtitle': $(this).find('.nfsubtitle').val()[0],
+	// 			 'body': $(this).find('.nfbody').val()[0]};
+	// 	newsfeeds.push(feed_dict);
+	//     });
+	//     var data = new FormData();
+	//     $('.image_input').each(function(index, element) {
+	// 	data.append('file_' + index, element.files);
+	//     });
+	//     var jsondResults = JSON.stringify(newsfeeds);
+	//     console.log("JSONed results are: "+jsondResults);
+	//     data.append("newsfeeds",jsondResults);
+	//     data.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+	//     console.log("Sending data to server: "+data);
+	//     $.ajax({url: manage_newsfeed_url,
+	// 	    type: 'POST',
+	// 	    dataType: false,
+	// 	    processData: false,
+	// 	    data: data,
+	// 	    error: function () { alert('Something went wrong.'); },
+	// 	    success: function () {
+	// 		alert('Great success!');
+	// 		window.location.replace('/business/');
+	// 	    }});
+	// }
+	//	;
 
 
 	/**
@@ -699,24 +695,13 @@ if (! apatapa.business) {
 	 * feedNo - the index of the newsfeed to edit. -1 is a new feed.
 	 */
 	var editFeed = function( feedNo ) {
+	    // Fields to fill in with already existing data, potentially
 	    var id,title,date,date_edited,subtitle,body,image;
-	    if ( feedNo >= 0 ) {
-		var sourceFeed = $('#feed_'+feedNo);
-		id = sourceFeed.children('.id').val();
-		title = sourceFeed.children('.nftitle').text();
-		date = sourceFeed.children('.nfdate').text();
-		subtitle = sourceFeed.children('.nfsubtitle').val();
-		body = sourceFeed.children('.nfbody').val();
-		image = sourceFeed.children('.nfimage').val();
-		console.log("title, for ex, was "+title);
-	    } else {
-		// id = 0 means we have a new newsfeed item
-		id = 0;
-		// increment count of newsfeed items
-		i++;
-		// set all fields to blank by default
-		title = date = subtitle = body = image = "";
-	    }
+
+	    // Where to put all this stuff. Will be with summary unless this is a new
+	    // news feed item.
+	    var container;
+
 	    // Dates in Javascript. Seriously, Javascript?
 	    var the_date = new Date();
 	    var dd = the_date.getDate();
@@ -725,23 +710,36 @@ if (! apatapa.business) {
 	    var yyyy = the_date.getFullYear();
 	    date_edited = mm+'/'+dd+'/'+yyyy;
 
-	    var should_delete = $('<input />');
-	    should_delete.prop({'type': 'hidden',
-				'value': 'false',
-				'name': 'should_delete_' + i,
-				'id': 'should_delete_' + i});
+	    if ( feedNo >= 0 ) {
+		var sourceFeed = $('#feed_'+feedNo);
+		id = sourceFeed.children('.id').val();
+		title = sourceFeed.children('.nftitle').text();
+		date = sourceFeed.children('.nfdate').text();
+		subtitle = sourceFeed.children('.nfsubtitle').val();
+		body = sourceFeed.children('.nfbody').val();
+		image = sourceFeed.children('.nfimage').val();
+		container = $("#feed_"+feedNo);
+	    } else {
+		// id = 0 means we have a new newsfeed item
+		id = 0;
+		// increment count of newsfeed items
+		i++;
+		// set all fields to blank by default, except for 'date'
+		title = subtitle = body = image = "";
+		date = date_edited;
+		// A new div for this item.
+		container = ("<div></div>");
+		container.prop({'class': 'feed',
+				'id': 'feed_' + i,
+				'name': 'feed_' + i});
+	    }
 	    
 	    var feed_id = $('<input />');
 	    feed_id.prop({'type': 'hidden',
 			  'value': id,
 			  'class': 'id',
-			  'id': 'feed_id_' + i,
+			  'id': 'id_feed_id',
 			  'name': 'feed_id_' + i});
-	    
-	    var feed_div = $('<div></div>');
-	    feed_div.prop({'class': 'feed',
-			   'id': 'feed_' + i,
-			   'name': 'feed_' + i});
 	    
 	    var img = $('<img />');
 	    img.prop({'src': image,
@@ -753,14 +751,19 @@ if (! apatapa.business) {
 			    'accept': 'image/*',
 			    'class': 'image_input',
 			    'name': 'nf_image_' + i,
-			    'id': 'nf_image_' + i});
+			    'id': 'id_image'});
 	    
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
 			     'type': 'text',
-			     'id': 'title_' + i,
+			     'id': 'id_title',
 			     'name': 'title_' + i});
 	    
+	    var csrf_field = $('<input />');
+ 	    csrf_field.prop({'type':'hidden',
+			     'name':"csrfmiddlewaretoken",
+			     'value':$('input[name=csrfmiddlewaretoken]').val()});
+
 	    var date_text = $('<p></p>');
 	    date_text.html(date + ' (last edited ' + date_edited + ')');
 
@@ -768,13 +771,13 @@ if (! apatapa.business) {
 	    subtitle_text.prop({'type': 'text',
 				'name': 'subtitle_' + i,
 				'class': 'nfsubtitle',
-				'id': 'subtitle_' + i,
+				'id': 'id_subtitle',
 				'value': subtitle});
 	    
 	    var body_text = $('<textarea></textarea>');
 	    body_text.prop({'class':'nfbody',
 			    'name': 'body_' + i,
-			    'id': 'body_' + i});
+			    'id': 'id_body'})
 	    body_text.val(body);
 
 	    // delete_button is the button that deletes any particular newsfeed
@@ -808,22 +811,35 @@ if (! apatapa.business) {
 		//TODO
 	    });
 
-	    $('#newsfeeds').append(feed_div.append('Title: ')
-	    			   .append(feed_id)
-	    			   .append(should_delete)
-	    			   .append(img)
-	    			   .append(title_text)
-	    			   .append('<br />')
-	    			   .append('Image: ')
-	    			   .append(img_input)
-	    			   .append(date_text)
-	    			   .append('Subtitle: ')
-	    			   .append(subtitle_text)
-	    			   .append('<br />')
-	    			   .append('Body: ')
-	    			   .append(body_text)
-	    			   .append('<br />')
-	    			   .append(delete_button));
+	    var editForm = $('<form></form>');
+	    editForm.prop({"action": manage_newsfeed_url,
+			   "method": "POST",
+			   "id":"nf_editing_form"});
+	    
+	    editForm
+		.append(csrf_field)
+		.append('Title: ')
+	    	.append(feed_id)
+	    	.append(img)
+	    	.append(title_text)
+	    	.append('<br />')
+	    	.append('Image: ')
+	    	.append(img_input)
+	    	.append(date_text)
+	    	.append('Subtitle: ')
+	    	.append(subtitle_text)
+	    	.append('<br />')
+	    	.append('Body: ')
+	    	.append(body_text)
+	    	.append('<br />');
+	    var submitButton = $("<button>OK</button>");
+	    submitButton.prop({"type":"submit"});
+	    editForm.append(submitButton);
+
+	    // Build all the elements.
+	    container
+		.append(editForm)
+	    	.append(delete_button);
 	    i++;
 	}
 
@@ -833,13 +849,6 @@ if (! apatapa.business) {
 	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
 
 	    console.log("Adding feed with body: "+body);
-
-	    var should_delete = $('<input />');
-	    should_delete.prop({'type': 'hidden',
-				'value': 'false',
-				'class':'should_delete',
-				'name': 'should_delete_' + i,
-				'id': 'should_delete_' + i});
 	    
 	    var feed_id = $('<input />');
 	    feed_id.prop({'type': 'hidden',
@@ -901,23 +910,42 @@ if (! apatapa.business) {
 	    	feed = $(this).parents('.feed');
 	    	apatapa.showAlert('Are you sure you want to delete?',
 	    			  '',
-	    			  function() {
-	    			      feed.children('.should_delete').val('true');
+				  function() {
 	    			      feed.hide(700);
-	    			  });
+				      // This gets the index of the feed
+				      console.log("NOTHING IS HAPPENING!!! WTF!!!!????!");
+				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
+				  });
 	    });
 	    // edit_button is the button that creates an edit form for this newsfeed
 	    var edit_button = $('<button></button>');
 	    edit_button.prop({'type':'button',
-			    'class':'nf_edit_button',
-			    'id':'feed_edit_button_'+i,
-			    'name':'feed_edit_button_'+i});
+			      'class':'nf_edit_button',
+			      'id':'feed_edit_button_'+i,
+			      'name':'feed_edit_button_'+i});
 	    edit_button.html("Edit");
 	    edit_button.button();
 	    edit_button.click(function() {
-		var index = $(this).prop('id').split('_')[3];
-		console.log("I think my index is "+index);
-		editFeed(index);
+	    	// pointer to this button
+	    	var buttonInstance = $(this);
+	    	// // index of this newsfeeditem
+	    	var index = $(this).prop('id').split('_')[3];
+	    	// what we do when "edit" is clicked
+	    	var editfunction = function() {
+	    	    // Change this button to an "OK" button, and change the
+	    	    // click handler.
+	    	    $('#nf_editing_form').hide("fast");
+	    	    $('#nf_editing_form').remove();
+	    	    buttonInstance.html("Cancel");
+	    	    buttonInstance.click(function() {
+	    	    	$('#nf_editing_form').hide("fast");
+	    	    	$('#nf_editing_form').remove();
+	    	    	buttonInstance.html("Edit");
+	    	    	buttonInstance.click(function(){editfunction();});
+	    	    });
+	    	    editFeed(index);
+	    	};
+	    	editfunction();
 	    });
 
 	    $('#newsfeeds').append(feed_div.append('Title: ')
@@ -925,7 +953,6 @@ if (! apatapa.business) {
 				   .append(subtitleField)
 				   .append(bodyField)
 	    			   .append(feed_id)
-	    			   .append(should_delete)
 	    			   .append(title_text)
 	    			   .append(date_text)
 				   .append(date_edited_text)
