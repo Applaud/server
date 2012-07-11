@@ -63,6 +63,7 @@ if( ! apatapa.stats ){
     //Lists retrieved from the ajax call
     _ns.employees;
     _ns.dimensions;
+    _ns.questions;
 
     //Lists who actually determine the composition of the chart
     _ns.cur_employees=[];
@@ -78,92 +79,34 @@ if( ! apatapa.stats ){
     // The first and last dates of ratings selected on the bar (JS date objects)
     _ns.range_start;
     _ns.range_stop;
-    
-    // Boolean variable to check if user has clicked on a specific employee or dimension yet
-    // 1 - user hasn't clicked anything
-    // 0 - user has clicked on something
-    _ns.isFirstClick = 1;
 
+    // The data with which to assemble the table or chart
+    _ns.goog_data;
+    
+    // Boolean variable to check if the cur_employees and cur_dimension variables are equivalent to 
+    // employees and dimensions respectively (i.e. if the user hasn't yet clicked on a dimension or
+    // has since removed it.
+    // 1 - cur_(employees, dimensions) === (employees, dimensions)
+    // 0 - They're not (or at least one isn't)
+    _ns.isCurEmployeesFull = 1;
+    _ns.isCurDimensionsFull = 1;
+
+    // Boolean variables to check which variables to use when constructing the goog_data
+    // Generally set by the js particular to the page in which the chart is rendered
+    _ns.isEmployees = 0;
+    _ns.isSurvey = 0;
 
     /*************************
      * CSS related variables *
      *************************/
     _ns.selected_background_color = "#bbbbbb";
 
-
-    // This function will take the current 'selected' data and assemble the google chart for it.
-    // TODO: Combine this function with the setTimeRange?
-    _ns.make_chart = function() {
-	// This is eventually the data fed into the chart
-	var chart_list = [];
-	
-	// Build the axes
-	var row0 = [ 'Dimension' ];
-	for( d in _ns.cur_dimensions){
-	    row0.push(_ns.cur_dimensions[d])
-	}
-	
-	chart_list.push(row0);
-	
-	// Is this all too slow?? Brainstorm efficiencies in here
-	// For each employee, calculate avg rating for each dimension
-	for ( e in _ns.cur_employees ) {
-	    var avgRatings = [];
-	    var totalRatings = {};
-	    var employee = _ns.cur_employees[e];
-
-
-	    // Sum up totals for each dimension
-	    for ( r in employee.ratings ) {
-		if( _ns.isRatingInRange(employee.ratings[r])){
-		    if (! totalRatings[employee.ratings[r].title] ){
-			totalRatings[employee.ratings[r].title] = [];
-		    }
-		    totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
-		}
-	    }
-	    // Compute averages
-	    for ( i in _ns.cur_dimensions ) {
-		var dimName = _ns.cur_dimensions[i];
-		avgRatings[i] = 0;
-		if ( dimName in totalRatings && totalRatings[dimName].length > 0 ) {
-		    var total = 0;
-		    for( r in totalRatings[dimName]) {
-			total += totalRatings[dimName][r];
-		    }
-		    avgRatings[i] = total / totalRatings[dimName].length;
-		}
-	    }
-
-	    var nextRow = [employee.first_name+' '+employee.last_name];
-	    nextRow = nextRow.concat(avgRatings);
-	    chart_list.push(nextRow);
-	}
-	// Create and populate the data table.
-	var data = google.visualization.arrayToDataTable( chart_list );
-	
-	// Create and draw the visualization.
-	new google.visualization.ColumnChart(document.getElementById('emp_graph')).
-	    draw(data,
-		 {title:"Evaluations by Dimension",
-		  width:"700", height:"500",
-		  hAxis: {title: "Dimension"},
-		  vAxis: {title: "Average Rating",
-			  viewWindowMode:'explicit',
-			  viewWindow:{
-			      max:6.0,
-			      min:0}
-			 }
-		 });
-    }
-
-    // This function should take a rating object (of type retrieved with the JSON call)
-    // and return whether or not it falls in the range of the dateslider
-    _ns.isRatingInRange = function(rating){
-	var rating_date = _ns.dateToJS(rating.date);
-	if(rating_date >= _ns.range_start && rating_date <= _ns.range_stop)
-	    return true;
-	return false;
+    /////////////////////////////
+    // Random helper functions //
+    /////////////////////////////
+    _ns.roundNumber = function(num, dec){
+        var result = Math.round(num*Math.pow(10, dec)/Math.pow(10, dec));
+        return result;
     }
 
     _ns.dateToJS = function( date ) {
@@ -179,25 +122,6 @@ if( ! apatapa.stats ){
 	return dateToJS(rating1.date) > dateToJS(rating2.date)? 1 : -1;
     }
 
-    // This function should set up the table of clickable dimensions
-    // Should only be called once
-    _ns.buildTable = function() {
-	var the_list = $('<ol></ol>');
-	the_list.prop({'id':"dimension_list"});
-	for (d in _ns.dimensions) {
-	    var dim = _ns.dimensions[d];
-	    var list_item = $('<li></li>');
-	    list_item.prop({'id':'dim_'+dim,
-			    'class':'dimension'});
-	    list_item.text(dim);
-	    list_item.hover(_ns.dimension_hover_in, _ns.dimension_hover_out);
-	    list_item.click(_ns.dimension_click);
-	    the_list.append(list_item);
-	}
-
-	$('#gt_dims').append(the_list);
-    }
-
     _ns.sliderValueToDate = function(sliderValue){
 	// This function will take a value from the slider (an integer from 0-n) and convert this to a date using, the 'first' global
 	var milliSinceFirst =sliderValue*86400000;
@@ -210,6 +134,258 @@ if( ! apatapa.stats ){
 	milliSinceFirst = date.getTime() - firstAsDate.getTime();
 	return milliSinceFirst/86400000;
     }
+
+    // This function should take a rating object (of type retrieved with the JSON call)
+    // and return whether or not it falls in the range of the dateslider
+    _ns.isRatingInRange = function(rating){
+	var rating_date = _ns.dateToJS(rating.date);
+	if(rating_date >= _ns.range_start && rating_date <= _ns.range_stop)
+	    return true;
+	return false;
+    }
+
+    ////////////////////////////
+    // Utilities for the page //
+    ////////////////////////////
+    
+    // A helper function to reset the boolean variables isEmployees and isSurvey
+    _ns.setAsEmployee = function(){
+        _ns.isEmployees = 1;
+        _ns.isSurvey = 0;
+    }
+    
+    _ns.setAsSurvey = function(){
+        _ns.isEmployees = 0;
+        _ns.isSurvey = 1;
+    }
+
+
+    // Takes an employee JSON object of the form passed from the view
+    _ns.add_employee = function(employee){
+	if( _ns.isCurEmployeesFull ){
+	    _ns.cur_employees=[employee];
+	    _ns.isCurEmployeesFull=0;
+	}
+	else{
+	    //First, make sure the employee isn't in the chart
+	    var arr_index = _ns.cur_employees.indexOf(employee);
+        if( arr_index === -1 ) _ns.cur_employees.push(employee); 
+	}
+    }
+    
+    // Takes an employee JSON object of the form passed from the view
+    _ns.remove_employee = function(employee){
+	if( ! _ns.isCurEmployeesFull){
+	    var arr_index = _ns.cur_employees.indexOf(employee);
+	    if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1); 
+        if( _ns.cur_employees.length === 0){
+            _ns.cur_employees=_ns.employees;
+            _ns.isCurEmployeesFull = 1;
+        }
+	}
+    }
+
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.add_dimension = function(dimension){
+	if( _ns.isCurDimensionsFull ){
+	    _ns.isCurDimensionsFull=0;
+	    _ns.cur_dimensions=[dimension];
+	}
+	else{
+	    //First, make sure the employee isn't in the chart
+	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
+	    if( arr_index === -1 ) _ns.cur_dimensions.push(dimension); 
+	}
+    }
+
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.remove_dimension = function(dimension){
+	if( ! _ns.isCurDimensionsFull ){
+	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
+	    if( arr_index != -1 ){
+            _ns.cur_dimensions.splice(arr_index, 1);
+		if(_ns.cur_dimensions.length === 0){
+		    _ns.cur_dimensions = _ns.dimensions;
+            _ns.isCurDimensionsFull = 1;
+        }
+	    }
+	}
+    }
+
+    ///////////////////////////////////
+    // Data gathering and assembling //
+    ///////////////////////////////////
+
+    // This function will assemble the goog_data variable to be put into either a chart or a table
+    _ns.assembleEmployeeData = function(){
+            var chart_list = [];
+            // Build the axes
+            var row0 = [ 'Dimension' ];
+            for( d in _ns.cur_dimensions){
+                row0.push(_ns.cur_dimensions[d])
+                    }
+	
+            chart_list.push(row0);
+	
+            // Is this all too slow?? Brainstorm efficiencies in here
+            // For each employee, calculate avg rating for each dimension
+            for ( e in _ns.cur_employees ) {
+                var avgRatings = [];
+                var totalRatings = {};
+                var employee = _ns.cur_employees[e];
+
+
+                // Sum up totals for each dimension
+                for ( r in employee.ratings ) {
+                    if( _ns.isRatingInRange(employee.ratings[r])){
+                        if (! totalRatings[employee.ratings[r].title] ){
+                            totalRatings[employee.ratings[r].title] = [];
+                        }
+                        totalRatings[employee.ratings[r].title].push( employee.ratings[r].value );
+                    }
+                }
+                // Compute averages
+                for ( i in _ns.cur_dimensions ) {
+                    var dimName = _ns.cur_dimensions[i];
+                    avgRatings[i] = 0;
+                    if ( dimName in totalRatings && totalRatings[dimName].length > 0 ) {
+                        var total = 0;
+                        for( r in totalRatings[dimName]) {
+                            total += totalRatings[dimName][r];
+                        }
+                        avgRatings[i] = _ns.roundNumber(total / totalRatings[dimName].length, 2);
+                    }
+                }
+
+                var nextRow = [employee.first_name+' '+employee.last_name];
+                nextRow = nextRow.concat(avgRatings);
+                chart_list.push(nextRow);
+                
+                _ns.goog_data = chart_list;
+            }
+    }
+    _ns.assembleSurveyTableData = function(){
+  
+            chart_list = [];
+            first_row = ["Question","Response"];
+            chart_list.push(first_row);
+            for(q in _ns.questions){
+                var label = _ns.questions[q].label;
+                for( r in _ns.questions[q].ratings){
+                    if(r == 0)
+                        next_row = [label];
+                    else
+                       next_row = [""];
+                    
+                    next_row.push(_ns.questions[q].ratings[r].response[0]);
+                    chart_list.push(next_row);
+                }
+            }
+            _ns.goog_data = chart_list;
+    }
+
+    
+    // Populates the corresponding div with formatted data from goog_data
+    _ns.makeTable = function(){
+        console.log("in makeTable.....");
+
+        var container;
+        if( _ns.isSurvey ){
+            console.log("survey");
+            _ns.assembleSurveyTableData();
+            container = $("#survey_table");
+        }
+        else {
+            console.log("other");
+            _ns.assembleEmployeeData();
+            container = $("#employee_table");
+        }
+                
+        for ( row in _ns.goog_data ){
+            var newdiv = $("<div></div>");
+            newdiv.addClass("table_row");
+            
+            var oddevenclass;    
+            if ( row == 0)
+                newdiv.addClass('first_row');
+
+            else if ( row % 2 === 0 )
+                oddevenclass='even';
+            else
+                oddevenclass='odd';            
+            newdiv.addClass(oddevenclass);
+            
+            var divWidth = parseInt($("#table_div").css("width"));
+            console.log("divWidth is.....");
+            console.log(divWidth);
+            var length = _ns.goog_data[row].length;
+            var cellWidth = divWidth/(length+1);
+            console.log("cellWidth is......."+cellWidth);
+            
+            for ( cell in _ns.goog_data[row] ){
+                var newspan = $("<span></span>");
+                newspan.prop({"class":"column_"+cell});
+                newspan.text(_ns.goog_data[row][cell]);
+                console.log(_ns.goog_data[row]);
+                //even spacing for the rest of the cells
+                
+                newspan.css("width",cellWidth);
+                //                newspan.css("padding", "10px");
+                newspan.css("text-align", "center");
+
+                newdiv.append(newspan);
+            }
+
+            container.append(newdiv);
+        }
+    }
+
+    // This function will take the current 'selected' data and assemble the google chart for it.
+    // TODO: Combine this function with the setTimeRange?
+    _ns.make_chart = function() {
+        _ns.assembleEmployeeData();
+        // Create and populate the data table.
+        var data = google.visualization.arrayToDataTable( _ns.goog_data );
+	
+        // Create and draw the visualization.
+        new google.visualization.ColumnChart(document.getElementById('employee_graph')).
+	    draw(data,
+            {title:"Evaluations by Dimension",
+            width:"500", height:"500",
+            hAxis: {title: "Dimension"},
+            vAxis: {title: "Average Rating",
+                viewWindowMode:'explicit',
+                viewWindow:{
+                max:6.0,
+                    min:0}
+        }
+    });
+    }
+
+
+    // This function should set up the table of clickable dimensions
+    // Should only be called once
+    _ns.buildTable = function() {
+        var the_list = $('<ul></ul>');
+        the_list.prop({'id':"dimension_list"});
+        for (d in _ns.dimensions) {
+            var dim = _ns.dimensions[d];
+            var list_item = $('<li></li>');
+            list_item.prop({'id':'dim_'+dim,
+                        'class':'dimension'});
+            list_item.text(dim);
+            list_item.hover(_ns.dimension_hover_in, _ns.dimension_hover_out);
+            list_item.click(_ns.dimension_click);
+            the_list.append(list_item);
+        }
+
+        $('#employee_filters').append(the_list);
+
+        //Survey filters??
+        
+
+    }
+
 
     // This function will build a slider which will represent the range of viewable data
     // It assumes that ratings for each employee are sorted by date
@@ -285,8 +461,10 @@ if( ! apatapa.stats ){
 	    }
 	    else {
 		// If not, determine whether a particular employees rating is the global first (last)
-		_ns.first = _ns.dateToJS(_ns.first) < _ns.dateToJS(e_first)? _ns.first : e_first;
-		_ns.last = _ns.dateToJS(_ns.last) > _ns.dateToJS(e_last)? _ns.last : e_last;
+            if(! typeof(e_first)==='undefined' && typeof(e_last)==='undefined' ){
+               _ns.first = _ns.dateToJS(_ns.first) < _ns.dateToJS(e_first)? _ns.first : e_first;
+               _ns.last = _ns.dateToJS(_ns.last) > _ns.dateToJS(e_last)? _ns.last : e_last;
+            }
 	    }
 	}
 
@@ -323,76 +501,22 @@ if( ! apatapa.stats ){
 	_ns.processNewData();
     }
 
-    _ns.employee_click = function(){
-	// TODO: Determine the structure of the html when there are multiple employees
-	// From this, we should grab the id.
-	var emp_id = $(this).attr('id');
-	var employee;
+    _ns.bind_employee_click = function(container, employee){
+        container.click(function(){
+           $(this).toggleClass('selected');
 	
-	//Is there a better (faster) way to do this?
-	for( i in _ns.employees ){
-	    if( _ns.employees[i].id == emp_id ){
-		employee = _ns.employees[i];
-		break;
-	    }
-	}
-	
-	$(this).toggleClass('selected');
-	
-	if( $(this).is('selected') ){
-	    _ns.add_employee(employee);
-	    $(this).css('background-color',selected_background_color);
-	}
-	else {
-	    _ns.remove_employee(employee);
-	}
+                if( $(this).hasClass('selected') ){
+                    _ns.add_employee(employee);
+                    $(this).css('background-color',_ns.selected_background_color);
+                }
+                else {
+                    _ns.remove_employee(employee);
+                    $(this).css('background-color',"#ffffff");
+                }
+           _ns.processNewData();
+       });
     }
 
-    // Takes an employee JSON object of the form passed from the view
-    _ns.add_employee = function(employee){
-	if( _ns.isFirstClick ){
-	    _ns.cur_employees=[employee];
-	    _ns.isFirstClick=0;
-	}
-	else{
-	    //First, make sure the employee isn't in the chart
-	    var arr_index = _ns.cur_employees.indexOf(employee);
-	    if( arr_index === -1 ) _ns.cur_employees.push(employee); 
-	}
-    }
-    
-    // Takes an employee JSON object of the form passed from the view
-    _ns.remove_employee = function(employee){
-	if( ! _ns.isFirstClick){
-	    var arr_index = _ns.cur_employees.indexOf(emp_id);
-	    if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1); 
-	}
-    }
-
-    // Takes a dimension JSON object of the form passed from the view
-    _ns.add_dimension = function(dimension){
-	if( _ns.isFirstClick ){
-	    _ns.isFirstClick=0;
-	    _ns.cur_dimensions=[dimension];
-	}
-	else{
-	    //First, make sure the employee isn't in the chart
-	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
-	    if( arr_index === -1 ) _ns.cur_dimensions.push(dimension); 
-	}
-    }
-
-    // Takes a dimension JSON object of the form passed from the view
-    _ns.remove_dimension = function(dimension){
-	if( ! _ns.isFirstClick ){
-	    var arr_index = _ns.cur_dimensions.indexOf(dimension);
-	    if( arr_index != -1 ){
-		_ns.cur_dimensions.splice(arr_index, 1); 
-		if(_ns.cur_dimensions.length === 0)
-		    _ns.cur_dimensions = _ns.dimensions;
-	    }
-	}
-    }
 
     // Using the employees list, assembles a list of dimension titles
     _ns.buildDimensions = function(){
@@ -410,23 +534,28 @@ if( ! apatapa.stats ){
 
     // This should just set variables
     _ns.initialize = function(data){
-	_ns.employees = data.data.employees;
-	_ns.buildDimensions();
-	_ns.buildTable();
-	_ns.cur_dimensions = _ns.dimensions;
-	_ns.cur_employees = _ns.employees;
-	_ns.setDateRange();
-	_ns.buildDateSlider();
-	_ns.bindDateSlider();
+        _ns.employees = data.data.employees;
+        _ns.buildDimensions();
+        _ns.questions = data.data.questions;
+        _ns.buildTable();
+        _ns.cur_dimensions = _ns.dimensions;
+        _ns.cur_employees = _ns.employees;
+        _ns.setDateRange();
+        _ns.buildDateSlider();
+        _ns.bindDateSlider();
 
-	_ns.make_chart();
+        _ns.setAsSurvey();
+        _ns.makeTable();
+
+        _ns.setAsEmployee();
+        _ns.makeTable();
+        _ns.make_chart();
     }
 
     // To be called anytime cur_dimensions or cur_employees is changed
     _ns.processNewData = function(){
-	_ns.setDateRange();
-	_ns.changeDateSlider();
-
-	_ns.make_chart();
+        _ns.setDateRange();
+        _ns.changeDateSlider();
+        _ns.make_chart();
     }
 })(apatapa.stats);

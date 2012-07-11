@@ -3,7 +3,84 @@
     
 }
 
-.employee_item {
+#nav_bar {
+    display:block;
+}
+
+#choice_nav_bar{
+
+}
+
+#stats_choice_div {
+    float: right;
+
+}
+
+#stats_choice_div {
+    border: thin dotted gray;
+    width: 400px;
+}
+
+.choice_div {
+    height: 450px;
+    overflow: scroll;
+
+}
+
+#info {
+    width: 550px;
+    float: left;
+}
+
+#graph_div {
+    border: thin dotted gray;
+}
+
+#survey_div {
+    border: thin dotted gray;
+}
+
+#employee_graph iframe{
+    text-align:left;
+    margin:0px;
+    padding:0px;
+}
 
 
+#info_nav_bar {
+}
+
+#choice_nav_bar {
+    float: right;
+}
+
+////////////////////////////
+// Styling for the tables //
+////////////////////////////
+#table_div {
+    overflow: scroll;
+
+}
+
+.odd {
+    background-color:#FFFFFF;
+ }
+
+.even {
+    background-color:#CCCCCC;
+
+ }
+
+.table_row {
+    padding: 10px;
+    height: 40px;
+}
+
+.table_row span {
+    display: inline-block;
+
+}
+.first_row {
+    background-color: #6666BB;
+    font-weight: bold;
 }
