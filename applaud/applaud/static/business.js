@@ -881,7 +881,7 @@ if (! apatapa.business) {
 	    });
 
 	    // Add this item to the rest of the listings.
-	    $('#newsfeeds').append(feed_div.append('Title: ')
+	    $('#newsfeeds').append(feed_div
 	    			   .append(title_text)
 				   .append(img)
 				   .append(subtitleField)

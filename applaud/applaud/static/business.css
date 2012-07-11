@@ -91,6 +91,8 @@ strong {
     font-size: 11px; }
   .feed .nfimage {
     float: right; }
+  .feed .nftitle {
+    font-weight: bold; }
 
 .question_optionlist {
   padding-top: 10px; }
