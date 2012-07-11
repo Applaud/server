@@ -224,11 +224,17 @@ qr1 = models.QuestionResponse(question=q1,
                               date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr1.save()
-qr2 = models.QuestionResponse(question=q2,
-                              response=['no'],
-                              date_created=datetime.utcnow().replace(tzinfo=utc),
-                              user=userprofile)
-qr2.save()
+
+for i in range(10):
+    today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
+    options = ["yes","no"]
+    which = options[int(2*random())]
+    qr2 = models.QuestionResponse(question=q2,
+                                  response=[which],
+                                  date_created=today,
+                                  user=userprofile)
+    qr2.save()
+
 qr3 = models.QuestionResponse(question=q3,
                               response=['aaargh!'],
                               date_created=datetime.utcnow().replace(tzinfo=utc),

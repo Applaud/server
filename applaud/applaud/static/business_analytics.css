@@ -12,6 +12,7 @@
 #info {
   width: 550px;
   height: 550px;
+  overflow: auto;
   float: left; }
 
 #graph_div {
@@ -30,9 +31,6 @@
 
 .selected {
   background-color: #646464; }
-
-#table_div {
-  overflow: scroll; }
 
 .odd {
   background-color: #FFFFFF; }

@@ -4,11 +4,13 @@ google.load("visualization", "1", {packages:["corechart"]});
 var display_employees = function(){
     $("#survey_stats_choice_div").hide();
     $("#employee_stats_choice_div").show();
+    $(".graph_link").removeAttr("disabled");
 }
 
     var display_survey = function(){
         $("#employee_stats_choice_div").hide();
         $("#survey_stats_choice_div").show();
+	$(".graph_link").attr("disabled","disabled");
     }
 
     var display_employee_graph = function(){
