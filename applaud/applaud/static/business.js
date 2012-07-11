@@ -597,7 +597,6 @@ if (! apatapa.business) {
 	    $('#add_newsfeed_button').button();
 	    $('#add_newsfeed_button').click( function () {
 		addFeed(0, "New Newsfeed Item", "Today", "<strong>right now</strong>", "", "", "", true);
-		registerClickHandlers();
 	    });
 	};
 	
