@@ -424,7 +424,7 @@ def analytics(request):
 
 @business_view
 def stats(request):
-    """A view to retrieve all statistics for employees  associated with a particular business.
+    """A view to retrieve all statistics for employees, and questions associated with a particular business.
        This should be done with a GET request.
     """
     profile = request.user.businessprofile
@@ -443,6 +443,21 @@ def stats(request):
                 return_data['employees']=[encoded_employee]
             else:
                 return_data['employees'].append(encoded_employee)
+
+
+        #Assumes a business only has a single survey
+        survey = profile.survey_set.all()[0]
+        
+        for question in survey.question_set.all():
+            print "loopin"
+            all_ratings = sorted(list(question.questionresponse_set.all()), key=lambda e: e.date_created)
+            encoded_question = views.QuestionEncoder().default(question)
+            encoded_question['ratings'] = [views.QuestionResponseEncoder().default(r) for r in all_ratings]
+
+            if not 'questions' in return_data:
+                return_data['questions']=[encoded_question]
+            else:
+                return_data['questions'].append(encoded_question)
             
         return HttpResponse(json.dumps({'data':return_data}),
                             mimetype='application/json')

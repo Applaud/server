@@ -141,18 +141,16 @@ class QuestionEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, o)
 
 
-
-# Encodes a rating into JSON
-class RatingEncoder(json.JSONEncoder):
+# Encodes a question response into JSON
+class QuestionResponseEncoder(json.JSONEncoder):
     def default(self, o):
-        if isinstance(o, models.Rating):
-            return {'business': o.employee.businessprofile,
-                    'date': o.date_created,
-                    'profile': o.profile,
-                    'rating_value': o.rating_value,
-                    'user': user}
+        if isinstance(o, models.QuestionResponse):
+            return {'date': o.date_created.strftime('%m/%d/%Y'),
+                    'response': o.response,
+                    'user': UserProfileEncoder().default(o.user)}
         else:
             return json.JSONEncdoder.default(self, o)
+
 
 # Encodes a NewsFeedItem into JSON.
 class NewsFeedItemEncoder(json.JSONEncoder):

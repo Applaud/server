@@ -236,6 +236,7 @@ class QuestionResponse(models.Model):
     question = models.ForeignKey(Question)
 
     # The response. Should be interpreted about whatever question.type is.
+    # Why is this a serialized strings field??
     response = SerializedStringsField()
     
     # The end user who provided the response

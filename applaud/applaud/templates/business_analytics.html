@@ -8,22 +8,51 @@ Employee Information
 <script type="text/javascript" src="{{ STATIC_URL }}business_stats.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
 
+
 {% endblock %}
 {% block links %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_analytics.css" />
 {% endblock %}
 {% block content %}
 {{ block.super }}
 <h1>Employee Analytics</h1>
-<div id="employees"></div> 
+
+<div id="nav_bar">
+<div id="choice_nav_bar">
+  <button class="employee_link">Employees</button>
+    <button class="survey_link">Survey</button>
+</div>
+<div id="info_nav_bar">
+    <button class="graph_link">Graph</button>
+    <button class="table_link">Table</button>
+</div>
 </div>
 
-<div id="graph_table">
-    <div id="gt_dims"></div>
-    <div id="emp_graph"></div>
-    <div id="date_slider_text">
-    </div>
+
+<div id="stats_choice_div">
+  
+  <div class="choice_div" id="employees"></div>
+  <div class="choice_div" id="survey"></div>
+  <div class="choice_div" id="employee_filters"></div>
+  <div class="choice_div" id="survey_filters"></div>
+
+  <div id="filter_choice_div">
+      <button class="filter_link">Filter</button>
+  </div>
+</div>
+<div id="info">
+  
+  <div id="graph_div">
+    <div class="data_view" id="employee_graph"></div>
+  </div>
+  <div id="table_div">
+    <div class="data_view" id="employee_table"></div>
+    <div class="data_view" id="survey_table"></div>
+  </div>
+  <div id="dateslider">
     <p id="dateslider_label"></p>
     <div id="gt_dateslider" name="dateslider"></div>
+  </div>
 </div>
 {% endblock%}
