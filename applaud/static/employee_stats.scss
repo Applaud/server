@@ -1,0 +1,33 @@
+/******** variables ********/
+$pagefont: 'Arvo', serif;	// most page fonts
+$contentwidth: 800px;		// width of main content div
+$logocolor: rgb(110,155,255);	// color of logo
+$titlecolor: rgb(80,2,120);	// color of sub-section titles
+$browncolor: rgb(44,30,30);	// dark brown color for header/footer
+$lightpink: rgb(255,235,250);	// light color for minor elements
+$footerspacing: 7px;		// padding on footer
+$footerheight: 15px;		// height of footer region
+$mainpadding: 15px;		// padding for main content
+/***************************/
+
+#graph_table {
+    margin: {
+	top:20px;
+    }
+    border:solid 2px $browncolor;
+    background-color:$lightpink;
+    #gt_dims {
+	display:block;
+	margin: {
+	    top:10px;
+	    bottom:20px;
+	}
+	.ui-selecting { background:#FECA40; }
+	.ui-selected { background: #F39814; color: white; }
+	li {
+	    display:inline;
+	    padding:5px;
+	    border-style:none;
+	}
+    }
+}

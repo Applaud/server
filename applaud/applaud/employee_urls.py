@@ -9,7 +9,8 @@ import settings
 urlpatterns = patterns('',
                        # Stats page.
                        url(r'^stats/$',
-                           employee_views.employee_stats),
+                           employee_views.employee_stats,
+                           name="employee_analytics"),
 
                        url(r'^get_stats/$',
                            employee_views.get_stats,

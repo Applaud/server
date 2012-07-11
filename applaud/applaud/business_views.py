@@ -726,8 +726,11 @@ def control_panel(request):
     
     if request.method == 'GET':
         # First all the employeees
-        employee_list = profile.employeeprofile_set.all()
+        employee_list = profile.employeeprofile_set.order_by('user__last_name')
         
+        # All the rating profiles for the business.
+        rating_profile_list = profile.ratingprofile_set.all()
+
         # All the newsfeed items that have been created so far.
         newsfeed_list = profile.newsfeeditem_set.all()
 
@@ -736,9 +739,42 @@ def control_panel(request):
 
         return render_to_response('business_control_panel.html',
                                   {'employee_list':employee_list,
+                                   'rating_profile_list':rating_profile_list,
                                    'feeds':newsfeed_list,
                                    'survey_list':survey_list},
                                   context_instance=RequestContext(request))
     # Method is post.
     else:
         return HttpResponseRedirect('/business')
+
+
+@csrf_protect
+@business_view
+def rating_profile_changes(request):
+    profile = request.user.businessprofile
+    
+    if request.method == 'POST':
+        for emp_key, rating_val in json.loads(request.POST['emp_profile_change']).items():
+            e = profile.employeeprofile_set.get(id=int(emp_key))
+            p = profile.ratingprofile_set.get(id=int(rating_val))
+            e.rating_profile=p
+            e.save()
+            
+        messages.add_message(request, messages.SUCCESS, "The Rating Profiles have been successfully updated!")
+    return HttpResponse('')
+
+
+@csrf_protect
+@business_view
+def get_employee_info(request):
+    profile = request.user.businessprofile
+
+    if request.method == 'GET':
+        employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
+        encoded_employee = views.EmployeeEncoder().default(employee)
+        return HttpResponse(json.dumps({'employee':encoded_employee}),
+                            mimetype='application/json')
+            
+    return render_to_response('business_control_panel.html',
+                              {'employee':encoded_employee},
+                              context_instance=RequestContext(request))

@@ -38,6 +38,9 @@ urlpatterns = patterns('',
                        url(r'^list_ratingprofiles/$',
                            views.list_rating_profiles,
                            name="business_list_ratingprofiles"),
+                       url(r'^update_ratingprofiles/$',
+                           views.rating_profile_changes,
+                           name="business_update_ratingprofiles"),
 
                        # Business home
                        url(r'^$',
@@ -72,5 +75,11 @@ urlpatterns = patterns('',
                        url(r'^newsfeed_list/$',
                            views.newsfeed_list,
                            name='business_newsfeed_list'),
+
+                       # General Functions
+                       url(r'^get_employee_info/$',
+                           views.get_employee_info,
+                           name="business_get_employee_info"),
                        
                        )
+
