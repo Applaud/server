@@ -65,43 +65,47 @@
 
   <div id="view_employees_div" class="employee_management">
     <div class="table">
-    <div id="cp_employee_header_row" class="table_row">
-      <div>Employee Name</div>
-      <div>Employee last name</div>
-      <div>Current Rating Profile</div>
-    </div>
-    {% for e in employee_list %}
-    <div id="cp_employee_row_{{ forloop.counter }}" class="cp_employee_row">
-      <div> {{ e.user.first_name }}</div>
-      <div> {{ e.user.last_name }}</div>
-      <div> 
-	<select>{% for rat_prof in rating_profile_list %}
-	  <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
-	  </option>
-	  {% endfor %}
-	</select>
-	<input type="hidden" value="{{ e.id }}"/>
+      <div id="cp_employee_header_row" class="table_row">
+	<div>Employee Name</div>
+	<div>Employee last name</div>
+	<div>Current Rating Profile</div>
+      </div>
+      {% for e in employee_list %}
+      <div id="cp_employee_row_{{ forloop.counter }}" class="cp_employee_row">
+	<div> {{ e.user.first_name }}</div>
+	<div> {{ e.user.last_name }}</div>
+	<div> 
+	  <select>
+	    {% for rat_prof in rating_profile_list %}
+	    <option {% ifequal rat_prof.id e.rating_profile.id %}selected="selected"{% endifequal %} value="{{ rat_prof.id}}">
+	      {{ rat_prof }}
+	    </option>
+	    {% endfor %}
+	  </select>
+	  <input type="hidden" value="{{ e.id }}"/>
+	</div>
+	
+	<div> 
+	  <button id="employee_contract_button_{{ forloop.counter }}" class="expand_employee_button">+</button>
+	  <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
+	</div>
       </div>
 
-    <div> 
-      <button id="employee_contract_button_{{ forloop.counter }}" class="expand_employee_button">+</button>
-      <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
-    </div>
-  </div>
-
-    <!-- This is the row that will be displayed with the standard employee div. -->
-
-    <div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><div id="expand_row_{{ e.id }}"> </div> </div>
-    {% endfor %}
+      <!-- This is the row that will be displayed with the standard employee div. -->
+      
+      <div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row">
+	<div id="expand_row_{{ e.id }}"> </div>
+      </div>
+      {% endfor %}
     </div>
     <button id="rating_profile_changes_button">Save Rating Profiles</button>
   </div>
-
+  
   <div id="add_employees_div" class="employee_management">
     <div class="content-title">
       <h2>Employee Management</h2>
     </div>
-
+    
     <div id="employees_listing">
     </div>
 
