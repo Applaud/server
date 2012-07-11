@@ -124,6 +124,7 @@ class SurveyEncoder(json.JSONEncoder):
             for q in question_list:
                 questions.append(question_encoder.default(q))
             res = {'title': o.title,
+                   'id':o.id,
                    'description': o.description,
                    'questions': questions}
             return res
