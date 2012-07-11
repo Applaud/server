@@ -21,4 +21,47 @@
   margin-left: 10px; }
 
 #iphone_preview {
-  margin-right: 15px; }
+  background-image: url("/static/iphoneTemplate.png");
+  width: 362px;
+  height: 710px;
+  float: right;
+  font-family: "Helvetica", sans-serif; }
+  #iphone_preview #iphone_screen {
+    position: relative;
+    left: 21px;
+    top: 135px;
+    background-color: cyan;
+    width: 320px;
+    height: 411px;
+    overflow: hidden; }
+    #iphone_preview #iphone_screen .navbar {
+      position: relative;
+      left: 0px;
+      top: 0px;
+      text-align: center;
+      height: 44px;
+      background-color: orange; }
+      #iphone_preview #iphone_screen .navbar p {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        position: relative;
+        top: 12px; }
+    #iphone_preview #iphone_screen .listitem {
+      width: 100%;
+      height: 44px;
+      display: block;
+      border-top: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: #7d7d7d;
+        font-size: 14px; }

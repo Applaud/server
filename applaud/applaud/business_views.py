@@ -351,7 +351,8 @@ def manage_survey(request):
             survey.save()
 
             messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
-            return HttpResponse("") # Empty response = all went well
+#            return HttpResponseRedirect(reverse('business_control_panel')) # Empty response = all went well
+            return HttpResponse('')
         # We're getting data for this business' survey.
     else:
         return HttpResponse(json.dumps({'survey':survey},

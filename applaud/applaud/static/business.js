@@ -796,6 +796,9 @@ if (! apatapa.business) {
 			     "TA":"long text",
 			     "TF":"short text"};
 	
+	// Keeps track of # of questions
+	var i = 0;
+	
 	// To indicate that a question is inactive right now.
 	var inactive_color = 'rgb(200, 200, 200)';
 	
@@ -838,7 +841,7 @@ if (! apatapa.business) {
 			       'survey_description':survey_description,
 			       'questions':JSON.stringify(questions),
 			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
-			success: function() { window.location.replace("/business/controlpanel")},
+			success: function() { window.location.reload(); },
 			error: function() {alert("something went wrong.")}
 		       });
 	    });
@@ -875,8 +878,6 @@ if (! apatapa.business) {
 	    
 	}
 
-	// Keeps track of # of questions
-	var i = 0;
 
 	// Start off with question 0 has 1 option
 	var questionOptions = [0];
@@ -909,16 +910,19 @@ if (! apatapa.business) {
 	    
 	    // This div will contain the parts that are visible (there will be an expand button)
 	    var question_visible_div = $("<div></div>");
-	    question_visible_div.prop({'id':"question_visible_"+(i+1)+"_div",
+	    question_visible_div.prop({'id':"question_visible_"+i+"_div",
 				       'class':"question_visible_div visible"});
 
-	    var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
+	    var questionAreaLabel = $("<label>Question</label>");
 	    questionAreaLabel.prop({"for":"question_"+i});
 	    
 	    var questionArea = $("<textarea></textarea>");
 	    questionArea.prop({'name':"question_"+i,
-			       'id':"question_"+i,
-			       'onchange': 'apatapa.business.control_panel.updateQuestion('+i+')'});
+			       'id':"question_"+i});
+	    questionArea.keyup(function () {
+		var index = $(this).prop('id').split('_')[1];
+		apatapa.business.control_panel.updateQuestion(id, index, $(this).val());
+	    });
 	    questionArea.text( label );
 
 	    var expand_button = $("<button>+</button>");
@@ -1053,6 +1057,7 @@ if (! apatapa.business) {
 		.append(question_visible_div)
 		.append(question_hidden_div)
 
+	    apatapa.business.control_panel.addQuestion(i, id, label);
 	    
 	    if( animated ) {
 		questionDiv.show(700);
@@ -1072,9 +1077,12 @@ if (! apatapa.business) {
 
 	    $("#question_"+i+"_div").find('.deletebutton').click( function () {
 		var parent = $(this).parents('.question');
+		var id_to_delete = parent.children('.question_id').val();
+		var index_to_delete = $(this).prop('id').split('_')[1];
 		apatapa.showAlert('Are you sure you want to delete?',
 				  'This will this question\'s data forever!',
 				  function () {
+				      apatapa.business.control_panel.deleteQuestion(id_to_delete, index_to_delete);
 				      parent.children('.should_delete').val('true');
 				      parent.hide(1000);
 				  });
