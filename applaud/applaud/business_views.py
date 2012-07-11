@@ -694,6 +694,7 @@ def manage_newsfeed(request):
     print str(request.POST)
     # If we are modifying a feed...
     feed_id = int(request.POST['feed_id'])
+    feed = ""
     if feed_id > 0:
         feed = models.NewsFeedItem.objects.get(id=feed_id)
         feed.title = request.POST['title']
@@ -714,15 +715,17 @@ def manage_newsfeed(request):
 
     # Whether dealing with a new NewsFeedItem or not, deal with any uploaded
     # images.
-    if 'image' in request.FILES:
+    if 'nf_image' in request.FILES:
+        print "Saving an image..."
         try:
             filename = '%s_%s_%s.jpg' % (profile.id,
                                          profile.business_name,
                                          feed.title[:10])
-            save_image(feed.image, filename, request.FILES['image'])
+            save_image(feed.image, filename, request.FILES['nf_image'])
+            feed.save()
         except IOError:
             pass
-        feed.save()
+
 
     print "About to be ok..."
     return HttpResponseRedirect(reverse("business_control_panel"))

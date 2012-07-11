@@ -739,7 +739,7 @@ if (! apatapa.business) {
 			  'value': id,
 			  'class': 'id',
 			  'id': 'id_feed_id',
-			  'name': 'feed_id_' + i});
+			  'name': 'feed_id'});
 	    
 	    var img = $('<img />');
 	    img.prop({'src': image,
@@ -750,14 +750,14 @@ if (! apatapa.business) {
 	    img_input.prop({'type': 'file',
 			    'accept': 'image/*',
 			    'class': 'image_input',
-			    'name': 'nf_image_' + i,
-			    'id': 'id_image'});
+			    'name': 'nf_image',
+			    'id': 'nf_image'});
 	    
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
 			     'type': 'text',
 			     'id': 'id_title',
-			     'name': 'title_' + i});
+			     'name': 'title'});
 	    
 	    var csrf_field = $('<input />');
  	    csrf_field.prop({'type':'hidden',
@@ -769,14 +769,14 @@ if (! apatapa.business) {
 
 	    var subtitle_text = $('<input />');
 	    subtitle_text.prop({'type': 'text',
-				'name': 'subtitle_' + i,
+				'name': 'subtitle',
 				'class': 'nfsubtitle',
 				'id': 'id_subtitle',
 				'value': subtitle});
 	    
 	    var body_text = $('<textarea></textarea>');
 	    body_text.prop({'class':'nfbody',
-			    'name': 'body_' + i,
+			    'name': 'body',
 			    'id': 'id_body'})
 	    body_text.val(body);
 
@@ -798,17 +798,6 @@ if (! apatapa.business) {
 				      // This gets the index of the feed
 				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
 				  });
-	    });
-	    // ok_button is the button that creates a new newsfeed item
-	    var ok_button = $('<button></button>');
-	    ok_button.prop({'type':'button',
-			    'class':'nf_ok_button',
-			    'id':'feed_ok_button_'+i,
-			    'name':'feed_ok_button_'+i});
-	    ok_button.html("OK");
-	    ok_button.button();
-	    ok_button.click(function() {
-		//TODO
 	    });
 
 	    var editForm = $('<form></form>');
@@ -834,12 +823,11 @@ if (! apatapa.business) {
 	    	.append('<br />');
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
+	    submitButton.button();
 	    editForm.append(submitButton);
 
 	    // Build all the elements.
-	    container
-		.append(editForm)
-	    	.append(delete_button);
+	    container.append(editForm)
 	    i++;
 	}
 

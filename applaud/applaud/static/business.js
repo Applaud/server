@@ -750,8 +750,8 @@ if (! apatapa.business) {
 	    img_input.prop({'type': 'file',
 			    'accept': 'image/*',
 			    'class': 'image_input',
-			    'name': 'image',
-			    'id': 'id_image'});
+			    'name': 'nf_image',
+			    'id': 'nf_image'});
 	    
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
@@ -799,21 +799,11 @@ if (! apatapa.business) {
 				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
 				  });
 	    });
-	    // ok_button is the button that creates a new newsfeed item
-	    var ok_button = $('<button></button>');
-	    ok_button.prop({'type':'button',
-			    'class':'nf_ok_button',
-			    'id':'feed_ok_button_'+i,
-			    'name':'feed_ok_button_'+i});
-	    ok_button.html("OK");
-	    ok_button.button();
-	    ok_button.click(function() {
-		//TODO
-	    });
 
 	    var editForm = $('<form></form>');
 	    editForm.prop({"action": manage_newsfeed_url,
 			   "method": "POST",
+			   "enctype": "multipart/form-data",
 			   "id":"nf_editing_form"});
 	    
 	    editForm
@@ -834,12 +824,11 @@ if (! apatapa.business) {
 	    	.append('<br />');
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
+	    submitButton.button();
 	    editForm.append(submitButton);
 
 	    // Build all the elements.
-	    container
-		.append(editForm)
-	    	.append(delete_button);
+	    container.append(editForm)
 	    i++;
 	}
 
