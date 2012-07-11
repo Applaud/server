@@ -581,11 +581,12 @@ if (! apatapa.business) {
 				      'id': 'add_newsfeed_button',
 				      'class': 'add_newsfeed_button'});
 	    add_newsfeed_button.html('Add New Item');
+	    add_newsfeed_button.button();
 	    add_newsfeed_button.click( function () {
 		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
 		registerClickHandlers();
 	    });
-	    $('#add_newsfeed_button').button();
+
 	    // var save_newsfeed_button = $('<button></button>');
 	    // save_newsfeed_button.prop({'type': 'button',
 	    // 			       'name': 'save_newsfeed_button',
@@ -621,17 +622,6 @@ if (! apatapa.business) {
 		registerClickHandlers();
 	    });
 	    $('#save_newsfeed_button').button();
-	    $('.nf_delete_button').button();
-	    $('.nf_delete_button').click( function () {
-	    	console.log("delete button clicked");
-	    	feed = $(this).parents('.feed');
-	    	apatapa.showAlert('Are you sure you want to delete?',
-	    			  '',
-	    			  function() {
-	    			      feed.children('.should_delete').val('true');
-	    			      feed.hide(700);
-	    			  });
-	    });
 	    
 	    $(".nf_contract_button").hide();
 	    $(".nf_expand_button").click( function () {
@@ -747,32 +737,33 @@ if (! apatapa.business) {
 				'name': 'feed_delete_button_' + i});
 	    delete_button.html('Delete');
 	    delete_button.button();
-	    // delete_button.click(function() {
-	    // 	feed = $(this).parent('.feed');
-	    // 	apatapa.showAlert('Are you sure you want to delete?',
-	    // 			  'This will erase this item\'s data permanently!',
-	    // 			  function() {
-	    // 			      feed.children('.should_delete').val('true');
-	    // 			      feed.hide(700);
-	    // 			  });
-	    // });
-	    
-	    $('#add_newsfeed_button').before(feed_div.append('Title: ')
-					     .append(feed_id)
-					     .append(should_delete)
-					     .append(img)
-					     .append(title_text)
-					     .append('<br />')
-					     .append('Image: ')
-					     .append(img_input)
-					     .append(date_text)
-					      .append('Subtitle: ')
-					     .append(subtitle_text)
-					     .append('<br />')
-					     .append('Body: ')
-					     .append(body_text)
-					     .append('<br />')
-					     .append(delete_button));
+	    delete_button.click( function () {
+	    	console.log("delete button clicked");
+	    	feed = $(this).parents('.feed');
+	    	apatapa.showAlert('Are you sure you want to delete?',
+	    			  '',
+	    			  function() {
+	    			      feed.children('.should_delete').val('true');
+	    			      feed.hide(700);
+	    			  });
+	    });
+
+	    $('#newsfeeds').append(feed_div.append('Title: ')
+				   .append(feed_id)
+				   .append(should_delete)
+				   .append(img)
+				   .append(title_text)
+				   .append('<br />')
+				   .append('Image: ')
+				   .append(img_input)
+				   .append(date_text)
+				   .append('Subtitle: ')
+				   .append(subtitle_text)
+				   .append('<br />')
+				   .append('Body: ')
+				   .append(body_text)
+				   .append('<br />')
+				   .append(delete_button));
 	    if( animated ) {
 		feed_div.show(700);
 	    }
