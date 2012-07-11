@@ -158,11 +158,15 @@ def get_survey(request):
     business_id = json.load(request)['business_id']
     business = models.BusinessProfile(id=business_id)
     survey = business.survey_set.all()[0]
+    print survey
     questions = []
     qe = QuestionEncoder()
     for question in survey.question_set.all():
         if question.active:
             questions.append(qe.default(question))
+    print survey.title
+    print survey.description
+    print questions
     return HttpResponse(json.dumps({'title': survey.title,
                                     'description': survey.description,
                                     'questions': questions}))
@@ -202,22 +206,25 @@ def example2(request):
     return HttpResponse(json.dumps(res))
 
 def example3(request):
+    bf = models.BusinessProfile.objects.get(id=1)
     res = { "nearby_businesses":
-		[
-	    {"name":"Foo Burgers",
-	     "type":"Burgers",
-	     "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
-	     "latitude":39.981634,
-	     "longitude":-83.004617,
+        	[
+            {"name":"Foo Burgers",
+             "type":"Burgers",
+             "goog_id":"677679492a58049a7eae079e0890897eb953d79b",
+             "latitude":39.981634,
+             "longitude":-83.004617,
+             'primary': bf.primary_color,
+             'secondary': bf.secondary_color,
              "id": 1},
-	    {"name":"Seymour House of Smiles",
-	     "type":"Orthodontist",
-	     "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
-	     "latitude":39.981934,
+            {"name":"Seymour House of Smiles",
+             "type":"Orthodontist",
+             "goog_id":"27ea39c8fed1c0437069066b8dccf958a2d06f19",
+             "latitude":39.981934,
              "longitude":-83.004676,
              "id": 1}, # ids are the same for testing purposes...
-	    ],
-	    }
+            ],
+            }
     return HttpResponse(json.dumps(res))
 
 # General feedback.
