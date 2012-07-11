@@ -624,7 +624,16 @@ def _get_only_quality_chart_data(employee_ids, start_time, stop_time):
 @csrf_protect
 @business_view
 def manage_newsfeed(request):
-    #This view will check allow a business to create, edit, and delete items from their newsfeed
+    '''
+    This view will check allow a business to create, edit, and delete
+    items from their newsfeed.
+
+    Format of JSON in POST requests:
+
+    {'delete_newsfeed':'true' # if deleting a newsfeed,
+     'id':newfeed_id }
+    '''
+
     profile = request.user.businessprofile
     if request.method == 'GET':
         newsfeed = profile.newsfeeditem_set.all()
@@ -634,50 +643,67 @@ def manage_newsfeed(request):
                                    'feeds':newsfeed},
                                   context_instance=RequestContext(request))
     # Otherwise, it's a POST.
+    print str(request.POST)
     profile = request.user.businessprofile
-    i = 0
-    while 'title_%d' % i in request.POST:
-        feed_id = request.POST['feed_id_%d' % i]
-        if int(feed_id): # it's an old feed, updated.
-            feed = models.NewsFeedItem.objects.get(id=feed_id)
-            if request.POST['should_delete_%d' % i] == 'true':
-                feed.delete()
-            else:
-                feed.title = request.POST['title_%d' % i]
-                feed.body = request.POST['body_%d' % i]
-                feed.subtitle = request.POST['subtitle_%d' % i]
-                feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
-                if 'nf_image_%d' % i in request.FILES:
-                    try:
-                        filename = '%s_%s_%s.jpg' % (profile.id,
-                                                     profile.business_name,
-                                                     feed.title[:10])
-                        save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
-                    except IOError:
-                        pass
-                feed.save()
-        else: # feed id is 0, must be new!
-            feed = models.NewsFeedItem(title=request.POST['title_%d' % i],
-                                       body=request.POST['body_%d' % i],
-                                       subtitle=request.POST['subtitle_%d' % i],
-                                       business=profile,
-                                       date=datetime.utcnow().replace(tzinfo=utc),
-                                       date_edited=datetime.utcnow().replace(tzinfo=utc))
+
+    # Delete a newsfeed
+    if 'delete_newsfeed' in request.POST:
+        print "Deleting something"
+        try:
+            print "About to try deleting id %d"%int(request.POST['id'])
+            news = models.NewsFeedItem.objects.get(id=int(request.POST['id']))
+            news.delete()
+            print "deleted!"
+        except:
+            pass
+    print "So far so good"
+    # i = 0
+    # print str(request.POST)
+    # while 'title_%d' % i in request.POST:
+    #     feed_id = request.POST['feed_id_%d' % i]
+    #     if int(feed_id): # it's an old feed, updated.
+    #         feed = models.NewsFeedItem.objects.get(id=feed_id)
+    #         if request.POST['should_delete_%d' % i] == 'true':
+    #             print "Deleting %s"%str(feed)
+    #             feed.delete()
+    #         else:
+    #             feed.title = request.POST['title_%d' % i]
+    #             feed.body = request.POST['body_%d' % i]
+    #             feed.subtitle = request.POST['subtitle_%d' % i]
+    #             feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
+    #             if 'nf_image_%d' % i in request.FILES:
+    #                 try:
+    #                     filename = '%s_%s_%s.jpg' % (profile.id,
+    #                                                  profile.business_name,
+    #                                                  feed.title[:10])
+    #                     save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
+    #                 except IOError:
+    #                     pass
+    #             feed.save()
+    #     else: # feed id is 0, must be new!
+    #         feed = models.NewsFeedItem(title=request.POST['title_%d' % i],
+    #                                    body=request.POST['body_%d' % i],
+    #                                    subtitle=request.POST['subtitle_%d' % i],
+    #                                    business=profile,
+    #                                    date=datetime.utcnow().replace(tzinfo=utc),
+    #                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
             
-            feed.save()
-            print feed
-            if 'nf_image_%d' % i in request.FILES:
-                    try:
-                        filename = '%s_%s_%s.jpg' % (profile.id,
-                                                     profile.business_name,
-                                                     feed.title[:10])
-                        save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
-                    except IOError:
-                        pass
-            if request.POST['should_delete_%d' % i] == 'true':
-                feed.delete()
-        i += 1
-    return HttpResponseRedirect(reverse("business_control_panel"))
+    #         feed.save()
+    #         print feed
+    #         if 'nf_image_%d' % i in request.FILES:
+    #                 try:
+    #                     filename = '%s_%s_%s.jpg' % (profile.id,
+    #                                                  profile.business_name,
+    #                                                  feed.title[:10])
+    #                     save_image(feed.image, filename, profile, request.FILES['nf_image_%d' % i])
+    #                 except IOError:
+    #                     pass
+    #         if request.POST['should_delete_%d' % i] == 'true':
+    #             feed.delete()
+    #     i += 1
+#    return HttpResponseRedirect(reverse("business_control_panel"))
+    print "About to be ok..."
+    return HttpResponse("")
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
 @csrf_protect

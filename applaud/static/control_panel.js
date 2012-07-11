@@ -31,7 +31,7 @@ if(! apatapa.business.control_panel ){
      * This is executed after the page has fully loaded.
      */
 
-    _ns.init_control_panel = function( feed_length ) {
+    _ns.init_control_panel = function( feed_length, employee_list_length ) {
 	apatapa.business.ratingprofiles.initRatingProfilesPage();
 	apatapa.business.newsfeed.initNewsfeedPage(feed_length );
 	apatapa.business.survey.initSurveyPage();
@@ -96,34 +96,43 @@ if(! apatapa.business.control_panel ){
 
 	    
 	});
-	var i =0;
-	for(i=1; i<6; i++) {
-	    $("#employee_row_"+i).click( function () {
-		var emp_id = $(this).parent().siblings().children("input").val();
-		var emp_expand_div;
-		var x=i;
-		console.log(x);
-		$.ajax({url: get_employee_info_url,
-			type:'GET',
-			dataType: 'json',
-			data: {'emp_id':emp_id,
-			       'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
 
-			error: function() { alert("There was an error!"); },
-			success: function (data) {
-			    emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
-			    console.log("#expand_row_"+x);
-			    $("#expand_row_"+x).append(emp_expand_div);
-			    $("#employee_div_"+x).show();
+	$(".expand_employee_button").click( function () {
+	    var emp_expand_div;
+	    var emp_id = $(this).parent().siblings().children("input").val();
+	    if ($("#employee_div_"+emp_id).prop("shown")!="true"){
+	    $.ajax({url: get_employee_info_url,
+		    type:'GET',
+		    dataType: 'json',
+		    data: {'emp_id':emp_id,
+			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
+
+		    error: function() { alert("There was an error!"); },
+		    success: function (data) {
+			emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
+
+			console.log("#expand_row_"+emp_id)
+			$("#expand_row_"+emp_id).append(emp_expand_div);
+			$("#employee_div_"+emp_id).show();
+			$("#employee_div_"+emp_id).prop("shown", "true");
 			    
-			}
-			
-		       });
+		    }
+		    
+		   });
+	    }
+	    else {
+		$("#employee_div_"+emp_id).show();
+	    }
 
+	});
+	   
+	$(".contract_employee_button").click( function () {
+	    var emp_id = $(this).parent().siblings().children("input").val();
+	    $("#employee_div_"+emp_id).hide();
 
-	    });
-	}
+	});
 
+	
     }
     
 })(apatapa.business.control_panel);

@@ -111,10 +111,10 @@ if (! apatapa.business) {
 	    var employee_div = $('<div></div>');
 	    employee_div.prop({'id':'employee_'+employee.id+'_div'});
 
-	    var employee_image = $('<img />');
-	    employee_image.prop({'src':employee.image,
-				 'alt':employee.first_name+" "+employee.last_name,
-				 'class':'profile_image'});
+	    var employee_image = $('<input />');
+	    employee_image.prop({'value':employee.image,
+				 'type':'hidden',
+				 'class':'nfimage'});
 	    var employee_id = $('<input />');
 	    employee_id.prop({'type':'hidden',
 			      'value':employee.id});
@@ -634,11 +634,31 @@ if (! apatapa.business) {
 		$(this).siblings(".nf_expand_button").show()
 		$(this).hide();
 	    });
-/*	    $('#save_newsfeed_button').click( function () {
-		apatapa.showAlert('Are you sure?', 'Saving changes!', saveChanges);
-	    });*/
+	    $('#save_newsfeed_button').click( function () {
+		saveChanges();
+	    });
 	};
 	
+	/**
+	 * Delete a single newsfeed.
+	 *
+	 * index - The index of the newsfeed to delete. This is the index as it appears
+	 * on the page, NOT the id.
+	 */
+	var deleteNewsfeed = function( index ) {
+	    console.log("delete newsfeed");
+	    // easay peasay
+	    $.ajax({url: manage_newsfeed_url,
+		    type:'POST',
+		    data: {'delete_newsfeed':'true',
+			   'id':$("#feed_id_"+index).val(),
+			   'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val()
+			  },
+		    error: function(){alert("Something went wrong.");}
+		   });
+	}
+
+
 	/*
 	 * Save the newsfeed -- just collects all the information from the DOM and
 	 * sends it off through AJAX.
@@ -646,19 +666,22 @@ if (! apatapa.business) {
 	var saveChanges = function () {
 	    var newsfeeds = [];
 	    $('.feed').each( function (index, element) {
-		var feed_dict = {'title': $(this).children('#title').val(),
-				 'id': $(this).children('#feed_' + index + '_id').val(),
-				 'should_delete': $(this).children('#should_delete').val(),
-				 'subtitle': $(this).children('#subtitle').val(),
-				 'body': $(this).children('#body').val()};
+		var feed_dict = {'title': $(this).find('.nftitle').val()[0],
+				 'id': $(this).find('.id').val(),
+				 'should_delete': $(this).find('.should_delete').val()[0],
+				 'subtitle': $(this).find('.nfsubtitle').val()[0],
+				 'body': $(this).find('.nfbody').val()[0]};
 		newsfeeds.push(feed_dict);
 	    });
 	    var data = new FormData();
 	    $('.image_input').each(function(index, element) {
 		data.append('file_' + index, element.files);
 	    });
-	    data.append(JSON.stringify(newsfeeds));
+	    var jsondResults = JSON.stringify(newsfeeds);
+	    console.log("JSONed results are: "+jsondResults);
+	    data.append("newsfeeds",jsondResults);
 	    data.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
+	    console.log("Sending data to server: "+data);
 	    $.ajax({url: manage_newsfeed_url,
 		    type: 'POST',
 		    dataType: false,
@@ -670,12 +693,41 @@ if (! apatapa.business) {
 			window.location.replace('/business/');
 		    }});
 	};
-	
-	/*
-	 * Adds a single newsfeed item to the DOM. Called from handleNewsfeedData().
+
+
+	/**
+	 * Edits a single newsfeed item. Editing div appears instead of the summary
+	 * of the original feed listing.
+	 *
+	 * feedNo - the index of the newsfeed to edit. -1 is a new feed.
 	 */
-	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
-	    
+	var editFeed = function( feedNo ) {
+	    var id,title,date,date_edited,subtitle,body,image;
+	    if ( feedNo >= 0 ) {
+		var sourceFeed = $('#feed_'+feedNo);
+		id = sourceFeed.children('.id').val();
+		title = sourceFeed.children('.nftitle').text();
+		date = sourceFeed.children('.nfdate').text();
+		subtitle = sourceFeed.children('.nfsubtitle').val();
+		body = sourceFeed.children('.nfbody').val();
+		image = sourceFeed.children('.nfimage').val();
+		console.log("title, for ex, was "+title);
+	    } else {
+		// id = 0 means we have a new newsfeed item
+		id = 0;
+		// increment count of newsfeed items
+		i++;
+		// set all fields to blank by default
+		title = date = subtitle = body = image = "";
+	    }
+	    // Dates in Javascript. Seriously, Javascript?
+	    var the_date = new Date();
+	    var dd = the_date.getDate();
+	    var mm = the_date.getMonth()+1;
+	    mm = mm < 10? '0'+mm : mm;
+	    var yyyy = the_date.getFullYear();
+	    date_edited = mm+'/'+dd+'/'+yyyy;
+
 	    var should_delete = $('<input />');
 	    should_delete.prop({'type': 'hidden',
 				'value': 'false',
@@ -693,10 +745,6 @@ if (! apatapa.business) {
 	    feed_div.prop({'class': 'feed',
 			   'id': 'feed_' + i,
 			   'name': 'feed_' + i});
-	    
-	    if( animated ) {
-		feed_div.hide();
-	    }
 	    
 	    var img = $('<img />');
 	    img.prop({'src': image,
@@ -722,14 +770,17 @@ if (! apatapa.business) {
 	    var subtitle_text = $('<input />');
 	    subtitle_text.prop({'type': 'text',
 				'name': 'subtitle_' + i,
+				'class': 'nfsubtitle',
 				'id': 'subtitle_' + i,
 				'value': subtitle});
 	    
 	    var body_text = $('<textarea></textarea>');
-	    body_text.prop({'value': body,
+	    body_text.prop({'class':'nfbody',
 			    'name': 'body_' + i,
 			    'id': 'body_' + i});
-	    
+	    body_text.val(body);
+
+	    // delete_button is the button that deletes any particular newsfeed
 	    var delete_button = $('<button></button>');
 	    delete_button.prop({'type': 'button',
 				'class': 'nf_delete_button',
@@ -742,28 +793,151 @@ if (! apatapa.business) {
 	    	feed = $(this).parents('.feed');
 	    	apatapa.showAlert('Are you sure you want to delete?',
 	    			  '',
-	    			  function() {
-	    			      feed.children('.should_delete').val('true');
+				  function() {
 	    			      feed.hide(700);
-	    			  });
+				      // This gets the index of the feed
+				      console.log("NOTHING IS HAPPENING!!! WTF!!!!????!");
+				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
+				  });
+	    });
+	    // ok_button is the button that creates a new newsfeed item
+	    var ok_button = $('<button></button>');
+	    ok_button.prop({'type':'button',
+			    'class':'nf_ok_button',
+			    'id':'feed_ok_button_'+i,
+			    'name':'feed_ok_button_'+i});
+	    ok_button.html("OK");
+	    ok_button.button();
+	    ok_button.click(function() {
+		//TODO
 	    });
 
 	    $('#newsfeeds').append(feed_div.append('Title: ')
-				   .append(feed_id)
-				   .append(should_delete)
+	    			   .append(feed_id)
+	    			   .append(should_delete)
+	    			   .append(img)
+	    			   .append(title_text)
+	    			   .append('<br />')
+	    			   .append('Image: ')
+	    			   .append(img_input)
+	    			   .append(date_text)
+	    			   .append('Subtitle: ')
+	    			   .append(subtitle_text)
+	    			   .append('<br />')
+	    			   .append('Body: ')
+	    			   .append(body_text)
+	    			   .append('<br />')
+	    			   .append(delete_button));
+	    i++;
+	}
+
+	/*
+	 * Adds a single newsfeed item to the DOM. Called from handleNewsfeedData().
+	 */
+	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
+
+	    console.log("Adding feed with body: "+body);
+
+	    var should_delete = $('<input />');
+	    should_delete.prop({'type': 'hidden',
+				'value': 'false',
+				'class':'should_delete',
+				'name': 'should_delete_' + i,
+				'id': 'should_delete_' + i});
+	    
+	    var feed_id = $('<input />');
+	    feed_id.prop({'type': 'hidden',
+			  'value': id,
+			  'class': 'id',
+			  'id': 'feed_id_' + i,
+			  'name': 'feed_id_' + i});
+	    
+	    var feed_div = $('<div></div>');
+	    feed_div.prop({'class': 'feed',
+			   'id': 'feed_' + i,
+			   'name': 'feed_' + i});
+	    
+	    if( animated ) {
+		feed_div.hide();
+	    }
+	    
+	    var title_text = $('<span></span>');
+	    title_text.prop({'type': 'text',
+			     'id': 'title_' + i,
+			     'class':'nftitle',
+			     'name': 'title_' + i});
+	    title_text.html(title);
+	    
+	    var date_text = $('<span></span>');
+	    date_text.addClass('nfdate');
+	    date_text.html(date);
+	    var date_edited_text = $('<span></span>');
+	    date_edited_text.addClass('nfdateedited');
+	    date_edited_text.html('(last edited ' + date_edited + ')');
+
+	    var bodyField = $('<input/>');
+	    bodyField.prop({'type':'hidden',
+			    'value':body,
+			    'class':'nfbody',
+			    'name': 'body_' + i,
+			    'id': 'body_' + i});
+	    var subtitleField = $('<input/>');
+	    subtitleField.prop({'type':'hidden',
+				'value':subtitle,
+				'class':'nfsubtitle',
+				'name':'subtitle_'+i,
+				'id':'subtitle_'+i});
+	    var img = $('<input />');
+	    img.prop({'value': image,
+		      'class': 'nfimage',
+		      'type': 'hidden'});
+
+	    // delete_button is the button that deletes any particular newsfeed
+	    var delete_button = $('<button></button>');
+	    delete_button.prop({'type': 'button',
+				'class': 'nf_delete_button',
+				'id': 'feed_delete_button_' + i,
+				'name': 'feed_delete_button_' + i});
+	    delete_button.html('Delete');
+	    delete_button.button();
+	    delete_button.click( function () {
+	    	console.log("delete button clicked");
+	    	feed = $(this).parents('.feed');
+	    	apatapa.showAlert('Are you sure you want to delete?',
+	    			  '',
+				  function() {
+	    			      feed.hide(700);
+				      // This gets the index of the feed
+				      console.log("NOTHING IS HAPPENING!!! WTF!!!!????!");
+				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
+				  });
+	    });
+	    // edit_button is the button that creates an edit form for this newsfeed
+	    var edit_button = $('<button></button>');
+	    edit_button.prop({'type':'button',
+			    'class':'nf_edit_button',
+			    'id':'feed_edit_button_'+i,
+			    'name':'feed_edit_button_'+i});
+	    edit_button.html("Edit");
+	    edit_button.button();
+	    edit_button.click(function() {
+		var index = $(this).prop('id').split('_')[3];
+		console.log("I think my index is "+index);
+		editFeed(index);
+	    });
+
+	    $('#newsfeeds').append(feed_div.append('Title: ')
 				   .append(img)
-				   .append(title_text)
-				   .append('<br />')
-				   .append('Image: ')
-				   .append(img_input)
-				   .append(date_text)
-				   .append('Subtitle: ')
-				   .append(subtitle_text)
-				   .append('<br />')
-				   .append('Body: ')
-				   .append(body_text)
-				   .append('<br />')
-				   .append(delete_button));
+				   .append(subtitleField)
+				   .append(bodyField)
+	    			   .append(feed_id)
+	    			   .append(should_delete)
+	    			   .append(title_text)
+	    			   .append(date_text)
+				   .append(date_edited_text)
+	    			   .append(delete_button)
+				   .append(edit_button));
+
 	    if( animated ) {
 		feed_div.show(700);
 	    }
@@ -771,14 +945,13 @@ if (! apatapa.business) {
 	}
 
 	_ns.initNewsfeedPage = function(num_feeds) {
-	    i = num_feeds;
-	    // $.ajax({url: list_newsfeed_url,
-	    // 	    type: 'GET',
-	    // 	    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
-	    // 	    error: function () { alert('Something went wrong.'); },
-	    // 	    success: handleNewsfeedData
-	    // 	   });
-	    registerClickHandlers();
+	    $.ajax({url: list_newsfeed_url,
+	    	    type: 'GET',
+	    	    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
+	    	    error: function () { alert('Something went wrong.'); },
+	    	    success: handleNewsfeedData
+	    	   });
+//	    registerClickHandlers();
 
 	    $(".hidden").hide();
 	};
