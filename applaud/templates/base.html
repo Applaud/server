@@ -99,6 +99,15 @@ var get_employee_info_url = "{% url business_get_employee_info %}"
 	  <li><a href="">Use cases</a></li>
 	  <li><a href="">Features</a></li>
 	</ul>
+	{% if user.is_authenticated %}
+	{% if user.businessprofile %}
+	<ul id="nav_link">
+	  <li> My Apatapa:</li>
+	  <li><a href="{% url analytics %}">Stats</a></li>
+	  <li><a href="{% url business_control_panel %}">Control Panel</a></li>
+	</ul>
+	{% endif %}
+	{% endif %}
 	{% endblock %}
       </div>
 

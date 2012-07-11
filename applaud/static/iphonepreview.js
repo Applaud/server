@@ -21,17 +21,6 @@ if (! apatapa.business.iphone ) {
 	$("#iphone_preview .listitem").css('background-color',rgbString);
     };
 
-    function rgbConvert(str) {
-	str = str.replace(/rgb\(|\)/g, "").split(",");
-	str[0] = parseInt(str[0], 10).toString(16).toLowerCase();
-	str[1] = parseInt(str[1], 10).toString(16).toLowerCase();
-	str[2] = parseInt(str[2], 10).toString(16).toLowerCase();
-	str[0] = (str[0].length == 1) ? '0' + str[0] : str[0];
-	str[1] = (str[1].length == 1) ? '0' + str[1] : str[1];
-	str[2] = (str[2].length == 1) ? '0' + str[2] : str[2];
-	return ('#' + str.join(""));
-    }
-
     function brighterPrimary(hexColor) {
 	hexColor = hexColor.replace(/#/g,"");
 	console.log("brighter of "+hexColor);
@@ -48,8 +37,7 @@ if (! apatapa.business.iphone ) {
 })(apatapa.business.iphone);
 
 $(document).ready(function() {
-    console.log("primary: "+$("#primary_color").val());
-    console.log("secondary: "+$("#secondary_color").val());
     apatapa.business.iphone.refreshPrimary();
     apatapa.business.iphone.refreshSecondary();
+    $('#iphone_screen').css('background-color', $('#secondary_color').val());
 });

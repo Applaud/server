@@ -87,7 +87,8 @@ iframe {
   padding: 15px; }
 
 #header {
-  height: 150px; }
+  height: 150px;
+  padding-bottom: 5px; }
 
 #main {
   overflow: auto;
@@ -166,6 +167,8 @@ iframe {
   text-align: right;
   position: relative;
   top: 60px; }
+  #navigation ul {
+    margin: 5px auto; }
   #navigation li {
     display: inline;
     padding: 5px; }

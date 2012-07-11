@@ -581,15 +581,6 @@ if (! apatapa.business) {
 		registerClickHandlers();
 	    });
 
-<<<<<<< HEAD
-	    // var save_newsfeed_button = $('<button></button>');
-	    // save_newsfeed_button.prop({'type': 'button',
-	    // 			       'name': 'save_newsfeed_button',
-	    // 			       'id': 'save_newsfeed_button',
-	    // 			       'class': 'save_newsfeed_button'});
-	    // save_newsfeed_button.html('Save Changes');
-=======
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 	    $('#save_newsfeed_button').button();
 
 	    for(d in data) {
@@ -603,34 +594,10 @@ if (! apatapa.business) {
 			feed.image,
 			false);
 	    }
-	    registerClickHandlers();
-	};
-	
-	/*
-	 * Registers click handlers for all buttons. Called from handleNewsfeedData().
-	 */
-	var registerClickHandlers = function () {
 	    $('#add_newsfeed_button').button();
 	    $('#add_newsfeed_button').click( function () {
-		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
-		registerClickHandlers();
+		addFeed(0, "New Newsfeed Item", "Today", "<strong>right now</strong>", "", "", "", true);
 	    });
-	    $('#save_newsfeed_button').button();
-	    
-	    $(".nf_contract_button").hide();
-	    $(".nf_expand_button").click( function () {
-		$(this).parent().siblings(".hidden").show();
-		$(this).siblings(".nf_contract_button").show()
-		$(this).hide();
-	    });
-	    $(".nf_contract_button").click( function () {
-		$(this).parent().siblings(".hidden").hide();
-		$(this).siblings(".nf_expand_button").show()
-		$(this).hide();
-	    });
-	    // $('#save_newsfeed_button').click( function () {
-	    // 	saveChanges();
-	    // });
 	};
 	
 	/**
@@ -651,44 +618,6 @@ if (! apatapa.business) {
 		    error: function(){alert("Something went wrong.");}
 		   });
 	}
-
-
-	/*
-	 * Save the newsfeed -- just collects all the information from the DOM and
-	 * sends it off through AJAX.
-	 */
-	// var saveChanges = function () {
-	//     var newsfeeds = [];
-	//     $('.feed').each( function (index, element) {
-	// 	var feed_dict = {'title': $(this).find('.nftitle').val()[0],
-	// 			 'id': $(this).find('.id').val(),
-	// 			 'should_delete': $(this).find('.should_delete').val()[0],
-	// 			 'subtitle': $(this).find('.nfsubtitle').val()[0],
-	// 			 'body': $(this).find('.nfbody').val()[0]};
-	// 	newsfeeds.push(feed_dict);
-	//     });
-	//     var data = new FormData();
-	//     $('.image_input').each(function(index, element) {
-	// 	data.append('file_' + index, element.files);
-	//     });
-	//     var jsondResults = JSON.stringify(newsfeeds);
-	//     console.log("JSONed results are: "+jsondResults);
-	//     data.append("newsfeeds",jsondResults);
-	//     data.append('csrfmiddlewaretoken', $('input[name=csrfmiddlewaretoken]').val());
-	//     console.log("Sending data to server: "+data);
-	//     $.ajax({url: manage_newsfeed_url,
-	// 	    type: 'POST',
-	// 	    dataType: false,
-	// 	    processData: false,
-	// 	    data: data,
-	// 	    error: function () { alert('Something went wrong.'); },
-	// 	    success: function () {
-	// 		alert('Great success!');
-	// 		window.location.replace('/business/');
-	// 	    }});
-	// }
-	//	;
-
 
 	/**
 	 * Edits a single newsfeed item. Editing div appears instead of the summary
@@ -805,6 +734,7 @@ if (! apatapa.business) {
 	    var editForm = $('<form></form>');
 	    editForm.prop({"action": manage_newsfeed_url,
 			   "method": "POST",
+			   "enctype": "multipart/form-data",
 			   "id":"nf_editing_form"});
 	    
 	    editForm
@@ -834,12 +764,20 @@ if (! apatapa.business) {
 	}
 
 	/*
-	 * Adds a single newsfeed item to the DOM. Called from handleNewsfeedData().
+	 * Adds a summary version of a NewsFeedItem. This includes a button to "edit", which
+	 * calls 'editFeed()'. 'addFeed()' is used to list the newsfeed items.
 	 */
 	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
 
 	    console.log("Adding feed with body: "+body);
 	    
+	    // DIV to house the newsfeed listing
+	    var feed_div = $('<div></div>');
+	    feed_div.prop({'class': 'feed',
+			   'id': 'feed_' + i,
+			   'name': 'feed_' + i});
+
+	    // Give the id of the NewsFeedItem
 	    var feed_id = $('<input />');
 	    feed_id.prop({'type': 'hidden',
 			  'value': id,
@@ -847,15 +785,11 @@ if (! apatapa.business) {
 			  'id': 'feed_id_' + i,
 			  'name': 'feed_id_' + i});
 	    
-	    var feed_div = $('<div></div>');
-	    feed_div.prop({'class': 'feed',
-			   'id': 'feed_' + i,
-			   'name': 'feed_' + i});
-	    
 	    if( animated ) {
 		feed_div.hide();
 	    }
 	    
+	    // SPAN to hold the title text, as well as the text itself.
 	    var title_text = $('<span></span>');
 	    title_text.prop({'type': 'text',
 			     'id': 'title_' + i,
@@ -863,25 +797,33 @@ if (! apatapa.business) {
 			     'name': 'title_' + i});
 	    title_text.html(title);
 	    
+	    // When the newsfeed item was first created
 	    var date_text = $('<span></span>');
 	    date_text.addClass('nfdate');
 	    date_text.html(date);
+
+	    // When the newsfeed item was last edited
 	    var date_edited_text = $('<span></span>');
 	    date_edited_text.addClass('nfdateedited');
 	    date_edited_text.html('(last edited ' + date_edited + ')');
 
+	    // The body of the newsfeed item
 	    var bodyField = $('<input/>');
 	    bodyField.prop({'type':'hidden',
 			    'value':body,
 			    'class':'nfbody',
 			    'name': 'body_' + i,
 			    'id': 'body_' + i});
+
+	    // And the subtitle
 	    var subtitleField = $('<input/>');
 	    subtitleField.prop({'type':'hidden',
 				'value':subtitle,
 				'class':'nfsubtitle',
 				'name':'subtitle_'+i,
 				'id':'subtitle_'+i});
+
+	    // Field for uploading a new image for this item.
 	    var img = $('<input />');
 	    img.prop({'value': image,
 		      'class': 'nfimage',
@@ -896,45 +838,17 @@ if (! apatapa.business) {
 	    delete_button.html('Delete');
 	    delete_button.button();
 	    delete_button.click( function () {
-<<<<<<< HEAD
-	    	feed = $(this).parents('.feed');
-	    	apatapa.showAlert('Are you sure you want to delete?',
-	    			  '',
-	    			  function() {
-	    			      feed.children('.should_delete').val('true');
-	    			      feed.hide(700);
-	    			  });
-	    });
-
-	    $('#newsfeeds').append(feed_div.append('Title: ')
-				   .append(feed_id)
-				   .append(should_delete)
-				   .append(img)
-				   .append(title_text)
-				   .append('<br />')
-				   .append('Image: ')
-				   .append(img_input)
-				   .append(date_text)
-				   .append('Subtitle: ')
-				   .append(subtitle_text)
-				   .append('<br />')
-				   .append('Body: ')
-				   .append(body_text)
-				   .append('<br />')
-				   .append(delete_button));
-=======
-	    	console.log("delete button clicked");
 	    	feed = $(this).parents('.feed');
 	    	apatapa.showAlert('Are you sure you want to delete?',
 	    			  '',
 				  function() {
 	    			      feed.hide(700);
 				      // This gets the index of the feed
-				      console.log("NOTHING IS HAPPENING!!! WTF!!!!????!");
 				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
 				  });
 	    });
 	    // edit_button is the button that creates an edit form for this newsfeed
+	    // TODO: implement this without DEEP recursion. Hahahahaha
 	    var edit_button = $('<button></button>');
 	    edit_button.prop({'type':'button',
 			      'class':'nf_edit_button',
@@ -965,18 +879,19 @@ if (! apatapa.business) {
 	    	editfunction();
 	    });
 
-	    $('#newsfeeds').append(feed_div.append('Title: ')
+	    // Add this item to the rest of the listings.
+	    $('#newsfeeds').append(feed_div
+	    			   .append(title_text)
 				   .append(img)
 				   .append(subtitleField)
 				   .append(bodyField)
 	    			   .append(feed_id)
-	    			   .append(title_text)
 	    			   .append(date_text)
 				   .append(date_edited_text)
 	    			   .append(delete_button)
 				   .append(edit_button));
 
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
+	    // Animate! (oooooh----aaaaaaaaaaah....)
 	    if( animated ) {
 		feed_div.show(700);
 	    }
@@ -984,24 +899,12 @@ if (! apatapa.business) {
 	}
 
 	_ns.initNewsfeedPage = function(num_feeds) {
-<<<<<<< HEAD
-	    i = num_feeds;
-	    // $.ajax({url: list_newsfeed_url,
-	    // 	    type: 'GET',
-	    // 	    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
-	    // 	    error: function () { alert('Something went wrong.'); },
-	    // 	    success: handleNewsfeedData
-	    // 	   });
-	    registerClickHandlers();
-=======
 	    $.ajax({url: list_newsfeed_url,
 	    	    type: 'GET',
 	    	    data: {'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()},
 	    	    error: function () { alert('Something went wrong.'); },
 	    	    success: handleNewsfeedData
 	    	   });
-//	    registerClickHandlers();
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 
 	    $(".hidden").hide();
 	};
@@ -1026,6 +929,9 @@ if (! apatapa.business) {
 			     "RG":"radio group",
 			     "TA":"long text",
 			     "TF":"short text"};
+	
+	// Keeps track of # of questions
+	var i = 0;
 	
 	// To indicate that a question is inactive right now.
 	var inactive_color = 'rgb(200, 200, 200)';
@@ -1069,7 +975,7 @@ if (! apatapa.business) {
 			       'survey_description':survey_description,
 			       'questions':JSON.stringify(questions),
 			   'csrfmiddlewaretoken':$("input[name=csrfmiddlewaretoken]").val()},
-			success: function() { window.location.replace("/business/controlpanel")},
+			success: function() { window.location.reload(); },
 			error: function() {alert("something went wrong.")}
 		       });
 	    });
@@ -1106,8 +1012,6 @@ if (! apatapa.business) {
 	    
 	}
 
-	// Keeps track of # of questions
-	var i = 0;
 
 	// Start off with question 0 has 1 option
 	var questionOptions = [0];
@@ -1140,58 +1044,36 @@ if (! apatapa.business) {
 	    
 	    // This div will contain the parts that are visible (there will be an expand button)
 	    var question_visible_div = $("<div></div>");
-	    question_visible_div.prop({'id':"question_visible_"+(i+1)+"_div",
+	    question_visible_div.prop({'id':"question_visible_"+i+"_div",
 				       'class':"question_visible_div visible"});
 
-	    var questionAreaLabel = $("<label>Question #"+(i+1)+"</label>");
+	    var questionAreaLabel = $("<label>Question</label>");
 	    questionAreaLabel.prop({"for":"question_"+i});
 	    
 	    var questionArea = $("<textarea></textarea>");
 	    questionArea.prop({'name':"question_"+i,
 			       'id':"question_"+i});
+	    questionArea.keyup(function () {
+		var index = $(this).prop('id').split('_')[1];
+		apatapa.business.control_panel.updateQuestion(id, index, $(this).val());
+	    });
 	    questionArea.text( label );
 
 	    var expand_button = $("<button>+</button>");
 	    expand_button.prop({'id':"survey_expand_button_"+(i+1),
 				'class': "expand_button visible"});
-<<<<<<< HEAD
 
 	    var contract_button = $("<button>-</button>");
 	    contract_button.prop({'id':"survey_contract_button_"+(i+1),
 				  'class': "contract_button"});
 	    
-=======
-	    expand_button.button();
-
-	    var contract_button = $("<button>-</button>");
-	    contract_button.prop({'id':"survey_contract_button_"+(i+1),
-				  'class': "contract_button hidden"});
-	    contract_button.button();
-	    contract_button.hide();
-	    
-	    expand_button.click( function () {
-		$(this).parent().siblings(".hidden").show();
-		$(this).siblings(".contract_button").show();
-		$(this).hide();
-	    });
-
-	    contract_button.click( function () {
-		$(this).parent().siblings(".hidden").hide();
-		$(this).siblings(".expand_button").show();
-		$(this).hide();
-	    });
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 
 	    question_visible_div.append(questionAreaLabel).append(questionArea).append(expand_button).append(contract_button);
 
 	    // All the other fields will initially be hidden, and in this div
 	    var question_hidden_div = $("<div></div>");
 	    question_hidden_div.prop({'id':"question_hidden_"+(i+1)+"_div",
-<<<<<<< HEAD
 				      'class':"question_hidden_div"});
-=======
-				      'class':"question_hidden_div hidden"});
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 
 	    var questionTypeLabel = $("<label>Question type </label>");
 	    questionTypeLabel.prop({"for":"question_"+i+"_type"});
@@ -1281,6 +1163,9 @@ if (! apatapa.business) {
 	    isActive.prop({'type': 'hidden',
 			   'class': 'is_active'
 			  });
+	    // Add the iphone question, so that we can hide it if necessary
+	    apatapa.business.control_panel.addQuestion(i, id, label);
+	    
 	    if(active) {
 		toggleActiveButton.html('Deactivate Question');
 		isActive.prop({'value': 'true'});
@@ -1289,6 +1174,9 @@ if (! apatapa.business) {
 		toggleActiveButton.html('Activate Question');
 		isActive.prop({'value': 'false'});
 		questionDiv.css('background-color', inactive_color);
+		console.log('hiding');
+		apatapa.business.control_panel.hideQuestion(id,
+							    toggleActiveButton.prop('id').split('_')[1]);
 	    }
 
 	    question_hidden_div
@@ -1303,10 +1191,6 @@ if (! apatapa.business) {
 		.append(deleteButton)
 		.append(toggleActiveButton);
 
-<<<<<<< HEAD
-=======
-	    
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 	    questionDiv
 		.append(questionId)
 		.append(shouldDelete)
@@ -1322,7 +1206,6 @@ if (! apatapa.business) {
 	    if(type === 'TA' || type === 'TF') {
 		addOptionButton.hide();
 	    }
-<<<<<<< HEAD
 	    
 	    $("#survey_questions_div").append(questionDiv);
 	    
@@ -1333,9 +1216,12 @@ if (! apatapa.business) {
 
 	    $("#question_"+i+"_div").find('.deletebutton').click( function () {
 		var parent = $(this).parents('.question');
+		var id_to_delete = parent.children('.question_id').val();
+		var index_to_delete = $(this).prop('id').split('_')[1];
 		apatapa.showAlert('Are you sure you want to delete?',
 				  'This will this question\'s data forever!',
 				  function () {
+				      apatapa.business.control_panel.deleteQuestion(id_to_delete, index_to_delete);
 				      parent.children('.should_delete').val('true');
 				      parent.hide(1000);
 				  });
@@ -1358,24 +1244,23 @@ if (! apatapa.business) {
 	    
 	    
 	    $("#question_"+i+"_div").find('.toggleactivebutton').click( function () {
-		if($(this).parent('.question').children('.is_active').val() === 'true') {
-		    $(this).parent('.question').children('.is_active').val('false');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
-		    $(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
+		if($(this).parents('.question').find('.is_active').val() === 'true') {
+		    $(this).parents('.question').find('.is_active').val('false');
+		    $(this).parents('.question').find('.toggleactivebutton').html('Activate Question');
+		    $(this).parents('.question').animate({backgroundColor: inactive_color}, 500);
+		    apatapa.business.control_panel.hideQuestion($(this).parents('.question').children('.question_id').val(),
+								$(this).prop('id').split('_')[1]);
 		}
 		else {
-		    $(this).parent('.question').children('.is_active').val('true');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
-		    $(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		    $(this).parents('.question').find('.is_active').val('true');
+		    $(this).parents('.question').find('.toggleactivebutton').html('Deactivate Question');
+		    $(this).parents('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		    apatapa.business.control_panel.showQuestion($(this).parents('.question').children('.question_id').val(),
+								$(this).prop('id').split('_')[1]);
 		}
 	    });
 
 
-=======
-
-	    // Hide the hidden div for each question.
-	    question_hidden_div.hide();
->>>>>>> f8dd03c6365c29961e7872940d646d90261ad6ce
 	    i++;
 	}
 

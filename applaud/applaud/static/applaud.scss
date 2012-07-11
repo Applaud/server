@@ -107,6 +107,9 @@ iframe{
 
 #header {
     height:150px;
+    padding: {
+	bottom:5px;
+    }
 }
 
 #main {
@@ -208,6 +211,9 @@ iframe{
     text-align:right;
     position:relative;
     top:60px;
+    ul {
+	margin:5px auto;
+    }
     li {
 	display: inline;
 	padding: 5px;
