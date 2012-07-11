@@ -917,7 +917,8 @@ if (! apatapa.business) {
 	    
 	    var questionArea = $("<textarea></textarea>");
 	    questionArea.prop({'name':"question_"+i,
-			       'id':"question_"+i});
+			       'id':"question_"+i,
+			       'onchange': 'apatapa.business.control_panel.updateQuestion('+i+')'});
 	    questionArea.text( label );
 
 	    var expand_button = $("<button>+</button>");

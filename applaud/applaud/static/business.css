@@ -31,6 +31,7 @@ strong {
   background-image: url("/static/iphoneTemplate.png");
   width: 362px;
   height: 710px;
+  float: right;
   font-family: "Helvetica", sans-serif; }
   #iphone_preview #iphone_screen {
     position: relative;
@@ -103,18 +104,21 @@ strong {
 /************
  * Employee management
  */
-#newemployeeform {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  display: block; }
-
-.profile_title {
-  margin-right: 15px;
-  display: inline; }
-
-.employee_name {
-  padding-left: 10px; }
-
-.del_emp_button {
-  background-color: #ff6464;
-  margin-left: 10px; }
+/* #newemployeeform { */
+/*     margin: { */
+/* 	top: 30px; */
+/* 	bottom: 30px; */
+/*     } */
+/*     display:block; */
+/* } */
+/* .profile_title { */
+/*     margin-right: 15px; */
+/*     display: inline; */
+/* } */
+/* .employee_name { */
+/*     padding-left:10px; */
+/* } */
+/* .del_emp_button { */
+/*     background-color:$deletecolor; */
+/*     margin-left:10px; */
+/* } */

@@ -739,6 +739,7 @@ def control_panel(request):
         return render_to_response('business_control_panel.html',
                                   {'employee_list':employee_list,
                                    'rating_profile_list':rating_profile_list,
+                                   'business_profile': profile,
                                    'feeds':newsfeed_list,
                                    'survey_list':survey_list},
                                   context_instance=RequestContext(request))

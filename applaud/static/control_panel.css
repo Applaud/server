@@ -1,36 +1,22 @@
 #control_panel_nav {
-    width: 600px;
-    background-color:#333333;
-
-}
+  width: 600px;
+  background-color: #333333; }
 
 .control_panel_div {
-    height: 600px;
-    
-}
+  height: 600px; }
 
-#manage_employees {
+#manage_employees #newemployeeform {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: block; }
+#manage_employees .profile_title {
+  margin-right: 15px;
+  display: inline; }
+#manage_employees .employee_name {
+  padding-left: 10px; }
+#manage_employees .del_emp_button {
+  background-color: #ff6464;
+  margin-left: 10px; }
 
-
-
-
-}
-
-#newsfeeds {
-
-
-
-}
-
-#survey_div {
-
-
-
-}
-
-
-#home_div {
-
-
-
-}
+#control_panel_survey_div .question {
+  width: 580px; }

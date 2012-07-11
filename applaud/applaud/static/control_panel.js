@@ -130,7 +130,11 @@ if(! apatapa.business.control_panel ){
 	    $("#employee_div_"+emp_id).hide();
 
 	});
-
+	
+	
+    }
+    
+    _ns.updateQuestion(index) {
 	
     }
     

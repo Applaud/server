@@ -40,7 +40,7 @@ strong {
     background-image:url('/static/iphoneTemplate.png');
     width:362px;
     height:710px;
-
+    float:right;
     font-family:"Helvetica", sans-serif;
 
     #iphone_screen {
@@ -121,6 +121,7 @@ strong {
     }
 }
 
+
 .question_optionlist {
     padding-top:10px;
 
@@ -139,24 +140,24 @@ strong {
 /************
  * Employee management
  */
-#newemployeeform {
-    margin: {
-	top: 30px;
-	bottom: 30px;
-    }
-    display:block;
-}
+/* #newemployeeform { */
+/*     margin: { */
+/* 	top: 30px; */
+/* 	bottom: 30px; */
+/*     } */
+/*     display:block; */
+/* } */
 
-.profile_title {
-    margin-right: 15px;
-    display: inline;
-}
+/* .profile_title { */
+/*     margin-right: 15px; */
+/*     display: inline; */
+/* } */
 
-.employee_name {
-    padding-left:10px;
-}
+/* .employee_name { */
+/*     padding-left:10px; */
+/* } */
 
-.del_emp_button {
-    background-color:$deletecolor;
-    margin-left:10px;
-}
+/* .del_emp_button { */
+/*     background-color:$deletecolor; */
+/*     margin-left:10px; */
+/* } */
