@@ -399,12 +399,11 @@ def business_profile(request):
         profile.secondary_color = request.POST['secondary_color']
     except ValueError, ValidationError:
         print "value/validation error (secondary)"
-
     profile.save()
     if 'logo_image' in request.FILES:
         filename = '%s_%s_logo.jpg' % (profile.id,
                                   profile.business_name)
-        save_image(profile.logo, filename, profile, request.FILES['logo_image'])
+        save_image(profile.logo, filename, request.FILES['logo_image'])
     messages.add_message(request, messages.SUCCESS, 'Profile updated!')
     return HttpResponseRedirect(reverse('business_home'))
 

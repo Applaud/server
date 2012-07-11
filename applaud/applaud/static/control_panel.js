@@ -206,12 +206,29 @@ if(! apatapa.business.control_panel ){
 	    $('#listitem_index_'+index).hide(500);
 	    console.log('delete index');
 	}
-	var listitem = $('<div></div>');
-	listitem.prop({'id': 'listitem_' + i,
-		       'class': 'listitem'});
-	$('#last_blank').before(listitem);
-	apatapa.business.iphone.refreshSecondary();
-	apatapa.business.iphone.refreshPrimary();
+	addNewBlankQuestion();
+
+    }
+    
+    _ns.hideQuestion = function (id, index) {
+	console.log('hide question ' + id + ' ' + index);
+	if(id !== '0') {
+	    $('#listitem_id_'+id).hide(500);
+	}
+	else {
+	    $('#listitem_index_'+index).hide(500);
+	}
+	addNewBlankQuestion();
+    }
+    
+    _ns.showQuestion = function (id, index) {
+	console.log('show question');
+	if(id !== '0') {
+	    $('#listitem_id_'+id).show(500);
+	}
+	else {
+	    $('#listitem_index_'+index).show(500);
+	}
     }
     
     _ns.createBlankDivs = function () {
@@ -227,6 +244,15 @@ if(! apatapa.business.control_panel ){
 	    console.log('appending blanks');
 	    $('#last_blank').before(listitem);
 	}
+    }
+    
+    var addNewBlankQuestion = function () {
+	var listitem = $('<div></div>');
+	listitem.prop({'id': 'listitem_' + i,
+		       'class': 'listitem'});
+	$('#last_blank').before(listitem);
+	apatapa.business.iphone.refreshSecondary();
+	apatapa.business.iphone.refreshPrimary();	
     }
     
 //    _ns.updateQuestion(index) {

@@ -1163,6 +1163,9 @@ if (! apatapa.business) {
 	    isActive.prop({'type': 'hidden',
 			   'class': 'is_active'
 			  });
+	    // Add the iphone question, so that we can hide it if necessary
+	    apatapa.business.control_panel.addQuestion(i, id, label);
+	    
 	    if(active) {
 		toggleActiveButton.html('Deactivate Question');
 		isActive.prop({'value': 'true'});
@@ -1171,6 +1174,9 @@ if (! apatapa.business) {
 		toggleActiveButton.html('Activate Question');
 		isActive.prop({'value': 'false'});
 		questionDiv.css('background-color', inactive_color);
+		console.log('hiding');
+		apatapa.business.control_panel.hideQuestion(id,
+							    toggleActiveButton.prop('id').split('_')[1]);
 	    }
 
 	    question_hidden_div
@@ -1191,7 +1197,6 @@ if (! apatapa.business) {
 		.append(question_visible_div)
 		.append(question_hidden_div)
 
-	    apatapa.business.control_panel.addQuestion(i, id, label);
 	    
 	    if( animated ) {
 		questionDiv.show(700);
@@ -1239,15 +1244,19 @@ if (! apatapa.business) {
 	    
 	    
 	    $("#question_"+i+"_div").find('.toggleactivebutton').click( function () {
-		if($(this).parent('.question').children('.is_active').val() === 'true') {
-		    $(this).parent('.question').children('.is_active').val('false');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Activate Question');
-		    $(this).parent('.question').animate({backgroundColor: inactive_color}, 500);
+		if($(this).parents('.question').find('.is_active').val() === 'true') {
+		    $(this).parents('.question').find('.is_active').val('false');
+		    $(this).parents('.question').find('.toggleactivebutton').html('Activate Question');
+		    $(this).parents('.question').animate({backgroundColor: inactive_color}, 500);
+		    apatapa.business.control_panel.hideQuestion($(this).parents('.question').children('.question_id').val(),
+								$(this).prop('id').split('_')[1]);
 		}
 		else {
-		    $(this).parent('.question').children('.is_active').val('true');
-		    $(this).parent('.question').children('.toggleactivebutton').html('Deactivate Question');
-		    $(this).parent('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		    $(this).parents('.question').find('.is_active').val('true');
+		    $(this).parents('.question').find('.toggleactivebutton').html('Deactivate Question');
+		    $(this).parents('.question').animate({backgroundColor: question_div_bg_color}, 500);
+		    apatapa.business.control_panel.showQuestion($(this).parents('.question').children('.question_id').val(),
+								$(this).prop('id').split('_')[1]);
 		}
 	    });
 

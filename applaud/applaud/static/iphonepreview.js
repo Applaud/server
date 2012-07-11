@@ -37,8 +37,7 @@ if (! apatapa.business.iphone ) {
 })(apatapa.business.iphone);
 
 $(document).ready(function() {
-    console.log("primary: "+$("#primary_color").val());
-    console.log("secondary: "+$("#secondary_color").val());
     apatapa.business.iphone.refreshPrimary();
     apatapa.business.iphone.refreshSecondary();
+    $('#iphone_screen').css('background-color', $('#secondary_color').val());
 });
