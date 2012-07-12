@@ -51,11 +51,7 @@ if( ! apatapa.functions ){
 	employee_name.prop({'class':'employee_name'});
 	employee_name.text(employee.first_name+" "+employee.last_name);
 	
-	var employee_bio = $('<p></p>')
-	employee_bio.text(employee.bio);
-
 	employee_info_div.append(employee_name)
-	    .append(employee_bio);
 
 	employee_div.append(employee_image)
 	    .append(employee_id)
