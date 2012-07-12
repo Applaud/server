@@ -126,7 +126,7 @@ def edit_profile(request):
                 # First off, make sure it's a actually an image, and that
                 # it's a filetype we will accept.
                 try:
-                    image = Image.open(request.FILES['profile_picture'])
+                    image = PImage.open(request.FILES['profile_picture'])
                 except IOError:
                     # For now, we'll just ignore bad images.
                     return HttpResponseRedirect(reverse('employee_analytics'))
@@ -151,6 +151,9 @@ def edit_profile(request):
                 thumb = PImage.open( imagepath )
                 thumb.thumbnail((128,128), PImage.ANTIALIAS)
                 thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
+
+                profile.profile_picture = imagepath
+                profile.save()
 
         messages.add_message(request, messages.SUCCESS, "Profile saved successfully!")
 
