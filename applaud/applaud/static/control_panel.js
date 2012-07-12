@@ -37,7 +37,12 @@ if(! apatapa.business.control_panel ){
 	apatapa.business.survey.initSurveyPage();
 	
 	_ns.createBlankDivs();
-
+	
+	// Allow us to update the title on the iPhone.
+	$('#survey_title').keyup(function () {
+	    console.log($(this).val());
+	    apatapa.business.control_panel.updateTitle($(this).val());
+	});
 	// This creates the sub-tabs for the control panel
 	$(".control_panel_div").hide();
 	$("#home_div").show();
@@ -255,8 +260,9 @@ if(! apatapa.business.control_panel ){
 	apatapa.business.iphone.refreshPrimary();	
     }
     
-//    _ns.updateQuestion(index) {
-//	
-//    }
+    _ns.updateTitle = function (title) {
+	console.log('update title');
+	$('#iphone_title').html(title);
+    }
     
 })(apatapa.business.control_panel);

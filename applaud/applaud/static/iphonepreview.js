@@ -9,10 +9,10 @@ if (! apatapa.business.iphone ) {
 	var brightRgbString = brighterPrimary(rgbString);
 
 	console.log("hexes: "+rgbString+" - "+brightRgbString);
-	
+	console.log('Webkit:    -webkit-linear-gradient(bottom, '+brightRgbString+','+rgbString+')');
 	$("#iphone_preview .navbar").css({
 	    'filter':'progid:DXImageTransform.Microsoft.gradient(startColorstr='+brightRgbString+'), endColorstr='+rgbString+'))',
-	    'background-image':'-webkit-gradient(linear, left bottom, left top, from('+brightRgbString+'), to('+rgbString+'))',
+	    'background-color':rgbString, // fuck it! chrome sucks.
 	    'background-image':'-moz-linear-gradient(90deg, '+brightRgbString+',  '+rgbString+')'});
     };
 

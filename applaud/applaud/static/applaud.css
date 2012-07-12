@@ -56,7 +56,7 @@ table {
 /* styles that apply to the whole page */
 html, body {
   font-family: 'Arvo', serif;
-  background-image: url("/static/wallpaper.jpg");
+  background-image: url("/static/tile-colors.png");
   height: 100%;
   margin: auto; }
 
@@ -94,8 +94,9 @@ iframe {
   overflow: auto;
   padding-bottom: 15px;
   height: 90%;
-  background-color: white;
   padding: 15px; }
+  #main #control_panel {
+    background-color: #ffffff; }
 
 /* very bottom div */
 #footer {

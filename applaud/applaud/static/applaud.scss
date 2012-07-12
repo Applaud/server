@@ -67,7 +67,7 @@ $mainpadding: 15px;		// padding for main content
 /* styles that apply to the whole page */
 html, body {
     font-family: 'Arvo', serif;
-    background-image:url('/static/wallpaper.jpg');
+    background-image:url('/static/tile-colors.png');
     height:100%;
     margin:auto;
 }
@@ -116,7 +116,10 @@ iframe{
     overflow:auto;
     padding-bottom:$footerheight;
     height:90%;
-    background-color:rgb(255, 255, 255);
+//    background-color:
+    #control_panel {
+	background-color:#ffffff;
+    }
     padding: $mainpadding;
 }
 

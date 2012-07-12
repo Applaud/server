@@ -1,11 +1,31 @@
 #control_panel {
-  width: 550px; }
+  padding: 8px;
+  width: 550px;
+  -moz-box-shadow: 0px px 8px #aaa;
+  -webkit-box-shadow: 0px 0px 8px #aaa;
+  box-shadow: 0px 0px 8px #aaa; }
 
 #control_panel_nav {
-  background-color: #333333; }
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding-left: 25px;
+  padding-bottom: 0px;
+  padding-top: 5px; }
+  #control_panel_nav button {
+    border: solid;
+    border-bottom: none;
+    border-radius: 5px;
+    border-color: #bbbbbb; }
 
 .control_panel_div {
-  height: 600px; }
+  height: 600px;
+  border: 4px solid;
+  border-color: #bbbbbb;
+  border-radius: 25px;
+  padding: 10px;
+  margin-top: -11px; }
+  .control_panel_div #employee_button {
+    height: 5px; }
 
 #manage_employees #newemployeeform {
   margin-top: 30px;
@@ -25,7 +45,10 @@
   width: 362px;
   height: 710px;
   float: right;
-  font-family: "Helvetica", sans-serif; }
+  font-family: "Helvetica", sans-serif;
+  -moz-box-shadow: 0px 3px 8px #aaa;
+  -webkit-box-shadow: 0px 3px 8px #aaa;
+  box-shadow: 0px 3px 8px #aaa; }
   #iphone_preview #iphone_screen {
     position: relative;
     left: 21px;

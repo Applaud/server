@@ -16,7 +16,11 @@ if (! apatapa.business) {
 }
 
 (function (business) {
-
+    
+    // To indicate that a question is inactive right now.
+    var inactive_color = 'rgb(200, 200, 200)';
+    var question_div_bg_color = 'rgb(255, 235, 250)';
+    
     ////////////////////////////////
     // apatapa.business.employees //
     ////////////////////////////////
@@ -174,7 +178,6 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
-	    $('.del_rp_button').button();
 	}
 
 	/**
@@ -196,7 +199,6 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
-	    $('.del_rp_dim_button').button();
 	}
 
 	/**
@@ -208,7 +210,6 @@ if (! apatapa.business) {
 	var bind_deactivate_buttons = function() {
 	    $('.deactivate_rp_dim_button').click( function( event ) {
 		event.preventDefault();
-
 		$.ajax({ url: manage_ratingprofiles_url,
 			 type: 'POST',
 			 data: {'profile_id':$(this).siblings('.profileid').val(),
@@ -218,7 +219,6 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
-	    $('.deactivate_rp_dim_button').button();
 	}
 
 	/**
@@ -239,7 +239,6 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
-	    $('.activate_rp_dim_button').button();
 	}
 
 	/**
@@ -284,7 +283,6 @@ if (! apatapa.business) {
 			   });
 		});
 	    });
-	    $('.edit_rp_dim_button').button();
 	}
 
 	/**
@@ -329,7 +327,6 @@ if (! apatapa.business) {
 		    .append( submit );
 		$(this).parent().append(newdimdiv);
 	    });
-	    $('.ins_rp_button').button();
 	}
 
 
@@ -459,7 +456,6 @@ if (! apatapa.business) {
 		    // Create the form for adding a ratingprofile
 		    var newprofile_form = $('<form action="/business/create_rating_profile/" method="post" id="newprofile_form"></form>');
 		    var submit_button = $('<input type="submit" class="rp_okbutton" value="OK" />');
-		    submit_button.button();
 		    submit_button.click( function( event ) {
 			event.preventDefault();
 			// Grab all dimensions
@@ -492,7 +488,6 @@ if (! apatapa.business) {
 					'id':"newprofile_cancel_button",
 					'value':"Cancel",
 					'class':"rp_cancel"});
-		    cancel_button.button();
 		    cancel_button.click( function( event ) {
 			event.preventDefault();
 			$('#newprofile_form').remove();
@@ -501,8 +496,6 @@ if (! apatapa.business) {
 		    // Add insert/delete dimension buttons
 		    var dim_insert_button = $('<button class="rp_add" type="button">+</button>');
 		    var dim_remove_button = $('<button class="rp_minus" type="button">-</button>');
-		    dim_insert_button.button();
-		    dim_remove_button.button();
 		    // Register click handlers on each of the insert/delete buttons
 		    dim_insert_button.click( function() {
 			handle_insert_dimension();
@@ -521,7 +514,6 @@ if (! apatapa.business) {
 		    // Add the form to the ratingprofile div
 		    $('#new_ratingprofile').append( newprofile_form );
 		});
-	    $('#new_ratingprofile_button').button();
 	}
 
 	/**
@@ -543,7 +535,6 @@ if (! apatapa.business) {
 	    bind_delete_buttons();		// Delete an entire profile
 	    bind_insert_buttons();		// Insert a dimension
 	    bind_remove_buttons();		// Remove a dimension
-	    bind_newprofile_button();	// Make a new ratingprofile
 	}	    
 
     })(business.ratingprofiles);
@@ -575,14 +566,10 @@ if (! apatapa.business) {
 				      'id': 'add_newsfeed_button',
 				      'class': 'add_newsfeed_button'});
 	    add_newsfeed_button.html('Add New Item');
-	    add_newsfeed_button.button();
 	    add_newsfeed_button.click( function () {
 		addFeed(0, "", "Today", "<strong>right now</strong>", "", "", "", true);
 		registerClickHandlers();
 	    });
-
-	    $('#save_newsfeed_button').button();
-
 	    for(d in data) {
 		feed = data[d];
 		addFeed(feed.id,
@@ -594,7 +581,6 @@ if (! apatapa.business) {
 			feed.image,
 			false);
 	    }
-	    $('#add_newsfeed_button').button();
 	    $('#add_newsfeed_button').click( function () {
 		addFeed(0, "New Newsfeed Item", "Today", "<strong>right now</strong>", "", "", "", true);
 	    });
@@ -718,7 +704,6 @@ if (! apatapa.business) {
 				'id': 'feed_delete_button_' + i,
 				'name': 'feed_delete_button_' + i});
 	    delete_button.html('Delete');
-	    delete_button.button();
 	    delete_button.click( function () {
 	    	console.log("delete button clicked");
 	    	feed = $(this).parents('.feed');
@@ -755,7 +740,6 @@ if (! apatapa.business) {
 	    	.append('<br />');
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
-	    submitButton.button();
 	    editForm.append(submitButton);
 
 	    // Build all the elements.
@@ -836,7 +820,6 @@ if (! apatapa.business) {
 				'id': 'feed_delete_button_' + i,
 				'name': 'feed_delete_button_' + i});
 	    delete_button.html('Delete');
-	    delete_button.button();
 	    delete_button.click( function () {
 	    	feed = $(this).parents('.feed');
 	    	apatapa.showAlert('Are you sure you want to delete?',
@@ -855,7 +838,6 @@ if (! apatapa.business) {
 			      'id':'feed_edit_button_'+i,
 			      'name':'feed_edit_button_'+i});
 	    edit_button.html("Edit");
-	    edit_button.button();
 	    edit_button.click(function() {
 	    	// pointer to this button
 	    	var buttonInstance = $(this);
@@ -933,10 +915,7 @@ if (! apatapa.business) {
 	// Keeps track of # of questions
 	var i = 0;
 	
-	// To indicate that a question is inactive right now.
-	var inactive_color = 'rgb(200, 200, 200)';
-	
-	var question_div_bg_color = 'rgb(255, 235, 250)';
+
 
 	var registerClickHandlers = function () {
 
@@ -1138,8 +1117,6 @@ if (! apatapa.business) {
     				  'name':"question_"+i+"_optionbutton",
      				  'id':"question_"+i+"_optionbutton",
 				  'class': 'option_button'});
-	    addOptionButton.button();
-
 	    addOptionButton.click(function() {
 		addOption(questionNumber, true);
 	    });
@@ -1150,15 +1127,11 @@ if (! apatapa.business) {
 			       'name': 'question_'+i+'_deletebutton',
 			       'id': 'question_'+i+'_deletebutton',
 			       'class': 'deletebutton'});
-	    deleteButton.button();
-	    
 	    var toggleActiveButton = $('<button></button>');
 	    toggleActiveButton.prop({'type': 'button',
 				     'name': 'question_'+i+'_toggleactivebutton',
 				     'id': 'question_'+i+'_toggleactivebutton',
 				     'class': 'toggleactivebutton'});
-	    toggleActiveButton.button();
-	    
 	    var isActive = $('<input />');
 	    isActive.prop({'type': 'hidden',
 			   'class': 'is_active'
