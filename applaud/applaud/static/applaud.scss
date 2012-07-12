@@ -58,6 +58,7 @@ $contentwidth: 1000px;		// width of main content div
 $logocolor: rgb(110,155,255);	// color of logo
 $titlecolor: rgb(80,2,120);	// color of sub-section titles
 $browncolor: rgb(44,30,30);	// dark brown color for header/footer
+$lightbrowncolor: rgb(55, 50, 50); // lighter brown for gradient
 $lightpink: rgb(255,235,250);	// light color for minor elements
 $footerspacing: 7px;		// padding on footer
 $footerheight: 15px;		// height of footer region
@@ -107,6 +108,10 @@ iframe{
 
 #header {
     height:150px;
+    background:-moz-linear-gradient(90deg, $browncolor, $lightbrowncolor);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor)";
+    background: -webkit-linear-gradient(bottom, $browncolor, $lightbrowncolor);
     padding: {
 	bottom:5px;
     }

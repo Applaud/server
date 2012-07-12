@@ -51,7 +51,11 @@ if(! apatapa.business.control_panel ){
 	    event.preventDefault();
 	    employee_display();
 	});
-
+	
+	$('.cp_nav_button').click( function(event) {
+	    $('.cp_nav_button').removeClass('selected');
+	    $(this).addClass('selected');
+	})
 
 	$(".newsfeed_link").click( function(event) {
 	    event.preventDefault();

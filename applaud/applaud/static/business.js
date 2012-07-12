@@ -44,6 +44,7 @@ if (! apatapa.business) {
 			     },
 			     error: function() { alert("Something went wrong."); }
 			   });
+		    return false;
 		});
 	}
 
@@ -178,6 +179,7 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
+	    return false;
 	}
 
 	/**
@@ -199,6 +201,7 @@ if (! apatapa.business) {
 			     error: function() { alert("Something went wrong."); }
 			   });
 		});
+	    return false;
 	}
 
 	/**
@@ -219,6 +222,7 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
+	    return false;
 	}
 
 	/**
@@ -239,6 +243,7 @@ if (! apatapa.business) {
 			 error: function() { alert("Something went wrong."); }
 		       });
 	    });
+	    return false;
 	}
 
 	/**
@@ -281,7 +286,9 @@ if (! apatapa.business) {
 			    success: listProfiles,
 			    error: function() { alert("Something went wrong."); }
 			   });
+		    return false;
 		});
+		return false;
 	    });
 	}
 
@@ -316,6 +323,7 @@ if (! apatapa.business) {
 			     success: listProfiles,
 			     error: function() { alert("Something went wrong."); }
 			   });
+		    return false;
 		});
 
 		newdimdiv
@@ -326,6 +334,7 @@ if (! apatapa.business) {
 		    .append( is_text_label )
 		    .append( submit );
 		$(this).parent().append(newdimdiv);
+		return false;
 	    });
 	}
 
@@ -482,6 +491,7 @@ if (! apatapa.business) {
 				 error: function() { alert("Something went wrong."); }
 			       });
 			$('#new_ratingprofile').empty();
+			return false;
 		    });
 		    var cancel_button = $('<input />');
 		    cancel_button.prop({'type':"submit",
@@ -514,6 +524,7 @@ if (! apatapa.business) {
 		    // Add the form to the ratingprofile div
 		    $('#new_ratingprofile').append( newprofile_form );
 		});
+	    return false;
 	}
 
 	/**
@@ -1119,6 +1130,7 @@ if (! apatapa.business) {
 				  'class': 'option_button'});
 	    addOptionButton.click(function() {
 		addOption(questionNumber, true);
+		return false;
 	    });
 	    
 	    // Add a delete button.
@@ -1198,6 +1210,7 @@ if (! apatapa.business) {
 				      parent.children('.should_delete').val('true');
 				      parent.hide(1000);
 				  });
+		return false;
 	    });
 
 	    $("#question_"+i+"_div").find(".expand_button").click( function (event) {
@@ -1205,6 +1218,7 @@ if (! apatapa.business) {
 		$(this).parent().siblings(".question_hidden_div").show();
 		$(this).siblings(".contract_button").show();
 		$(this).hide();
+		return false;
 	    });
 	    
 	    $("#question_"+i+"_div").find(".contract_button").hide();
@@ -1213,6 +1227,7 @@ if (! apatapa.business) {
 		$(this).parent().siblings(".question_hidden_div").hide();
 		$(this).siblings(".expand_button").show();
 		$(this).hide();
+		return false;
 	    });
 	    
 	    
@@ -1231,6 +1246,7 @@ if (! apatapa.business) {
 		    apatapa.business.control_panel.showQuestion($(this).parents('.question').children('.question_id').val(),
 								$(this).prop('id').split('_')[1]);
 		}
+		return false;
 	    });
 
 
