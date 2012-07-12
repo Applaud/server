@@ -20,8 +20,8 @@ ACCOUNT_ACTIVATION_DAYS = 7
 # Where to go after login
 LOGIN_REDIRECT_URL = '/accounts/profile'
 
-#SERVER_URL="http://ec2-107-22-6-55.compute-1.amazonaws.com"
-SERVER_URL="http://localhost:8000"
+SERVER_URL="http://ec2-107-22-6-55.compute-1.amazonaws.com"
+#SERVER_URL="http://localhost:8000"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),

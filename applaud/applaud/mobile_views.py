@@ -13,6 +13,7 @@ import json
 import urllib2
 from applaud import forms
 from applaud import models
+from applaud.models import UserProfile
 from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder
 from django.utils.timezone import utc
