@@ -13,6 +13,7 @@ import settings
 import sys
 from applaud.models import EmployeeProfile
 import views
+from django.core.files import File
 
 # 'employee_view' decorator.
 def employee_view(view):
@@ -105,7 +106,7 @@ def _profile_picture(em_profile, thumb=True):
     image_url = "%s/%s"%(imagepath,imagename)
     if not os.path.exists(settings.MEDIA_ROOT + image_url):
         image_url = settings.DEFAULT_PROFILE_IMAGE
-
+    
     return image_url
 
 @employee_view
@@ -126,11 +127,13 @@ def edit_profile(request):
                 # First off, make sure it's a actually an image, and that
                 # it's a filetype we will accept.
                 try:
-                    image = Image.open(request.FILES['profile_picture'])
+                    image = PImage.open(request.FILES['profile_picture'])
                 except IOError:
                     # For now, we'll just ignore bad images.
+                    messages.add_message(request, messages.ERROR, "Something went wrong uploading the image.")
                     return HttpResponseRedirect(reverse('employee_analytics'))
                 if not image.format in ['PNG', 'JPEG', 'BMP']:
+                    messages.add_message(request, messages.ERROR, "Invalid image type. Please submit a PNG, JPG, or BMP.")
                     return HttpResponseRedirect(reverse('employee_analytics'))
                 fileext = request.FILES['profile_picture'].name.split('.')[-1]
                 imagedir = "%s%s.%d"%(settings.MEDIA_ROOT,
@@ -151,6 +154,9 @@ def edit_profile(request):
                 thumb = PImage.open( imagepath )
                 thumb.thumbnail((128,128), PImage.ANTIALIAS)
                 thumb.save( "%s/thumb_%s"%(imagedir,imagename) )
+
+                profile.profile_picture = imagepath
+                profile.save()
 
         messages.add_message(request, messages.SUCCESS, "Profile saved successfully!")
 
