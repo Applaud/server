@@ -26,6 +26,12 @@
   margin: 0px;
   padding: 0px; }
 
+#survey_table table, #employee_table table {
+  width: 100%; }
+  #survey_table table th, #survey_table table td, #employee_table table th, #employee_table table td {
+    padding-top: 7px;
+    padding-bottom: 3px; }
+
 #choice_nav_bar {
   float: right; }
 

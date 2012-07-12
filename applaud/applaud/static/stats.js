@@ -1,4 +1,4 @@
-/* README 
+/* README
  *
  * Notes: This file is for the display of any and all analytics across
  * the website. It is ONLY for display.  That is, it assumes that any
@@ -6,7 +6,7 @@
  * relevant and consistently formatted data.  Then it should make a
  * single call to the function initialize, which should take the
  * retrieved data as the sole parameter.
- * 
+ *
  * Complications in the display of these charts arise when we consider
  * viewing data between employees with different RatingProfiles The
  * current implementation is to display averages across the time range
@@ -14,7 +14,7 @@
  * paramter for a 'Host', it will still be displayed when viewing a
  * 'Host' and 'Waiter' together, but not when viewing only 'Waiter's)
  * This can be altered later.
- * 
+ *
  * Ideally, in the case where the chart range is limited so that there
  * are no ratings for a selected employee, that employee is removed
  * from the chart altogether.
@@ -29,7 +29,7 @@
  *      by a start and stop date.  The start date will be the date of
  *      the earliest rating by any employee to the date of the lastest
  *      rating of any employee.
- * 
+ *
  *     Chart Range: The range of days which are actually displayed on
  *      the graph. This is subset of the viewable range.
  *
@@ -142,13 +142,13 @@ if( ! apatapa.stats ){
     ////////////////////////////
     // Utilities for the page //
     ////////////////////////////
-    
+
     // A helper function to reset the boolean variables isEmployees and isSurvey
     _ns.setAsEmployee = function(){
         _ns.isEmployees = 1;
         _ns.isSurvey = 0;
     }
-    
+
     _ns.setAsSurvey = function(){
         _ns.isEmployees = 0;
         _ns.isSurvey = 1;
@@ -162,11 +162,11 @@ if( ! apatapa.stats ){
         if( arr_index === -1 ) _ns.cur_employees.push(employee);
 	else _ns.cur_employees = [employee];
     }
-    
+
     // Takes an employee JSON object of the form passed from the view
     _ns.remove_employee = function(employee){
 	var arr_index = _ns.cur_employees.indexOf(employee);
-	if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1); 
+	if( arr_index != -1 ) _ns.cur_employees.splice(arr_index, 1);
         if( _ns.cur_employees.length === 0){
 	    _ns.cur_employees=_ns.employees;
         }
@@ -239,9 +239,9 @@ if( ! apatapa.stats ){
             for( d in _ns.cur_dimensions){
                 row0.push(_ns.cur_dimensions[d])
             }
-	
+
             chart_list.push(row0);
-	
+
             // Is this all too slow?? Brainstorm efficiencies in here
             // For each employee, calculate avg rating for each dimension
             for ( e in _ns.cur_employees ) {
@@ -275,12 +275,12 @@ if( ! apatapa.stats ){
                 var nextRow = [employee.first_name+' '+employee.last_name];
                 nextRow = nextRow.concat(avgRatings);
                 chart_list.push(nextRow);
-                
+
                 _ns.goog_data = chart_list;
             }
     }
     _ns.assembleSurveyTableData = function(){
-  
+
         chart_list = [];
         first_row = ["Question","Response"];
         chart_list.push(first_row);
@@ -321,44 +321,49 @@ if( ! apatapa.stats ){
             container = $("#employee_table");
         }
 	container.empty();
-                
+
+	var the_table = $('<table></table>');
+
         for ( row in _ns.goog_data ){
-            var newdiv = $("<div></div>");
-            newdiv.addClass("table_row");
-            
-            var oddevenclass;    
+            var newrow = $("<tr></tr>");
+            newrow.addClass("table_row");
+
+            var oddevenclass;
             if ( row == 0)
-                newdiv.addClass('first_row');
+                newrow.addClass('first_row');
 
             else if ( row % 2 === 0 )
                 oddevenclass='even';
             else
                 oddevenclass='odd';
-            newdiv.addClass(oddevenclass);
-            
+            newrow.addClass(oddevenclass);
+
             var divWidth = parseInt($("#table_div").css("width"));
             console.log("divWidth is.....");
             console.log(divWidth);
             var length = _ns.goog_data[row].length;
             var cellWidth = divWidth/(length+1);
             console.log("cellWidth is......."+cellWidth);
-            
+
             for ( cell in _ns.goog_data[row] ){
-                var newspan = $("<span></span>");
-                newspan.prop({"class":"column_"+cell});
-                newspan.text(_ns.goog_data[row][cell]);
+		var newcol;
+		if ( newrow.hasClass("first_row") )
+                    newcol = $("<th></th>");
+		else
+		    newcol = $("<td></td>");
+                newcol.prop({"class":"column_"+cell});
+                newcol.text(_ns.goog_data[row][cell]);
                 console.log(_ns.goog_data[row]);
                 //even spacing for the rest of the cells
-                
-                newspan.css("width",cellWidth);
-                //                newspan.css("padding", "10px");
-                newspan.css("text-align", "center");
 
-                newdiv.append(newspan);
+                newcol.css("width",cellWidth);
+                newcol.css("text-align", "center");
+
+                newrow.append(newcol);
             }
-
-            container.append(newdiv);
+	    the_table.append(newrow);
         }
+	container.append(the_table);
     }
 
     // This function will take the current 'selected' data and assemble the google chart for it.
@@ -367,7 +372,7 @@ if( ! apatapa.stats ){
         _ns.assembleEmployeeData();
         // Create and populate the data table.
         var data = google.visualization.arrayToDataTable( _ns.goog_data );
-	
+
         // Create and draw the visualization.
         new google.visualization.ColumnChart(document.getElementById('employee_graph')).
 	    draw(data,
@@ -407,7 +412,7 @@ if( ! apatapa.stats ){
     // It assumes that ratings for each employee are sorted by date
     // Should only be called once, afterwards should only change slider
     _ns.buildDateSlider = function() {
-	
+
 	var slider = $('#gt_dateslider');
 	slider.slider({ animate: true,
 			range: true,
@@ -415,7 +420,7 @@ if( ! apatapa.stats ){
 			max: _ns.range,
 			values:[0,_ns.range],
 		      });
-	
+
 	_ns.range_start = _ns.sliderValueToDate(0);
 	_ns.range_stop = _ns.sliderValueToDate(_ns.range);
 
@@ -457,7 +462,7 @@ if( ! apatapa.stats ){
     //
     // TODO: Optimize this. Is there a better way to achieve the same thing?
     _ns.setDateRange = function(){
-	
+
 	for( e in _ns.cur_employees ){
 	    var e_ratings =  _ns.cur_employees[e].ratings;
 	    var e_ratings_length =  _ns.cur_employees[e].ratings.length;
@@ -508,7 +513,7 @@ if( ! apatapa.stats ){
 
     _ns.dimension_click = function(){
 	var dim_title = $(this).text();
-	
+
 	$(this).toggleClass('dim_selected');
 
 	// Check if it's selected
@@ -526,7 +531,7 @@ if( ! apatapa.stats ){
     _ns.bind_employee_click = function(container, employee){
         container.click(function(){
            $(this).toggleClass('selected');
-	
+
                 if( $(this).hasClass('selected') ){
                     _ns.add_employee(employee);
                 }
