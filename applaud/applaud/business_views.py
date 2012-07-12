@@ -842,11 +842,12 @@ def rating_profile_changes(request):
 @business_view
 def get_employee_info(request):
     profile = request.user.businessprofile
-
     if request.method == 'GET':
         employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
-        encoded_employee = views.EmployeeEncoder().default(employee)
-        return HttpResponse(json.dumps({'employee':encoded_employee}),
+        # encoded_employee = views.EmployeeEncoder().default(employee)
+        print employee
+        print employee.bio
+        return HttpResponse(json.dumps({'bio':employee.bio}),
                             mimetype='application/json')
             
     return render_to_response('business_control_panel.html',

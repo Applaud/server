@@ -56,7 +56,7 @@ table {
 /* styles that apply to the whole page */
 html, body {
   font-family: 'Arvo', serif;
-  background-image: url("/static/tile-colors.png");
+  background-image: url("/static/SmallTile.png");
   height: 100%;
   margin: auto; }
 

@@ -60,47 +60,32 @@
     </div>
     
     <div id="view_employees_div" class="employee_management">
-      <div class="table">
-	<div id="cp_employee_header_row" class="table_row">
-	  <div>Employee Name</div>
-	  <div>Employee last name</div>
-	  <div>Current Rating Profile</div>
-	</div>
 	{% for e in employee_list %}
+      <div class="cp_employee_div">
 	<div id="cp_employee_row_{{ forloop.counter }}" class="cp_employee_row">
-	  <div> {{ e.user.first_name }}</div>
-	  <div> {{ e.user.last_name }}</div>
-	  <div> 
-	    <select>{% for rat_prof in rating_profile_list %}
-	      <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
-	      </option>
-	      {% endfor %}
-	    </select>
-	    <input type="hidden" value="{{ e.id }}"/>
-	  </div>
-	  
-	  <div> 
-	    <button id="employee_contract_button_{{ forloop.counter }}" class="expand_employee_button">+</button>
-	    <button id="employee_contract_button_{{ forloop.counter }}" class="contract_employee_button">-</button>
-	  </div>
+	  {{ e.user.first_name }}  {{ e.user.last_name }}
+	  <select value="{{ e.id }}">{% for rat_prof in rating_profile_list %}
+	    <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
+	    </option>
+	    {% endfor %}
+	  </select>
+	  <input type="hidden" value="{{ e.id }}"/>
+	  <button id="employee_expand_button_{{ e.id }}" class="expand_employee_button">+</button>
+	  <button id="employee_contract_button_{{ e.id }}" class="contract_employee_button">-</button>
 	</div>
-	
 	<!-- This is the row that will be displayed with the standard employee div. -->
-	<div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"><div id="expand_row_{{ e.id }}"> </div> </div>
-	{% endfor %}
+	<div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"> </div> 
       </div>
+      {% endfor %}
       <button id="rating_profile_changes_button">Save Rating Profiles</button>
     </div>
     <div id="add_employees_div" class="employee_management">
-      <div class="content-title">
-	<h2>Employee Management</h2>
-      </div>
 
       <div id="employees_listing">
       </div>
 
       <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
-	<h3>Add Employees</h3>
+	<h2>Add Employees</h2>
 	{% csrf_token %}
 	<label for="emails">Email List</label>
 	<input type="text" name="emails" >
@@ -132,7 +117,7 @@
       <div id="newsfeeds">
       </div>
       
-      <button type="submit" id="save_newsfeed_button" name="save_newsfeed_button" class="save_newsfeed_button">Save Changes</button>
+      <!-- <button type="submit" id="save_newsfeed_button" name="save_newsfeed_button" class="save_newsfeed_button">Save Changes</button> -->
     </form>
   </div>
   <div id="control_panel_survey_div" name="control_panel_survey_div" class="control_panel_div">
