@@ -41,6 +41,7 @@ userprofile2 = models.UserProfile(user=enduser2,
                                  first_time=0)
 userprofile2.save()
 
+
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=39.07279, longitude=-120.14223, goog_id="677679492a58049a7eae079e0890897eb953d79b", business_name="Boo Furgers")
 business.save()
@@ -299,7 +300,7 @@ for i in range(10):
                                   user=profiles[int(random()*2)])
     qr2.save()
 
-qr3 = models.QuestionResponse(question=q3,
+,qr3 = models.QuestionResponse(question=q3,
                               response=['aaargh!'],
                               date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
