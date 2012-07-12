@@ -17,12 +17,25 @@ from random  import random
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
 enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
+enduser.first_name="Master"
+enduser.last_name="Trash"
+enduser.save()
+# Make another user.
+enduser2 = User.objects.create_user('Mama Bear', 'mamabear@berensteinbears.com', 'seekrit')
+enduser2.first_name="Mama"
+enduser2.last_name="Bear"
+enduser2.save()
 
 # Make userprofile (he's really young, I know...)
 userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 userprofile.save()
+userprofile2 = models.UserProfile(user=enduser2,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+userprofile2.save()
+
 
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=39.07279, longitude=-120.14223, goog_id="677679492a58049a7eae079e0890897eb953d79b", business_name="Boo Furgers")
@@ -228,11 +241,12 @@ qr1.save()
 for i in range(10):
     today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
     options = ["yes","no"]
+    profiles = [userprofile,userprofile2]
     which = options[int(2*random())]
     qr2 = models.QuestionResponse(question=q2,
                                   response=[which],
                                   date_created=today,
-                                  user=userprofile)
+                                  user=profiles[int(random()*2)])
     qr2.save()
 
 qr3 = models.QuestionResponse(question=q3,

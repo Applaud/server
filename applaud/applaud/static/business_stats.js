@@ -71,6 +71,7 @@ $(document).ready( function(){
 		apatapa.stats.initialize(data);
 		apatapa.functions.listEmployees($('#employees'), data);
 		apatapa.functions.listQuestions($('#survey'), data);
+		apatapa.functions.listUsers($("#survey_filters"), data);
 		display_employees();
 		display_employee_graph();
             },

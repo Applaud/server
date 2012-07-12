@@ -64,11 +64,13 @@ if( ! apatapa.stats ){
     _ns.employees;
     _ns.dimensions;
     _ns.questions;
+    _ns.users;
 
     //Lists who actually determine the composition of the chart
     _ns.cur_employees=[];
     _ns.cur_dimensions=[];
     _ns.cur_questions = [];
+    _ns.cur_users = [];
 
     // The first and last dates of ratings in cur_employees and cur_dimensions
     _ns.first;
@@ -206,6 +208,25 @@ if( ! apatapa.stats ){
 	}
     }
 
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.addUser = function(user) {
+	if (_ns.cur_users.indexOf(user.id) < 0)
+	    _ns.cur_users.push(user.id);
+	else
+	    _ns.cur_users = [user.id];
+    };
+
+    // Takes a dimension JSON object of the form passed from the view
+    _ns.removeUser = function(user) {
+	var index = _ns.cur_users.indexOf(user.id);
+	if ( index >= 0 ) {
+	    _ns.cur_users.splice(index, 1);
+	    if (_ns.cur_users.length === 0)
+		_ns.cur_users = _ns.users;
+	}
+    }
+
+
     ///////////////////////////////////
     // Data gathering and assembling //
     ///////////////////////////////////
@@ -260,25 +281,32 @@ if( ! apatapa.stats ){
     }
     _ns.assembleSurveyTableData = function(){
   
-            chart_list = [];
-            first_row = ["Question","Response"];
-            chart_list.push(first_row);
-            for(q in _ns.cur_questions){
-                var label = _ns.cur_questions[q].label;
-                for( r in _ns.cur_questions[q].ratings){
-                    if(r == 0)
-                        next_row = [label];
-                    else
-                       next_row = [""];
-                    
-                    next_row.push(_ns.cur_questions[q].ratings[r].response[0]);
-                    chart_list.push(next_row);
-                }
+        chart_list = [];
+        first_row = ["Question","Response"];
+        chart_list.push(first_row);
+        for(q in _ns.cur_questions){
+	    var label_included = false;
+            var label = _ns.cur_questions[q].label;
+            for( r in _ns.cur_questions[q].ratings){
+		var next_row = [];
+		// Filtering by user
+		var response = _ns.cur_questions[q].ratings[r];
+		console.log(_ns.cur_users);
+		if ( _ns.cur_users.indexOf(response.user.id) >= 0 ) {
+		    if (! label_included ) {
+			next_row.push(label);
+			label_included=true;
+		    } else {
+			next_row.push("");
+		    }
+		    next_row.push(_ns.cur_questions[q].ratings[r].response[0]);
+		    chart_list.push(next_row);
+		}
             }
-            _ns.goog_data = chart_list;
+        }
+        _ns.goog_data = chart_list;
     }
 
-    
     // Populates the corresponding div with formatted data from goog_data
     _ns.makeTable = function(){
         var container;
@@ -373,12 +401,7 @@ if( ! apatapa.stats ){
         }
 
         $('#employee_filters').append(the_list);
-
-        //Survey filters??
-        
-
     }
-
 
     // This function will build a slider which will represent the range of viewable data
     // It assumes that ratings for each employee are sorted by date
@@ -528,15 +551,32 @@ if( ! apatapa.stats ){
 	}
     }
 
+    // This function creates the list _ns.users
+    _ns.buildUsers = function() {
+	_ns.users = [];
+	for ( q in _ns.questions ) {
+	    var question = _ns.questions[q];
+	    for ( r in question.ratings ) {
+		var rating = question.ratings[r];
+		var user = rating.user;
+		if ( _ns.users.indexOf(user.id) < 0 ) {
+		    _ns.users.push(user.id);
+		}
+	    }
+	}
+    };
+
     // This should just set variables
     _ns.initialize = function(data){
         _ns.employees = data.data.employees;
         _ns.buildDimensions();
         _ns.questions = data.data.questions;
+	_ns.buildUsers();
         _ns.buildTable();
         _ns.cur_dimensions = _ns.dimensions;
         _ns.cur_employees = _ns.employees;
 	_ns.cur_questions = _ns.questions;
+	_ns.cur_users = _ns.users;
         _ns.setDateRange();
         _ns.buildDateSlider();
         _ns.bindDateSlider();
