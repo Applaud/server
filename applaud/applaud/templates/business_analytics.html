@@ -7,23 +7,60 @@ Employee Information
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}business_stats.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
-
 {% endblock %}
 {% block links %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_analytics.css" />
 {% endblock %}
 {% block content %}
 {{ block.super }}
 <h1>Employee Analytics</h1>
-<div id="employees"></div> 
+
+<div id="nav_bar">
+<div id="choice_nav_bar">
+  <button class="employee_link">Employees</button>
+    <button class="survey_link">Survey</button>
+</div>
+<div id="info_nav_bar">
+    <button class="graph_link">Graph</button>
+    <button class="table_link">Table</button>
+</div>
 </div>
 
-<div id="graph_table">
-    <div id="gt_dims"></div>
-    <div id="emp_graph"></div>
-    <div id="date_slider_text">
+<div id="stats_choice_div">
+  <div id="employee_stats_choice_div" class="choice_div">
+    <h3><a href="#">Employees</a></h3>
+    <div>
+      <div id="employees"></div>
     </div>
+    <h3><a href="#">Dimensions</a></h3>
+    <div>
+      <div class="choice_div" id="employee_filters"></div>    
+    </div>
+  </div>
+  <div id="survey_stats_choice_div" class="choice_div">
+    <h3><a href="#">Question</a></h3>
+    <div>
+      <div id="survey"></div>
+    </div>
+    <h3><a href="#">Users</a></h3>
+    <div>
+      <div id="survey_filters"></div>
+    </div>
+  </div>
+</div>
+<div id="info">
+  
+  <div id="graph_div">
+    <div class="data_view" id="employee_graph"></div>
+  </div>
+  <div id="table_div">
+    <div class="data_view" id="employee_table"></div>
+    <div class="data_view" id="survey_table"></div>
+  </div>
+  <div id="dateslider">
     <p id="dateslider_label"></p>
     <div id="gt_dateslider" name="dateslider"></div>
+  </div>
 </div>
 {% endblock%}

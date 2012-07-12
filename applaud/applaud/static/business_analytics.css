@@ -1,9 +1,56 @@
-#employees li{
-    padding-top: 25px;
-    
-}
+#employees li {
+  padding-top: 25px; }
 
-.employee_item {
+#nav_bar {
+  display: block; }
 
+#stats_choice_div {
+  float: right;
+  width: 400px;
+  height: 550px; }
 
-}
+#info {
+  width: 550px;
+  height: 550px;
+  overflow: auto;
+  float: left; }
+
+#graph_div {
+  border: thin dotted gray; }
+
+#survey_div {
+  border: thin dotted gray; }
+
+#employee_graph iframe {
+  text-align: left;
+  margin: 0px;
+  padding: 0px; }
+
+#survey_table table, #employee_table table {
+  width: 100%; }
+  #survey_table table th, #survey_table table td, #employee_table table th, #employee_table table td {
+    padding-top: 7px;
+    padding-bottom: 3px; }
+
+#choice_nav_bar {
+  float: right; }
+
+.selected {
+  background-color: #646464; }
+
+.odd {
+  background-color: #FFFFFF; }
+
+.even {
+  background-color: #CCCCCC; }
+
+.table_row {
+  padding: 10px;
+  height: 40px; }
+
+.table_row span {
+  display: inline-block; }
+
+.first_row {
+  background-color: #6666BB;
+  font-weight: bold; }

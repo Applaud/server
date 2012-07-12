@@ -17,18 +17,38 @@ from random  import random
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
 enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
+enduser.first_name="Master"
+enduser.last_name="Trash"
+enduser.save()
+# Make another user.
+enduser2 = User.objects.create_user('Mama Bear', 'mamabear@berensteinbears.com', 'seekrit')
+enduser2.first_name="Mama"
+enduser2.last_name="Bear"
+enduser2.save()
+
+keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
+keith_user.first_name = 'Keith'
+keith_user.last_name = 'Cox'
+keith_user.save()
 
 # Make userprofile (he's really young, I know...)
 userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 userprofile.save()
+userprofile2 = models.UserProfile(user=enduser2,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+userprofile2.save()
 
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=39.07279, longitude=-120.14223, goog_id="677679492a58049a7eae079e0890897eb953d79b", business_name="Boo Furgers")
 business.save()
 business2 = models.BusinessProfile(user=user2, phone='0-987-654-3210', latitude=39.07279, longitude=-120.14223, goog_id='asdf987sdf765asdf875asdf685487we65r9867', business_name='Apatapa')
 business2.save()
+keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
+                                        latitude='14.3', longitude='12.34',
+                                        goog_id='23l;asdr4ajiaf', business_name="Resort Equities")
 
 # Business and Customer groups.
 business_group = Group(name='Business')
@@ -39,6 +59,8 @@ customer_group.save()
 # Add the business group.
 business.groups = [business_group]
 business.save()
+keith_business.groups = [business_group]
+keith_business.save()
 business2.groups = [business_group]
 business2.save()
 
@@ -63,6 +85,29 @@ enthusiasm = models.RatedDimension(title="Enthusiasm",
 efficiency.save()
 enthusiasm.save()
 
+keith_waiter_profile = models.RatingProfile(title='Waiter', business=keith_business)
+keith_waiter_profile.save()
+promptness = models.RatedDimension(title='Promptness',
+                                   rating_profile=keith_waiter_profile)
+promptness.save()
+friendliness = models.RatedDimension(title='Friendliness',
+                                     rating_profile=keith_waiter_profile)
+friendliness.save()
+helpfulness = models.RatedDimension(title='Helpfulness',
+                                    rating_profile=keith_waiter_profile)
+helpfulness.save()
+
+keith_hostess_profile = models.RatingProfile(title='Hostess', business=keith_business)
+friendliness = models.RatedDimension(title='Friendliness',
+                                     rating_profile=keith_hostess_profile)
+friendliness.save()
+helpfulness = models.RatedDimension(title='Helpfulness',
+                                    rating_profile=keith_hostess_profile)
+helpfulness.save()
+two_adj = models.RatedDimension(title='Describe with two adjectives',
+                                rating_profile=keith_hostess_profile,
+                                is_text=True)
+two_adj.save()
 
 
 profile3 = models.RatingProfile(title='Profile 3', business=business)
@@ -76,34 +121,34 @@ surliness.save()
 
 # Make a User.
 emp_user = User.objects.create_user('joe', 'joes@aol.com', 'apatapa')
-emp_user.first_name = 'joe'
-emp_user.last_name = 'jake'
+emp_user.first_name = 'Moe'
+emp_user.last_name = 'Smith'
 emp_user.save()
-emp_user2 = User.objects.create_user('jill', 'jill@gmail.com', 'apatapa')
-emp_user2.first_name = 'jill'
-emp_user2.last_name = 'joan'
+emp_user2 = User.objects.create_user('Jill', 'jill@gmail.com', 'apatapa')
+emp_user2.first_name = 'Jill'
+emp_user2.last_name = 'Lane'
 emp_user2.save()
 emp_user3 = User.objects.create_user('jeremy', 'jeremy@aol.com', 'apatapa')
-emp_user3.first_name = 'jeremy'
-emp_user3.last_name = 'jewelthief'
+emp_user3.first_name = 'Jeremy'
+emp_user3.last_name = 'Bates'
 emp_user3.save()
 emp_enduser = User.objects.create_user('josh', 'josh@gmail.com', 'apatapa')
-emp_enduser.first_name = 'josh'
-emp_enduser.last_name = 'jeff'
+emp_enduser.first_name = 'Josh'
+emp_enduser.last_name = 'Englewood'
 emp_enduser.save()
 
 #Lots of employees for Boo Furgers!
 emp_user6 = User.objects.create_user('jordan', 'jordan@aol.com', 'apatapa')
-emp_user6.first_name = 'jordan'
-emp_user6.last_name = 'jyroscope'
+emp_user6.first_name = 'Jordan'
+emp_user6.last_name = 'Moon'
 emp_user6.save()
 emp_user4 = User.objects.create_user('jack', 'jackjones@aol.com', 'apatapa')
-emp_user4.first_name = 'jack'
-emp_user4.last_name = 'jones'
+emp_user4.first_name = 'Jack'
+emp_user4.last_name = 'Jones'
 emp_user4.save()
 emp_user5 = User.objects.create_user('LaLa', 'lala@aol.com', 'apatapa')
-emp_user5.first_name = 'LaLa'
-emp_user5.last_name = 'Mississippi Love'
+emp_user5.first_name = 'Sarah'
+emp_user5.last_name = 'Jane'
 emp_user5.save()
 
 
@@ -147,7 +192,25 @@ mystical2 = models.EmployeeProfile(business=business,
                                   bio="Another lovely bio for another employee of the month! Ring the bell, hit the gong, we\'ve got a superstar on our hands! Remember back when you were just a kid??")
 mystical2.save()
 
-
+moe = models.EmployeeProfile(business=keith_business,
+                             user=emp_user,
+                             rating_profile=keith_waiter_profile,
+                             bio='Moe grew up in South San Francisco, went to Cal, and began working at Pacific Catch in 2010. Moe hopes to get his master\'s and work in restaurant management.')
+moe.save()
+jill = models.EmployeeProfile(business=keith_business,
+                              user=emp_user2,
+                              rating_profile=keith_hostess_profile,
+                              bio='Jill is from Denmark. She currently goes to art school and is studying portraiture.')
+jill.save()
+jeremy = models.EmployeeProfile(business=keith_business,
+                                user=emp_user3,
+                                rating_profile=keith_waiter_profile,
+                                bio='After graduating from Oberlin College in 1993, Jeremy tried his hand at microbrewing, but found it much too small. He is our oldest employee, and dreams of owning his own restaurant.')
+jeremy.save()
+josh = models.EmployeeProfile(business=keith_business,
+                              user=emp_enduser,
+                              rating_profile=keith_hostess_profile,
+                              bio='')
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
@@ -224,11 +287,18 @@ qr1 = models.QuestionResponse(question=q1,
                               date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr1.save()
-qr2 = models.QuestionResponse(question=q2,
-                              response=['no'],
-                              date_created=datetime.utcnow().replace(tzinfo=utc),
-                              user=userprofile)
-qr2.save()
+
+for i in range(10):
+    today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
+    options = ["yes","no"]
+    profiles = [userprofile,userprofile2]
+    which = options[int(2*random())]
+    qr2 = models.QuestionResponse(question=q2,
+                                  response=[which],
+                                  date_created=today,
+                                  user=profiles[int(random()*2)])
+    qr2.save()
+
 qr3 = models.QuestionResponse(question=q3,
                               response=['aaargh!'],
                               date_created=datetime.utcnow().replace(tzinfo=utc),
