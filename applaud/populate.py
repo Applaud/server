@@ -16,14 +16,14 @@ from random  import random
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
-enduser = User.objects.create_user('Master Trash', 'mastertrash@gmail.com', 'seekrit')
-enduser.first_name="Master"
-enduser.last_name="Trash"
+enduser = User.objects.create_user('keith', 'mastertrash@gmail.com', 'apatapa')
+enduser.first_name="Keith"
+enduser.last_name="Cox"
 enduser.save()
 # Make another user.
-enduser2 = User.objects.create_user('Mama Bear', 'mamabear@berensteinbears.com', 'seekrit')
-enduser2.first_name="Mama"
-enduser2.last_name="Bear"
+enduser2 = User.objects.create_user('john harris', 'mamabear@berensteinbears.com', 'apatapa')
+enduser2.first_name="John"
+enduser2.last_name="Harris"
 enduser2.save()
 
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
@@ -91,20 +91,21 @@ keith_waiter_profile.save()
 promptness = models.RatedDimension(title='Promptness',
                                    rating_profile=keith_waiter_profile)
 promptness.save()
-friendliness = models.RatedDimension(title='Friendliness',
+friendlinessw = models.RatedDimension(title='Friendliness',
+                                      rating_profile=keith_waiter_profile)
+friendlinessw.save()
+helpfulnessw = models.RatedDimension(title='Helpfulness',
                                      rating_profile=keith_waiter_profile)
-friendliness.save()
-helpfulness = models.RatedDimension(title='Helpfulness',
-                                    rating_profile=keith_waiter_profile)
-helpfulness.save()
+helpfulnessw.save()
 
 keith_hostess_profile = models.RatingProfile(title='Hostess', business=keith_business)
-friendliness = models.RatedDimension(title='Friendliness',
+keith_hostess_profile.save()
+friendlinessh = models.RatedDimension(title='Friendliness',
+                                      rating_profile=keith_hostess_profile)
+friendlinessh.save()
+helpfulnessh = models.RatedDimension(title='Helpfulness',
                                      rating_profile=keith_hostess_profile)
-friendliness.save()
-helpfulness = models.RatedDimension(title='Helpfulness',
-                                    rating_profile=keith_hostess_profile)
-helpfulness.save()
+helpfulnessh.save()
 two_adj = models.RatedDimension(title='Describe with two adjectives',
                                 rating_profile=keith_hostess_profile,
                                 is_text=True)
@@ -154,64 +155,83 @@ emp_user5.save()
 
 
 # Make a few Employees.
-master = models.EmployeeProfile(business=business,
-                                user=emp_user,
-                                rating_profile=profile2,
-                                bio='foo')
-master.save()
-mystical = models.EmployeeProfile(business=business2,
-                                  user=emp_user2,
-                                  rating_profile=profile2,
-                                  bio='bio')
-mystical.save()
-mystical2 = models.EmployeeProfile(business=business,
-                                  user=emp_user3,
-                                  rating_profile=profile3,
-                                  bio='bio')
-mystical2.save()
-luke = models.EmployeeProfile(business=business2,
-                              user=emp_enduser,
-                              rating_profile=profile3,
-                              bio='biology')
-luke.save()
+# master = models.EmployeeProfile(business=business,
+#                                 user=emp_user,
+#                                 rating_profile=profile2,
+#                                 bio='foo')
+# master.save()
+# mystical = models.EmployeeProfile(business=business2,
+#                                   user=emp_user2,
+#                                   rating_profile=profile2,
+#                                   bio='bio')
+# mystical.save()
+# mystical2 = models.EmployeeProfile(business=business,
+#                                   user=emp_user3,
+#                                   rating_profile=profile3,
+#                                   bio='bio')
+# mystical2.save()
+# luke = models.EmployeeProfile(business=business2,
+#                               user=emp_enduser,
+#                               rating_profile=profile3,
+#                               bio='biology')
+# luke.save()
 
-mystical2 = models.EmployeeProfile(business=business,
-                                  user=emp_user6,
-                                  rating_profile=profile1,
-                                  bio="Super super bio!!!!!")
-mystical2.save()
+# mystical2 = models.EmployeeProfile(business=business,
+#                                   user=emp_user6,
+#                                   rating_profile=profile1,
+#                                   bio="Super super bio!!!!!")
+# mystical2.save()
 
-mystical2 = models.EmployeeProfile(business=business,
-                                  user=emp_user4,
-                                  rating_profile=profile1,
-                                  bio='The bioiest of all bioed bios')
-mystical2.save()
+# mystical2 = models.EmployeeProfile(business=business,
+#                                   user=emp_user4,
+#                                   rating_profile=profile1,
+#                                   bio='The bioiest of all bioed bios')
+# mystical2.save()
 
-mystical2 = models.EmployeeProfile(business=business,
-                                  user=emp_user5,
-                                  rating_profile=profile3,
-                                  bio="Another lovely bio for another employee of the month! Ring the bell, hit the gong, we\'ve got a superstar on our hands! Remember back when you were just a kid??")
-mystical2.save()
+# mystical2 = models.EmployeeProfile(business=business,
+#                                   user=emp_user5,
+#                                   rating_profile=profile3,
+#                                   bio="Another lovely bio for another employee of the month! Ring the bell, hit the gong, we\'ve got a superstar on our hands! Remember back when you were just a kid??")
+# mystical2.save()
 
 moe = models.EmployeeProfile(business=keith_business,
                              user=emp_user,
                              rating_profile=keith_waiter_profile,
-                             bio='Moe grew up in South San Francisco, went to Cal, and began working at Pacific Catch in 2010. Moe hopes to get his master\'s and work in restaurant management.')
+                             bio='I grew up in South San Francisco, went to Cal, and began working at Pacific Catch in 2010. I hope to get my master\'s and work in restaurant management.')
 moe.save()
 jill = models.EmployeeProfile(business=keith_business,
                               user=emp_user2,
                               rating_profile=keith_hostess_profile,
-                              bio='Jill is from Denmark. She currently goes to art school and is studying portraiture.')
+                              bio='I am from Denmark. I currently go to art school and am studying portraiture.')
 jill.save()
 jeremy = models.EmployeeProfile(business=keith_business,
                                 user=emp_user3,
                                 rating_profile=keith_waiter_profile,
-                                bio='After graduating from Oberlin College in 1993, Jeremy tried his hand at microbrewing, but found it much too small. He is our oldest employee, and dreams of owning his own restaurant.')
+                                bio='After graduating from Oberlin College in 1993, I tried my hand at microbrewing, but found it much too small. I am our oldest employee, and dream of owning my own restaurant.')
 jeremy.save()
 josh = models.EmployeeProfile(business=keith_business,
                               user=emp_enduser,
+                              rating_profile=keith_waiter_profile,
+                              bio='Hailing from Sydney, Australia, I moved to California to experience the American lifestyle. In my free time, I love to sample the surfing sights.')
+josh.save()
+
+jordan = models.EmployeeProfile(business=keith_business,
+                                user=emp_user6,
+                                rating_profile=keith_waiter_profile,
+                                bio='Pacific Catch is the 10th restaurant I have waitressed in and it is by far the best.  I have lived in 13 states and California is definitely home for good.')
+jordan.save()
+
+jack = models.EmployeeProfile(business=keith_business,
+                              user=emp_user4,
                               rating_profile=keith_hostess_profile,
-                              bio='')
+                              bio='I am an avid extreme sportsman and chef. My favorite place to play is Lake Tahoe.')
+jack.save()
+
+sarah = models.EmployeeProfile(business=keith_business,
+                               user=emp_user5,
+                               rating_profile=keith_waiter_profile,
+                               bio='I grew up in Mill Valley and I hope to never leave. I would love to start my own chocolate studio.')
+sarah.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
@@ -219,51 +239,57 @@ quality_dim = profile1.rateddimension_set.get(title='Quality')
 for i in range(10):
     today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
     print today
-    rating1 = models.Rating(title='Awesomeness',
+    rating1 = models.Rating(title='Friendliness',
                             rating_value=5*random(),
-                            employee=master,
+                            employee=moe,
 #                            id=1,
                             date_created=today,
-                            dimension=awesomeness,
+                            dimension=friendlinessw,
                             user=userprofile)
     rating1.save()
-    rating2 = models.Rating(title='Slickness',
+    rating2 = models.Rating(title='Promptness',
                             rating_value=5*random(),
-                            employee=master,
+                            employee=jeremy,
                             date_created=today,
-                            dimension=slickness,
+                            dimension=promptness,
                             user=userprofile)
     rating2.save()
     rating3 = models.Rating(title='Quality',
                             rating_value=5*random(),
-                            employee=master,
+                            employee=jill,
+                            date_created=today,
+                            dimension=quality_dim,
+                            user=userprofile)
+    rating3 = models.Rating(title='Quality',
+                            rating_value=5*random(),
+                            employee=jill,
                             date_created=today,
                             dimension=quality_dim,
                             user=userprofile)
     rating3.save()
 
 # Make a couple of NewsFeedItems.
-nfi1 = models.NewsFeedItem(title='Apatapa arrives in Tahoe!',
-                           subtitle='proceed to code',
-                           body='After an insane amout of driving, we finally got there.',
+nfi1 = models.NewsFeedItem(title='Pacific Catch Opens Fourth Location In South Bay',
+                           subtitle='in Campbell, CA',
+                           body='We have recently opened our fourth location, in Campbell. Expect to see our innovative flavors featured on the menu every night!',
                            date=datetime.utcnow().replace(tzinfo=utc),
                            date_edited=datetime.utcnow().replace(tzinfo=utc),
-                           business=business)
+                           business=keith_business)
 
 nfi1.save()
-nfi2 = models.NewsFeedItem(title='Foo!',
-                           subtitle='Bar?',
-                           body='Baz.',
+nfi2 = models.NewsFeedItem(title='Featured Chef Chandon Clenard on CleanFish.com ',
+                           subtitle='committed to a more sustainable future',
+                           body='Chef Chandon believes that a healthy environment is the most important part of Pacific Catch.',
                            date=datetime.utcnow().replace(tzinfo=utc),
                            date_edited=datetime.utcnow().replace(tzinfo=utc),
-                           business=business)
+                           business=keith_business)
 nfi2.save()
-nfi3 = models.NewsFeedItem(title='Try our new parrots!',
-                           subtitle='Delicious, nutritious.',
-                           body='These parrots are selling for a dollar.',
+nfi3 = models.NewsFeedItem(title='Pacific Catch on Apatapa!',
+                           subtitle='check us out on your iPhone',
+                           body='We hope that using Apatapa will allow us to give our customers a better experience.',
                            date=datetime.utcnow().replace(tzinfo=utc),
                            date_edited=datetime.utcnow().replace(tzinfo=utc),
-                           business=business)
+                           business=keith_business)
 nfi3.save()
 
 # Make Surveys.
@@ -271,44 +297,46 @@ s1 = models.Survey(title='Emacs?', description='Text editor of the gods.', busin
 s1.save()
 s2 = models.Survey(title='Apatapa?', description='Apps providing apatapa through apps providing apatapa', business=business2)
 s2.save()
+s3 = models.Survey(title='Feedback', description='We want your help improving Pacific Catch.', business=keith_business)
+s3.save()
 
 # Make Questions.
-q1 = models.Question(label='Yes or no?', type='RG', options=['yes', 'no'], survey=s1)
+q1 = models.Question(label='Would you join us for live jazz on Thursday nights?', type='RG', options=['yes', 'no'], survey=s3)
 q1.save()
-q2 = models.Question(label='African swallow or European swallow?', type='CG', options=['yes', 'no'], survey=s1)
+q2 = models.Question(label='Are these good locations for the next Pacific Catch', type='CG', options=['Burlingame', 'Orinda', 'Lucas Valley'], survey=s3)
 q2.save()
-q3 = models.Question(label='What is your favorite color?', type='TF', options=[], survey=s1)
+q3 = models.Question(label='What do you wish we served?', type='TF', options=[], survey=s3)
 q3.save()
-q4 = models.Question(label='Tell us your life story', type='TA', survey=s1)
+q4 = models.Question(label='Tell us your favorite Pacific Catch story.', type='TA', survey=s3)
 q4.save()
 
 # Write responses.
-qr1 = models.QuestionResponse(question=q1,
-                              response=['yes'],
-                              date_created=datetime.utcnow().replace(tzinfo=utc),
-                              user=userprofile)
-qr1.save()
+# qr1 = models.QuestionResponse(question=q1,
+#                               response=['yes'],
+#                               date_created=datetime.utcnow().replace(tzinfo=utc),
+#                               user=userprofile)
+# qr1.save()
 
 for i in range(10):
     today = datetime.utcnow().replace(tzinfo=utc)+timedelta(days=i)
     options = ["yes","no"]
     profiles = [userprofile,userprofile2]
     which = options[int(2*random())]
-    qr2 = models.QuestionResponse(question=q2,
+    qr2 = models.QuestionResponse(question=q1,
                                   response=[which],
                                   date_created=today,
                                   user=profiles[int(random()*2)])
     qr2.save()
 
-,qr3 = models.QuestionResponse(question=q3,
-                              response=['aaargh!'],
+qr3 = models.QuestionResponse(question=q3,
+                              response=['Ahi tuna'],
                               date_created=datetime.utcnow().replace(tzinfo=utc),
                               user=userprofile)
 qr3.save()
 qr4 = models.QuestionResponse(question=q4,
-                              response=['Life story HERE.'],
+                              response=['I came to Pacific Catch on my birthday with my family, and had a great time!'],
                               date_created=datetime.utcnow().replace(tzinfo=utc),
-                              user=userprofile)
+                              user=userprofile2)
 qr4.save()
 
 

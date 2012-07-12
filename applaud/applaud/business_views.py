@@ -315,7 +315,7 @@ def manage_survey(request):
     survey = ""
     # Get the business' survey.
     try:
-        survey = profile.survey_set.get(pk=1)
+        survey = profile.survey_set.all()[0]
     except models.Survey.DoesNotExist:
         survey = models.Survey(title="",description="",business=profile)
 
