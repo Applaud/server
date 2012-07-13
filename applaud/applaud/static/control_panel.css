@@ -75,6 +75,12 @@
     width: 320px;
     height: 411px;
     overflow: hidden; }
+    #iphone_preview #iphone_screen #iphone_description {
+      position: relative;
+      height: 60px;
+      padding: 10px;
+      text-align: center;
+      overflow: auto; }
     #iphone_preview #iphone_screen .navbar {
       position: relative;
       left: 0px;

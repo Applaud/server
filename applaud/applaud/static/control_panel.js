@@ -40,9 +40,14 @@ if(! apatapa.business.control_panel ){
 	
 	// Allow us to update the title on the iPhone.
 	$('#survey_title').keyup(function () {
-	    console.log($(this).val());
 	    apatapa.business.control_panel.updateTitle($(this).val());
 	});
+	
+	// Same for the description.
+	$('#survey_description').keyup( function () {
+	    apatapa.business.control_panel.updateDescription($(this).val());
+	});
+	
 	// This creates the sub-tabs for the control panel
 	$(".control_panel_div").hide();
 	$("#home_div").show();
@@ -272,6 +277,10 @@ if(! apatapa.business.control_panel ){
     _ns.updateTitle = function (title) {
 	console.log('update title');
 	$('#iphone_title').html(title);
+    }
+    
+    _ns.updateDescription = function (text) {
+	$('#iphone_description').html(text);
     }
     
 })(apatapa.business.control_panel);

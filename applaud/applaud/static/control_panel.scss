@@ -117,7 +117,7 @@ $border-grey: #e0e0e0;
     -moz-box-shadow:0px 3px 8px #aaa;
     -webkit-box-shadow:0px 3px 8px #aaa;
     box-shadow:0px 3px 8px #aaa;
-    border-radius:50px;;
+    border-radius:50px;
     #iphone_screen {
 	position:relative;
 	left:21px;
@@ -126,7 +126,13 @@ $border-grey: #e0e0e0;
 	width:320px;
 	height:411px;
 	overflow:hidden;
-
+	#iphone_description {
+	    position:relative;
+	    height:60px;
+	    padding:10px;
+	    text-align:center;
+	    overflow:auto;
+	}
 	.navbar {
 	    position:relative;
 	    left:0px;
