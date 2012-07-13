@@ -34,6 +34,22 @@ strong {
     height:64px;
     vertical-align:middle;
 }
+/* any form field/label pair */
+.formfield {
+    display:block;
+    margin: {
+	top:10px;
+	bottom:10px;
+    }
+    input, textarea {
+	margin-top:5px;
+	width:100%;
+	font-family:'Lucida Grande';
+	font-size:11px;
+	vertical-align:text-top;
+    }
+}
+
 
 /* iphone preview */
 #iphone_preview {
@@ -152,34 +168,12 @@ strong {
 	    }
 	}
     }
-    /* any form field/label pair */
-    .formfield {
-	display:block;
-	margin: {
-	    top:10px;
-	    bottom:10px;
-	}
-	input, textarea {
-	    margin-top:5px;
-	    width:100%;
-	    font-family:'Lucida Grande';
-	    font-size:11px;
-	    vertical-align:text-top;
-	}
-    }
 }
 
 /************
  * Questions
  */
 
-/* title+label of survey */
-/* summary view of a question */
-.titlediv, .descriptiondiv {
-    input, textarea {
-	width:100%;
-    }
-}
 .question_visible_div {
     textarea {
 	width:100%;

@@ -26,6 +26,18 @@ strong {
   height: 64px;
   vertical-align: middle; }
 
+/* any form field/label pair */
+.formfield {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px; }
+  .formfield input, .formfield textarea {
+    margin-top: 5px;
+    width: 100%;
+    font-family: 'Lucida Grande';
+    font-size: 11px;
+    vertical-align: text-top; }
+
 /* iphone preview */
 #iphone_preview {
   background-image: url("/static/iphoneTemplate.png");
@@ -84,8 +96,7 @@ strong {
   /* edit and delete buttons together */
   /* The date paragraph. */
   /* Textareas look better when they match text field inputs. */
-  /* the image input with image preview */
-  /* any form field/label pair */ }
+  /* the image input with image preview */ }
   .feed .nftitle {
     font-weight: bold;
     display: block;
@@ -118,25 +129,10 @@ strong {
       font-family: 'Lucida Grande';
       font-size: 11px;
       vertical-align: text-top; }
-  .feed .formfield {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 10px; }
-    .feed .formfield input, .feed .formfield textarea {
-      margin-top: 5px;
-      width: 100%;
-      font-family: 'Lucida Grande';
-      font-size: 11px;
-      vertical-align: text-top; }
 
 /************
  * Questions
  */
-/* title+label of survey */
-/* summary view of a question */
-.titlediv input, .titlediv textarea, .descriptiondiv input, .descriptiondiv textarea {
-  width: 100%; }
-
 .question_visible_div textarea {
   width: 100%; }
 .question_visible_div .expand_button, .question_visible_div .contract_button {
