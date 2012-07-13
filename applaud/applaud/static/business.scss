@@ -99,27 +99,56 @@ strong {
  */
 .feed {
     padding:10px;
-    input {
-	margin:10px auto;
-    }
     .nf_delete_button {
 	margin-top: 10px;
-//	background-color:$deletecolor;
     }
     /* The date paragraph. */
     p {
 	margin:5px auto;
     }
     /* Textareas look better when they match text field inputs. */
-    textarea {
-	font-family:'Lucida Grande';
-	font-size:11px;
-    }
-    .nfimage {
-	float:right;
-    }
     .nftitle {
 	font-weight:bold;
+    }
+    .image_input {
+	float:left;
+    }
+    /* the image input with image preview */
+    .imagediv {
+	height:68px;
+	display: block;
+	img {
+    	    float:left;
+    	    vertical-align:text-center;
+	    width:64px;
+	    height:64px;
+	    margin-right:10px;
+	}
+	/* the image input */
+	.imgfield {
+	    input {
+		width:80%;
+		margin-top:5px;
+		font-family:'Lucida Grande';
+		font-size:11px;
+		vertical-align:text-top;
+	    }
+	}
+    }
+    /* any form field/label pair */
+    .formfield {
+	display:block;
+	margin: {
+	    top:10px;
+	    bottom:10px;
+	}
+	input, textarea {
+	    margin-top:5px;
+	    width:100%;
+	    font-family:'Lucida Grande';
+	    font-size:11px;
+	    vertical-align:text-top;
+	}
     }
 }
 
