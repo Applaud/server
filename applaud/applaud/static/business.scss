@@ -115,7 +115,12 @@ strong {
     }
     /* edit and delete buttons together */
     .deleteedit {
+	width:200px;
+	text-align:right;
 	float:right;
+    }
+    .nf_cancel_button, .nf_edit_button {
+	display:inline;
     }
     /* The date paragraph. */
     p {

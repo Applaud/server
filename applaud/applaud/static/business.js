@@ -872,33 +872,35 @@ if (! apatapa.business) {
 			      'name':'feed_edit_button_'+i});
 	    edit_button.html("Edit");
 	    edit_button.click(function() {
-	    	// pointer to this button
-	    	var buttonInstance = $(this);
-	    	// // index of this newsfeeditem
-	    	var index = $(this).prop('id').split('_')[3];
-	    	// what we do when "edit" is clicked
-	    	var editfunction = function() {
-	    	    // Change this button to an "OK" button, and change the
-	    	    // click handler.
-	    	    $('#nf_editing_form').hide("fast");
-	    	    $('#nf_editing_form').remove();
-	    	    buttonInstance.html("Cancel");
-	    	    buttonInstance.click(function() {
-	    	    	$('#nf_editing_form').hide("fast");
-	    	    	$('#nf_editing_form').remove();
-	    	    	buttonInstance.html("Edit");
-	    	    	buttonInstance.click(function(){editfunction();});
-	    	    });
-	    	    editFeed(index);
-	    	};
-	    	editfunction();
+	    	// Change this button to an "OK" button, and change the
+	    	// click handler.
+		$(this).hide();
+		cancel_button.css("display","inline");
+		var index = edit_button.prop('id').split('_')[3];
+	    	$('#nf_editing_form').hide("fast");
+	    	$('#nf_editing_form').remove();
+	    	editFeed(index);
 	    });
+	    var cancel_button = $('<button></button>');
+	    cancel_button.prop({'type':'button',
+				'class':'nf_cancel_button',
+				'id':'feed_cancel_button_'+i,
+				'name':'feed_cancel_button_'+i});
+	    cancel_button.html("Cancel");
+	    cancel_button.click(function() {
+		$(this).hide();
+		edit_button.css("display","inline");
+		$('#nf_editing_form').hide("fast");
+	    	$('#nf_editing_form').remove();
+	    });
+	    cancel_button.hide();
 
 	    var buttonsSpan = $('<span></span>');
 	    buttonsSpan.addClass("deleteedit");
 	    buttonsSpan
 		.append(delete_button)
-		.append(edit_button);
+		.append(edit_button)
+		.append(cancel_button);
 
 	    // Add this item to the rest of the listings.
 	    $('#newsfeeds').append(feed_div

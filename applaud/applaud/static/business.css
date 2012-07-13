@@ -93,7 +93,11 @@ strong {
   .feed .nfdate {
     margin-right: 10px; }
   .feed .deleteedit {
+    width: 200px;
+    text-align: right;
     float: right; }
+  .feed .nf_cancel_button, .feed .nf_edit_button {
+    display: inline; }
   .feed p {
     margin: 5px auto; }
   .feed .image_input {
