@@ -6,17 +6,31 @@
 
 #stats_choice_div {
   float: right;
-  width: 400px;
+  width: 330px;
   height: 550px; }
 
+#employee_stats_choice_div h3 {
+  border: 2px solid #e0e0e0; }
+
 #info {
-  width: 550px;
-  height: 550px;
-  overflow: auto;
-  float: left; }
+  width: 615px;
+  height: 590px;
+  float: left;
+  overflow: auto; }
 
 #graph_div {
-  border: thin dotted gray; }
+  width: 605px;
+  margin-left: 5px;
+  border: none;
+  margin-bottom: 5px;
+  -moz-box-shadow: 0px 0px 8px #aaaaaa;
+  -webkit-box-shadow: 0px 0px 8px #aaaaaa;
+  box-shadow: 0px 0px 8px #aaaaaa; }
+
+#gt_dateslider {
+  width: 575px;
+  margin-left: 10px;
+  margin-top: 5px; }
 
 #survey_div {
   border: thin dotted gray; }
@@ -26,14 +40,21 @@
   margin: 0px;
   padding: 0px; }
 
+#employee_table {
+  -moz-box-shadow: 0px px 8px #aaaaaa;
+  -webkit-box-shadow: 0px 0px 8px #aaaaaa;
+  box-shadow: 0px 0px 8px #aaaaaa; }
+
 #survey_table table, #employee_table table {
   width: 100%; }
-  #survey_table table th, #survey_table table td, #employee_table table th, #employee_table table td {
-    padding-top: 7px;
-    padding-bottom: 3px; }
 
-#choice_nav_bar {
-  float: right; }
+#survey_table table th, #survey_table table td, #employee_table table th, #employee_table table td {
+  padding-top: 7px;
+  padding-bottom: 3px; }
+
+#table_div {
+  width: 610px;
+  margin-left: 5px; }
 
 .selected {
   background-color: #646464; }
@@ -54,3 +75,29 @@
 .first_row {
   background-color: #6666BB;
   font-weight: bold; }
+
+#main {
+  height: 650px; }
+
+.choice_list {
+  margin-top: 5px;
+  margin-bottom: 4px;
+  padding-left: 25px;
+  padding-bottom: 0px;
+  padding-top: 5px; }
+  .choice_list li {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: inline;
+    border: 2px solid;
+    border-color: #e0e0e0;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff)";
+    background: -webkit-linear-gradient(bottom, #e0e0e0, white);
+    background: -moz-linear-gradient(90deg, #e0e0e0, white);
+    padding: 0 10px;
+    cursor: pointer; }
+  .choice_list li.selected {
+    background: #ffffff;
+    border-bottom-color: #ffffff;
+    z-index: 1; }
