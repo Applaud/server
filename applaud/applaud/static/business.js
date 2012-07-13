@@ -669,18 +669,32 @@ if (! apatapa.business) {
 			  'id': 'id_feed_id',
 			  'name': 'feed_id'});
 	    
+	    var imgDiv = $('<div></div>');
+	    imgDiv.addClass('imagediv');
 	    var img = $('<img />');
 	    img.prop({'src': image,
 		      'class': 'nfimage',
 		      'alt': title});
 	    
+	    var imgFieldDiv = $('<div></div>');
+	    imgFieldDiv.addClass('imgfield');
+	    var img_label = $('<label>Image</label>');
+	    img_label.prop("for","nf_image");
 	    var img_input = $('<input />');
 	    img_input.prop({'type': 'file',
 			    'accept': 'image/*',
 			    'class': 'image_input',
 			    'name': 'nf_image',
 			    'id': 'nf_image'});
+	    imgDiv
+		.append(img)
+		.append(
+		    imgFieldDiv
+			.append(img_label)
+			.append(img_input));
 	    
+	    var title_label = $('<label>Title</label>');
+	    title_label.prop("for","title");
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
 			     'type': 'text',
@@ -695,13 +709,18 @@ if (! apatapa.business) {
 	    var date_text = $('<p></p>');
 	    date_text.html(date + ' (last edited ' + date_edited + ')');
 
+	    var subtitle_label = $('<label>Subtitle</label>');
+	    subtitle_label.prop("for","nfsubtitle");
 	    var subtitle_text = $('<input />');
 	    subtitle_text.prop({'type': 'text',
 				'name': 'subtitle',
 				'class': 'nfsubtitle',
+				'name': 'nfsubtitle',
 				'id': 'id_subtitle',
 				'value': subtitle});
 	    
+	    var body_label = $('<label>Body</label>');
+	    body_label.prop("for","body");
 	    var body_text = $('<textarea></textarea>');
 	    body_text.prop({'class':'nfbody',
 			    'name': 'body',
@@ -732,23 +751,26 @@ if (! apatapa.business) {
 			   "method": "POST",
 			   "enctype": "multipart/form-data",
 			   "id":"nf_editing_form"});
+
+	    var wrapFormField = function() {
+		var newDiv = $('<div></div>');
+		newDiv.addClass("formfield");
+		return newDiv;
+	    };
 	    
 	    editForm
 		.append(csrf_field)
-		.append('Title: ')
 	    	.append(feed_id)
-	    	.append(img)
-	    	.append(title_text)
-	    	.append('<br />')
-	    	.append('Image: ')
-	    	.append(img_input)
-	    	.append(date_text)
-	    	.append('Subtitle: ')
-	    	.append(subtitle_text)
-	    	.append('<br />')
-	    	.append('Body: ')
-	    	.append(body_text)
-	    	.append('<br />');
+		.append(wrapFormField()
+			.append(title_label)
+	    		.append(title_text))
+		.append(imgDiv)
+		.append(wrapFormField()
+			.append(subtitle_label)
+	    		.append(subtitle_text))
+		.append(wrapFormField()
+			.append(body_label)
+	    		.append(body_text));
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
 	    editForm.append(submitButton);
@@ -872,6 +894,12 @@ if (! apatapa.business) {
 	    	editfunction();
 	    });
 
+	    var buttonsSpan = $('<span></span>');
+	    buttonsSpan.addClass("deleteedit");
+	    buttonsSpan
+		.append(delete_button)
+		.append(edit_button);
+
 	    // Add this item to the rest of the listings.
 	    $('#newsfeeds').append(feed_div
 	    			   .append(title_text)
@@ -881,8 +909,7 @@ if (! apatapa.business) {
 	    			   .append(feed_id)
 	    			   .append(date_text)
 				   .append(date_edited_text)
-	    			   .append(delete_button)
-				   .append(edit_button));
+				   .append(buttonsSpan));
 
 	    // Animate! (oooooh----aaaaaaaaaaah....)
 	    if( animated ) {
