@@ -79,6 +79,8 @@ MEDIA_URL = '/media/'
 
 # Path to the default profile picture
 DEFAULT_PROFILE_IMAGE = 'default.jpg'
+# Path to image for 'no image' display
+NO_IMAGE = 'noimage.png'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
