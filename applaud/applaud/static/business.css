@@ -78,21 +78,65 @@ strong {
  */
 .feed {
   padding: 10px;
+  /* the title in summary view */
+  /* the date created in summary view */
+  /* last time edited in summaryview */
+  /* edit and delete buttons together */
   /* The date paragraph. */
-  /* Textareas look better when they match text field inputs. */ }
-  .feed input {
-    margin: 10px auto; }
-  .feed .nf_delete_button {
-    margin-top: 10px; }
+  /* Textareas look better when they match text field inputs. */
+  /* the image input with image preview */
+  /* any form field/label pair */ }
+  .feed .nftitle {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px; }
+  .feed .nfdate {
+    margin-right: 10px; }
+  .feed .deleteedit {
+    width: 200px;
+    text-align: right;
+    float: right; }
+  .feed .nf_cancel_button, .feed .nf_edit_button {
+    display: inline; }
   .feed p {
     margin: 5px auto; }
-  .feed textarea {
-    font-family: 'Lucida Grande';
-    font-size: 11px; }
-  .feed .nfimage {
-    float: right; }
-  .feed .nftitle {
-    font-weight: bold; }
+  .feed .image_input {
+    float: left; }
+  .feed .imagediv {
+    height: 68px;
+    display: block;
+    /* the image input */ }
+    .feed .imagediv img {
+      float: left;
+      vertical-align: text-center;
+      width: 64px;
+      height: 64px;
+      margin-right: 10px; }
+    .feed .imagediv .imgfield input {
+      width: 80%;
+      margin-top: 5px;
+      font-family: 'Lucida Grande';
+      font-size: 11px;
+      vertical-align: text-top; }
+  .feed .formfield {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px; }
+    .feed .formfield input, .feed .formfield textarea {
+      margin-top: 5px;
+      width: 100%;
+      font-family: 'Lucida Grande';
+      font-size: 11px;
+      vertical-align: text-top; }
+
+/************
+ * Questions
+ */
+/* summary view of a question */
+.question_visible_div textarea {
+  width: 100%; }
+.question_visible_div .expand_button, .question_visible_div .contract_button {
+  float: right; }
 
 .question_optionlist {
   padding-top: 10px; }
