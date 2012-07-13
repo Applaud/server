@@ -2,6 +2,11 @@ $deletecolor: rgb(255,100,100);
 $lightpink: rgb(255,235,250);
 $browncolor: rgb(44,30,30);	// dark brown color for header/footer
 $border-grey: #e0e0e0;
+$shadow-color: #aaa;
+
+h2 {
+    font-size:14pt;
+}
 
 #control_panel {
     padding: {
@@ -9,9 +14,9 @@ $border-grey: #e0e0e0;
     }
     overflow:auto;
     width:550px;
-    -moz-box-shadow:0px px 8px #aaa;
-    -webkit-box-shadow:0px 0px 8px #aaa;
-    box-shadow:0px 0px 8px #aaa;
+    -moz-box-shadow:0px px 8px $shadow-color;
+    -webkit-box-shadow:0px 0px 8px $shadow-color;
+    box-shadow:0px 0px 8px $shadow-color;
     #control_panel_heading {
 	margin: {
 	    left:10px
@@ -67,11 +72,29 @@ $border-grey: #e0e0e0;
     }
 }
 
-#manage_employees {
+#control_panel_employees_div {
+    .cp_employee_div {
+	margin:5px;
+	.extra_employee_row {
+	    margin:5px;
+	}
+	h2 {
+	    display:inline;
+	}
+    }
     #newemployeeform {
 	margin: {
 	    top: 30px;
 	    bottom: 30px;
+	}
+	.employee_info {
+	    margin:5px;
+	}
+	h2 {
+	    margin: {
+		bottom:10px;
+		left:0;
+	    }
 	}
 	display:block;
     }
@@ -114,9 +137,9 @@ $border-grey: #e0e0e0;
     height:710px;
     float:right;
     font-family:"Helvetica", sans-serif;
-    -moz-box-shadow:0px 3px 8px #aaa;
-    -webkit-box-shadow:0px 3px 8px #aaa;
-    box-shadow:0px 3px 8px #aaa;
+    -moz-box-shadow:0px 3px 8px $shadow-color;
+    -webkit-box-shadow:0px 3px 8px $shadow-color;
+    box-shadow:0px 3px 8px $shadow-color;
     border-radius:50px;
     #iphone_screen {
 	position:relative;
@@ -183,8 +206,8 @@ $border-grey: #e0e0e0;
     width:200px;
     heigth:250px;
     padding:20px;
-//    -moz-box-shadow:0px 10px 10px #aaa;
-    -webkit-box-shadow:0px 0px 10px #aaa;
-    box-shadow:0px 10px 10px #aaa;
+//    -moz-box-shadow:0px 10px 10px $shadow-color;
+    -webkit-box-shadow:0px 0px 10px $shadow-color;
+    box-shadow:0px 10px 10px $shadow-color;
     -moz-transform:rotate(-2deg);
 }
