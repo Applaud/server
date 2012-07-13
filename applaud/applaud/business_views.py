@@ -712,7 +712,7 @@ def manage_newsfeed(request):
         feed = models.NewsFeedItem.objects.get(id=feed_id)
         feed.title = request.POST['title']
         feed.body = request.POST['body']
-        feed.subtitle = request.POST['subtitle']
+        feed.subtitle = request.POST['nfsubtitle']
         feed.date_edited = datetime.utcnow().replace(tzinfo=utc)
         feed.save()
 
