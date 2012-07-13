@@ -173,7 +173,13 @@ strong {
  * Questions
  */
 
+/* title+label of survey */
 /* summary view of a question */
+.titlediv, .descriptiondiv {
+    input, textarea {
+	width:100%;
+    }
+}
 .question_visible_div {
     textarea {
 	width:100%;
@@ -182,6 +188,7 @@ strong {
 	float:right;
     }
 }
+/* option list for a question */
 .question_optionlist {
     padding-top:10px;
 

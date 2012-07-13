@@ -132,12 +132,17 @@ strong {
 /************
  * Questions
  */
+/* title+label of survey */
 /* summary view of a question */
+.titlediv input, .titlediv textarea, .descriptiondiv input, .descriptiondiv textarea {
+  width: 100%; }
+
 .question_visible_div textarea {
   width: 100%; }
 .question_visible_div .expand_button, .question_visible_div .contract_button {
   float: right; }
 
+/* option list for a question */
 .question_optionlist {
   padding-top: 10px; }
   .question_optionlist label {
