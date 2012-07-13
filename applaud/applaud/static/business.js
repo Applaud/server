@@ -765,10 +765,6 @@ if (! apatapa.business) {
 			.append(title_label)
 	    		.append(title_text))
 		.append(imgDiv)
-		// .append(.append('<div></div>')
-		// 	.append(img)
-		// 	.append(img_label)
-	    	// 	.append(img_input))
 		.append(wrapFormField()
 			.append(subtitle_label)
 	    		.append(subtitle_text))
@@ -898,6 +894,12 @@ if (! apatapa.business) {
 	    	editfunction();
 	    });
 
+	    var buttonsSpan = $('<span></span>');
+	    buttonsSpan.addClass("deleteedit");
+	    buttonsSpan
+		.append(delete_button)
+		.append(edit_button);
+
 	    // Add this item to the rest of the listings.
 	    $('#newsfeeds').append(feed_div
 	    			   .append(title_text)
@@ -907,8 +909,7 @@ if (! apatapa.business) {
 	    			   .append(feed_id)
 	    			   .append(date_text)
 				   .append(date_edited_text)
-	    			   .append(delete_button)
-				   .append(edit_button));
+				   .append(buttonsSpan));
 
 	    // Animate! (oooooh----aaaaaaaaaaah....)
 	    if( animated ) {

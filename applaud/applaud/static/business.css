@@ -78,16 +78,24 @@ strong {
  */
 .feed {
   padding: 10px;
+  /* the title in summary view */
+  /* the date created in summary view */
+  /* last time edited in summaryview */
+  /* edit and delete buttons together */
   /* The date paragraph. */
   /* Textareas look better when they match text field inputs. */
   /* the image input with image preview */
   /* any form field/label pair */ }
-  .feed .nf_delete_button {
-    margin-top: 10px; }
+  .feed .nftitle {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px; }
+  .feed .nfdate {
+    margin-right: 10px; }
+  .feed .deleteedit {
+    float: right; }
   .feed p {
     margin: 5px auto; }
-  .feed .nftitle {
-    font-weight: bold; }
   .feed .image_input {
     float: left; }
   .feed .imagediv {

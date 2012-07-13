@@ -99,17 +99,29 @@ strong {
  */
 .feed {
     padding:10px;
-    .nf_delete_button {
-	margin-top: 10px;
+    /* the title in summary view */
+    .nftitle {
+	font-weight:bold;
+	display:block;
+	margin-bottom:15px;
+    }
+    /* the date created in summary view */
+    .nfdate {
+	margin-right:10px;
+    }
+    /* last time edited in summaryview */
+    .nfdateedited {
+
+    }
+    /* edit and delete buttons together */
+    .deleteedit {
+	float:right;
     }
     /* The date paragraph. */
     p {
 	margin:5px auto;
     }
     /* Textareas look better when they match text field inputs. */
-    .nftitle {
-	font-weight:bold;
-    }
     .image_input {
 	float:left;
     }
