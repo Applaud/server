@@ -75,6 +75,11 @@ h2 {
 #control_panel_employees_div {
     .cp_employee_div {
 	margin:5px;
+	.cp_employee_row {
+	    .profileexpand {
+		float:right;
+	    }
+	}
 	.extra_employee_row {
 	    margin:5px;
 	}

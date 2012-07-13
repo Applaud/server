@@ -124,14 +124,11 @@ if(! apatapa.business.control_panel ){
 
 			    error: function() { alert("There was an ungodly error!"); },
 			    success: function (data) {
-				// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
 				var emp_expand = $("<div>"+data['bio']+"</div>");
 				$("#employee_div_"+emp_id).append(data['bio']);
 				$("#employee_div_"+emp_id).show();
 				$("#employee_div_"+emp_id).prop("shown", "true");
-				
 			    }
-			    
 			   });
 		    $(this).html('-');
 		}
@@ -142,7 +139,7 @@ if(! apatapa.business.control_panel ){
 	    }
 	    else {
 		$(this).html('+');
-		$(this).parent().siblings(".hidden").hide();
+		$("#employee_div_"+emp_id).hide();
 	    }
 	});
 	

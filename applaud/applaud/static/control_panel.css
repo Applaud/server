@@ -49,6 +49,8 @@ h2 {
 
 #control_panel_employees_div .cp_employee_div {
   margin: 5px; }
+  #control_panel_employees_div .cp_employee_div .cp_employee_row .profileexpand {
+    float: right; }
   #control_panel_employees_div .cp_employee_div .extra_employee_row {
     margin: 5px; }
   #control_panel_employees_div .cp_employee_div h2 {
