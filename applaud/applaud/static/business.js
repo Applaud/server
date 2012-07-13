@@ -1092,7 +1092,11 @@ if (! apatapa.business) {
 				  'class': "contract_button"});
 	    
 
-	    question_visible_div.append(questionAreaLabel).append(questionArea).append(expand_button).append(contract_button);
+	    question_visible_div
+		.append(questionAreaLabel)
+		.append(expand_button)
+		.append(contract_button)
+		.append(questionArea);
 
 	    // All the other fields will initially be hidden, and in this div
 	    var question_hidden_div = $("<div></div>");

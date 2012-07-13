@@ -169,7 +169,19 @@ strong {
     }
 }
 
+/************
+ * Questions
+ */
 
+/* summary view of a question */
+.question_visible_div {
+    textarea {
+	width:100%;
+    }
+    .expand_button, .contract_button {
+	float:right;
+    }
+}
 .question_optionlist {
     padding-top:10px;
 
