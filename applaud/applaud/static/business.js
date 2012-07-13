@@ -872,10 +872,15 @@ if (! apatapa.business) {
 			      'name':'feed_edit_button_'+i});
 	    edit_button.html("Edit");
 	    edit_button.click(function() {
-	    	// Change this button to an "OK" button, and change the
-	    	// click handler.
+		// Make sure there are no other "cancel" buttons
+		$('.nf_cancel_button').hide();
+		$('.nf_edit_button').show();
+
+		// Hide this edit button
 		$(this).hide();
+		// Turn on the cancel button
 		cancel_button.css("display","inline");
+
 		var index = edit_button.prop('id').split('_')[3];
 	    	$('#nf_editing_form').hide("fast");
 	    	$('#nf_editing_form').remove();
