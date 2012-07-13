@@ -130,8 +130,8 @@ h2 {
 #sticky {
   background-color: #fff490;
   width: 200px;
-  heigth: 250px;
   padding: 20px;
   -webkit-box-shadow: 0px 0px 10px #aaaaaa;
   box-shadow: 0px 10px 10px #aaaaaa;
-  -moz-transform: rotate(-2deg); }
+  -moz-transform: rotate(-2deg);
+  -webkit-transform: rotate(-2deg); }
