@@ -12,8 +12,9 @@ h2 {
     padding: {
 	top:8px;
     }
-    overflow:auto;
+    overflow:scroll;
     width:550px;
+    height:710px;
     -moz-box-shadow:0px px 8px $shadow-color;
     -webkit-box-shadow:0px 0px 8px $shadow-color;
     box-shadow:0px 0px 8px $shadow-color;
@@ -75,6 +76,11 @@ h2 {
 #control_panel_employees_div {
     .cp_employee_div {
 	margin:5px;
+	.cp_employee_row {
+	    .profileexpand {
+		float:right;
+	    }
+	}
 	.extra_employee_row {
 	    margin:5px;
 	}
