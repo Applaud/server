@@ -214,6 +214,8 @@ h2 {
     font-family: 'The Girl Next Door', cursive;
     background-color:rgb(255, 244, 144);
     width:200px;
+    font-family:'Marker Felt';
+    font-size:20px;
     padding:20px;
     @include shadow(8px, #aaa, 0px, 10px);
     -moz-transform:rotate(-2deg);
