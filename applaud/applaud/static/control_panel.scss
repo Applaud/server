@@ -1,3 +1,5 @@
+@import "applaud.scss";
+
 $deletecolor: rgb(255,100,100);
 $lightpink: rgb(255,235,250);
 $browncolor: rgb(44,30,30);	// dark brown color for header/footer
@@ -15,9 +17,9 @@ h2 {
     overflow:scroll;
     width:550px;
     height:710px;
-    -moz-box-shadow:0px px 8px $shadow-color;
-    -webkit-box-shadow:0px 0px 8px $shadow-color;
-    box-shadow:0px 0px 8px $shadow-color;
+    
+    @include shadow(8px);
+    
     #control_panel_heading {
 	margin: {
 	    left:10px
