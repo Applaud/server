@@ -16,7 +16,7 @@ h2 {
     }
     overflow:scroll;
     width:550px;
-    height:710px;
+    height:700px;
     
     @include shadow(8px);
     
@@ -59,7 +59,6 @@ h2 {
 }
 
 .control_panel_div {
-    height: 600px;
     border: 2px solid;
     border-color:$border-grey;
     border-top-radius:15px;
@@ -78,7 +77,9 @@ h2 {
 #control_panel_employees_div {
     .cp_employee_div {
 	margin:5px;
+	background-color:$lightpink;
 	.cp_employee_row {
+	    height:40px;
 	    .profileexpand {
 		float:right;
 	    }
@@ -210,12 +211,11 @@ h2 {
 }
 
 #sticky {
+    font-family: 'The Girl Next Door', cursive;
     background-color:rgb(255, 244, 144);
     width:200px;
     padding:20px;
-//    -moz-box-shadow:0px 10px 10px $shadow-color;
-    -webkit-box-shadow:0px 0px 10px $shadow-color;
-    box-shadow:0px 10px 10px $shadow-color;
+    @include shadow(8px, #aaa, 0px, 10px);
     -moz-transform:rotate(-2deg);
     -webkit-transform:rotate(-2deg);
 }

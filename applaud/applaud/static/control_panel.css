@@ -240,7 +240,7 @@ h2 {
   padding-top: 8px;
   overflow: scroll;
   width: 550px;
-  height: 710px;
+  height: 700px;
   -moz-box-shadow: 0px 0px 8px #aaaaaa;
   -webkit-box-shadow: 0px 0px 8px #aaaaaa;
   box-shadow: 0px 0px 8px #aaaaaa; }
@@ -271,7 +271,6 @@ h2 {
     z-index: 1; }
 
 .control_panel_div {
-  height: 600px;
   border: 2px solid;
   border-color: #e0e0e0;
   border-top-radius: 15px;
@@ -284,9 +283,12 @@ h2 {
     height: 5px; }
 
 #control_panel_employees_div .cp_employee_div {
-  margin: 5px; }
-  #control_panel_employees_div .cp_employee_div .cp_employee_row .profileexpand {
-    float: right; }
+  margin: 5px;
+  background-color: #ffebfa; }
+  #control_panel_employees_div .cp_employee_div .cp_employee_row {
+    height: 40px; }
+    #control_panel_employees_div .cp_employee_div .cp_employee_row .profileexpand {
+      float: right; }
   #control_panel_employees_div .cp_employee_div .extra_employee_row {
     margin: 5px; }
   #control_panel_employees_div .cp_employee_div h2 {
@@ -366,10 +368,12 @@ h2 {
         font-size: 14px; }
 
 #sticky {
+  font-family: 'The Girl Next Door', cursive;
   background-color: #fff490;
   width: 200px;
   padding: 20px;
-  -webkit-box-shadow: 0px 0px 10px #aaaaaa;
-  box-shadow: 0px 10px 10px #aaaaaa;
+  -moz-box-shadow: 0px 10px 8px #aaaaaa;
+  -webkit-box-shadow: 0px 10px 8px #aaaaaa;
+  box-shadow: 0px 10px 8px #aaaaaa;
   -moz-transform: rotate(-2deg);
   -webkit-transform: rotate(-2deg); }

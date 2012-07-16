@@ -134,7 +134,7 @@ strong {
  * Questions
  */
 .question_visible_div textarea {
-  width: 100%; }
+  width: 90%; }
 .question_visible_div .expand_button, .question_visible_div .contract_button {
   float: right; }
 
