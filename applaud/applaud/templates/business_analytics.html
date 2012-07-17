@@ -17,17 +17,16 @@ Employee Information
 <h1>Employee Analytics</h1>
 
 <div id="nav_bar">
-<div id="choice_nav_bar">
-  <button class="employee_link">Employees</button>
-    <button class="survey_link">Survey</button>
-</div>
-<div id="info_nav_bar">
-    <button class="graph_link">Graph</button>
-    <button class="table_link">Table</button>
-</div>
+
 </div>
 
 <div id="stats_choice_div">
+  <div id="choice_nav_bar">
+    <ul class="choice_list">  
+      <li class="employee_link">Employees</li>
+      <li class="survey_link">Survey</li>
+    </ul>
+  </div>
   <div id="employee_stats_choice_div" class="choice_div">
     <h3><a href="#">Employees</a></h3>
     <div>
@@ -50,13 +49,18 @@ Employee Information
   </div>
 </div>
 <div id="info">
-  
-  <div id="graph_div">
-    <div class="data_view" id="employee_graph"></div>
+  <div id="info_nav_bar">
+    <ul class="choice_list">
+      <li class="graph_link selected">Graph</li>
+      <li class="table_link">Table</li>
+    </ul>
+  </div>  
+  <div id="graph_div" class="data_view">
+    <div id="employee_graph"></div>
   </div>
-  <div id="table_div">
-    <div class="data_view" id="employee_table"></div>
-    <div class="data_view" id="survey_table"></div>
+  <div id="table_div" class="data_view">
+    <div id="employee_table"></div>
+    <div id="survey_table"></div>
   </div>
   <div id="dateslider">
     <p id="dateslider_label"></p>

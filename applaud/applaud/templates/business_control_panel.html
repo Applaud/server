@@ -3,6 +3,7 @@
 {% block links %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}control_panel.css" />
+<link href="http://fonts.googleapis.com/css?family=The+Girl+Next+Door" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block scripts %}
 {{ block.super }}
@@ -26,6 +27,9 @@
   <div id="iphone_screen">
     <div class="navbar">
       <p id="iphone_title" class="iphone_title">{{ survey_list.0.title }}</p>
+    </div>
+    <div class="description">
+      <p id="iphone_description" class="iphone_description">{{ survey_list.0.description }}</p>
     </div>
   </div>
 </div>
@@ -63,21 +67,22 @@
 	{% for e in employee_list %}
       <div class="cp_employee_div">
 	<div id="cp_employee_row_{{ forloop.counter }}" class="cp_employee_row">
-	  {{ e.user.first_name }}  {{ e.user.last_name }}
-	  <select value="{{ e.id }}">{% for rat_prof in rating_profile_list %}
-	    <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
-	    </option>
-	    {% endfor %}
-	  </select>
-	  <input type="hidden" value="{{ e.id }}"/>
-	  <button id="employee_expand_button_{{ e.id }}" class="expand_employee_button" value="true">+</button>
+	  <h2>{{ e.user.first_name }}  {{ e.user.last_name }}</h2>
+	  <div class="profileexpand">
+	    <select value="{{ e.id }}">{% for rat_prof in rating_profile_list %}
+	      <option {% ifequal rat_prof.id e.rating_profile.id %} selected="selected" {% endifequal %} value="{{ rat_prof.id }}">{{ rat_prof }}
+	      </option>
+	      {% endfor %}
+	    </select>
+	    <input type="hidden" value="{{ e.id }}"/>
+	    <button id="employee_expand_button_{{ e.id }}" class="expand_employee_button" value="true">+</button>
+	  </div>
 
 	</div>
 	<!-- This is the row that will be displayed with the standard employee div. -->
 	<div id="employee_div_{{ e.id }}"  class="hidden extra_employee_row"> </div> 
       </div>
       {% endfor %}
-      <button id="rating_profile_changes_button">Save Rating Profiles</button>
     </div>
     <div id="add_employees_div" class="employee_management">
 
@@ -87,11 +92,14 @@
       <form method="post" action="{% url business_new_employee %}" enctype="multipart/form-data" id="newemployeeform">
 	<h2>Add Employees</h2>
 	{% csrf_token %}
-	<label for="emails">Email List</label>
-	<input type="text" name="emails" >
-	<br />
-	<label for="csv"> Upload .csv File </label>
-	<input type="file" name="csv" />
+	<div id="emails_div" class="employee_info">
+	  <label for="emails">Email List</label>
+	  <input type="text" name="emails" >
+	</div>
+	<div id="csv_div" class="employee_info">
+	  <label for="csv"> Upload .csv File </label>
+	  <input type="file" name="csv" />
+	</div>
 	<input type="submit" value="Submit" />
       </form>
     </div>
@@ -105,6 +113,7 @@
       <button type="button" class="ratingprofile_new_profile" id="new_ratingprofile_button">Add Profile</button>
       <div id="new_ratingprofile">
       </div>
+      <button id="rating_profile_changes_button">Save Rating Profiles</button>
     </div>
   </div>
   <div id="control_panel_newsfeeds_div" name="control_panel_newsfeeds_div" class="control_panel_div">
@@ -134,11 +143,11 @@
       {% csrf_token %}
       
       <div id="surveyinfo" name="surveyinfo">
-	<div id="titlediv" name="titlediv">
+	<div id="titlediv" name="titlediv" class="formfield">
 	  <label for="title">Title</label>
 	  <input type="text" id="survey_title" name="title" />
 	</div>
-	<div id="descriptiondiv" name="descriptiondiv">
+	<div id="descriptiondiv" name="descriptiondiv" class="formfield">
 	  <label for="description">Description</label>
 	  <input type="text" id="survey_description" name="description" />
 	</div>

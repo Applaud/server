@@ -34,6 +34,22 @@ strong {
     height:64px;
     vertical-align:middle;
 }
+/* any form field/label pair */
+.formfield {
+    display:block;
+    margin: {
+	top:10px;
+	bottom:10px;
+    }
+    input, textarea {
+	margin-top:5px;
+	width:100%;
+	font-family:'Lucida Grande';
+	font-size:11px;
+	vertical-align:text-top;
+    }
+}
+
 
 /* iphone preview */
 #iphone_preview {
@@ -99,31 +115,74 @@ strong {
  */
 .feed {
     padding:10px;
-    input {
-	margin:10px auto;
+    /* the title in summary view */
+    .nftitle {
+	font-weight:bold;
+	display:block;
+	margin-bottom:15px;
     }
-    .nf_delete_button {
-	margin-top: 10px;
-//	background-color:$deletecolor;
+    /* the date created in summary view */
+    .nfdate {
+	margin-right:10px;
+    }
+    /* last time edited in summaryview */
+    .nfdateedited {
+
+    }
+    /* edit and delete buttons together */
+    .deleteedit {
+	width:180px;
+	text-align:right;
+	float:right;
+    }
+    .nf_cancel_button, .nf_edit_button {
+	display:inline;
     }
     /* The date paragraph. */
     p {
 	margin:5px auto;
     }
     /* Textareas look better when they match text field inputs. */
-    textarea {
-	font-family:'Lucida Grande';
-	font-size:11px;
+    .image_input {
+	float:left;
     }
-    .nfimage {
-	float:right;
-    }
-    .nftitle {
-	font-weight:bold;
+    /* the image input with image preview */
+    .imagediv {
+	height:68px;
+	display: block;
+	img {
+    	    float:left;
+    	    vertical-align:text-center;
+	    width:64px;
+	    height:64px;
+	    margin-right:10px;
+	}
+	/* the image input */
+	.imgfield {
+	    input {
+		width:80%;
+		margin-top:5px;
+		font-family:'Lucida Grande';
+		font-size:11px;
+		vertical-align:text-top;
+	    }
+	}
     }
 }
 
+/************
+ * Questions
+ */
 
+.question_visible_div {
+    textarea {
+	width:90%;
+    }
+    .expand_button, .contract_button {
+	float:right;
+    }
+}
+/* option list for a question */
 .question_optionlist {
     padding-top:10px;
 

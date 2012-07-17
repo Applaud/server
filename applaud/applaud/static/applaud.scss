@@ -64,6 +64,14 @@ $footerspacing: 7px;		// padding on footer
 $footerheight: 15px;		// height of footer region
 $mainpadding: 15px;		// padding for main content
 /***************************/
+@mixin shadow($size, $color:#aaa, $xoffset:0px, $yoffset:0px) {
+    -moz-box-shadow:$xoffset $yoffset $size $color;
+    -webkit-box-shadow:$xoffset $yoffset $size $color;
+    box-shadow:$xoffset $yoffset $size $color;
+
+}
+
+
 
 /* styles that apply to the whole page */
 html, body {
@@ -122,7 +130,6 @@ iframe{
     overflow:auto;
     padding-bottom:$footerheight;
     height:90%;
-//    background-color:
     #control_panel {
 	background-color:#ffffff;
     }

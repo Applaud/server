@@ -40,9 +40,14 @@ if(! apatapa.business.control_panel ){
 	
 	// Allow us to update the title on the iPhone.
 	$('#survey_title').keyup(function () {
-	    console.log($(this).val());
 	    apatapa.business.control_panel.updateTitle($(this).val());
 	});
+	
+	// Same for the description.
+	$('#survey_description').keyup( function () {
+	    apatapa.business.control_panel.updateDescription($(this).val());
+	});
+	
 	// This creates the sub-tabs for the control panel
 	$(".control_panel_div").hide();
 	$("#home_div").show();
@@ -119,14 +124,11 @@ if(! apatapa.business.control_panel ){
 
 			    error: function() { alert("There was an ungodly error!"); },
 			    success: function (data) {
-				// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
 				var emp_expand = $("<div>"+data['bio']+"</div>");
 				$("#employee_div_"+emp_id).append(data['bio']);
 				$("#employee_div_"+emp_id).show();
 				$("#employee_div_"+emp_id).prop("shown", "true");
-				
 			    }
-			    
 			   });
 		    $(this).html('-');
 		}
@@ -137,7 +139,7 @@ if(! apatapa.business.control_panel ){
 	    }
 	    else {
 		$(this).html('+');
-		$(this).parent().siblings(".hidden").hide();
+		$("#employee_div_"+emp_id).hide();
 	    }
 	});
 	
@@ -272,6 +274,10 @@ if(! apatapa.business.control_panel ){
     _ns.updateTitle = function (title) {
 	console.log('update title');
 	$('#iphone_title').html(title);
+    }
+    
+    _ns.updateDescription = function (text) {
+	$('#iphone_description').html(text);
     }
     
 })(apatapa.business.control_panel);
