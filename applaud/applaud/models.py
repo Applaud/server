@@ -142,6 +142,11 @@ class Coupon(models.Model):
         ('IMG', 'image'),
     )
 
+    # What business created this coupon
+    business = models.ForeignKey('BusinessProfile')
+    # What users have been issued this coupon
+    users = models.ManyToManyField('UserProfile')
+
     # Title of the coupon
     title = models.CharField(max_length=200)
     # Additional long description of the coupon (optional)

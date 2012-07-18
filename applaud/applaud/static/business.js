@@ -8,6 +8,7 @@
  * apatapa.business.newsfeed
  * apatapa.business.ratingprofiles
  * apatapa.business.survey
+ * apatapa.business.coupons
  * */
 
 
@@ -1337,4 +1338,60 @@ if (! apatapa.business) {
    
 	}
     })(business.survey);
+    
+
+
+    //////////////////////////////
+    // apatapa.business.coupons //
+    //////////////////////////////
+
+    if (! business.coupons ) {
+	business.coupons = {};
+    }
+
+    (function ( _ns ) {
+	/**
+	 * couponDiv(coupon)
+	 * 
+	 * Build an HTML div to display a single coupon.
+	 *
+	 * coupon = JSON-encoded representation of a Coupon. See the CouponEncoder for details.
+	 */
+	var couponDiv = function(coupon) {
+	    var newDiv = $("<div></div>");
+	    newDiv.addClass("coupon");
+
+	    var couponTitle = $("<span>"+coupon.title+"</span>");
+	    couponTitle.addClass("coupontitle");
+
+	    var couponDate = $("<span>"+coupon.issued+"</span>");
+	    couponDate.addClass("coupondate");
+
+	    newDiv.append(couponTitle).append(couponDate);
+	    return newDiv;
+	};
+
+	/**
+	 * listCoupons(coupons)
+	 *
+	 * Builds a list of coupons in HTML. Takes a JSON'd list of coupons, per
+	 * the CouponEncoder. Calls "couponDiv(coupon)".
+	 *
+	 * coupons = The JSON'd list of coupons.
+	 * container = An HTML node to insert the list into (e.g., a "div")
+	 */
+	_ns.listCoupons = function(coupons, container) {
+	    var couponList = $("<ul></ul>");
+	    couponList.prop({"id":"coupon_list"});
+
+	    for (var c in coupons) {
+		var coupon = coupons[c];
+		couponList.append( couponDiv(coupon) );
+	    }
+
+	    container.append( couponList );
+	};
+	
+    })(business.coupons);
+
 })(apatapa.business);
