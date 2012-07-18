@@ -131,6 +131,34 @@ class RatedDimension(models.Model):
     def __unicode__(self):
         return self.title
 
+class Coupon(models.Model):
+    '''
+    Models a coupon or offer from a business to an end-user.
+    '''
+
+    # What the coupon will display (numeric = UPC/QR, image = display an image instead)
+    COUPON_TYPES = (
+        ('NUM', 'numeric'),
+        ('IMG', 'image'),
+    )
+
+    # Title of the coupon
+    title = models.CharField(max_length=200)
+    # Additional long description of the coupon (optional)
+    description = models.CharField(max_length=500,null=True,blank=True)
+    # What this coupon will display when redeemed
+    type = models.CharField(max_length=3,choices=COUPON_TYPES)
+    # The expiration date (blank if none)
+    expiration = models.DateField(blank=True,null=True)
+    # Date this coupon was issued (day/time of creation of this model instance)
+    issued = models.DateTimeField(editable=False)
+
+    def __unicode__(self):
+        return "%s (expires %s, issued %s)"%(title,
+                                             expiration.strftime("%d/%m/%Y"),
+                                             issued.strftime("%d/%m/%Y"))
+    
+
 #
 # NEWSFEED
 #
