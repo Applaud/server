@@ -153,6 +153,11 @@ class Coupon(models.Model):
     # Date this coupon was issued (day/time of creation of this model instance)
     issued = models.DateTimeField(editable=False)
 
+    # Image, if this is an image-type
+    image = models.ImageField(blank=True, null=True, upload_to='coupon_images/')
+    # Number, if this is a numeric-type (using CharField for hex/alpha support in barcodes)
+    number = models.CharField(max_length=200)
+
     def __unicode__(self):
         return "%s (expires %s, issued %s)"%(title,
                                              expiration.strftime("%d/%m/%Y"),
