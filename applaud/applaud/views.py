@@ -37,6 +37,20 @@ def index(request):
                                              'user_type': user_type},
                               context_instance=RequestContext(request))
 
+# Encodes a Coupon into JSON format
+class CouponEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Coupon):
+            return {'title':o.title,
+                    'description':o.description,
+                    'type':o.type,
+                    'expiration':o.expiration.strftime("%m/%d/%Y"),
+                    'issued':o.issued.strftime("%m/%d/%Y"),
+                    'image':o.image.url,
+                    'number':o.number}
+        else:
+            return json.JSONEncoder.default(self, o)
+
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
