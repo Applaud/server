@@ -92,12 +92,12 @@ var get_employee_info_url = "{% url business_get_employee_info %}"
       <div id="navigation">
 	{% block navigation_links %}
 	<ul>
-	  <li><a href="{% url home %}">Apatapa</a></li>
-	  <li><a href="">History</a></li>
-	  <li><a href="http://apatapablog.com">Blog</a></li>
-	  <li><a href="">How to use</a></li>
-	  <li><a href="">Use cases</a></li>
+	  <li><a href="/overview">Overview</a></li>
+	  <li><a href="">Take the Tour!</a></li>
 	  <li><a href="">Features</a></li>
+	  <li><a href="">Sign Up</a></li>
+	  <li><a href="">About Us</a></li>
+	  <li><a href="http://apatapablog.com">Blog</a></li>
 	</ul>
 	{% if user.is_authenticated %}
 	{% if user.businessprofile %}

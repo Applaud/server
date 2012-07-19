@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import admin
 import views
 import settings
-#from registration import views as business_views
+
 import business_urls, mobile_urls, employee_urls, user_urls
 
 # Import other urlconfs
@@ -27,5 +27,10 @@ urlpatterns = patterns('',
                        (r'^mobile/', include(mobile_urls)),
                        (r'^employee/', include(employee_urls)),
                        (r'^user/', include(user_urls)),
+                       (r'^overview/', direct_to_template,
+                        {'template':'overview.html'}),
                        (r'^accounts/', include('registration.backends.default.urls')),
                        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
