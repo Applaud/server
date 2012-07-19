@@ -292,4 +292,8 @@ class UserProfile(models.Model):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
-                
+
+class BusinessPhoto(models.Model):
+    """A photo for a business."""
+    image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    business = models.ForeignKey('BusinessProfile')
