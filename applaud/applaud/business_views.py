@@ -383,28 +383,73 @@ def list_coupons(request):
                                   locals(),
                                   context_instance=RequestContext(request))
 
+def _award_coupon(coupon_id, user_id, expiration):
+    '''
+    Function for awarding a coupon to a user.
+
+    Returns 'true' if all went well. 'false' otherwise.
+    '''
+    
+    try:
+        coupon = models.Coupon.objects.get(id=coupon_id)
+        ticket = Ticket(coupon=coupon,
+                        user=models.UserProfile.objects.get(id=user_id),
+                        expiration=expiration)
+        ticket.save()
+        coupon.issued_count += 1
+        coupon.save()
+    except:
+        return False
+    return True
+
 @business_view
 def award_coupon(request):
     '''
     Rewards a single customer with a single coupon.
 
     {'coupon_id':COUPON_ID,
-     'user_id':USER_ID}
+     'user_id':USER_ID,
+     'expiration_day':EXPIRATION_DAY,           - optional
+     'expiration_month':EXPIRATION_MONTH,       - optional
+     'expiration_year':EXPIRATION_YEAR}         - optional
     '''
 
     profile = request.user.businessprofile
-    try:
-        coupon = models.Coupon.get(id=int(request.POST['coupon_id']))
-    except models.Coupon.DoesNotExist:
-        pass
-    try:
-        coupon.users.add(models.UserProfile.objects.get(id=int(request.POST['user_id'])))
-    except models.UserProfile.DoesNotExist:
-        pass
+    expiration = None
+    # If an expiration date has been specified...
+    if len(set(['expiration_day','expiration_month','expiration_year']) &
+           set(request.POST.keys())) == 3:
+        # Some validation on the date
+        try:
+            day = int(request.POST['expiration_day'])
+            day = 0 if day > 31 else day
+            month = int(request.POST['expiration_month'])
+            month = 0 if month > 12 else month
+            year = int(request.POST['expiration_year'])
+            expiration = datetime.date(year,month,day)
+        except:
+            pass
 
+    _award_coupon(int(request.POST['coupon_id']),
+                  int(request.POST['user_id']),
+                  expiration)
+        
     # Empty HttpResponse shows that everything went alright.
     return HttpResponse("")
     
+def _revoke_coupon(coupon_id, user_id):
+    try:
+        coupon = models.Coupon.objects.get(id=coupon_id)
+        ticket = models.Ticket.get(user=models.UserProfile.objects.get(id=user_id),
+                                   coupon=coupon)
+        ticket.delete()
+        coupon.issued_count -= 1
+        coupon.save()
+    except:
+        return False
+    return True
+        
+
 @business_view
 def revoke_coupon(request):
     '''
@@ -414,12 +459,8 @@ def revoke_coupon(request):
      'user':USER_ID}
     '''
     if request.method == 'POST':
-        try:
-            coupon = models.Coupon.objects.get(id=int(request.POST['id']))
-            coupon.users.remove(models.UserProfile.get(id=int(request.POST['user'])))
-            coupon.save()
-        except models.Coupon.DoesNotExist, models.UserProfile.DoesNotExist, ValueError
-            pass
+        _revoke_coupon(int(request.POST['id']),
+                       int(request.POST['user']))
         
         # An empty response to let us know everything went O.K.
         return HttpResponse("")

@@ -37,19 +37,29 @@ def index(request):
                                              'user_type': user_type},
                               context_instance=RequestContext(request))
 
+class TicketEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Ticket):
+            enc = UserProfileEncoder()
+            return {'user':enc.default(o.user),
+                    'issued':o.issued.strftime("%m/%d/%Y"),
+                    'expiration':"never" if o.expiration is None else o.expiration.strftime("%m/%d/%Y")}
+        else:
+            return json.JSONEncoder.default(self, o)
+
 # Encodes a Coupon into JSON format
 class CouponEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.Coupon):
-            enc = UserProfileEncoder()
+            enc = TicketEncoder()
             return {'title':o.title,
                     'description':o.description,
                     'type':o.type,
-                    'expiration':"never" if o.expiration is None else o.expiration.strftime("%m/%d/%Y"),
-                    'issued':o.issued.strftime("%m/%d/%Y"),
                     'image':"" if not o.image else o.image.url,
                     'number':o.number,
-                    'users':[enc.default(user) for user in o.users.all()]}
+                    'tickets':[enc.default(ticket) for ticket in o.ticket_set.all()],
+                    'issued_count':o.issued_count,
+                    'redeemed_count':o.redeemed_count}
         else:
             return json.JSONEncoder.default(self, o)
 

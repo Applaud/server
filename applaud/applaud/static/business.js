@@ -1351,36 +1351,38 @@ if (! apatapa.business) {
 
     (function ( _ns ) {
 	/**
-	 * couponDiv(coupon)
+	 * briefCouponDiv(coupon)
 	 * 
-	 * Build an HTML div to display a single coupon.
+	 * Build an HTML div to display a single coupon in a compact and concise manner.
 	 *
 	 * coupon = JSON-encoded representation of a Coupon. See the CouponEncoder for details.
 	 */
-	var couponDiv = function(coupon) {
+	var briefCouponDiv = function(coupon) {
 	    var newDiv = $("<div></div>");
 	    newDiv.addClass("coupon");
 
 	    var couponTitle = $("<span>"+coupon.title+"</span>");
 	    couponTitle.addClass("coupontitle");
 
-	    var couponDate = $("<span>"+coupon.issued+"</span>");
-	    couponDate.addClass("coupondate");
+	    var issuedCount = $("<span>("+coupon.issued_count+" issued)</span>");
+	    issuedCount.addClass("couponissued");
 
-	    newDiv.append(couponTitle).append(couponDate);
+	    newDiv.append(couponTitle).append(issuedCount);
 	    return newDiv;
 	};
 
 	/**
-	 * listCoupons(coupons)
+	 * listCouponsBriefly(coupons)
 	 *
 	 * Builds a list of coupons in HTML. Takes a JSON'd list of coupons, per
-	 * the CouponEncoder. Calls "couponDiv(coupon)".
+	 * the CouponEncoder. Calls "briefCouponDiv(coupon)". The resulting list contains
+	 * a minimal amount of information about each coupon, just enough to select
+	 * one and award one to a customer. Compare this function with 'listCoupons(coupons)'
 	 *
 	 * coupons = The JSON'd list of coupons.
 	 * container = An HTML node to insert the list into (e.g., a "div")
 	 */
-	_ns.listCoupons = function(coupons, container) {
+	_ns.listCouponsBriefly = function(coupons, container) {
 	    console.log(coupons);
 
 	    var couponList = $("<ul></ul>");
@@ -1388,7 +1390,7 @@ if (! apatapa.business) {
 
 	    for (var c in coupons) {
 		var coupon = coupons[c];
-		couponList.append( couponDiv(coupon) );
+		couponList.append( briefCouponDiv(coupon) );
 	    }
 
 	    container.append( couponList );

@@ -131,6 +131,23 @@ class RatedDimension(models.Model):
     def __unicode__(self):
         return self.title
 
+class Ticket(models.Model):
+    '''
+    Models an instance of a Coupon that is issued to a user.
+    '''
+
+    user = models.ForeignKey('UserProfile')
+    coupon = models.ForeignKey('Coupon')
+    issued = models.DateTimeField(auto_now=True,editable=False)
+    expiration = models.DateTimeField(null=True,blank=True)
+
+    def __unicode__(self):
+        expiry = self.expiration
+        expiry = expiry.strftime("%m/%d/%Y") if expiry is not None else "never"
+        return "%s (issued %s, expires %s)"%(self.coupon.title,
+                                             self.issued.strftime("%m/%d/%Y"),
+                                             expiry)
+
 class Coupon(models.Model):
     '''
     Models a coupon or offer from a business to an end-user.
@@ -144,8 +161,6 @@ class Coupon(models.Model):
 
     # What business created this coupon
     business = models.ForeignKey('BusinessProfile')
-    # What users have been issued this coupon
-    users = models.ManyToManyField('UserProfile')
 
     # Title of the coupon
     title = models.CharField(max_length=200)
@@ -153,23 +168,21 @@ class Coupon(models.Model):
     description = models.CharField(max_length=500,null=True,blank=True)
     # What this coupon will display when redeemed
     type = models.CharField(max_length=3,choices=COUPON_TYPES)
-    # The expiration date (blank if none)
-    expiration = models.DateField(blank=True,null=True)
-    # Date this coupon was issued (day/time of creation of this model instance)
-    issued = models.DateTimeField(auto_now=True,editable=False)
 
     # Image, if this is an image-type
     image = models.ImageField(blank=True, null=True, upload_to='coupon_images/')
     # Number, if this is a numeric-type (using CharField for hex/alpha support in barcodes)
     number = models.CharField(max_length=200)
 
+    # Number of tickets that have been issued
+    issued_count = models.IntegerField(default=0)
+    # Number of tickets that have been redeemed
+    redeemed_count = models.IntegerField(default=0)
+
     def __unicode__(self):
         expiry = self.expiration
         expiry = expiry.strftime("%m/%d/%Y") if expiry is not None else "never"
-        return "%s (expires %s, issued %s)"%(self.title,
-                                             expiry,
-                                             self.issued.strftime("%d/%m/%Y"))
-    
+        return '%s (%s)'%(self.title, self.description)
 
 #
 # NEWSFEED

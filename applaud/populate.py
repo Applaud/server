@@ -346,8 +346,11 @@ coupon = models.Coupon(title="Buy 1 get 1 free daifuku!",
                        type="NUM",
                        number=1259735056134)
 coupon.save()
-coupon.users.add(userprofile)
-coupon.users.add(userprofile2)
+models.Ticket(user=userprofile,
+              coupon=coupon).save()
+models.Ticket(user=userprofile2,
+              coupon=coupon).save()
+coupon.issued_count = 2
 coupon.save()
 
 print 'apatapa!'
