@@ -384,6 +384,28 @@ def list_coupons(request):
                                   context_instance=RequestContext(request))
 
 @business_view
+def award_coupon(request):
+    '''
+    Rewards a single customer with a single coupon.
+
+    {'coupon_id':COUPON_ID,
+     'user_id':USER_ID}
+    '''
+
+    profile = request.user.businessprofile
+    try:
+        coupon = models.Coupon.get(id=int(request.POST['coupon_id']))
+    except models.Coupon.DoesNotExist:
+        pass
+    try:
+        coupon.users.add(models.UserProfile.objects.get(id=int(request.POST['user_id'])))
+    except models.UserProfile.DoesNotExist:
+        pass
+
+    # Empty HttpResponse shows that everything went alright.
+    return HttpResponse("")
+    
+@business_view
 def revoke_coupon(request):
     '''
     Revokes a coupon issuance from a user.
