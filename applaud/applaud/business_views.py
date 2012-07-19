@@ -405,7 +405,7 @@ def business_profile(request):
                                   profile.business_name)
         save_image(profile.logo, filename, request.FILES['logo_image'])
     messages.add_message(request, messages.SUCCESS, 'Profile updated!')
-    return HttpResponseRedirect(reverse('business_home'))
+    return HttpResponseRedirect(reverse('business_control_panel'))
 
 @csrf_protect
 @business_view

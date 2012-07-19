@@ -325,7 +325,7 @@ h2 {
     position: relative;
     left: 21px;
     top: 135px;
-    background-color: cyan;
+    background-color: #bbb;
     width: 320px;
     height: 411px;
     overflow: hidden; }
@@ -341,7 +341,7 @@ h2 {
       top: 0px;
       text-align: center;
       height: 44px;
-      background-color: orange; }
+      background-color: #fff; }
       #iphone_preview #iphone_screen .navbar p {
         font-size: 20px;
         font-weight: bold;
@@ -366,6 +366,33 @@ h2 {
         left: 10px;
         color: #7d7d7d;
         font-size: 14px; }
+  #iphone_preview .tab_bar {
+    width: 320px;
+    height: 49px;
+    left: 21px;
+    top: 136px;
+    position: relative;
+    background: -moz-linear-gradient(90deg, #050505 40%, #4b4b4b);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5))";
+    background: -webkit-linear-gradient(bottom, #050505 40%, #4b4b4b);
+    /* Setting the font-size to 0 so that the tab bar divs can be inline with no space between them */
+    font-size: 0px; }
+    #iphone_preview .tab_bar .tab_bar_div {
+      position: relative;
+      top: 0px;
+      height: 49px;
+      width: 64px;
+      display: inline-block;
+      color: #fff;
+      background-color: transparent;
+      font-size: 8px; }
+    #iphone_preview .tab_bar .tab_bar_selected {
+      background: -moz-linear-gradient(90deg, #2d2d2d 40%, #696969);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45));
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45))";
+      background: -webkit-linear-gradient(bottom, #2d2d2d 40%, #696969);
+      border-radius: 5px; }
 
 #sticky {
   font-family: 'The Girl Next Door', cursive;
