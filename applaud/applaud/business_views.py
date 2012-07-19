@@ -416,12 +416,15 @@ def revoke_coupon(request):
     if request.method == 'POST':
         try:
             coupon = models.Coupon.objects.get(id=int(request.POST['id']))
-            coupon.delete()
-        except models.Coupon.DoesNotExist:
+            coupon.users.remove(models.UserProfile.get(id=int(request.POST['user'])))
+            coupon.save()
+        except models.Coupon.DoesNotExist, models.UserProfile.DoesNotExist, ValueError
             pass
-
+        
         # An empty response to let us know everything went O.K.
         return HttpResponse("")
+    
+    # Other types of requests get the coupon list.
     return HttpResponseRedirect(reverse('business_list_coupons'))
         
 
