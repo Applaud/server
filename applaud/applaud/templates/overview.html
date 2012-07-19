@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
+{% endblock %}
+
+{% block scripts %}
+<!-- Tour created with Amberjack wizard: http://amberjack.org -->
+<div class="ajTourDef" id="MyTour" style="display:none">
+  Some thing 
+  <div title="http://ec2-107-22-6-55.compute-1.amazonaws.com/">
+    Placeholder for page 1 - replace this text
+  </div>
+  <div title="http://ec2-107-22-6-55.compute-1.amazonaws.com/overview">
+    Placeholder for page 2 - replace this text
+  </div>
+</div>
+
+<script type="text/javascript" src="http://amberjack.org/src/stable/amberjack.pack.js">
+</script>
+
+<script type="text/javascript" defer="true">
+  Amberjack.onCloseClickStay = true;
+  Amberjack.open();
+</script>
+{% endblock %}
+
+{% block title %}Apatapa | Overview{% endblock %}
+
+{% block content %}
+<div css="width:50%">
+<p>
+Businesses already have digital identities: Facebook, Twitter, Yelp, and foursquare, to name a few.  Through all of these identities, businesses can host a variety of conversations with their customers.  We believe that a business should have a centralized identity that takes full advantage of the smartphones their customers carry.</p><br />
+</p>
+Apatapa connects people with their current location.  Using our website, businesses decide what a customer sees when they open Apatapa on their premises.  The beta version provides businesses with three customizable features: a newsfeed, employee evaluations, and a feedback center.  Newsfeed items are the first thing a customer sees when opening Apatapa — an announcement about a sale, a future event, or a new improvement.  Businesses can choose how their individual employees are evaluated and view results in the analytics center.  In the feedback center, businesses create questions and use the responses to improve customer experience and build loyalty.
+</p><br />
+<p>
+Version 1.0, which we will be releasing at the end of the summer, promises to have even more features that businesses can use to further engage their customers.
+
+</p>
+</div>
+
+<a href="http://ec2-107-22-6-55.compute-1.amazonaws.com/?tourId=MyTour"><img src="http://amberjack.org/src/stable/amberjack.png" alt="Click to start tour!" /></a>
+
+{% endblock %}
