@@ -339,5 +339,15 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
+# Create and issue some coupons
+coupon = models.Coupon(title="Buy 1 get 1 free daifuku!",
+                       description="These bean-filled confections MUST GO.",
+                       business=keith_business,
+                       type="NUM",
+                       number=1259735056134)
+coupon.save()
+coupon.users.add(userprofile)
+coupon.users.add(userprofile2)
+coupon.save()
 
 print 'apatapa!'

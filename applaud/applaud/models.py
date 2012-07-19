@@ -156,7 +156,7 @@ class Coupon(models.Model):
     # The expiration date (blank if none)
     expiration = models.DateField(blank=True,null=True)
     # Date this coupon was issued (day/time of creation of this model instance)
-    issued = models.DateTimeField(editable=False)
+    issued = models.DateTimeField(auto_now=True,editable=False)
 
     # Image, if this is an image-type
     image = models.ImageField(blank=True, null=True, upload_to='coupon_images/')
@@ -164,9 +164,11 @@ class Coupon(models.Model):
     number = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return "%s (expires %s, issued %s)"%(title,
-                                             expiration.strftime("%d/%m/%Y"),
-                                             issued.strftime("%d/%m/%Y"))
+        expiry = self.expiration
+        expiry = expiry.strftime("%m/%d/%Y") if expiry is not None else "never"
+        return "%s (expires %s, issued %s)"%(self.title,
+                                             expiry,
+                                             self.issued.strftime("%d/%m/%Y"))
     
 
 #

@@ -1381,6 +1381,8 @@ if (! apatapa.business) {
 	 * container = An HTML node to insert the list into (e.g., a "div")
 	 */
 	_ns.listCoupons = function(coupons, container) {
+	    console.log(coupons);
+
 	    var couponList = $("<ul></ul>");
 	    couponList.prop({"id":"coupon_list"});
 

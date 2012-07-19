@@ -359,6 +359,50 @@ def manage_survey(request):
                                        cls=views.SurveyEncoder),
                             mimetype='application/json')
 
+
+#####################
+# COUPON MANAGEMENT #
+#####################
+
+@business_view
+def list_coupons(request):
+    '''
+    Lists all the coupons for a business.
+    '''
+    profile = request.user.businessprofile
+
+    enc = views.CouponEncoder()
+    coupons_list = [enc.default(coupon) for coupon in profile.coupon_set.all()]
+    coupons = json.dumps(coupons_list)
+
+    if request.method == 'POST':
+        return HttpResponse(coupons,
+                            mimetype='application/json')
+    else:
+        return render_to_response("business_coupons.html",
+                                  locals(),
+                                  context_instance=RequestContext(request))
+
+@business_view
+def revoke_coupon(request):
+    '''
+    Revokes a coupon issuance from a user.
+    
+    {'id':COUPON_ID,
+     'user':USER_ID}
+    '''
+    if request.method == 'POST':
+        try:
+            coupon = models.Coupon.objects.get(id=int(request.POST['id']))
+            coupon.delete()
+        except models.Coupon.DoesNotExist:
+            pass
+
+        # An empty response to let us know everything went O.K.
+        return HttpResponse("")
+    return HttpResponseRedirect(reverse('business_list_coupons'))
+        
+
 # A function to recieve a comma-separated email list, strip them
 # and check them for validity
 def strip_and_validate_emails(emails):

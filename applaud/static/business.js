@@ -8,6 +8,7 @@
  * apatapa.business.newsfeed
  * apatapa.business.ratingprofiles
  * apatapa.business.survey
+ * apatapa.business.coupons
  * */
 
 
@@ -669,18 +670,32 @@ if (! apatapa.business) {
 			  'id': 'id_feed_id',
 			  'name': 'feed_id'});
 	    
+	    var imgDiv = $('<div></div>');
+	    imgDiv.addClass('imagediv');
 	    var img = $('<img />');
 	    img.prop({'src': image,
 		      'class': 'nfimage',
 		      'alt': title});
 	    
+	    var imgFieldDiv = $('<div></div>');
+	    imgFieldDiv.addClass('imgfield');
+	    var img_label = $('<label>Image</label>');
+	    img_label.prop("for","nf_image");
 	    var img_input = $('<input />');
 	    img_input.prop({'type': 'file',
 			    'accept': 'image/*',
 			    'class': 'image_input',
 			    'name': 'nf_image',
 			    'id': 'nf_image'});
+	    imgDiv
+		.append(img)
+		.append(
+		    imgFieldDiv
+			.append(img_label)
+			.append(img_input));
 	    
+	    var title_label = $('<label>Title</label>');
+	    title_label.prop("for","title");
 	    var title_text = $('<input />');
 	    title_text.prop({'value': title,
 			     'type': 'text',
@@ -695,13 +710,18 @@ if (! apatapa.business) {
 	    var date_text = $('<p></p>');
 	    date_text.html(date + ' (last edited ' + date_edited + ')');
 
+	    var subtitle_label = $('<label>Subtitle</label>');
+	    subtitle_label.prop("for","nfsubtitle");
 	    var subtitle_text = $('<input />');
 	    subtitle_text.prop({'type': 'text',
 				'name': 'subtitle',
 				'class': 'nfsubtitle',
+				'name': 'nfsubtitle',
 				'id': 'id_subtitle',
 				'value': subtitle});
 	    
+	    var body_label = $('<label>Body</label>');
+	    body_label.prop("for","body");
 	    var body_text = $('<textarea></textarea>');
 	    body_text.prop({'class':'nfbody',
 			    'name': 'body',
@@ -732,23 +752,26 @@ if (! apatapa.business) {
 			   "method": "POST",
 			   "enctype": "multipart/form-data",
 			   "id":"nf_editing_form"});
+
+	    var wrapFormField = function() {
+		var newDiv = $('<div></div>');
+		newDiv.addClass("formfield");
+		return newDiv;
+	    };
 	    
 	    editForm
 		.append(csrf_field)
-		.append('Title: ')
 	    	.append(feed_id)
-	    	.append(img)
-	    	.append(title_text)
-	    	.append('<br />')
-	    	.append('Image: ')
-	    	.append(img_input)
-	    	.append(date_text)
-	    	.append('Subtitle: ')
-	    	.append(subtitle_text)
-	    	.append('<br />')
-	    	.append('Body: ')
-	    	.append(body_text)
-	    	.append('<br />');
+		.append(wrapFormField()
+			.append(title_label)
+	    		.append(title_text))
+		.append(imgDiv)
+		.append(wrapFormField()
+			.append(subtitle_label)
+	    		.append(subtitle_text))
+		.append(wrapFormField()
+			.append(body_label)
+	    		.append(body_text));
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
 	    editForm.append(submitButton);
@@ -850,27 +873,40 @@ if (! apatapa.business) {
 			      'name':'feed_edit_button_'+i});
 	    edit_button.html("Edit");
 	    edit_button.click(function() {
-	    	// pointer to this button
-	    	var buttonInstance = $(this);
-	    	// // index of this newsfeeditem
-	    	var index = $(this).prop('id').split('_')[3];
-	    	// what we do when "edit" is clicked
-	    	var editfunction = function() {
-	    	    // Change this button to an "OK" button, and change the
-	    	    // click handler.
-	    	    $('#nf_editing_form').hide("fast");
-	    	    $('#nf_editing_form').remove();
-	    	    buttonInstance.html("Cancel");
-	    	    buttonInstance.click(function() {
-	    	    	$('#nf_editing_form').hide("fast");
-	    	    	$('#nf_editing_form').remove();
-	    	    	buttonInstance.html("Edit");
-	    	    	buttonInstance.click(function(){editfunction();});
-	    	    });
-	    	    editFeed(index);
-	    	};
-	    	editfunction();
+		// Make sure there are no other "cancel" buttons
+		$('.nf_cancel_button').hide();
+		$('.nf_edit_button').show();
+
+		// Hide this edit button
+		$(this).hide();
+		// Turn on the cancel button
+		cancel_button.css("display","inline");
+
+		var index = edit_button.prop('id').split('_')[3];
+	    	$('#nf_editing_form').hide("fast");
+	    	$('#nf_editing_form').remove();
+	    	editFeed(index);
 	    });
+	    var cancel_button = $('<button></button>');
+	    cancel_button.prop({'type':'button',
+				'class':'nf_cancel_button',
+				'id':'feed_cancel_button_'+i,
+				'name':'feed_cancel_button_'+i});
+	    cancel_button.html("Cancel");
+	    cancel_button.click(function() {
+		$(this).hide();
+		edit_button.css("display","inline");
+		$('#nf_editing_form').hide("fast");
+	    	$('#nf_editing_form').remove();
+	    });
+	    cancel_button.hide();
+
+	    var buttonsSpan = $('<span></span>');
+	    buttonsSpan.addClass("deleteedit");
+	    buttonsSpan
+		.append(delete_button)
+		.append(edit_button)
+		.append(cancel_button);
 
 	    // Add this item to the rest of the listings.
 	    $('#newsfeeds').append(feed_div
@@ -881,8 +917,7 @@ if (! apatapa.business) {
 	    			   .append(feed_id)
 	    			   .append(date_text)
 				   .append(date_edited_text)
-	    			   .append(delete_button)
-				   .append(edit_button));
+				   .append(buttonsSpan));
 
 	    // Animate! (oooooh----aaaaaaaaaaah....)
 	    if( animated ) {
@@ -1058,7 +1093,11 @@ if (! apatapa.business) {
 				  'class': "contract_button"});
 	    
 
-	    question_visible_div.append(questionAreaLabel).append(questionArea).append(expand_button).append(contract_button);
+	    question_visible_div
+		.append(questionAreaLabel)
+		.append(expand_button)
+		.append(contract_button)
+		.append(questionArea);
 
 	    // All the other fields will initially be hidden, and in this div
 	    var question_hidden_div = $("<div></div>");
@@ -1299,4 +1338,62 @@ if (! apatapa.business) {
    
 	}
     })(business.survey);
+    
+
+
+    //////////////////////////////
+    // apatapa.business.coupons //
+    //////////////////////////////
+
+    if (! business.coupons ) {
+	business.coupons = {};
+    }
+
+    (function ( _ns ) {
+	/**
+	 * couponDiv(coupon)
+	 * 
+	 * Build an HTML div to display a single coupon.
+	 *
+	 * coupon = JSON-encoded representation of a Coupon. See the CouponEncoder for details.
+	 */
+	var couponDiv = function(coupon) {
+	    var newDiv = $("<div></div>");
+	    newDiv.addClass("coupon");
+
+	    var couponTitle = $("<span>"+coupon.title+"</span>");
+	    couponTitle.addClass("coupontitle");
+
+	    var couponDate = $("<span>"+coupon.issued+"</span>");
+	    couponDate.addClass("coupondate");
+
+	    newDiv.append(couponTitle).append(couponDate);
+	    return newDiv;
+	};
+
+	/**
+	 * listCoupons(coupons)
+	 *
+	 * Builds a list of coupons in HTML. Takes a JSON'd list of coupons, per
+	 * the CouponEncoder. Calls "couponDiv(coupon)".
+	 *
+	 * coupons = The JSON'd list of coupons.
+	 * container = An HTML node to insert the list into (e.g., a "div")
+	 */
+	_ns.listCoupons = function(coupons, container) {
+	    console.log(coupons);
+
+	    var couponList = $("<ul></ul>");
+	    couponList.prop({"id":"coupon_list"});
+
+	    for (var c in coupons) {
+		var coupon = coupons[c];
+		couponList.append( couponDiv(coupon) );
+	    }
+
+	    container.append( couponList );
+	};
+	
+    })(business.coupons);
+
 })(apatapa.business);

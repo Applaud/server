@@ -42,6 +42,14 @@ urlpatterns = patterns('',
                            views.rating_profile_changes,
                            name="business_update_ratingprofiles"),
 
+                       # Coupons
+                       url(r'^coupons$',
+                           views.list_coupons,
+                           name="business_list_coupons"),
+                       url(r'^revoke_coupon',
+                           views.revoke_coupon,
+                           name="business_revoke_coupon"),
+
                        # Business home
                        url(r'^$',
                            redirect_to,

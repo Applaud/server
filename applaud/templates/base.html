@@ -5,8 +5,8 @@
 <head>
   <title>{% block title %}Apatapa{% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
-  <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
-  <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css">
+  <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css' />
+  <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css" />
   {% block links %}
   {% endblock %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -22,7 +22,6 @@
 var manage_employees_url = "{% url business_manage_employees %}";
 var delete_employee_url = "{% url business_delete_employee %}";
 var list_employees_url = "{% url business_list_employees %}";
-var coupons_url = "{% url business_coupons %}";
 
 // Employee URLs
 var employee_stats_url = "{% url employee_stats %}";
@@ -42,12 +41,16 @@ var list_newsfeed_url = "{% url business_newsfeed_list %}";
 var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
 
 //Business Analytics URL
-var business_stats_url ="{% url business_stats %}"
-var business_list_employee_url = "{% url business_list_employee %}"
+var business_stats_url ="{% url business_stats %}";
+var business_list_employee_url = "{% url business_list_employee %}";
 
 // Control Panel URL
-var control_panel_home = "{% url business_control_panel %}"
-var get_employee_info_url = "{% url business_get_employee_info %}"
+var control_panel_home = "{% url business_control_panel %}";
+var get_employee_info_url = "{% url business_get_employee_info %}";
+
+// Coupons URLs
+var revoke_coupon_url = "{% url business_revoke_coupon %}";
+var list_coupons_url = "{% url business_list_coupons %}";
 
 </script>
   {% block scripts %}

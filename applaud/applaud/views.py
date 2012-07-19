@@ -41,13 +41,15 @@ def index(request):
 class CouponEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.Coupon):
+            enc = UserProfileEncoder()
             return {'title':o.title,
                     'description':o.description,
                     'type':o.type,
-                    'expiration':o.expiration.strftime("%m/%d/%Y"),
+                    'expiration':"never" if o.expiration is None else o.expiration.strftime("%m/%d/%Y"),
                     'issued':o.issued.strftime("%m/%d/%Y"),
-                    'image':o.image.url,
-                    'number':o.number}
+                    'image':"" if not o.image else o.image.url,
+                    'number':o.number,
+                    'users':[enc.default(user) for user in o.users.all()]}
         else:
             return json.JSONEncoder.default(self, o)
 
