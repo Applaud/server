@@ -56,7 +56,7 @@ urlpatterns = patterns('',
                            name='business_control_panel'),
 
                        # Analytics
-                       url(r'^analytics',
+                       url(r'^analytics/',
                            views.analytics,
                            name="analytics"),
                        url(r'^get_analytics/',
