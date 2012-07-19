@@ -10,22 +10,27 @@ if(! apatapa.business.control_panel ){
 	$(".employee_management").hide();
 	$("#view_employees_div").show();
 	$(".hidden").hide();
-    }
+    };
 
     var newsfeed_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_newsfeeds_div").show();
-    }
+    };
 
     var survey_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_survey_div").show();
-    }
+    };
 
     var home_display = function(){
 	$(".control_panel_div").hide();
 	$("#home_div").show();
-    }
+    };
+    
+    var photos_display = function() {
+	$('.control_panel_div').hide();
+	$("#control_panel_photos_div").show();
+    };
 
     /**
      * This is executed after the page has fully loaded.
@@ -77,8 +82,12 @@ if(! apatapa.business.control_panel ){
 	    event.preventDefault();
 	    home_display();
 	});
-
-
+	
+	$('.photos_link').click( function(event) {
+	    event.preventDefault();
+	    photos_display();
+	});
+	
 	// These are the sub-navigation buttons within employee management within the control panel
 	$("#view_employees_button").click( function () {
 	    $(".employee_management").hide();

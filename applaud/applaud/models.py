@@ -294,6 +294,15 @@ class UserProfile(models.Model):
                 setattr(self, key, value)
 
 class BusinessPhoto(models.Model):
-    """A photo for a business."""
+    """
+    A photo for a business.
+    
+    tags is a list of strings which describe this photo.
+    votes is a signed integer showing the aggregate votes this photo has received.
+    active is a boolean indicating whether or not this photo will be shown to users.
+    """
     image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
     business = models.ForeignKey('BusinessProfile')
+    tags = SerializedStringsField()
+    votes = models.IntegerField(default=0)
+    active = models.BooleanField(default=0)

@@ -44,6 +44,7 @@
     <li id="employee_button" class="employee_link cp_nav_button">Employees</li>
     <li id="newsfeed_button" class="newsfeed_link cp_nav_button">News Items</li>
     <li id="survey_button" class="survey_link cp_nav_button">Questions</li>
+    <li id="photos_button" class="photos_link cp_nav_button">Photos</li>
   </ul>
 
   
@@ -157,6 +158,25 @@
 	<input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
       </div>
     </form>
+  </div>
+  
+  <div id="control_panel_photos_div" name="control_panel_photos_div" class="control_panel_div">
+    <h1>Photos</h1>
+    <p>Here you can see photos that your customers have taken in your location and uploaded to Apatapa.</p>
+    <div id="photos">
+      {% for photo in business_profile.businessphoto_set.all %}
+      <div class="photo">
+	<ul class="photo_tags">
+	  {% for tag in photo.tags %}
+	  <li>{{ tag }}</li>
+	  {% endfor %}
+	</ul>
+	<span class="photo_votes">{{ photo.votes }}</span>
+	<span class="photo_active">{% if photo.active %}(active){% endif %}
+	<img class="business_photo" src="photo.image.url" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}
