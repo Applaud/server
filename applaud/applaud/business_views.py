@@ -851,3 +851,15 @@ def get_employee_info(request):
     return render_to_response('business_control_panel.html',
                               {'employee':encoded_employee},
                               context_instance=RequestContext(request))
+
+# Toggle a photo from active (shown to customers) to inactive,
+# or vice versa.
+@csrf_protect
+@business_view
+def toggle_photo(request):
+    profile = request.user.businessprofile
+    photo_id = request.GET['photo_id']
+    photo = models.BusinessPhoto.objects.get(id=photo_id)
+    photo.active = not photo.active
+    photo.save()
+    return HttpResponse('')

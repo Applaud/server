@@ -75,7 +75,12 @@ urlpatterns = patterns('',
                        url(r'^newsfeed_list/$',
                            views.newsfeed_list,
                            name='business_newsfeed_list'),
-
+                       
+                       # Photo URLs
+                       url(r'toggle_photo/$',
+                           views.toggle_photo,
+                           name='business_toggle_photo'),
+                       
                        # General Functions
                        url(r'^get_employee_info/$',
                            views.get_employee_info,

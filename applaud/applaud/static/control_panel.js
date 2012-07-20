@@ -65,7 +65,7 @@ if(! apatapa.business.control_panel ){
 	$('.cp_nav_button').click( function(event) {
 	    $('.cp_nav_button').removeClass('selected');
 	    $(this).addClass('selected');
-	})
+	});
 
 	$(".newsfeed_link").click( function(event) {
 	    event.preventDefault();
@@ -152,13 +152,35 @@ if(! apatapa.business.control_panel ){
 	    }
 	});
 	
+	// When we click the 'activate' button on a photo, actually activate it.
+	$('.photo_active_button').click( function () {
+	    $.ajax({url: toggle_photo_url,
+		    type: 'POST',
+		    data: {'photo_id': $(this).prop('id').split('_')[1],
+			   'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val()},
+		    error: function () { alert('Shit!'); },
+		    success: function () { alert('Whee!'); }});
+	});
+	
 	$(".contract_employee_button").click( function () {
 	   
 
 	});
 	
-	
-    }
+	// Go to the appropriate tab if there's a hash in the URL.
+	if(location.hash === '#questions') {
+	    $('.survey_link').click();
+	}
+	if(location.hash === '#employees') {
+	    $('.employee_link').click();
+	}
+	if(location.hash === '#photos') {
+	    $('.photos_link').click();
+	}
+	if(location.hash === '#newsfeed') {
+	    $('.newsfeed_link').click();
+	}
+    };
     
     _ns.addQuestion = function (index, id, title) {
 	var listitem;
@@ -194,12 +216,11 @@ if(! apatapa.business.control_panel ){
 	    console.log('truncating');
 	}
 	subtitle.html('This is a generic response');
-	listitem.append(heading)
-	    .append(subtitle);
+	listitem.append(heading).append(subtitle);
 	$('#listitem_' + index).replaceWith(listitem);
 	apatapa.business.iphone.refreshPrimary();
 	apatapa.business.iphone.refreshSecondary();
-    }
+    };
     
     _ns.updateQuestion = function (id, index, title) {
 	if(id) {
@@ -233,7 +254,7 @@ if(! apatapa.business.control_panel ){
 	}
 	addNewBlankQuestion();
 
-    }
+    };
     
     _ns.hideQuestion = function (id, index) {
 	console.log('hide question ' + id + ' ' + index);
@@ -244,7 +265,7 @@ if(! apatapa.business.control_panel ){
 	    $('#listitem_index_'+index).hide(500);
 	}
 	addNewBlankQuestion();
-    }
+    };
     
     _ns.showQuestion = function (id, index) {
 	console.log('show question');
@@ -254,7 +275,7 @@ if(! apatapa.business.control_panel ){
 	else {
 	    $('#listitem_index_'+index).show(500);
 	}
-    }
+    };
     
     _ns.createBlankDivs = function () {
 	var last_blank = $('<div></div>');
@@ -269,7 +290,7 @@ if(! apatapa.business.control_panel ){
 	    console.log('appending blanks');
 	    $('#last_blank').before(listitem);
 	}
-    }
+    };
     
     var addNewBlankQuestion = function () {
 	var listitem = $('<div></div>');
@@ -278,15 +299,15 @@ if(! apatapa.business.control_panel ){
 	$('#last_blank').before(listitem);
 	apatapa.business.iphone.refreshSecondary();
 	apatapa.business.iphone.refreshPrimary();	
-    }
+    };
     
     _ns.updateTitle = function (title) {
 	console.log('update title');
 	$('#iphone_title').html(title);
-    }
+    };
     
     _ns.updateDescription = function (text) {
 	$('#iphone_description').html(text);
-    }
+    };
     
 })(apatapa.business.control_panel);
