@@ -11,7 +11,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 import applaud.settings
 from applaud import models
 from django.contrib.auth.models import User, Group
-from random  import random
+from random import random
+from applaud import business_views
+from applaud import settings
+import Image
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -339,5 +342,14 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
+keith_photo = models.BusinessPhoto(business=keith_business,
+                                   tags=['tag', 'tagged', 'mystical'],
+                                   uploaded_by=userprofile)
+keith_photo.save()
+
+business_views.save_image(keith_photo.image,
+                          'keith_photo_test.jpg',
+                          settings.MEDIA_ROOT + 'noimage.png')
+keith_photo.save()
 
 print 'apatapa!'

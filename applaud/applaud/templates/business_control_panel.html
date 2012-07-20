@@ -173,7 +173,7 @@
 	</ul>
 	<span class="photo_votes">{{ photo.votes }}</span>
 	<div class="photo_active_button {% if photo.active %}active{% endif %}" id="photo_{{ photo.id }}_active" name="{{ photo.id }}_active">{% if photo.active %}active{% else %}inactive{% endif %}</div>
-	<img class="business_photo" src="photo.image.url" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
+	<img class="business_photo" src="{{ photo.image.url }}" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
       </div>
       {% endfor %}
     </div>

@@ -768,7 +768,7 @@ def save_image(model_image, filename, tmp_image):
     '''
     Saves an image to a NewsFeedItem.
 
-    model_image = Reference to the "image" field in a NewsFeedItem.
+    model_image = Reference to the "image" field in a NewsFeedItem (or any model with an image).
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
@@ -781,7 +781,7 @@ def save_image(model_image, filename, tmp_image):
     feed_image.save(imagefile, 'JPEG')
     # give it a unique name
     filename_parts = filename.split('.')
-    filename = filename_parts[0] + hashlib.md5(imagefile.getvalue()).hexdigest() + filename_parts[1]
+    filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
     # save it to disk so we have a real file to work with
     imagefile = open(os.path.join('/tmp', filename), 'w')
     feed_image.save(imagefile,'JPEG')
