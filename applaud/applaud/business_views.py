@@ -858,7 +858,7 @@ def get_employee_info(request):
 @business_view
 def toggle_photo(request):
     profile = request.user.businessprofile
-    photo_id = request.GET['photo_id']
+    photo_id = request.POST['photo_id']
     photo = models.BusinessPhoto.objects.get(id=photo_id)
     photo.active = not photo.active
     photo.save()

@@ -211,13 +211,48 @@ h2 {
 }
 
 #sticky {
-    font-family: 'The Girl Next Door', cursive;
+    font-family: 'The Girl Next Door', 'Marker Felt', cursive;
     background-color:rgb(255, 244, 144);
     width:200px;
-    font-family:'Marker Felt';
     font-size:20px;
     padding:20px;
     @include shadow(8px, #aaa, 0px, 10px);
     -moz-transform:rotate(-2deg);
     -webkit-transform:rotate(-2deg);
+}
+
+#control_panel_photos_div {
+    .photo {
+	margin: 5px auto;
+	background-color:$lightpink;
+	padding:10px;
+	.photo_votes {
+	    position:relative;
+	    flaot:left;
+	}
+	ul {
+	    position:relative;
+	    left:25px;
+	    margin:5px auto;
+	    li {
+		display:inline;
+		font-size:10pt;
+	    }
+	}
+	img {
+	    position:relative;
+	    left:25px;
+	    margin:10px auto;
+	}
+	.photo_active_button {
+	    // margin:5px auto;
+	    width:auto;
+	    position:relative;
+	    left:25px;
+	    padding:3px;
+	    border-style:solid;
+	    border-width:2px;
+	    border-color:black;
+	}
+    }
 }

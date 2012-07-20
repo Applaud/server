@@ -154,12 +154,16 @@ if(! apatapa.business.control_panel ){
 	
 	// When we click the 'activate' button on a photo, actually activate it.
 	$('.photo_active_button').click( function () {
+	    var photo_id = $(this).prop('id').split('_')[1];
 	    $.ajax({url: toggle_photo_url,
 		    type: 'POST',
-		    data: {'photo_id': $(this).prop('id').split('_')[1],
+		    data: {'photo_id': photo_id,
 			   'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val()},
 		    error: function () { alert('Shit!'); },
-		    success: function () { alert('Whee!'); }});
+		    success: function () {
+			alert('Whee!');
+			$('#photo_'+photo_id+'_active').html($('#photo_'+photo_id+'_active').html() === 'active' ? 'inactive' : 'active');
+		    }});
 	});
 	
 	$(".contract_employee_button").click( function () {
