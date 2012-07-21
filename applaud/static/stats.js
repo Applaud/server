@@ -377,7 +377,7 @@ if( ! apatapa.stats ){
         new google.visualization.ColumnChart(document.getElementById('employee_graph')).
 	    draw(data,
             {title:"Evaluations by Dimension",
-            width:"500", height:"500",
+            width:"599", height:"500",
             hAxis: {title: "Dimension"},
             vAxis: {title: "Average Rating",
                 viewWindowMode:'explicit',

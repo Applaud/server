@@ -64,7 +64,7 @@ $footerspacing: 7px;		// padding on footer
 $footerheight: 15px;		// height of footer region
 $mainpadding: 15px;		// padding for main content
 /***************************/
-@mixin shadow($size, $color:#aaa, $xoffset:0px, $yoffset:0px) {
+@mixin shadow($size, $color:#ccc, $xoffset:0px, $yoffset:0px) {
     -moz-box-shadow:$xoffset $yoffset $size $color;
     -webkit-box-shadow:$xoffset $yoffset $size $color;
     box-shadow:$xoffset $yoffset $size $color;
@@ -120,6 +120,7 @@ iframe{
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor);
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor)";
     background: -webkit-linear-gradient(bottom, $browncolor, $lightbrowncolor);
+    @include shadow(8px);
     padding: {
 	bottom:5px;
     }
@@ -129,10 +130,10 @@ iframe{
 #main {
     overflow:auto;
     padding-bottom:$footerheight;
-    height:90%;
-    #control_panel {
-	background-color:#ffffff;
-    }
+    height:600px;
+    background-color:#fff;
+    @include shadow(3px);
+
     padding: $mainpadding;
 }
 
@@ -263,6 +264,7 @@ h1, h3 {
 
 h1 {
     font-size:24pt;
+    margin:5px;
     padding-bottom:8px;
 }
 
@@ -310,4 +312,9 @@ h3 {
     margin: {
 	left:10px;
     }
+}
+
+#overview_div {
+    width:60%;
+    padding:10px;
 }

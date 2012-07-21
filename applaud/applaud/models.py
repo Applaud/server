@@ -293,3 +293,22 @@ class UserProfile(models.Model):
             if key != 'id':
                 setattr(self, key, value)
                 
+# It's called MessageItem because messages was making django fussy
+class MessageItem(models.Model):
+    subject = models.TextField(max_length=100, blank=True, null=True)
+    text = models.TextField()
+
+    # we don't need to recipient because the message belongs to one inbox
+    sender = models.ForeignKey(User)
+    inbox = models.ForeignKey('Inbox')
+    date_created=models.DateTimeField()
+
+    def __unicode__(self):
+        return self.text
+
+
+class Inbox(models.Model):
+    user = models.OneToOneField(User)
+    def __unicode__(self):
+        return str(self.user)
+    

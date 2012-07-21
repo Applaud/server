@@ -351,7 +351,7 @@ def manage_survey(request):
             survey.save()
 
             messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
-#            return HttpResponseRedirect(reverse('business_control_panel')) # Empty response = all went well
+#            return HttpResponseRedirect(reverse('business_controlpanel')) # Empty response = all went well
             return HttpResponse('')
         # We're getting data for this business' survey.
     else:
@@ -844,10 +844,11 @@ def get_employee_info(request):
     profile = request.user.businessprofile
     if request.method == 'GET':
         employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
-        # encoded_employee = views.EmployeeEncoder().default(employee)
         return HttpResponse(json.dumps({'bio':employee.bio}),
                             mimetype='application/json')
             
     return render_to_response('business_control_panel.html',
                               {'employee':encoded_employee},
                               context_instance=RequestContext(request))
+
+

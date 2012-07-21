@@ -340,4 +340,21 @@ qr4 = models.QuestionResponse(question=q4,
 qr4.save()
 
 
+# some messages and inbox items
+inbox1 = models.Inbox(user=keith_business.user)
+inbox1.save()
+
+message1 = models.MessageItem(text='Welcome to the Apatapa family! Also your sandwich was god awful',
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
+                              inbox = inbox1,
+                              subject='sandwich',
+                              sender = userprofile2.user)
+message1.save()
+
+message2 = models.MessageItem(text='I am fucking tired of finding roaches in my sandwiches!!!!',
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
+                              inbox = inbox1,
+                              sender = userprofile2.user)
+message2.save()
+
 print 'apatapa!'

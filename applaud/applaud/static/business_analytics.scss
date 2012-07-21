@@ -1,5 +1,7 @@
+@import "applaud.scss" ;
+
 $border-grey: #e0e0e0;
-$shadow-color: #aaa;
+$shadow-color: #ccc;
 
 #employees li {
     padding-top: 25px; }
@@ -13,11 +15,7 @@ $shadow-color: #aaa;
     height: 550px;
 }
 
-#employee_stats_choice_div {
-    h3 {
-	border:2px solid $border-grey;
-    }
-}
+
 
 #info {
     width: 615px;
@@ -31,9 +29,7 @@ $shadow-color: #aaa;
     margin-left:5px;
     border:none;
     margin-bottom:5px;
-    -moz-box-shadow:0px 0px 8px $shadow-color;
-    -webkit-box-shadow:0px 0px 8px $shadow-color;
-    box-shadow:0px 0px 8px $shadow-color;
+    @include shadow(5px);
 }
 
 #gt_dateslider {
@@ -53,9 +49,7 @@ $shadow-color: #aaa;
     padding: 0px; }
 
 #employee_table {
-    -moz-box-shadow:0px px 8px $shadow-color;
-    -webkit-box-shadow:0px 0px 8px $shadow-color;
-    box-shadow:0px 0px 8px $shadow-color;
+    @include shadow(5px);
 }
 
 #survey_table table, #employee_table table {
@@ -118,10 +112,21 @@ $shadow-color: #aaa;
 	background:-moz-linear-gradient(90deg, $border-grey, #ffffff);
 	padding:0 10px;
 	cursor:pointer;
+	z-index:2;
     }
     li.selected {
 	background:#ffffff;
 	border-bottom-color:#ffffff;
-	z-index:1;
+	border-bottom-width:0px;
+	z-index:3;
     }
 }
+
+.choice_div {
+    @include shadow(4px);
+    div, h3 {
+	border-color:$border-grey;
+	border-top-width:0px;
+    }
+}
+
