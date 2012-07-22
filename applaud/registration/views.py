@@ -194,13 +194,24 @@ def register(request, backend, success_url=None, form_class=None,
         form = form_class(data=request.POST, files=request.FILES)
 
 
-        sys.stderr.write("validating form...")
         if form.is_valid():
             new_user = backend.register(request, **form.cleaned_data)
             # django-registration does not take care of names. Do it here.
             new_user.first_name = request.POST['first_name']
             new_user.last_name = request.POST['last_name']
             new_user.save()
+            
+            # Each user (business, emp or enduser) has an inbox, associated with the User model
+            inbox = applaud_models.Inbox(user=new_user)
+            inbox.save()
+            
+            # Welcome message
+            message = applaud_models.MessageItem(text="Welcome to the Apatapa family! We're happatapy to have you here",
+                                                 date_created = datetime.utcnow().replace(tzinfo=utc),
+                                                 inbox = inbox,
+                                                 subject = 'Oh Hello!',
+                                                 sender = User.objects.get(pk=1))
+            message.save()
 
             # This section modified by Luke & Peter on Tue Jun 19 21:26:42 UTC 2012
             # This section modified again by Jack and Shahab on Thu June 21

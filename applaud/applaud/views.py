@@ -1,12 +1,16 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, Inbox, MessageItem
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.middleware.csrf import get_token
-from datetime import datetime
+
+from datetime import datetime, timedelta
+from django.utils.timezone import utc
+
 from django.contrib.auth.models import Group, User
 import sys
 import json
@@ -190,6 +194,7 @@ class MessageItemEncoder(json.JSONEncoder):
             return {'subject':o.subject,
                     'text':o.text,
                     'date':o.date_created.strftime("%d/%m/%Y"),
+                    'unread':o.unread,
                     'sender': {'first_name':o.sender.first_name,
                                'last_name':o.sender.last_name,
                                'id':o.sender.id}}
@@ -231,6 +236,9 @@ def get_inbox(request):
                 return_data['messages']=[encoded_message]
             else:
                 return_data['messages'].append(encoded_message)
+            mess.unread = False
+            mess.save()
+
         return HttpResponse(json.dumps({'inbox_data':return_data}),
                             mimetype="application/json")
     
@@ -247,19 +255,14 @@ def send_message(request):
      'text': ... }
      '''
     if request.method=='POST':
-        print request.POST
         s = User.objects.get(id=request.POST['sender_id'])
         recipient = User.objects.get(id=request.POST['recipient_id'])
-        print recipient
         i = recipient.inbox
-        print i
         message = models.MessageItem(text=request.POST['text'], 
                                      subject=request.POST['subject'],
-                                     date_created = datetime.now(),
+                                     date_created=datetime.datetime.utcnow().replace(tzinfo=utc),
                                      sender = s,
                                      inbox = i)
-        print message
+        print message.date_created.date()
         message.save()
-        
-        messages.add_message(request, messages.SUCCESS, "Message sent!")
     return HttpResponse('')

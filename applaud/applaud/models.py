@@ -300,8 +300,14 @@ class MessageItem(models.Model):
 
     # we don't need to recipient because the message belongs to one inbox
     sender = models.ForeignKey(User)
+
+    # the business related to the sender (if it's either a business itself or employee)
+    business = models.ForeignKey('BusinessProfile', blank=True, null=True)
+
+    unread = models.BooleanField(default=1)
+
     inbox = models.ForeignKey('Inbox')
-    date_created=models.DateTimeField()
+    date_created=models.DateTimeField(blank=True, null=True)
 
     def __unicode__(self):
         return self.text
