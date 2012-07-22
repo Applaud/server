@@ -163,7 +163,7 @@ class QuestionResponseEncoder(json.JSONEncoder):
 class NewsFeedItemEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.NewsFeedItem):
-            image_url = '%s%s' % (settings.MEDIA_URL, settings.NO_IMAGE)
+            image_url = ""
             if o.image:
                 image_url = o.image.url
             return {'id': o.id,
