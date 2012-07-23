@@ -720,7 +720,7 @@ def manage_newsfeed(request):
     else: 
         feed = models.NewsFeedItem(title=request.POST['title'],
                                    body=request.POST['body'],
-                                   subtitle=request.POST['subtitle'],
+                                   subtitle=request.POST['nfsubtitle'],
                                    business=profile,
                                    date=datetime.utcnow().replace(tzinfo=utc),
                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
