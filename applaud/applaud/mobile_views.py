@@ -16,6 +16,7 @@ from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder
+from business_views import save_image
 from django.utils.timezone import utc
 
 # 'mobile_view' decorator.
@@ -238,3 +239,20 @@ def nfdata(request):
         nfitem_list.append(encoder.default(nfitem))
     ret = {'newsfeed_items':nfitem_list}
     return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+@mobile_view
+def post_photo(request):
+    """ Post a photo from the phone to the server. Called
+    with a POST. """
+    profile = request.user.userprofile
+    image = request.FILES['image']
+    business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
+    business_photo = models.BusinessPhoto(business=business,
+                                          tags=json.loads(request.POST['tags']),
+                                          uploaded_by=profile)
+    business_photo.save()
+    filename = '%s_%s.jpg' % (profile.id,
+                       business.business_name)
+    save_image(business_photo.image, filename, image)
+    return HttpResponse('')
