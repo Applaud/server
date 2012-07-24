@@ -26,7 +26,9 @@ if(! apatapa.business.control_panel ){
 	$("#control_panel_survey_div").show();
 	$(".tab_bar_div").removeClass("tab_bar_selected");
 	$("#survey_tab_bar").addClass("tab_bar_selected");
+	console.log('calling display');
 	_ns.displayiPhoneDiv("survey");
+	console.log('done');
     };
     
     _ns.profile_display = function(){
@@ -204,10 +206,12 @@ if(! apatapa.business.control_panel ){
 	   
 
 	});
-	
+	// This hides all the other iphone divs and chooses the home iphone div
+	_ns.displayiPhoneDiv("home");
 	// Go to the appropriate tab if there's a hash in the URL.
 	if(location.hash === '#questions') {
-	    $('.survey_link').click();
+	    //$('.survey_link').click();
+	    _ns.survey_display();
 	}
 	if(location.hash === '#employees') {
 	    $('.employee_link').click();
@@ -218,8 +222,6 @@ if(! apatapa.business.control_panel ){
 	if(location.hash === '#newsfeed') {
 	    $('.newsfeed_link').click();
 	}
-	// This hides all the other iphone divs and chooses the home iphone div
-	_ns.displayiPhoneDiv("home");
     };
 
     // In the iphone questions view, this adds each question.
