@@ -243,8 +243,13 @@ def nfdata(request):
 @csrf_protect
 @mobile_view
 def post_photo(request):
-    """ Post a photo from the phone to the server. Called
-    with a POST. """
+    """
+    Post a photo from the phone to the server. Called
+    with a POST.
+    
+    Expects 'business_id' and 'tags' as POST keys, and
+    'image' as a file.
+    """
     profile = request.user.userprofile
     image = request.FILES['image']
     business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
