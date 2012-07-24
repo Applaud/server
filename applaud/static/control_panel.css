@@ -1,262 +1,15 @@
-/******************************
- * -----   CSS RESET   -----  *
- ******************************/
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline; }
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block; }
-
-body {
-  line-height: 1; }
-
-ol, ul {
-  list-style: none; }
-
-blockquote, q {
-  quotes: none; }
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none; }
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
-/******************************
- * ---- END CSS RESET  -----  *
- ******************************/
-/******** variables ********/
-/***************************/
-/* styles that apply to the whole page */
-html, body {
-  font-family: 'Arvo', serif;
-  background-image: url("/static/SmallTile.png");
-  height: 100%;
-  margin: auto; }
-
-/* main content style */
-#content {
-  width: 1000px;
-  min-height: 100%;
-  margin-left: auto;
-  margin-right: auto; }
-
-/* very top and bottom caps */
-#header, #footer, #extra-content {
-  color: white;
-  background-color: #2c1e1e; }
-
-#extra-extra-content {
-  background: rgba(0, 0, 0, 0);
-  background: black transparent;
-  /* For IE 5.5 - 7*/
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
-  /* For IE 8*/
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)"; }
-
-iframe {
-  text-align: center;
-  margin-left: 100px;
-  margin-right: 100px;
-  padding: 15px; }
-
-#header {
-  height: 150px;
-  background: -moz-linear-gradient(90deg, #2c1e1e, #373232);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor);
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor)";
-  background: -webkit-linear-gradient(bottom, #2c1e1e, #373232);
-  -moz-box-shadow: 0px 0px 8px #cccccc;
-  -webkit-box-shadow: 0px 0px 8px #cccccc;
-  box-shadow: 0px 0px 8px #cccccc;
-  padding-bottom: 5px; }
-
-#main {
-  overflow: auto;
-  padding-bottom: 15px;
-  height: 600px;
-  background-color: #fff;
-  -moz-box-shadow: 0px 0px 3px #cccccc;
-  -webkit-box-shadow: 0px 0px 3px #cccccc;
-  box-shadow: 0px 0px 3px #cccccc;
-  padding: 15px; }
-
-/* very bottom div */
-#footer {
-  position: relative;
-  width: 986px;
-  height: 15px;
-  line-height: 15px;
-  font-family: 'PT Sans Caption', sans-serif;
-  font-size: 10pt;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0px;
-  padding-left: 7px;
-  padding-right: 7px;
-  padding-top: 7px; }
-
-/* titles for main content divs */
-.content-title {
-  font-variant: small-caps;
-  border-bottom: solid 1px #500278;
-  color: #500278;
-  margin-bottom: 15px;
-  margin-top: 5px;
-  text-align: left;
-  max-width: 480px; }
-  .content-title h2 {
-    font-size: 20pt;
-    margin-bottom: 10px; }
-
-/* "features" div */
-#features {
-  float: left;
-  width: 40%; }
-
-/* "partners" div */
-#partners {
-  float: right;
-  width: 50%; }
-
-/* the logo div */
-#logo {
-  position: relative; }
-  #logo h1 {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    color: #6e9bff;
-    font-size: 36pt;
-    padding: 15px; }
-
-.logo_title {
-  text-transform: lowercase; }
-
-#accountlinks {
-  text-align: right;
-  font-size: 10pt;
-  font-family: 'Pt Sans Caption', sans-serif;
-  padding-right: 10px;
-  padding-top: 15px; }
-  #accountlinks a {
-    color: white;
-    text-decoration: none; }
-
-/* main links at the top */
-#navigation {
-  margin: 10px;
-  text-transform: uppercase;
-  display: block;
-  text-align: right;
-  position: relative;
-  top: 60px; }
-  #navigation ul {
-    margin: 5px auto; }
-  #navigation li {
-    display: inline;
-    padding: 5px; }
-  #navigation a {
-    color: white;
-    text-decoration: none; }
-    #navigation a:hover {
-      text-decoration: underline; }
-
-#copyright {
-  float: left; }
-
-#contact {
-  float: right; }
-  #contact a {
-    text-decoration: none;
-    color: white; }
-
-h1, h3 {
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #2c1e1e; }
-
-h1 {
-  font-size: 24pt;
-  margin: 5px;
-  padding-bottom: 8px; }
-
-h3 {
-  font-size: 16pt; }
-
-.errorlist li {
-  color: red;
-  padding-bottom: 10px; }
-
-/** forms that are prominent on the page.
-    potentially the only thing on the page at all. **/
-.centerform {
-  float: left;
-  margin-left: auto;
-  margin-right: auto;
-  /* input { */
-  /* 	text-align:right; */
-  /* } */
-  background-color: #ffebfa;
-  display: block;
-  max-width: 600px;
-  padding: 20px; }
-  .centerform p {
-    text-align: right;
-    display: block;
-    margin-top: 3px;
-    margin-bottom: 3px; }
-
-.login_ {
-  margin-top: 20px; }
-
-#messages {
-  margin-left: 10px; }
-
-#overview_div {
-  width: 60%;
-  padding: 10px; }
-
-#main {
-  height: 100%; }
-
-h2 {
-  font-size: 14pt; }
-
 #control_panel {
   padding-top: 8px;
+  overflow: auto;
   width: 550px;
-  height: 700px; }
+  -moz-box-shadow: 0px px 8px #aaa;
+  -webkit-box-shadow: 0px 0px 8px #aaa;
+  box-shadow: 0px 0px 8px #aaa; }
   #control_panel #control_panel_heading {
     margin-left: 10px; }
 
 #control_panel_nav {
+  font-size: 10pt;
   margin-top: 5px;
   margin-bottom: 10px;
   padding-left: 25px;
@@ -280,6 +33,7 @@ h2 {
     z-index: 1; }
 
 .control_panel_div {
+  height: 600px;
   border: 2px solid;
   border-color: #e0e0e0;
   border-top-radius: 15px;
@@ -287,41 +41,20 @@ h2 {
   border-left: none;
   border-right: none;
   padding: 20px;
-  border-radius: 5px;
-  margin-top: -8px;
-  -moz-box-shadow: 0px 0px 3px #cccccc;
-  -webkit-box-shadow: 0px 0px 3px #cccccc;
-  box-shadow: 0px 0px 3px #cccccc;
-  overflow: auto; }
+  margin-top: -8px; }
   .control_panel_div #employee_button {
     height: 5px; }
 
-#control_panel_employees_div .cp_employee_div {
-  margin: 5px;
-  background-color: #ffebfa; }
-  #control_panel_employees_div .cp_employee_div .cp_employee_row {
-    height: 40px; }
-    #control_panel_employees_div .cp_employee_div .cp_employee_row .profileexpand {
-      float: right; }
-  #control_panel_employees_div .cp_employee_div .extra_employee_row {
-    margin: 5px; }
-  #control_panel_employees_div .cp_employee_div h2 {
-    display: inline; }
-#control_panel_employees_div #newemployeeform {
+#manage_employees #newemployeeform {
   margin-top: 30px;
   margin-bottom: 30px;
   display: block; }
-  #control_panel_employees_div #newemployeeform .employee_info {
-    margin: 5px; }
-  #control_panel_employees_div #newemployeeform h2 {
-    margin-bottom: 10px;
-    margin-left: 0; }
-#control_panel_employees_div .profile_title {
+#manage_employees .profile_title {
   margin-right: 15px;
   display: inline; }
-#control_panel_employees_div .employee_name {
+#manage_employees .employee_name {
   padding-left: 10px; }
-#control_panel_employees_div .del_emp_button {
+#manage_employees .del_emp_button {
   background-color: #ff6464;
   margin-left: 10px; }
 
@@ -331,37 +64,25 @@ h2 {
   height: 710px;
   float: right;
   font-family: "Helvetica", sans-serif;
-  -moz-box-shadow: 0px 3px 8px #aaaaaa;
-  -webkit-box-shadow: 0px 3px 8px #aaaaaa;
-  box-shadow: 0px 3px 8px #aaaaaa;
+  -moz-box-shadow: 0px 3px 8px #aaa;
+  -webkit-box-shadow: 0px 3px 8px #aaa;
+  box-shadow: 0px 3px 8px #aaa;
   border-radius: 50px; }
   #iphone_preview #iphone_screen {
     position: relative;
     left: 21px;
     top: 135px;
-    background-color: #bbb;
+    background-color: cyan;
     width: 320px;
     height: 411px;
     overflow: hidden; }
-    #iphone_preview #iphone_screen .iphone_description {
-      position: relative;
-      height: 60px;
-      padding: 10px;
-      text-align: center; }
-    #iphone_preview #iphone_screen #iphone_home_message {
-      position: relative;
-      height: 60px;
-      padding: 10px;
-      vertical-align: middle;
-      margin: 10px;
-      margin-top: 25px; }
     #iphone_preview #iphone_screen .navbar {
       position: relative;
       left: 0px;
       top: 0px;
       text-align: center;
       height: 44px;
-      background-color: #fff; }
+      background-color: orange; }
       #iphone_preview #iphone_screen .navbar p {
         font-size: 20px;
         font-weight: bold;
@@ -386,43 +107,12 @@ h2 {
         left: 10px;
         color: #7d7d7d;
         font-size: 14px; }
-  #iphone_preview .tab_bar {
-    width: 320px;
-    height: 49px;
-    left: 21px;
-    top: 136px;
-    position: relative;
-    background: -moz-linear-gradient(90deg, #050505 40%, #4b4b4b);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5));
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5))";
-    background: -webkit-linear-gradient(bottom, #050505 40%, #4b4b4b);
-    /* Setting the font-size to 0 so that the tab bar divs can be inline with no space between them */
-    font-size: 0px; }
-    #iphone_preview .tab_bar .tab_bar_div {
-      position: relative;
-      top: 0px;
-      height: 49px;
-      width: 64px;
-      display: inline-block;
-      color: #fff;
-      background-color: transparent;
-      font-size: 8px; }
-    #iphone_preview .tab_bar .tab_bar_selected {
-      background: -moz-linear-gradient(90deg, #2d2d2d 40%, #696969);
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45));
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45))";
-      background: -webkit-linear-gradient(bottom, #2d2d2d 40%, #696969);
-      border-radius: 5px; }
 
 #sticky {
-  font-family: 'The Girl Next Door', cursive;
   background-color: #fff490;
   width: 200px;
-  font-family: 'Marker Felt';
-  font-size: 20px;
+  heigth: 250px;
   padding: 20px;
-  -moz-box-shadow: 0px 10px 8px #aaaaaa;
-  -webkit-box-shadow: 0px 10px 8px #aaaaaa;
-  box-shadow: 0px 10px 8px #aaaaaa;
-  -moz-transform: rotate(-2deg);
-  -webkit-transform: rotate(-2deg); }
+  -webkit-box-shadow: 0px 0px 10px #aaa;
+  box-shadow: 0px 10px 10px #aaa;
+  -moz-transform: rotate(-2deg); }

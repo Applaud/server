@@ -186,7 +186,6 @@ if(! apatapa.business.control_panel ){
 	    }
 	});
 	
-<<<<<<< HEAD
 	// When we click the 'activate' button on a photo, actually activate it.
 	$('.photo_active_button').click( function () {
 	    var photo_id = $(this).prop('id').split('_')[1];

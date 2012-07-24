@@ -200,7 +200,6 @@
     </form>
   </div>
   
-<<<<<<< HEAD
   <div id="control_panel_photos_div" name="control_panel_photos_div" class="control_panel_div">
     <h1>Photos</h1>
     <p>Here you can see photos that your customers have taken in your location and uploaded to Apatapa.</p>
@@ -218,7 +217,7 @@
       </div>
       {% endfor %}
     </div>
-=======
+  </div>
 
   <div id="control_panel_profile_div" name="control_panel_profile_div" class="control_panel_div">
     <h1>{{ business.business_name }}</h1>
@@ -232,8 +231,6 @@
       Your secondary colors (likewise!) <input type="text" class="color {hash:true,caps:false}" name="secondary_color" id="secondary_color_input" value="{{ business_profile.secondary_color }}" onchange="apatapa.business.iphone.refreshSecondary();" /><br />
       <button type="submit" id="save_profile_button" name="save_profile_button">Save Changes</button>
     </form>
-
->>>>>>> master
   </div>
 </div>
 {% endblock %}

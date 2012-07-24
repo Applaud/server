@@ -273,7 +273,8 @@ h2 {
     background: -webkit-linear-gradient(bottom, #e0e0e0, white);
     background: -moz-linear-gradient(90deg, #e0e0e0, white);
     padding: 0 10px;
-    cursor: pointer; }
+    cursor: pointer;
+    font-size: 10pt; }
   #control_panel_nav li.selected {
     background: #ffffff;
     border-bottom-color: #ffffff;

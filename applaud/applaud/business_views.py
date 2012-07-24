@@ -704,7 +704,6 @@ def manage_newsfeed(request):
         return HttpResponse("")
 
     # Modify a newsfeed item
-    print str(request.POST)
     # If we are modifying a feed...
     feed_id = int(request.POST['feed_id'])
     feed = ""
@@ -725,6 +724,16 @@ def manage_newsfeed(request):
                                    date=datetime.utcnow().replace(tzinfo=utc),
                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
         feed.save()
+        if request.POST['message_checkbox']=='on':
+            for subscriber in profile.userprofile_set.all():
+                print subscriber
+                message = models.MessageItem(subject=request.POST['title'],
+                                             text=request.POST['body'],
+                                             sender=profile.user,
+                                             business=profile,
+                                             inbox=subscriber.user.inbox,
+                                             date_created = datetime.utcnow().replace(tzinfo=utc))
+                message.save()
 
     # Whether dealing with a new NewsFeedItem or not, deal with any uploaded
     # images.
@@ -738,9 +747,7 @@ def manage_newsfeed(request):
             feed.save()
         except IOError:
             pass
-
-
-    print "About to be ok..."
+    messages.add_message(request, messages.SUCCESS, "Newsfeed items successfully created!")
     return HttpResponseRedirect(reverse("business_control_panel"))
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
