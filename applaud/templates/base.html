@@ -102,14 +102,14 @@ var send_message_url = "{% url send_message %}"
 	  <li><a href="http://apatapablog.com">Blog</a></li>
 	</ul>
 	{% if user.is_authenticated %}
+	  {% if user.businessprofile %}
 	<ul id="nav_link">
 	  <li> My Apatapa:</li>
-	  {% if user.businessprofile %}
 	  <li><a href="{% url analytics %}">Stats</a></li>
 	  <li><a href="{% url business_control_panel %}">Control Panel</a></li>
-	  {% endif %}
 	  <li><a href="/messages">Messages</a></li>
 	</ul>
+	  {% endif %}
 	{% endif %}
 	{% endblock %}
       </div>

@@ -16,7 +16,7 @@ from random  import random
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
 user2 = User.objects.create_user('Apatapa', 'alsdafasdf@gmail.com', 'applaud')
-enduser = User.objects.create_user('keith', 'mastertrash@gmail.com', 'apatapa')
+enduser = User.objects.create_user('little keith', 'mastertrash@gmail.com', 'apatapa')
 enduser.first_name="Keith"
 enduser.last_name="Cox"
 enduser.save()
@@ -51,6 +51,7 @@ keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         latitude='14.3', longitude='12.34',
                                         goog_id='23l;asdr4ajiaf', business_name="Pacific Catch")
 
+
 # Business and Customer groups.
 business_group = Group(name='Business')
 business_group.save()
@@ -65,6 +66,9 @@ keith_business.save()
 business2.groups = [business_group]
 business2.save()
 
+# Get the user to follow the business.
+userprofile.businesses_followed.add(business, keith_business)
+userprofile2.businesses_followed.add(business, keith_business)
 # Make a RatingProfile.
 
 profile1 = models.RatingProfile(title='Profile 1', business=business)
@@ -345,7 +349,8 @@ inbox1 = models.Inbox(user=keith_business.user)
 inbox1.save()
 inbox2 = models.Inbox(user=userprofile2.user)
 inbox2.save()
-
+inbox3 = models.Inbox(user=userprofile.user)
+inbox3.save()
 message1 = models.MessageItem(text='Welcome to the Apatapa family! Also your sandwich was god awful',
                               date_created=datetime.utcnow().replace(tzinfo=utc),
                               inbox = inbox1,
