@@ -1,5 +1,5 @@
 {% extends "business.html" %}
-{% block title %}Control Panel {% endblock %}
+{% block title %}Apatapa | Control Panel{% endblock %}
 {% block links %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}control_panel.css" />
@@ -11,9 +11,11 @@
 <script type="text/javascript" src="{{ STATIC_URL }}business.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}employee.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphonepreview.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jscolor/jscolor.js"></script>
 <script type="text/javascript">
   $(document).ready(function() {
   apatapa.business.control_panel.init_control_panel( {{ feeds|length }}, {{ employee_list|length }});
+
   });
 </script>
 {% endblock %}
@@ -25,13 +27,50 @@
 <!-- listitem heading title -->
 <div id="iphone_preview">
   <div id="iphone_screen">
-    <div class="navbar">
-      <p id="iphone_title" class="iphone_title">{{ survey_list.0.title }}</p>
+    <div id="iphone_survey_div" class="iphone_divs">
+      <div class="navbar">
+	<p id="iphone_title" class="iphone_title">{{ survey_list.0.title }}</p>
+      </div>
+      <div class="description">
+	<p id="iphone_description" class="iphone_description">{{ survey_list.0.description }}</p>
+      </div>
     </div>
-    <div class="description">
-      <p id="iphone_description" class="iphone_description">{{ survey_list.0.description }}</p>
+
+    
+    <div id="iphone_newsfeed_div" class="iphone_divs">
+      <div class="navbar">
+	<p class="iphone_title">Newsfeed</p>
+      </div>
+    </div>
+
+    <div id="iphone_home_div" class="iphone_divs">
+      <div class="navbar">
+	<p class="iphone_title">{{ business_profile.business_name }}</p>
+      </div>
+      <div>
+	<p id="iphone_home_message">You can use this iPhone simulator to view what the changes will look like when your customer opens up Apatapa on your premises.</p>
+      </div>      
     </div>
   </div>
+  <div class="tab_bar">
+    <div class="tab_bar_div" id="employee_tab_bar">
+
+    </div>
+    <div class="tab_bar_div" id="blank_tab_bar">
+      
+    </div>
+    <div class="tab_bar_div" id="comment_tab_bar">
+
+    </div>
+    <div class="tab_bar_div" id="survey_tab_bar">
+
+    </div>
+    <div class="tab_bar_div" id="newsfeed_tab_bar">
+
+    </div>
+    
+  </div>
+
 </div>
 <div id="control_panel">
   
@@ -41,16 +80,17 @@
 
   <ul id="control_panel_nav" name="control_panel_nav">
     <li id="home_button" class="home_link cp_nav_button selected"  name="home_button">Home</li>
+    <li id="profile_button" class="profile_link cp_nav_button">Profile</li>
     <li id="employee_button" class="employee_link cp_nav_button">Employees</li>
-    <li id="newsfeed_button" class="newsfeed_link cp_nav_button">News Items</li>
     <li id="survey_button" class="survey_link cp_nav_button">Questions</li>
     <li id="photos_button" class="photos_link cp_nav_button">Photos</li>
+    <li id="newsfeed_button" class="newsfeed_link cp_nav_button">News Items</li>
   </ul>
 
   
   <div id="home_div" class="control_panel_div" name="home_div" >
     <div id="sticky">
-      <p>Welcome to your control panel. Here, you can look at and edit the display of apatapa when a user is located on your premises. Use the above to navigate to the various features that you can customize.</p>
+      <p>Welcome to your control panel. Here, you can look at and edit the display of apatapa when a user is located on your premises. Use the above tabs to navigate to the various features that you can customize.</p>
     </div>
   </div>
 
@@ -160,6 +200,7 @@
     </form>
   </div>
   
+<<<<<<< HEAD
   <div id="control_panel_photos_div" name="control_panel_photos_div" class="control_panel_div">
     <h1>Photos</h1>
     <p>Here you can see photos that your customers have taken in your location and uploaded to Apatapa.</p>
@@ -177,6 +218,22 @@
       </div>
       {% endfor %}
     </div>
+=======
+
+  <div id="control_panel_profile_div" name="control_panel_profile_div" class="control_panel_div">
+    <h1>{{ business.business_name }}</h1>
+    {% if business.logo %}
+    <img src="{{ business_profile.logo.url }}" alt="logo" />
+    {% endif %}
+    <form name="logo" action="/business/profile/" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      Upload a logo! <input type="file" accept="image/*" name="logo_image" id="logo_image" /><br />
+      Your primary colors (comma-separated!) <input type="text" class="color {hash:true,caps:false}" name="primary_color" id="primary_color_input" value="{{ business_profile.primary_color }}" onchange="apatapa.business.iphone.refreshPrimary();" /><br />
+      Your secondary colors (likewise!) <input type="text" class="color {hash:true,caps:false}" name="secondary_color" id="secondary_color_input" value="{{ business_profile.secondary_color }}" onchange="apatapa.business.iphone.refreshSecondary();" /><br />
+      <button type="submit" id="save_profile_button" name="save_profile_button">Save Changes</button>
+    </form>
+
+>>>>>>> master
   </div>
 </div>
 {% endblock %}

@@ -786,8 +786,6 @@ if (! apatapa.business) {
 	 */
 	var addFeed = function (id, title, date, date_edited, subtitle, body, image, animated) {
 
-	    console.log("Adding feed with body: "+body);
-	    
 	    // DIV to house the newsfeed listing
 	    var feed_div = $('<div></div>');
 	    feed_div.prop({'class': 'feed',

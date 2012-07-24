@@ -6,6 +6,10 @@ $browncolor: rgb(44,30,30);	// dark brown color for header/footer
 $border-grey: #e0e0e0;
 $shadow-color: #aaa;
 
+
+#main {
+    height:100%;
+}
 h2 {
     font-size:14pt;
 }
@@ -14,11 +18,9 @@ h2 {
     padding: {
 	top:8px;
     }
-    overflow:scroll;
+
     width:550px;
     height:700px;
-    
-    @include shadow(8px);
     
     #control_panel_heading {
 	margin: {
@@ -66,12 +68,15 @@ h2 {
     border-left:none;
     border-right:none;
     padding: 20px;
+    border-radius:5px;
     #employee_button {
 	height:5px;
     }
     margin: {
 	top:-8px;
     }
+    @include shadow(3px);
+    overflow:auto;
 }
 
 #control_panel_employees_div {
@@ -154,16 +159,23 @@ h2 {
 	position:relative;
 	left:21px;
 	top:135px;
-	background-color:cyan;
+	background-color:#bbb;
 	width:320px;
 	height:411px;
 	overflow:hidden;
-	#iphone_description {
+	.iphone_description {
 	    position:relative;
 	    height:60px;
 	    padding:10px;
 	    text-align:center;
-	    overflow:auto;
+	}
+	#iphone_home_message {
+	    position:relative;
+	    height:60px;
+	    padding:10px;
+	    vertical-align:middle;
+	    margin:10px;
+	    margin-top:25px;
 	}
 	.navbar {
 	    position:relative;
@@ -171,7 +183,7 @@ h2 {
 	    top:0px;
 	    text-align:center;
 	    height:44px;
-	    background-color:orange;
+	    background-color:#fff;
 //	    background-image:-webkit-linear-gradient(bottom, #400075, #640096);
 	    p {
 		font-size:20px;
@@ -206,6 +218,38 @@ h2 {
 		color:rgb(125,125,125);
 		font-size:14px;
 	    }
+	}
+    }
+    .tab_bar{
+	width:320px;
+	height:49px;
+	left:21px;
+	top:136px;
+	position: relative;
+	background:-moz-linear-gradient(90deg, rgb(5,5,5) 40%, rgb(75,75,75));
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5))";
+	background: -webkit-linear-gradient(bottom, rgb(5,5,5) 40%, rgb(75,75,75));
+	
+	/* Setting the font-size to 0 so that the tab bar divs can be inline with no space between them */
+	font-size:0px;
+	
+	.tab_bar_div {
+	    position:relative;
+	    top:0px;
+	    height:49px;
+	    width:64px;
+	    display:inline-block;
+	    color:#fff;
+	    background-color:transparent;
+	    font-size:8px;
+	}
+	.tab_bar_selected {
+	    background:-moz-linear-gradient(90deg, rgb(45,45,45) 40%, rgb(105,105,105));
+	    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45));
+	    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45))";
+	    background: -webkit-linear-gradient(bottom, rgb(45,45,45) 40%, rgb(105,105,105));	    
+	    border-radius:5px;
 	}
     }
 }

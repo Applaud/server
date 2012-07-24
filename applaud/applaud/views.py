@@ -1,12 +1,16 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile
+from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, Inbox, MessageItem
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.middleware.csrf import get_token
-from datetime import datetime
+
+from datetime import datetime, timedelta
+from django.utils.timezone import utc
+
 from django.contrib.auth.models import Group, User
 import sys
 import json
@@ -68,7 +72,9 @@ class EmployeeEncoder(json.JSONEncoder):
             dimension_list = []
             for d in o.rating_profile.rateddimension_set.all():
                 dimension_list.append(dimension_encoder.default(d))
-            image_url = settings.SERVER_URL+settings.MEDIA_URL+employee_views._profile_picture(o)
+            image_url = employee_views._profile_picture(o)
+            if image_url:
+                image_url = settings.SERVER_URL+settings.MEDIA_URL+image_url
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
@@ -159,7 +165,7 @@ class QuestionResponseEncoder(json.JSONEncoder):
 class NewsFeedItemEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.NewsFeedItem):
-            image_url = '%s%s' % (settings.MEDIA_URL, settings.NO_IMAGE)
+            image_url = ""
             if o.image:
                 image_url = o.image.url
             return {'id': o.id,
@@ -183,3 +189,82 @@ class RatingEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, o)
 
+
+class MessageItemEncoder(json.JSONEncoder):
+    def default(self,o):
+        if isinstance(o, models.MessageItem):
+            return {'subject':o.subject,
+                    'text':o.text,
+                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'unread':o.unread,
+                    'sender': {'first_name':o.sender.first_name,
+                               'last_name':o.sender.last_name,
+                               'id':o.sender.id}}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+
+
+
+
+
+def view_inbox(request):
+    
+    if request.user.is_authenticated():
+        # try:
+        #     profile = request.user.businessprofile
+        # except BusinessProfile.DoesNotExist:
+        #     try:
+        #         profile = request.user.employeeprofile
+        #     except EmployeeProfile.DoesNotExist:
+        #         profile = request.user.userprofile
+        inbox = request.user.inbox
+        message_list = inbox.messageitem_set.all()
+        return render_to_response('messages.html',
+                                  {'message_list':message_list,
+                                   'user':request.user},
+                                  context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect(reverse("auth_login"))
+
+@csrf_protect
+def get_inbox(request):
+    if request.method == 'GET':
+        inbox = request.user.inbox
+        return_data={}
+        for mess in inbox.messageitem_set.all():
+            encoded_message = MessageItemEncoder().default(mess)
+            if not 'messages' in return_data:
+                return_data['messages']=[encoded_message]
+            else:
+                return_data['messages'].append(encoded_message)
+            mess.unread = False
+            mess.save()
+
+        return HttpResponse(json.dumps({'inbox_data':return_data}),
+                            mimetype="application/json")
+    
+    return HttpResponseRedirect('/messages')
+
+
+# BAD BAD BAD. Fix this!
+@csrf_exempt
+def send_message(request):
+    '''
+    {'sender_id':user_id,
+     'recipient_id': ... ,
+     'subject': ... ,
+     'text': ... }
+     '''
+    if request.method=='POST':
+        s = User.objects.get(id=request.POST['sender_id'])
+        recipient = User.objects.get(id=request.POST['recipient_id'])
+        i = recipient.inbox
+        message = models.MessageItem(text=request.POST['text'], 
+                                     subject=request.POST['subject'],
+                                     date_created=datetime.datetime.utcnow().replace(tzinfo=utc),
+                                     sender = s,
+                                     inbox = i)
+        print message.date_created.date()
+        message.save()
+    return HttpResponse('')

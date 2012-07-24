@@ -308,3 +308,28 @@ class BusinessPhoto(models.Model):
     votes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
+                
+# It's called MessageItem because messages was making django fussy
+class MessageItem(models.Model):
+    subject = models.TextField(max_length=100, blank=True, null=True)
+    text = models.TextField()
+
+    # we don't need to recipient because the message belongs to one inbox
+    sender = models.ForeignKey(User)
+
+    # the business related to the sender (if it's either a business itself or employee)
+    business = models.ForeignKey('BusinessProfile', blank=True, null=True)
+
+    unread = models.BooleanField(default=1)
+
+    inbox = models.ForeignKey('Inbox')
+    date_created=models.DateTimeField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.text
+
+
+class Inbox(models.Model):
+    user = models.OneToOneField(User)
+    def __unicode__(self):
+        return str(self.user)

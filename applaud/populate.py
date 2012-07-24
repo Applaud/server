@@ -356,4 +356,25 @@ keith_photo2 = models.BusinessPhoto(business=keith_business,
 business_views.save_image(keith_photo2.image,
                           'keith_photo_numero_dos.jpg',
                           settings.MEDIA_ROOT + 'noimage.png')
+
+# some messages and inbox items
+inbox1 = models.Inbox(user=keith_business.user)
+inbox1.save()
+inbox2 = models.Inbox(user=userprofile2.user)
+inbox2.save()
+
+message1 = models.MessageItem(text='Welcome to the Apatapa family! Also your sandwich was god awful',
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
+                              inbox = inbox1,
+                              subject='sandwich',
+                              sender = userprofile2.user)
+message1.save()
+
+message2 = models.MessageItem(text='I am fucking tired of finding roaches in my sandwiches!!!!',
+                              date_created=datetime.utcnow().replace(tzinfo=utc),
+                              inbox = inbox1,
+                              subject='',
+                              sender = userprofile2.user)
+
+message2.save()
 print 'apatapa!'

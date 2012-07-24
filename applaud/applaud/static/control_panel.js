@@ -4,25 +4,37 @@ if(! apatapa.business.control_panel ){
 
 (function (_ns) {
 
-    var employee_display = function(){
+    _ns.employee_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_employees_div").show();
 	$(".employee_management").hide();
 	$("#view_employees_div").show();
 	$(".hidden").hide();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#employee_tab_bar").addClass("tab_bar_selected");
     };
 
-    var newsfeed_display = function(){
+    _ns.newsfeed_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_newsfeeds_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#newsfeed_tab_bar").addClass("tab_bar_selected");
     };
 
-    var survey_display = function(){
+    _ns.survey_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_survey_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#survey_tab_bar").addClass("tab_bar_selected");
+	_ns.displayiPhoneDiv("survey");
+    };
+    
+    _ns.profile_display = function(){
+	$(".control_panel_div").hide();
+	$("#control_panel_profile_div").show();
     };
 
-    var home_display = function(){
+    _ns.home_display = function(){
 	$(".control_panel_div").hide();
 	$("#home_div").show();
     };
@@ -30,7 +42,17 @@ if(! apatapa.business.control_panel ){
     var photos_display = function() {
 	$('.control_panel_div').hide();
 	$("#control_panel_photos_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	_ns.displayiPhoneDiv("home");
     };
+
+    // function to hide other iphone divs and display the one that's passed in as an argument. Between "home", "newsfeed", "survey".
+    _ns.displayiPhoneDiv = function (name) {
+	console.log("hiding iphone divs");
+	$(".iphone_divs").hide();
+	$("#iphone_"+name+"_div").show();
+    }
+
 
     /**
      * This is executed after the page has fully loaded.
@@ -56,10 +78,16 @@ if(! apatapa.business.control_panel ){
 	// This creates the sub-tabs for the control panel
 	$(".control_panel_div").hide();
 	$("#home_div").show();
+
+	// This sets the navigation tab clicked as 'selected'
+	$('.cp_nav_button').click( function(event) {
+	    $('.cp_nav_button').removeClass('selected');
+	    $(this).addClass('selected');
+	})
 	
 	$(".employee_link").click( function(event) {
 	    event.preventDefault();
-	    employee_display();
+	    _ns.employee_display();
 	});
 	
 	$('.cp_nav_button').click( function(event) {
@@ -69,18 +97,24 @@ if(! apatapa.business.control_panel ){
 
 	$(".newsfeed_link").click( function(event) {
 	    event.preventDefault();
-	    newsfeed_display();
+	    _ns.newsfeed_display();
 	});
 
 
 	$(".survey_link").click( function(event) {
 	    event.preventDefault();
-	    survey_display()
+	    _ns.survey_display()
 	});
+
+	$(".profile_link").click( function(event) {
+	    event.preventDefault();
+	    _ns.profile_display()
+	});
+
 
 	$(".home_link").click( function(event) {
 	    event.preventDefault();
-	    home_display();
+	    _ns.home_display();
 	});
 	
 	$('.photos_link').click( function(event) {
@@ -152,6 +186,7 @@ if(! apatapa.business.control_panel ){
 	    }
 	});
 	
+<<<<<<< HEAD
 	// When we click the 'activate' button on a photo, actually activate it.
 	$('.photo_active_button').click( function () {
 	    var photo_id = $(this).prop('id').split('_')[1];
@@ -184,8 +219,11 @@ if(! apatapa.business.control_panel ){
 	if(location.hash === '#newsfeed') {
 	    $('.newsfeed_link').click();
 	}
+	// This hides all the other iphone divs and chooses the home iphone div
+	_ns.displayiPhoneDiv("home");
     };
-    
+
+    // In the iphone questions view, this adds each question.
     _ns.addQuestion = function (index, id, title) {
 	var listitem;
 	var heading;
@@ -226,6 +264,7 @@ if(! apatapa.business.control_panel ){
 	apatapa.business.iphone.refreshSecondary();
     };
     
+    // Also for the iphone questions view.
     _ns.updateQuestion = function (id, index, title) {
 	if(id) {
 	    if(title.length < 30) {
@@ -285,7 +324,7 @@ if(! apatapa.business.control_panel ){
 	var last_blank = $('<div></div>');
 	last_blank.prop({'id': 'last_blank',
 			 'class': 'listitem'});
-	$('#iphone_screen').append(last_blank);
+	$('#iphone_survey_div').append(last_blank);
 	for(i = 0; i < 9; i++) {
 	    var listitem = $('<div></div>');
 	    console.log('adding listitem!');

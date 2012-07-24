@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import admin
 import views
 import settings
-#from registration import views as business_views
+
 import business_urls, mobile_urls, employee_urls, user_urls
 
 # Import other urlconfs
@@ -27,5 +27,26 @@ urlpatterns = patterns('',
                        (r'^mobile/', include(mobile_urls)),
                        (r'^employee/', include(employee_urls)),
                        (r'^user/', include(user_urls)),
+                       (r'^overview/', direct_to_template,
+                        {'template':'overview.html'}),
+
+                       (r'^about/', direct_to_template,
+                        {'template':'about.html'}),
+
+                       # These are to do with messages and inbox.
+                       url(r'^messages/', views.view_inbox,
+                           name="messages"),
+                       url(r'^get_inbox/', views.get_inbox,
+                           name="get_inbox"),
+                       url(r'^send_message/', views.send_message,
+                           name="send_message"),
+
+
+                       (r'^features/', direct_to_template,
+                        {'template':'features.html'}),
+
                        (r'^accounts/', include('registration.backends.default.urls')),
                        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+

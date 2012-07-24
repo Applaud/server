@@ -351,7 +351,7 @@ def manage_survey(request):
             survey.save()
 
             messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
-#            return HttpResponseRedirect(reverse('business_control_panel')) # Empty response = all went well
+#            return HttpResponseRedirect(reverse('business_controlpanel')) # Empty response = all went well
             return HttpResponse('')
         # We're getting data for this business' survey.
     else:
@@ -405,7 +405,7 @@ def business_profile(request):
                                   profile.business_name)
         save_image(profile.logo, filename, request.FILES['logo_image'])
     messages.add_message(request, messages.SUCCESS, 'Profile updated!')
-    return HttpResponseRedirect(reverse('business_home'))
+    return HttpResponseRedirect(reverse('business_control_panel'))
 
 @csrf_protect
 @business_view
@@ -720,7 +720,7 @@ def manage_newsfeed(request):
     else: 
         feed = models.NewsFeedItem(title=request.POST['title'],
                                    body=request.POST['body'],
-                                   subtitle=request.POST['subtitle'],
+                                   subtitle=request.POST['nfsubtitle'],
                                    business=profile,
                                    date=datetime.utcnow().replace(tzinfo=utc),
                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
@@ -844,7 +844,6 @@ def get_employee_info(request):
     profile = request.user.businessprofile
     if request.method == 'GET':
         employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
-        # encoded_employee = views.EmployeeEncoder().default(employee)
         return HttpResponse(json.dumps({'bio':employee.bio}),
                             mimetype='application/json')
             

@@ -17,30 +17,40 @@ var display_employees = function(){
         console.log("employee graph");
         $(".data_view").hide();
         $("#dateslider").show();
-        $("#employee_graph").show();
+        $("#graph_div").show();
     }
             
     var display_employee_table = function(){
         console.log("employee table");
          $(".data_view").hide();
         $("#dateslider").hide();
-         $("#employee_table").show();
+	$('#table_div').show();
+	$('#survey_table').hide();
+        $("#employee_table").show();
     }
 
    var display_survey_table = function(){
        console.log("survey table");
-         $(".data_view").hide();
+       $(".data_view").hide();
        $("#dateslider").hide();
-         $("#survey_table").show();
+       $('#table_div').show();
+       $('#employee_table').hide();
+       $("#survey_table").show();
     }
 
 $(document).ready( function(){
 
     $(".employee_link").click( function(){
-            console.log("employee link");
             apatapa.stats.setAsEmployee();
             display_employees();
             display_employee_graph();
+	$('.graph_link').show();
+//	$('.graph_link').hasClass('selected') ? $('#graph_div').show() : $('#table_div').show();
+	if($('.graph_link').hasClass('selected')) {
+	    $('.table_link').removeClass('selected');
+	}
+	$(".survey_link").removeClass('selected');
+	$(this).addClass("selected");
     });
 
     $(".survey_link").click( function(){
@@ -48,19 +58,31 @@ $(document).ready( function(){
             apatapa.stats.setAsSurvey();
             display_survey();
             display_survey_table();
+	$('.graph_link').hide();
+	$('.table_link').addClass('selected');
+	$(".employee_link").removeClass('selected');
+	$(this).addClass("selected");
     });
 
     $(".graph_link").click( function(){
-            if ( apatapa.stats.isEmployees )
-                display_employee_graph();
+	if(! $(this).hasClass('selected')) {
+	    $(this).addClass('selected');
+	    $('.table_link').removeClass('selected');
+	}
+        if ( apatapa.stats.isEmployees ) {
+            display_employee_graph();
+	}
     });
     
     $(".table_link").click( function(){
-            if ( apatapa.stats.isEmployees )
-                display_employee_table();
-            else
-                display_survey_table();
-
+	if(! $(this).hasClass('selected')) {
+	    $(this).addClass('selected');
+	    $('.graph_link').removeClass('selected');
+	}
+        if ( apatapa.stats.isEmployees )
+            display_employee_table();
+        else
+            display_survey_table();
     });
     
     $.ajax({url: business_stats_url,
