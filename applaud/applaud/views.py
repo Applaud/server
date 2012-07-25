@@ -205,10 +205,17 @@ class MessageItemEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, o)
 
-
-
-
-
+class BusinessPhotoEncoder(jsons.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.BusinessPhoto):
+            return {'image': o.image.url,
+                    'business_id': o.business.id,
+                    'tags': o.tags,
+                    'votes': o.votes,
+                    'active': o.active,
+                    'uploaded_by': UserProfileEncoder.default(o.uploaded_by)}
+        else:
+            return json.JSONEncoder.default(self, o)
 
 def view_inbox(request):
     

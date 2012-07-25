@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessProfileEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -261,3 +261,13 @@ def post_photo(request):
                        business.business_name)
     save_image(business_photo.image, filename, image)
     return HttpResponse('')
+
+@mobile_view
+def get_photos(request):
+    """
+    Get all the photos associated with a particular business,
+    whose database ID is passed in by GET.
+    """
+    business = models.BusinessProfile.objects.get(id=int(request.POST['id']))
+    encoder = BusinessPhotoEncoder()
+    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
