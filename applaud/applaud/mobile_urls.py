@@ -28,8 +28,9 @@ urlpatterns = patterns('',
                        # General feedback.
                        url(r'^general_feedback/$', views.general_feedback),
                        
-                       # Posting photos.
+                       # Photos.
                        url(r'^post_photo/$', views.post_photo),
+                       url(r'^get_photos/$', views.get_photos),
 
                        # Getting the CSRF token for mobile devices
                        url(r'^newsfeed/$',views.nfdata),
