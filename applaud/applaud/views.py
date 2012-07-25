@@ -72,7 +72,9 @@ class EmployeeEncoder(json.JSONEncoder):
             dimension_list = []
             for d in o.rating_profile.rateddimension_set.all():
                 dimension_list.append(dimension_encoder.default(d))
-            image_url = settings.SERVER_URL+settings.MEDIA_URL+employee_views._profile_picture(o)
+            image_url = employee_views._profile_picture(o)
+            if image_url:
+                image_url = settings.SERVER_URL+settings.MEDIA_URL+image_url
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
@@ -191,6 +193,8 @@ class RatingEncoder(json.JSONEncoder):
 class MessageItemEncoder(json.JSONEncoder):
     def default(self,o):
         if isinstance(o, models.MessageItem):
+            print o.subject
+            print o.date_created
             return {'subject':o.subject,
                     'text':o.text,
                     'date':o.date_created.strftime("%d/%m/%Y"),
@@ -231,6 +235,8 @@ def get_inbox(request):
         inbox = request.user.inbox
         return_data={}
         for mess in inbox.messageitem_set.all():
+            print "before"
+            print mess
             encoded_message = MessageItemEncoder().default(mess)
             if not 'messages' in return_data:
                 return_data['messages']=[encoded_message]
@@ -238,7 +244,8 @@ def get_inbox(request):
                 return_data['messages'].append(encoded_message)
             mess.unread = False
             mess.save()
-
+        print "outside for loop"
+        print return_data
         return HttpResponse(json.dumps({'inbox_data':return_data}),
                             mimetype="application/json")
     
@@ -266,3 +273,4 @@ def send_message(request):
         print message.date_created.date()
         message.save()
     return HttpResponse('')
+

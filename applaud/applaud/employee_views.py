@@ -84,7 +84,7 @@ def list_employee(request):
 def _profile_picture(em_profile, thumb=True):
     '''
     Returns the path to the profile picture for the given employee.
-    Gives the default profile picture if no specific one exists.
+    Returns the empty string if no picture exists.
 
     thumb = True/False (whether or not to return a thumbnail version)
     '''
@@ -104,7 +104,7 @@ def _profile_picture(em_profile, thumb=True):
     # Does this file exist?
     image_url = "%s/%s"%(imagepath,imagename)
     if not os.path.exists(settings.MEDIA_ROOT + image_url):
-        image_url = settings.DEFAULT_PROFILE_IMAGE
+        return ""
 
     return image_url
 
