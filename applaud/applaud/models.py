@@ -284,7 +284,7 @@ class UserProfile(models.Model):
         ('Other', 'Other'),
         )
     sex = models.CharField(max_length=6, choices=SEX_TYPES, blank=True, null=True)
-
+    businesses_followed = models.ManyToManyField(BusinessProfile, blank=True, null=True)
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
 
@@ -295,8 +295,8 @@ class UserProfile(models.Model):
                 
 # It's called MessageItem because messages was making django fussy
 class MessageItem(models.Model):
-    subject = models.TextField(max_length=100, blank=True, null=True)
-    text = models.TextField()
+    subject = models.TextField(max_length=100, blank=True, null=True, default=" ")
+    text = models.TextField(default=" ")
 
     # we don't need to recipient because the message belongs to one inbox
     sender = models.ForeignKey(User)
