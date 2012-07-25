@@ -116,20 +116,20 @@ def _make_inactive_business(checkin_location):
                            description='We would love to hear your thoughts on how we can improve our business.',
                            business=business)
     survey.save()
-#     if "food" in checkin_location["types"] or "restaurant" in checkin_location["types"]:
-#         q1 = models.Question(label='What would you like to see on our menu?', type='TF', survey=survey)
-#         q1.save()
-#     elif "store" in checkin_location["types"] and not "grocery_or_supermarket" in checkin_location["types"]:
-#         q1 = models.Question(label='How helpful was our staff?', type='RG', options=['1','2','3','4','5'], survey=survey)
-#         q1.save()
-#     elif "grocery_or_supermarket" in checkin_location["types"]:
-#         q1 = models.Question(label='Did you find everythin you were looking for?', type='RG', options=["yes","no"], survey=survey)
-#         q1.save()
-#         q2 = models.Question(label='If not, what couldn\'t you find?', type='TF', survey=survey)
-#         q2.save()
-#     else:
-#         q1 = models.Question(label='Rate your overall experience:',  type='RG', options=['1','2','3','4','5'], survey=survey)
-#         q1.save()
+    if "food" in checkin_location["types"] or "restaurant" in checkin_location["types"]:
+        q1 = models.Question(label='What would you like to see on our menu?', type='TF', survey=survey)
+        q1.save()
+    elif "store" in checkin_location["types"] and not "grocery_or_supermarket" in checkin_location["types"]:
+        q1 = models.Question(label='How helpful was our staff?', type='RG', options=['1','2','3','4','5'], survey=survey)
+        q1.save()
+    elif "grocery_or_supermarket" in checkin_location["types"]:
+        q1 = models.Question(label='Did you find everythin you were looking for?', type='RG', options=["yes","no"], survey=survey)
+        q1.save()
+        q2 = models.Question(label='If not, what couldn\'t you find?', type='TF', survey=survey)
+        q2.save()
+    else:
+        q1 = models.Question(label='Rate your overall experience:',  type='RG', options=['1','2','3','4','5'], survey=survey)
+        q1.save()
 
     q0 = models.Question(label="What's one thing you would change about our business?", type='TA', options=[], survey=survey)
     q0.save()
