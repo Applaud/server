@@ -252,7 +252,7 @@ class EmployeeProfile(models.Model):
     '''Models an employee.
     '''
     # Just a standard bio for an employee
-    bio = models.TextField(max_length=1000,blank=True,null=True)
+    bio = models.TextField(max_length=300,blank=True,null=True)
     # What dimensions are relevant for rating this employee
     rating_profile = models.ForeignKey(RatingProfile, blank=True, null=True)
     # Where does this employee work?
