@@ -192,13 +192,10 @@ def get_survey(request):
     which is passed in as JSON.
     '''
     data = json.load(request)
-    goog_id = data['goog_id']
-    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
 
     survey = business.survey_set.all()[0]
-    print "goog_id in get_survey is...."+goog_id
-    print "survey is....."
-    print survey
     
     questions = []
     qe = QuestionEncoder()
