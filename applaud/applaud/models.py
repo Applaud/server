@@ -292,6 +292,10 @@ class UserProfile(models.Model):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
+
+# # This needs to be implemented
+# class CorporateProfile(request):
+    
                 
 # It's called MessageItem because messages was making django fussy
 class MessageItem(models.Model):
