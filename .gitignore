@@ -4,4 +4,6 @@ applaud/applaud/test.db
 .DS_Store
 *~
 #*#
-applaud/static
+applaud/static/*
+static/*
+media/*
