@@ -351,7 +351,7 @@ def manage_survey(request):
             survey.save()
 
             messages.add_message(request, messages.SUCCESS, "Your survey has been saved.")
-#            return HttpResponseRedirect(reverse('business_control_panel')) # Empty response = all went well
+#            return HttpResponseRedirect(reverse('business_controlpanel')) # Empty response = all went well
             return HttpResponse('')
         # We're getting data for this business' survey.
     else:
@@ -704,7 +704,6 @@ def manage_newsfeed(request):
         return HttpResponse("")
 
     # Modify a newsfeed item
-    print str(request.POST)
     # If we are modifying a feed...
     feed_id = int(request.POST['feed_id'])
     feed = ""
@@ -720,11 +719,21 @@ def manage_newsfeed(request):
     else: 
         feed = models.NewsFeedItem(title=request.POST['title'],
                                    body=request.POST['body'],
-                                   subtitle=request.POST['subtitle'],
+                                   subtitle=request.POST['nfsubtitle'],
                                    business=profile,
                                    date=datetime.utcnow().replace(tzinfo=utc),
                                    date_edited=datetime.utcnow().replace(tzinfo=utc))
         feed.save()
+        if request.POST['message_checkbox']=='on':
+            for subscriber in profile.userprofile_set.all():
+                print subscriber
+                message = models.MessageItem(subject=request.POST['title'],
+                                             text=request.POST['body'],
+                                             sender=profile.user,
+                                             business=profile,
+                                             inbox=subscriber.user.inbox,
+                                             date_created = datetime.utcnow().replace(tzinfo=utc))
+                message.save()
 
     # Whether dealing with a new NewsFeedItem or not, deal with any uploaded
     # images.
@@ -738,9 +747,7 @@ def manage_newsfeed(request):
             feed.save()
         except IOError:
             pass
-
-
-    print "About to be ok..."
+    messages.add_message(request, messages.SUCCESS, "Newsfeed items successfully created!")
     return HttpResponseRedirect(reverse("business_control_panel"))
 
 # Returns all of a business' newsfeeds as JSON. To be called from AJAX.
@@ -844,10 +851,11 @@ def get_employee_info(request):
     profile = request.user.businessprofile
     if request.method == 'GET':
         employee=profile.employeeprofile_set.get(id=request.GET['emp_id'])
-        # encoded_employee = views.EmployeeEncoder().default(employee)
         return HttpResponse(json.dumps({'bio':employee.bio}),
                             mimetype='application/json')
             
     return render_to_response('business_control_panel.html',
                               {'employee':encoded_employee},
                               context_instance=RequestContext(request))
+
+

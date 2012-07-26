@@ -726,6 +726,11 @@ if (! apatapa.business) {
 			    'name': 'body',
 			    'id': 'id_body'})
 	    body_text.val(body);
+	    
+	    var add_message = $('<input>Send as message to followers</input>');
+	    add_message.prop({'type':'checkbox',
+			      'name':'message_checkbox',
+			      'class':'message_checkbox'});
 
 	    // delete_button is the button that deletes any particular newsfeed
 	    var delete_button = $('<button></button>');
@@ -770,7 +775,9 @@ if (! apatapa.business) {
 	    		.append(subtitle_text))
 		.append(wrapFormField()
 			.append(body_label)
-	    		.append(body_text));
+	    		.append(body_text))
+		.append(wrapFormField()
+			.append(add_message));
 	    var submitButton = $("<button>OK</button>");
 	    submitButton.prop({"type":"submit"});
 	    editForm.append(submitButton);

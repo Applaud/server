@@ -48,6 +48,10 @@ var business_list_employee_url = "{% url business_list_employee %}"
 var control_panel_home = "{% url business_control_panel %}"
 var get_employee_info_url = "{% url business_get_employee_info %}"
 
+// Messages URL
+var messages_url = "{% url messages %}"
+var get_inbox_url = "{% url get_inbox %}"
+var send_message_url = "{% url send_message %}"
 </script>
   {% block scripts %}
   {% endblock %}
@@ -93,20 +97,19 @@ var get_employee_info_url = "{% url business_get_employee_info %}"
 	{% block navigation_links %}
 	<ul>
 	  <li><a href="/overview">Overview</a></li>
-	  <li><a href="">Take the Tour!</a></li>
-	  <li><a href="">Features</a></li>
-	  <li><a href="">Sign Up</a></li>
-	  <li><a href="">About Us</a></li>
+	  <li><a href="/features">Features</a></li>
+	  <li><a href="/about">About Us</a></li>
 	  <li><a href="http://apatapablog.com">Blog</a></li>
 	</ul>
 	{% if user.is_authenticated %}
-	{% if user.businessprofile %}
+	  {% if user.businessprofile %}
 	<ul id="nav_link">
 	  <li> My Apatapa:</li>
 	  <li><a href="{% url analytics %}">Stats</a></li>
 	  <li><a href="{% url business_control_panel %}">Control Panel</a></li>
+	  <li><a href="/messages">Messages</a></li>
 	</ul>
-	{% endif %}
+	  {% endif %}
 	{% endif %}
 	{% endblock %}
       </div>

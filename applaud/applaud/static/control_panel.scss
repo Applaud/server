@@ -6,6 +6,10 @@ $browncolor: rgb(44,30,30);	// dark brown color for header/footer
 $border-grey: #e0e0e0;
 $shadow-color: #aaa;
 
+
+#main {
+    height:100%;
+}
 h2 {
     font-size:14pt;
 }
@@ -14,11 +18,9 @@ h2 {
     padding: {
 	top:8px;
     }
-    overflow:scroll;
+
     width:550px;
     height:700px;
-    
-    @include shadow(8px);
     
     #control_panel_heading {
 	margin: {
@@ -66,12 +68,15 @@ h2 {
     border-left:none;
     border-right:none;
     padding: 20px;
+    border-radius:5px;
     #employee_button {
 	height:5px;
     }
     margin: {
 	top:-8px;
     }
+    @include shadow(3px);
+    overflow:auto;
 }
 
 #control_panel_employees_div {
@@ -158,12 +163,19 @@ h2 {
 	width:320px;
 	height:411px;
 	overflow:hidden;
-	#iphone_description {
+	.iphone_description {
 	    position:relative;
 	    height:60px;
 	    padding:10px;
 	    text-align:center;
-	    overflow:auto;
+	}
+	#iphone_home_message {
+	    position:relative;
+	    height:60px;
+	    padding:10px;
+	    vertical-align:middle;
+	    margin:10px;
+	    margin-top:25px;
 	}
 	.navbar {
 	    position:relative;

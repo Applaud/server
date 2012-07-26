@@ -4,28 +4,50 @@ if(! apatapa.business.control_panel ){
 
 (function (_ns) {
 
-    var employee_display = function(){
+    _ns.employee_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_employees_div").show();
 	$(".employee_management").hide();
 	$("#view_employees_div").show();
 	$(".hidden").hide();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#employee_tab_bar").addClass("tab_bar_selected");
     }
 
-    var newsfeed_display = function(){
+    _ns.newsfeed_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_newsfeeds_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#newsfeed_tab_bar").addClass("tab_bar_selected");
     }
 
-    var survey_display = function(){
+    _ns.survey_display = function(){
 	$(".control_panel_div").hide();
 	$("#control_panel_survey_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	$("#survey_tab_bar").addClass("tab_bar_selected");
+	_ns.displayiPhoneDiv("survey");
+    }
+    
+    _ns.profile_display = function(){
+	$(".control_panel_div").hide();
+	$("#control_panel_profile_div").show();
     }
 
-    var home_display = function(){
+    _ns.home_display = function(){
 	$(".control_panel_div").hide();
 	$("#home_div").show();
+	$(".tab_bar_div").removeClass("tab_bar_selected");
+	_ns.displayiPhoneDiv("home");
     }
+
+    // function to hide other iphone divs and display the one that's passed in as an argument. Between "home", "newsfeed", "survey".
+    _ns.displayiPhoneDiv = function (name) {
+	console.log("hiding iphone divs");
+	$(".iphone_divs").hide();
+	$("#iphone_"+name+"_div").show();
+    }
+
 
     /**
      * This is executed after the page has fully loaded.
@@ -40,37 +62,50 @@ if(! apatapa.business.control_panel ){
 	
 	// Allow us to update the title on the iPhone.
 	$('#survey_title').keyup(function () {
-	    console.log($(this).val());
 	    apatapa.business.control_panel.updateTitle($(this).val());
 	});
+	
+	// Same for the description.
+	$('#survey_description').keyup( function () {
+	    apatapa.business.control_panel.updateDescription($(this).val());
+	});
+	
 	// This creates the sub-tabs for the control panel
 	$(".control_panel_div").hide();
 	$("#home_div").show();
-	
-	$(".employee_link").click( function(event) {
-	    event.preventDefault();
-	    employee_display();
-	});
-	
+
+	// This sets the navigation tab clicked as 'selected'
 	$('.cp_nav_button').click( function(event) {
 	    $('.cp_nav_button').removeClass('selected');
 	    $(this).addClass('selected');
 	})
+	
+	$(".employee_link").click( function(event) {
+	    event.preventDefault();
+	    _ns.employee_display();
+	});
+	
 
 	$(".newsfeed_link").click( function(event) {
 	    event.preventDefault();
-	    newsfeed_display();
+	    _ns.newsfeed_display();
 	});
 
 
 	$(".survey_link").click( function(event) {
 	    event.preventDefault();
-	    survey_display()
+	    _ns.survey_display()
 	});
+
+	$(".profile_link").click( function(event) {
+	    event.preventDefault();
+	    _ns.profile_display()
+	});
+
 
 	$(".home_link").click( function(event) {
 	    event.preventDefault();
-	    home_display();
+	    _ns.home_display();
 	});
 
 
@@ -119,14 +154,11 @@ if(! apatapa.business.control_panel ){
 
 			    error: function() { alert("There was an ungodly error!"); },
 			    success: function (data) {
-				// emp_expand_div = apatapa.functions.makeEmployeeDiv(data['employee']);
 				var emp_expand = $("<div>"+data['bio']+"</div>");
 				$("#employee_div_"+emp_id).append(data['bio']);
 				$("#employee_div_"+emp_id).show();
 				$("#employee_div_"+emp_id).prop("shown", "true");
-				
 			    }
-			    
 			   });
 		    $(this).html('-');
 		}
@@ -137,18 +169,18 @@ if(! apatapa.business.control_panel ){
 	    }
 	    else {
 		$(this).html('+');
-		$(this).parent().siblings(".hidden").hide();
+		$("#employee_div_"+emp_id).hide();
 	    }
 	});
 	
-	$(".contract_employee_button").click( function () {
-	   
-
-	});
 	
-	
+	// This hides all the other iphone divs and chooses the home iphone div
+	_ns.displayiPhoneDiv("home");
     }
     
+
+
+    // In the iphone questions view, this adds each question.
     _ns.addQuestion = function (index, id, title) {
 	var listitem;
 	var heading;
@@ -190,6 +222,7 @@ if(! apatapa.business.control_panel ){
 	apatapa.business.iphone.refreshSecondary();
     }
     
+    // Also for the iphone questions view.
     _ns.updateQuestion = function (id, index, title) {
 	if(id) {
 	    if(title.length < 30) {
@@ -249,7 +282,7 @@ if(! apatapa.business.control_panel ){
 	var last_blank = $('<div></div>');
 	last_blank.prop({'id': 'last_blank',
 			 'class': 'listitem'});
-	$('#iphone_screen').append(last_blank);
+	$('#iphone_survey_div').append(last_blank);
 	for(i = 0; i < 9; i++) {
 	    var listitem = $('<div></div>');
 	    console.log('adding listitem!');
@@ -272,6 +305,10 @@ if(! apatapa.business.control_panel ){
     _ns.updateTitle = function (title) {
 	console.log('update title');
 	$('#iphone_title').html(title);
+    }
+    
+    _ns.updateDescription = function (text) {
+	$('#iphone_description').html(text);
     }
     
 })(apatapa.business.control_panel);

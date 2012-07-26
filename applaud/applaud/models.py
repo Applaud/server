@@ -252,7 +252,7 @@ class EmployeeProfile(models.Model):
     '''Models an employee.
     '''
     # Just a standard bio for an employee
-    bio = models.TextField(max_length=1000,blank=True,null=True)
+    bio = models.TextField(max_length=300,blank=True,null=True)
     # What dimensions are relevant for rating this employee
     rating_profile = models.ForeignKey(RatingProfile, blank=True, null=True)
     # Where does this employee work?
@@ -284,7 +284,7 @@ class UserProfile(models.Model):
         ('Other', 'Other'),
         )
     sex = models.CharField(max_length=6, choices=SEX_TYPES, blank=True, null=True)
-
+    businesses_followed = models.ManyToManyField(BusinessProfile, blank=True, null=True)
     def __unicode__(self):
         return '%s %s %s' % (self.user.first_name, self.user.last_name, self.user)
 
@@ -292,4 +292,33 @@ class UserProfile(models.Model):
         for key, value in d.iteritems():
             if key != 'id':
                 setattr(self, key, value)
+
+# # This needs to be implemented
+# class CorporateProfile(request):
+    
                 
+# It's called MessageItem because messages was making django fussy
+class MessageItem(models.Model):
+    subject = models.TextField(max_length=100, blank=True, null=True, default=" ")
+    text = models.TextField(default=" ")
+
+    # we don't need to recipient because the message belongs to one inbox
+    sender = models.ForeignKey(User)
+
+    # the business related to the sender (if it's either a business itself or employee)
+    business = models.ForeignKey('BusinessProfile', blank=True, null=True)
+
+    unread = models.BooleanField(default=1)
+
+    inbox = models.ForeignKey('Inbox')
+    date_created=models.DateTimeField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.text
+
+
+class Inbox(models.Model):
+    user = models.OneToOneField(User)
+    def __unicode__(self):
+        return str(self.user)
+    

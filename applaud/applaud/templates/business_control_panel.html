@@ -1,5 +1,5 @@
 {% extends "business.html" %}
-{% block title %}Control Panel {% endblock %}
+{% block title %}Apatapa | Control Panel{% endblock %}
 {% block links %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}control_panel.css" />
@@ -47,6 +47,9 @@
       <div class="navbar">
 	<p class="iphone_title">{{ business_profile.business_name }}</p>
       </div>
+      <div>
+	<p id="iphone_home_message">You can use this iPhone simulator to view what the changes will look like when your customer opens up Apatapa on your premises.</p>
+      </div>      
     </div>
   </div>
   <div class="tab_bar">

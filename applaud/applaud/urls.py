@@ -29,6 +29,22 @@ urlpatterns = patterns('',
                        (r'^user/', include(user_urls)),
                        (r'^overview/', direct_to_template,
                         {'template':'overview.html'}),
+
+                       (r'^about/', direct_to_template,
+                        {'template':'about.html'}),
+
+                       # These are to do with messages and inbox.
+                       url(r'^messages/', views.view_inbox,
+                           name="messages"),
+                       url(r'^get_inbox/', views.get_inbox,
+                           name="get_inbox"),
+                       url(r'^send_message/', views.send_message,
+                           name="send_message"),
+
+
+                       (r'^features/', direct_to_template,
+                        {'template':'features.html'}),
+
                        (r'^accounts/', include('registration.backends.default.urls')),
                        ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -43,7 +43,7 @@ def mobile_view(view):
             profile = request.user.userprofile
         except UserProfile.DoesNotExist:
             return goto_home(*args, **kw)
-
+        
         if request.method == 'GET':
             return get_csrf(*args, **kw)
 
@@ -61,24 +61,24 @@ def whereami(request):
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
 
-    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+settings.GOOGLE_PLACES_RADIUS+"&sensor=true&key="+settings.GOOGLE_API_KEY)
+    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY))
 
     to_parse = json.loads(from_goog.read())
-
     business_list = []
 
     for entry in to_parse["results"]:
-	# Create an inactive Applaud account for any businesses we don't recognize here.
-        business_list.append(
-            {
+        business_list.append({
                 "name":entry["name"],
-                "type":entry["types"][0],
+                "types":entry["types"],
                 "goog_id":entry["id"],
                 "latitude":entry["geometry"]["location"]["lat"],
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
         
     ret = json.dumps({'nearby_businesses':business_list})
+
+    print business_list
+
     return HttpResponse(ret)
 
 @mobile_view
@@ -89,17 +89,52 @@ def checkin(request):
 	try:
 	    business = BusinessProfile.objects.get(goog_id=checkin_location['goog_id'])
 	except BusinessProfile.DoesNotExist:
-	    business = BusinessProfile(goog_id=checkin_location['goog_id'],
-				       latitude=float(checkin_location['latitude']),
-				       longitude=float(checkin_location['longitude']))
-	    business_user = User.objects.create_user(username=checkin_location['name'],
-						     password='password')
-            business_user.is_active = False
-	    business_user.save()
-	    business.user = business_user
-	    business.save()
+            # Make an inactive business account
+            print "exception found...."
+            business = _make_inactive_business(checkin_location)
 
 	return HttpResponse(json.dumps(business, cls=BusinessProfileEncoder))
+
+
+def _make_inactive_business(checkin_location):
+    # Function to make an inactive business, checkin_location is a JSON object
+    # TODO: Implement
+    business = BusinessProfile(business_name = '',
+                               address = '',
+                               goog_id=checkin_location['goog_id'],
+                               latitude=float(checkin_location['latitude']),
+                               longitude=float(checkin_location['longitude']))
+    business_user =User.objects.create_user(username=checkin_location['name'],
+                                             password='password')
+    business_user.is_active = False
+    business_user.save()
+    business.user = business_user
+    business.save()
+    print "goog_id of business just created is...."+checkin_location['goog_id']
+    print "about to create survey"
+    survey = models.Survey(title='Feedback',
+                           description='We would love to hear your thoughts on how we can improve our business.',
+                           business=business)
+    survey.save()
+    if "food" in checkin_location["types"] or "restaurant" in checkin_location["types"]:
+        q1 = models.Question(label='What would you like to see on our menu?', type='TF', survey=survey)
+        q1.save()
+    elif "store" in checkin_location["types"] and not "grocery_or_supermarket" in checkin_location["types"]:
+        q1 = models.Question(label='How helpful was our staff?', type='RG', options=['1','2','3','4','5'], survey=survey)
+        q1.save()
+    elif "grocery_or_supermarket" in checkin_location["types"]:
+        q1 = models.Question(label='Did you find everythin you were looking for?', type='RG', options=["yes","no"], survey=survey)
+        q1.save()
+        q2 = models.Question(label='If not, what couldn\'t you find?', type='TF', survey=survey)
+        q2.save()
+    else:
+        q1 = models.Question(label='Rate your overall experience:',  type='RG', options=['1','2','3','4','5'], survey=survey)
+        q1.save()
+
+    q0 = models.Question(label="What's one thing you would change about our business?", type='TA', options=[], survey=survey)
+    q0.save()
+
+    return business
 
 # Getting and posting employee data from iOS.
 @mobile_view
@@ -156,18 +191,23 @@ def get_survey(request):
     '''Gets the survey for a particular business, the ID of
     which is passed in as JSON.
     '''
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
-    print business_id
+    data = json.load(request)
+    goog_id = data['goog_id']
+    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+
     survey = business.survey_set.all()[0]
+    print "goog_id in get_survey is...."+goog_id
+    print "survey is....."
     print survey
+    
     questions = []
     qe = QuestionEncoder()
-    for question in survey.question_set.all():
+    qs = survey.question_set.all()
+    for question in qs:
         if question.active:
-            questions.append(qe.default(question))
-    print survey.title
-    print survey.description
+            new_question = qe.default(question)
+            questions.append(new_question)
+
     print questions
     return HttpResponse(json.dumps({'title': survey.title,
                                     'description': survey.description,

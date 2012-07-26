@@ -92,15 +92,20 @@ iframe {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor)";
   background: -webkit-linear-gradient(bottom, #2c1e1e, #373232);
+  -moz-box-shadow: 0px 0px 8px #cccccc;
+  -webkit-box-shadow: 0px 0px 8px #cccccc;
+  box-shadow: 0px 0px 8px #cccccc;
   padding-bottom: 5px; }
 
 #main {
   overflow: auto;
   padding-bottom: 15px;
-  height: 90%;
+  height: 600px;
+  background-color: #fff;
+  -moz-box-shadow: 0px 0px 3px #cccccc;
+  -webkit-box-shadow: 0px 0px 3px #cccccc;
+  box-shadow: 0px 0px 3px #cccccc;
   padding: 15px; }
-  #main #control_panel {
-    background-color: #ffffff; }
 
 /* very bottom div */
 #footer {
@@ -199,6 +204,7 @@ h1, h3 {
 
 h1 {
   font-size: 24pt;
+  margin: 5px;
   padding-bottom: 8px; }
 
 h3 {
@@ -233,17 +239,20 @@ h3 {
 #messages {
   margin-left: 10px; }
 
+#overview_div {
+  width: 60%;
+  padding: 10px; }
+
+#main {
+  height: 100%; }
+
 h2 {
   font-size: 14pt; }
 
 #control_panel {
   padding-top: 8px;
-  overflow: scroll;
   width: 550px;
-  height: 700px;
-  -moz-box-shadow: 0px 0px 8px #aaaaaa;
-  -webkit-box-shadow: 0px 0px 8px #aaaaaa;
-  box-shadow: 0px 0px 8px #aaaaaa; }
+  height: 700px; }
   #control_panel #control_panel_heading {
     margin-left: 10px; }
 
@@ -278,7 +287,12 @@ h2 {
   border-left: none;
   border-right: none;
   padding: 20px;
-  margin-top: -8px; }
+  border-radius: 5px;
+  margin-top: -8px;
+  -moz-box-shadow: 0px 0px 3px #cccccc;
+  -webkit-box-shadow: 0px 0px 3px #cccccc;
+  box-shadow: 0px 0px 3px #cccccc;
+  overflow: auto; }
   .control_panel_div #employee_button {
     height: 5px; }
 
@@ -329,12 +343,18 @@ h2 {
     width: 320px;
     height: 411px;
     overflow: hidden; }
-    #iphone_preview #iphone_screen #iphone_description {
+    #iphone_preview #iphone_screen .iphone_description {
       position: relative;
       height: 60px;
       padding: 10px;
-      text-align: center;
-      overflow: auto; }
+      text-align: center; }
+    #iphone_preview #iphone_screen #iphone_home_message {
+      position: relative;
+      height: 60px;
+      padding: 10px;
+      vertical-align: middle;
+      margin: 10px;
+      margin-top: 25px; }
     #iphone_preview #iphone_screen .navbar {
       position: relative;
       left: 0px;

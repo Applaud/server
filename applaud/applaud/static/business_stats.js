@@ -41,7 +41,6 @@ var display_employees = function(){
 $(document).ready( function(){
 
     $(".employee_link").click( function(){
-            console.log("employee link");
             apatapa.stats.setAsEmployee();
             display_employees();
             display_employee_graph();
@@ -50,6 +49,8 @@ $(document).ready( function(){
 	if($('.graph_link').hasClass('selected')) {
 	    $('.table_link').removeClass('selected');
 	}
+	$(".survey_link").removeClass('selected');
+	$(this).addClass("selected");
     });
 
     $(".survey_link").click( function(){
@@ -59,6 +60,8 @@ $(document).ready( function(){
             display_survey_table();
 	$('.graph_link').hide();
 	$('.table_link').addClass('selected');
+	$(".employee_link").removeClass('selected');
+	$(this).addClass("selected");
     });
 
     $(".graph_link").click( function(){
