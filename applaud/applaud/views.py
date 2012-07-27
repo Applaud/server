@@ -144,6 +144,7 @@ class QuestionEncoder(json.JSONEncoder):
             return {'label': o.label,
                     'type': o.type,
                     'options': o.options,
+                    'general_feedback': o.general_feedback,
                     'active': o.active,
                     'id': o.id}
         else:

@@ -487,9 +487,7 @@ def get_survey(request):
             questions.append(new_question)
 
     print questions
-    return HttpResponse(json.dumps({'title': survey.title,
-                                    'description': survey.description,
-                                    'questions': questions}))
+    return HttpResponse(json.dumps(survey, cls=SurveyEncoder))
 
 # Posting survey response.
 @mobile_view

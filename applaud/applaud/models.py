@@ -172,6 +172,22 @@ class Survey(models.Model):
     description = models.TextField(max_length=1000,blank=True,null=True)
     business = models.ForeignKey('BusinessProfile')
 
+    def save(self, *args, **kwargs):
+        super(Survey, self).save(*args, **kwargs)
+
+        # Make sure we have a general feedback question
+        self.validate()
+
+    def validate(self):
+        # Every survey has a "General Feedback" question
+        if len(self.question_set.filter(general_feedback=True)) == 0:
+            q = Question(label='Comments?',
+                         type='TA',
+                         general_feedback=True,
+                         survey=self,
+                         options=[])
+            q.save()
+
     def __unicode__(self):
         return self.title
 
@@ -186,6 +202,9 @@ class Question(models.Model):
         ('RG', 'radio group'),
         ('CG', 'checkbox group'),
     )
+
+    # Is this a general feedback question?
+    general_feedback = models.BooleanField(default=0)
 
     # Type of widget for the question
     type = models.CharField(max_length=2,choices=QUESTION_TYPES)
