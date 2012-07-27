@@ -74,7 +74,7 @@ class EmployeeEncoder(json.JSONEncoder):
                 dimension_list.append(dimension_encoder.default(d))
             image_url = employee_views._profile_picture(o)
             if image_url:
-                image_url = settings.SERVER_URL+settings.MEDIA_URL+image_url
+                image_url = settings.MEDIA_URL+image_url
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
 		   'bio':o.bio,
