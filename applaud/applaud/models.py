@@ -167,6 +167,7 @@ class GeneralFeedback(models.Model):
 #
 # SURVEY MODELS
 #
+FEEDBACK_LABEL = 'Share Your Thoughts'
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
@@ -180,13 +181,18 @@ class Survey(models.Model):
 
     def validate(self):
         # Every survey has a "General Feedback" question
-        if len(self.question_set.filter(general_feedback=True)) == 0:
-            q = Question(label='Comments?',
+        general_feedback_questions = list(self.question_set.filter(general_feedback=True))
+        if len(general_feedback_questions) == 0:
+            q = Question(label=FEEDBACK_LABEL,
                          type='TA',
                          general_feedback=True,
                          survey=self,
                          options=[])
             q.save()
+        else:
+            feedback = general_feedback_questions.get[0]
+            feedback.label = FEEDBACK_LABEL
+            feedback.save()
 
     def __unicode__(self):
         return self.title
