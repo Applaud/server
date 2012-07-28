@@ -411,7 +411,14 @@ def _make_inactive_business(checkin_location):
         q5.save()
     elif "grocery_or_supermarket" in checkin_location["types"]:
         q1 = models.Question(label='What products would you like to see more of here?', type='TF', survey=survey)
-        # Do this again
+        q1.save()
+        q2 = models.Question(label='Are there any products you would start buying if the price was slightly lower?', type='TA', survey=survey)
+        q2.save()
+        q0.delete()
+        q0 =  models.Question(label='How do you think technology could improve your experience here?', type='TA', survey=survey)
+        q0.save()
+        q3 =  models.Question(label='What products would you like to see more of here?', type='TF', survey=survey)
+        q3.save()
     elif 'spa' in checkin_location['types']:
         q1 = models.Question(label='What product(s) do you wish you could buy here?', type='TF', survey=survey)
         q1.save()
