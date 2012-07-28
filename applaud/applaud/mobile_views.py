@@ -62,7 +62,7 @@ def whereami(request):
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
 
-    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius="+settings.GOOGLE_PLACES_RADIUS+"&sensor=true&key="+settings.GOOGLE_API_KEY)
+    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+settings.GOOGLE_API_KEY)
 
     to_parse = json.loads(from_goog.read())
 
@@ -159,7 +159,7 @@ def get_survey(request):
     '''
     business_id = json.load(request)['business_id']
     business = models.BusinessProfile(id=business_id)
-    print business_id
+    print 'business_id: %s' % business_id
     survey = business.survey_set.all()[0]
     print survey
     questions = []
