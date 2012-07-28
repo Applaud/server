@@ -51,9 +51,11 @@ business.save()
 business2 = models.BusinessProfile(user=user2, phone='0-987-654-3210', latitude=39.07279, longitude=-120.14223, goog_id='asdf987sdf765asdf875asdf685487we65r9867', business_name='Apatapa')
 business2.save()
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
-                                        latitude='14.3', longitude='12.34',
-                                        goog_id='23l;asdr4ajiaf', business_name="Pacific Catch")
-
+                                        latitude='37.928640', longitude='-122.5176380',
+                                        goog_id='92dc1dbbf0596a27c330a754f9ed0bf93555e9ca', business_name="Pacific Catch",
+                                        primary_color = '#e83723',
+                                        secondary_color = '#e6d6bc')
+keith_business.save()
 
 # Business and Customer groups.
 business_group = Group(name='Business')

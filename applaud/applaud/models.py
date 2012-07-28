@@ -167,10 +167,32 @@ class GeneralFeedback(models.Model):
 #
 # SURVEY MODELS
 #
+FEEDBACK_LABEL = 'Share Your Thoughts'
 class Survey(models.Model):
     title = models.TextField(max_length=100)
     description = models.TextField(max_length=1000,blank=True,null=True)
     business = models.ForeignKey('BusinessProfile')
+
+    def save(self, *args, **kwargs):
+        super(Survey, self).save(*args, **kwargs)
+
+        # Make sure we have a general feedback question
+        self.validate()
+
+    def validate(self):
+        # Every survey has a "General Feedback" question
+        general_feedback_questions = list(self.question_set.filter(general_feedback=True))
+        if len(general_feedback_questions) == 0:
+            q = Question(label=FEEDBACK_LABEL,
+                         type='TA',
+                         general_feedback=True,
+                         survey=self,
+                         options=[])
+            q.save()
+        else:
+            feedback = general_feedback_questions.get[0]
+            feedback.label = FEEDBACK_LABEL
+            feedback.save()
 
     def __unicode__(self):
         return self.title
@@ -186,6 +208,9 @@ class Question(models.Model):
         ('RG', 'radio group'),
         ('CG', 'checkbox group'),
     )
+
+    # Is this a general feedback question?
+    general_feedback = models.BooleanField(default=0)
 
     # Type of widget for the question
     type = models.CharField(max_length=2,choices=QUESTION_TYPES)
@@ -252,7 +277,7 @@ class EmployeeProfile(models.Model):
     '''Models an employee.
     '''
     # Just a standard bio for an employee
-    bio = models.TextField(max_length=1000,blank=True,null=True)
+    bio = models.TextField(max_length=300,blank=True,null=True)
     # What dimensions are relevant for rating this employee
     rating_profile = models.ForeignKey(RatingProfile, blank=True, null=True)
     # Where does this employee work?
@@ -309,7 +334,9 @@ class BusinessPhoto(models.Model):
     downvotes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
-                
+# # This needs to be implemented
+# class CorporateProfile(request):
+    
 # It's called MessageItem because messages was making django fussy
 class MessageItem(models.Model):
     subject = models.TextField(max_length=100, blank=True, null=True, default=" ")
