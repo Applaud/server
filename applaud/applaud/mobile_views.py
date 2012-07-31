@@ -60,11 +60,15 @@ def whereami(request):
 
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
+    goog_query = "https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY)
+    from_goog = urllib2.urlopen(goog_query)
 
-    from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY))
 
     to_parse = json.loads(from_goog.read())
     business_list = []
+    print "to_parse is....."
+    print to_parse
+
 
     for entry in to_parse["results"]:
         business_list.append({
@@ -75,7 +79,7 @@ def whereami(request):
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
         
-    ret = json.dumps({'nearby_businesses':business_list})
+        ret = json.dumps({'nearby_businesses':business_list})
 
     print business_list
 
@@ -92,8 +96,11 @@ def checkin(request):
             # Make an inactive business account
             print "exception found...."
             business = _make_inactive_business(checkin_location)
-
-	return HttpResponse(json.dumps(business, cls=BusinessProfileEncoder))
+        
+        ret = json.dumps(business, cls=BusinessProfileEncoder)
+        print "ret is....."
+        print ret
+	return HttpResponse(ret)
 
 
 def _make_inactive_business(checkin_location):
@@ -128,7 +135,8 @@ def _make_inactive_business(checkin_location):
         q2 = models.Question(label='If not, what couldn\'t you find?', type='TF', survey=survey)
         q2.save()
     else:
-        q1 = models.Question(label='Rate your overall experience:',  type='RG', options=['1','2','3','4','5'], survey=survey)
+        q1 = models.Question(label='What would you like to see on our menu?', type='TF', survey=survey)
+#       q1 = models.Question(label='Rate your overall experience:',  type='RG', options=['1','2','3','4','5'], survey=survey)
         q1.save()
 
     q0 = models.Question(label="What's one thing you would change about our business?", type='TA', options=[], survey=survey)
@@ -180,8 +188,10 @@ def employee_list(request):
 
     This is used by mobile devices to view all the employees for a business.
     '''
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
+    data = json.load(request)
+    goog_id = data['goog_id']
+    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+
     return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                    cls=EmployeeEncoder))
 
@@ -269,8 +279,10 @@ def general_feedback(request):
 @mobile_view
 @csrf_protect
 def nfdata(request):
-    business_id = json.load(request)['business_id']
-    business = models.BusinessProfile(id=business_id)
+    data = json.load(request)
+    goog_id = data['goog_id']
+    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+
     nfitems = business.newsfeeditem_set.all()
     nfitem_list = []
     encoder = NewsFeedItemEncoder()
