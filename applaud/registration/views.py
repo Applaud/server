@@ -3,6 +3,7 @@ Views which allow users to create and activate accounts.
 """
 
 
+from datetime import datetime
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect
