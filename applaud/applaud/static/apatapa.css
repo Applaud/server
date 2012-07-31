@@ -30,7 +30,12 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
-  line-height: 1; }
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; }
 
 ol, ul {
   list-style: none; }
@@ -52,5 +57,8 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-html, body {
-  font-size: inherit; }
+#main {
+  margin-top: 50px;
+  width: 1000px;
+  margin-left: 100px;
+  margin-right: auto; }
