@@ -21,7 +21,6 @@ time, mark, audio, video {
     margin: 0;
     padding: 0;
     border: 0;
-    font:inherit;
     vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -36,7 +35,9 @@ body {
     background-height: 100%;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background-color:rbga(255,255,255,0.5);
 }
+
 ol, ul {
     list-style: none;
 }
@@ -74,9 +75,14 @@ $mainpadding: 15px;		// padding for main content
     box-shadow:$xoffset $yoffset $size $color;
 }
 
+body {
+    font-family:"Helvetica", sans-serif;
+}
+
 #main {
-    margin-top:50px;
+ 
+    margin-top:60px;
     width:1000px;
-    margin-left:100px;
+    margin-left:auto;
     margin-right:auto;
 }

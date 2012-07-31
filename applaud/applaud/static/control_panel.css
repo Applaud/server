@@ -30,7 +30,12 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
-  line-height: 1; }
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; }
 
 ol, ul {
   list-style: none; }
@@ -52,11 +57,17 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
+html {
+  font-family: "Helvetica", sans-serif; }
+
 #main {
   margin-top: 50px;
   width: 1000px;
-  margin-left: 100px;
+  margin-left: auto;
   margin-right: auto; }
+
+html {
+  font-family: "Helvetica", sans-serif; }
 
 #main {
   height: 100%;
@@ -108,7 +119,8 @@ h2 {
   -moz-box-shadow: 0px 0px 3px #cccccc;
   -webkit-box-shadow: 0px 0px 3px #cccccc;
   box-shadow: 0px 0px 3px #cccccc;
-  overflow: auto; }
+  overflow: auto;
+  background-color: #fff; }
   .control_panel_div #employee_button {
     height: 5px; }
 
