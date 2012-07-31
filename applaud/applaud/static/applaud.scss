@@ -21,8 +21,7 @@ time, mark, audio, video {
     margin: 0;
     padding: 0;
     border: 0;
-    font-size: 100%;
-    font: inherit;
+    font:inherit;
     vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -76,6 +75,7 @@ $mainpadding: 15px;		// padding for main content
 /* styles that apply to the whole page */
 html, body {
     font-family: 'Arvo', serif;
+    font-size:6px;
     background-image:url('/static/SmallTile.png');
     height:100%;
     margin:auto;
