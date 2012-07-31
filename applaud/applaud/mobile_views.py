@@ -134,7 +134,7 @@ def _make_inactive_business(checkin_location):
         q2.save()
         q3 = models.Question(label='How can we make our line system more efficient?', type='TA', survey=survey)
         q3.save()
-   elif 'zoo' in checkin_location['types']:
+    elif 'zoo' in checkin_location['types']:
         q1 = models.Question(label='What is your favorite animal at the zoo?', type='TF', survey=survey)
         q1.save()
         q2 = models.Question(label='What animal do you wish lived in the zoo?', type='TF', survey=survey)
@@ -143,7 +143,7 @@ def _make_inactive_business(checkin_location):
         q3.save()
         q0.delete()
         q0 = models.Question(label='How could your experience be improved?', type='TA', survey=survey)
-        q0.save()p
+        q0.save()
         q4 = models.Question(label='What do you wish teachers did more of?', type='TA', survey=survey)
         q4.save()
         q5 = models.Question(label='How do you think technology could improve the zoo?', type='TA', survey=survey)
@@ -436,19 +436,19 @@ def _make_inactive_business(checkin_location):
         q0.delete()
         q0 = models.Question(label="How do you feel this business could most improve?", type='TA', survey=survey)
         q0.save()
-     elif 'department_store' in checkin_location['types']:
+    elif 'department_store' in checkin_location['types']:
         q1 = models.Question(label='What would you like to see carried here?', type='TF', survey=survey)
         q1.save()
         q2 = models.Question(label='How do you think technology could improve your shoping experience here?', type='TA',  survey=survey)
         q2.save()
         q3 = models.Question(label='What do you think are the best new  brands?', type='TF', survey=survey)
         q3.save()
-     elif 'train_station' in checkin_location['types']:
+    elif 'train_station' in checkin_location['types']:
         q1 = models.Question(label='Do you enjoy street musicians in the train station?', type='RG', options=['Yes','No'], survey=survey)
         q1.save()
         q2 = models.Question(label='What do you wish was served here?', type='TF', survey=survey)
         q2.save()
-     elif 'hospital' in checkin_location['types']:
+    elif 'hospital' in checkin_location['types']:
         q1 = models.Question(label='What improvements would you like to see in the waiting room?', type='TF', survey=survey)
         q3 = models.Question(label='Is there anything that needs maintenance?', type='TF', survey=survey)
         q3.save()
@@ -457,7 +457,7 @@ def _make_inactive_business(checkin_location):
         q0.save()
         q4 = models.Question(label='What food do you wish was served on the train?', type='TF', survey=survey)
         q4.save()
-     elif 'health' in checkin_location['types']:
+    elif 'health' in checkin_location['types']:
         q1 = models.Question(label='What improvements would you like to see in the waiting room?', type='TF', survey=survey)
         q4 = models.Question(label='What do you wish teachers did more of?', type='TA', survey=survey)
         q4.save()
