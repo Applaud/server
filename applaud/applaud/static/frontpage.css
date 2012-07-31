@@ -1,0 +1,106 @@
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+/******** variables ********/
+/***************************/
+body {
+  background-image: url("/media/cafeImage.jpg");
+  background-size: 80%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  height: 700px;
+  margin: auto; }
+  body p {
+    font-size: 8px;
+    margin: 5px; }
+
+#appStore {
+  border-radius: 8px; }
+
+#video {
+  height: 500px;
+  max-height: 600px;
+  max-width: 840px;
+  padding: 0px;
+  margin: auto; }
+
+#myModal {
+  width: 840px;
+  align: center;
+  margin: auto;
+  position: fixed;
+  top: 15%;
+  left: 15%;
+  padding: 5px; }
+
+#hand_image {
+  z-index: 1;
+  float: left;
+  margin-top: 100px; }
+
+#info-div {
+  float: left;
+  width: 500px;
+  background: rgba(200, 200, 200, 0.5);
+  border-radius: 12px;
+  color: black;
+  line-height: normal; }
+
+#name-tagline {
+  background-color: rgba(200, 200, 200, 0);
+  width: 200px;
+  float: right;
+  padding: 5px;
+  margin: 50px;
+  margin-right: 300px; }
+  #name-tagline #apatapa {
+    color: #640096;
+    font-size: 20px; }
+  #name-tagline #tagline {
+    margin-top: -10px; }
