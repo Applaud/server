@@ -4,14 +4,11 @@
   {% load i18n %}
   <head>
     <title>{% block title %}Apatapa{% endblock %}</title>
-    <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'/>
-    <link href="http://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet" type="text/css"/>
+
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />
     {% block links %}
     {% endblock %}
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
-    <link type="text/css" href="{{ STATIC_URL }}jquery-ui/css/custom-theme/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />
-    <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui/js/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}functions.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
@@ -61,76 +58,77 @@
     <div id="content">
       <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
-	  <div class="container">
-	    <div class="nav-collapse collapse">
+	  <div class="container-fluid">
+	    <a class="brand" href="{% url home %}">Apatapa</a>
+	    <div class="nav-collapse">
 	      <ul class="nav">
-		<li><a href="{% url home %}"><h4 class="logo_title">apatapa</h4></a></li>
+		{% block navigation %}		
 		{% if user.is_authenticated %}
 		{% if user.businessprofile %}
+		<li class="divider-vertical"></li>
 		<li><a href="{% url analytics %}">Stats</a></li>
+		<li class="divider-vertical"></li>
 		<li><a href="{% url business_control_panel %}">Control Panel</a></li>
+		<li class="divider-vertical"></li>
 		<li><a href="/messages">Messages</a></li>
+		<li class="divider-vertical"></li>
 		{% endif %}
 		{% endif %}
-
-		{% block navigation %}
-		{% if user.is_authenticated %}
-		<li>
-		  {% if user.userprofile %}
-		  <a href="{% url user_home %}">View Account</a>
-		  {% elif user.employeeprofile %}
-	          <a href="{% url employee_home %}">View Account </a>
-		  {% elif user.businessprofile %}
-	          <a href="{% url business_profile %}">View Account </a>
-		  {% endif %}
-		</li>
-		<li><a href="{% url auth_logout %}">Log out</a></li>
-		{% else %}
-		<li><a href="{% url auth_login %}">{% trans "Log in" %}</a> </li>
-		{% endif %}
-		{% endblock %}
-
-
-	      </div>
-	      
+	      </ul>
 	    </div>
+	    {% endblock %}
+	    {% if user.is_authenticated %}
+	    <div class="btn-group pull-right">
+	      <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+		{{ user.first_name }} {{ user.last_name }}
+		<span class="caret"></span>
+	      </a>
+	      <ul class="dropdown-menu">
+		<li><a href="#">Profile</a></li>
+		<li class="divider"></li>
+		<li><a href="{% url auth_logout %}">Log out</a></li>
+	      </ul>
+	    </div>
+	    {% endif %}
 	  </div>
 	</div>
+      </div>
 
-	
-	
-	<div id="messages">
-	  {% if messages %}
-	  <ul class="messages">
-	    {% for message in messages %}
-	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %} >{{ message }}</li>
-	    {% endfor %}
-	  </ul>
-	  {% endif %}
-	</div>
-	
+      
+      
+      <div id="messages">
+	{% if messages %}
+	<ul class="messages">
+	  {% for message in messages %}
+	  <li{% if message.tags %} class="{{ message.tags }}"{% endif %} >{{ message }}</li>
+	  {% endfor %}
+	</ul>
+	{% endif %}
+      </div>
+      
+      
+      <div id="extra-content">
+	{% block header %}
+	{% endblock %}
+      </div>
+      
+      <div id="main">
+	{% block content %}
+	{% endblock %}
+      </div>
+      
 
-	<div id="extra-content">
-	  {% block header %}
-	  {% endblock %}
+      <div id="footer">
+	<div id="copyright">
+	  All rights reserved - copyright 2012
 	</div>
-	
-	<div id="main">
-	  {% block content %}
-	  {% endblock %}
-	</div>
-	
 
-	<div id="footer">
-	  <div id="copyright">
-	    All rights reserved - copyright 2012
-	  </div>
-	</div>
 	
 	<div id="contact">
 	  <a href="mailto:pfogg@oberlin.edu">Contact</a>
 	</div>
       </div>
+
     </div>
   </body>
 </html>

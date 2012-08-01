@@ -66,3 +66,8 @@ html {
   width: 1000px;
   margin-left: auto;
   margin-right: auto; }
+
+#footer {
+  position: relative;
+  bottom: 0px;
+  display: block; }

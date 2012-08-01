@@ -318,7 +318,7 @@ def manage_survey(request):
         survey = profile.survey_set.all()[0]
     except models.Survey.DoesNotExist:
         survey = models.Survey(title="",description="",business=profile)
-
+    print survey
     if request.method == 'POST':
         print type(json.loads(request.POST['questions']))
         # If we're POSTing survey data.
@@ -355,6 +355,7 @@ def manage_survey(request):
             return HttpResponse('')
         # We're getting data for this business' survey.
     else:
+        print survey
         return HttpResponse(json.dumps({'survey':survey},
                                        cls=views.SurveyEncoder),
                             mimetype='application/json')
