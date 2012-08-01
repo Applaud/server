@@ -527,8 +527,8 @@ def employee_list(request):
     This is used by mobile devices to view all the employees for a business.
     '''
     data = json.load(request)
-    goog_id = data['goog_id']
-    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
 
     return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                    cls=EmployeeEncoder))
@@ -612,8 +612,8 @@ def general_feedback(request):
 @csrf_protect
 def nfdata(request):
     data = json.load(request)
-    goog_id = data['goog_id']
-    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
 
     nfitems = business.newsfeeditem_set.all()
     nfitem_list = []
