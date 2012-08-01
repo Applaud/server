@@ -731,25 +731,28 @@ if (! apatapa.business) {
 	    add_message.prop({'type':'checkbox',
 			      'name':'message_checkbox',
 			      'class':'message_checkbox'});
-
+	    
+/*
+ * I think this piece of code may be used twice
+ */
 	    // delete_button is the button that deletes any particular newsfeed
-	    var delete_button = $('<button></button>');
-	    delete_button.prop({'type': 'button',
-				'class': 'nf_delete_button',
-				'id': 'feed_delete_button_' + i,
-				'name': 'feed_delete_button_' + i});
-	    delete_button.html('Delete');
-	    delete_button.click( function () {
-	    	console.log("delete button clicked");
-	    	feed = $(this).parents('.feed');
-	    	apatapa.showAlert('Are you sure you want to delete?',
-	    			  '',
-				  function() {
-	    			      feed.hide(700);
-				      // This gets the index of the feed
-				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
-				  });
-	    });
+	    // var delete_button = $('<button></button>');
+	    // delete_button.prop({'type': 'button',
+	    // 			'class': 'nf_delete_button',
+	    // 			'id': 'feed_delete_button_' + i,
+	    // 			'name': 'feed_delete_button_' + i});
+	    // delete_button.html('Delete');
+	    // delete_button.click( function () {
+	    // 	console.log("delete button clicked");
+	    // 	feed = $(this).parents('.feed');
+	    // 	// apatapa.showAlert('Are you sure you want to delete?',
+	    // 	// 		  '',
+	    // 	// 		  function() {
+	    // 	// 		      feed.hide(700);
+	    // 	// 		      // This gets the index of the feed
+	    // 	// 		      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
+	    // 	// 		  });
+	    // });
 
 	    var editForm = $('<form></form>');
 	    editForm.prop({"action": manage_newsfeed_url,
@@ -859,14 +862,19 @@ if (! apatapa.business) {
 				'name': 'feed_delete_button_' + i});
 	    delete_button.html('Delete');
 	    delete_button.click( function () {
+		console.log("delete button click");
 	    	feed = $(this).parents('.feed');
-	    	apatapa.showAlert('Are you sure you want to delete?',
-	    			  '',
-				  function() {
-	    			      feed.hide(700);
-				      // This gets the index of the feed
-				      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
-				  });
+		var conf = confirm("Are you sure you want to delete?");
+		if(conf==true){
+		    feed.hide(700);
+		    deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);}		    
+	    	// apatapa.showAlert('Are you sure you want to delete?',
+	    	// 		  '',
+		// 		  function() {
+	    	// 		      feed.hide(700);
+		// 		      // This gets the index of the feed
+		// 		      deleteNewsfeed(feed.find(".id").prop("id").split("_")[2]);
+		// 		  });
 	    });
 	    // edit_button is the button that creates an edit form for this newsfeed
 	    // TODO: implement this without DEEP recursion. Hahahahaha

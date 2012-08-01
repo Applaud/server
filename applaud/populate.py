@@ -58,6 +58,7 @@ business2.save()
 #                                         secondary_color = '#e6d6bc')
 # keith_business.save()
 
+
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         latitude='39.073778', longitude='-120.141402',
                                         goog_id='8eaccc6443d4a16442baf5f3a0bd527594105436', business_name="Chambers Landing Bar & Grill",
