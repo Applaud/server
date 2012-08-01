@@ -21,7 +21,6 @@ time, mark, audio, video {
     margin: 0;
     padding: 0;
     border: 0;
-    font:inherit;
     vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -38,6 +37,7 @@ body {
     background-attachment: fixed;
     background-color:rbga(255,255,255,0.5);
 }
+
 ol, ul {
     list-style: none;
 }
@@ -73,16 +73,21 @@ $mainpadding: 15px;		// padding for main content
     -moz-box-shadow:$xoffset $yoffset $size $color;
     -webkit-box-shadow:$xoffset $yoffset $size $color;
     box-shadow:$xoffset $yoffset $size $color;
-
 }
-html {
+
+@mixin gradient($startColor,$endColor){
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$startColor, endColorstr=$endColor)";
+	background: -webkit-linear-gradient(bottom, $startColor, $endColor);
+	background:-moz-linear-gradient(90deg, $startColor, $endColor);
+}
+
+body {
     font-family:"Helvetica", sans-serif;
 }
 
-
-
 #main {
-    margin-top:50px;
+ 
+    margin-top:60px;
     width:1000px;
     margin-left:auto;
     margin-right:auto;

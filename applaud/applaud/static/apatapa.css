@@ -21,7 +21,6 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  font: inherit;
   vertical-align: baseline; }
 
 /* HTML5 display-role reset for older browsers */
@@ -58,11 +57,11 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-html {
+body {
   font-family: "Helvetica", sans-serif; }
 
 #main {
-  margin-top: 50px;
+  margin-top: 60px;
   width: 1000px;
   margin-left: auto;
   margin-right: auto; }

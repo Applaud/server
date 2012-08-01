@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   {% load i18n %}
   <head>
@@ -57,6 +57,8 @@
   </head>
   <body>
     <div id="content">
+      
+      {% block navbar %}
       <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 	  <div class="container-fluid">
@@ -118,18 +120,17 @@
 	{% endblock %}
       </div>
       
-
+      {% block footer %}
       <div id="footer">
 	<div id="copyright">
 	  All rights reserved - copyright 2012
 	</div>
-
 	
 	<div id="contact">
 	  <a href="mailto:pfogg@oberlin.edu">Contact</a>
 	</div>
       </div>
-
+      {% endblock %}
     </div>
   </body>
 </html>
