@@ -21,7 +21,6 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 100%;
   font: inherit;
   vertical-align: baseline; }
 
@@ -31,7 +30,12 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
-  line-height: 1; }
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; }
 
 ol, ul {
   list-style: none; }
@@ -53,198 +57,21 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-/* styles that apply to the whole page */
-html, body {
-  font-family: 'Arvo', serif;
-  background-image: url("/static/SmallTile.png");
-  height: 100%;
-  margin: auto; }
+html {
+  font-family: "Helvetica", sans-serif; }
 
-/* main content style */
-#content {
+#main {
+  margin-top: 50px;
   width: 1000px;
-  min-height: 100%;
   margin-left: auto;
   margin-right: auto; }
 
-/* very top and bottom caps */
-#header, #footer, #extra-content {
-  color: white;
-  background-color: #2c1e1e; }
-
-#extra-extra-content {
-  background: rgba(0, 0, 0, 0);
-  background: black transparent;
-  /* For IE 5.5 - 7*/
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
-  /* For IE 8*/
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)"; }
-
-iframe {
-  text-align: center;
-  margin-left: 100px;
-  margin-right: 100px;
-  padding: 15px; }
-
-#header {
-  height: 150px;
-  background: -moz-linear-gradient(90deg, #2c1e1e, #373232);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor);
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$browncolor, endColorstr=$lightbrowncolor)";
-  background: -webkit-linear-gradient(bottom, #2c1e1e, #373232);
-  -moz-box-shadow: 0px 0px 8px #cccccc;
-  -webkit-box-shadow: 0px 0px 8px #cccccc;
-  box-shadow: 0px 0px 8px #cccccc;
-  padding-bottom: 5px; }
+html {
+  font-family: "Helvetica", sans-serif; }
 
 #main {
-  overflow: auto;
-  padding-bottom: 15px;
-  height: 600px;
-  background-color: #fff;
-  -moz-box-shadow: 0px 0px 3px #cccccc;
-  -webkit-box-shadow: 0px 0px 3px #cccccc;
-  box-shadow: 0px 0px 3px #cccccc;
-  padding: 15px; }
-
-/* very bottom div */
-#footer {
-  position: relative;
-  width: 986px;
-  height: 15px;
-  line-height: 15px;
-  font-family: 'PT Sans Caption', sans-serif;
-  font-size: 10pt;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0px;
-  padding-left: 7px;
-  padding-right: 7px;
-  padding-top: 7px; }
-
-/* titles for main content divs */
-.content-title {
-  font-variant: small-caps;
-  border-bottom: solid 1px #500278;
-  color: #500278;
-  margin-bottom: 15px;
-  margin-top: 5px;
-  text-align: left;
-  max-width: 480px; }
-  .content-title h2 {
-    font-size: 20pt;
-    margin-bottom: 10px; }
-
-/* "features" div */
-#features {
-  float: left;
-  width: 40%; }
-
-/* "partners" div */
-#partners {
-  float: right;
-  width: 50%; }
-
-/* the logo div */
-#logo {
-  position: relative; }
-  #logo h1 {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    color: #6e9bff;
-    font-size: 36pt;
-    padding: 15px; }
-
-.logo_title {
-  text-transform: lowercase; }
-
-#accountlinks {
-  text-align: right;
-  font-size: 10pt;
-  font-family: 'Pt Sans Caption', sans-serif;
-  padding-right: 10px;
-  padding-top: 15px; }
-  #accountlinks a {
-    color: white;
-    text-decoration: none; }
-
-/* main links at the top */
-#navigation {
-  margin: 10px;
-  text-transform: uppercase;
-  display: block;
-  text-align: right;
-  position: relative;
-  top: 60px; }
-  #navigation ul {
-    margin: 5px auto; }
-  #navigation li {
-    display: inline;
-    padding: 5px; }
-  #navigation a {
-    color: white;
-    text-decoration: none; }
-    #navigation a:hover {
-      text-decoration: underline; }
-
-#copyright {
-  float: left; }
-
-#contact {
-  float: right; }
-  #contact a {
-    text-decoration: none;
-    color: white; }
-
-h1, h3 {
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #2c1e1e; }
-
-h1 {
-  font-size: 24pt;
-  margin: 5px;
-  padding-bottom: 8px; }
-
-h3 {
-  font-size: 16pt; }
-
-.errorlist li {
-  color: red;
-  padding-bottom: 10px; }
-
-/** forms that are prominent on the page.
-    potentially the only thing on the page at all. **/
-.centerform {
-  float: left;
-  margin-left: auto;
-  margin-right: auto;
-  /* input { */
-  /* 	text-align:right; */
-  /* } */
-  background-color: #ffebfa;
-  display: block;
-  max-width: 600px;
-  padding: 20px; }
-  .centerform p {
-    text-align: right;
-    display: block;
-    margin-top: 3px;
-    margin-bottom: 3px; }
-
-.login_ {
-  margin-top: 20px; }
-
-#messages {
-  margin-left: 10px; }
-
-#overview_div {
-  width: 60%;
-  padding: 10px; }
-
-#main {
-  height: 100%; }
+  height: 100%;
+  width: 1000px; }
 
 h2 {
   font-size: 14pt; }
@@ -292,7 +119,8 @@ h2 {
   -moz-box-shadow: 0px 0px 3px #cccccc;
   -webkit-box-shadow: 0px 0px 3px #cccccc;
   box-shadow: 0px 0px 3px #cccccc;
-  overflow: auto; }
+  overflow: auto;
+  background-color: #fff; }
   .control_panel_div #employee_button {
     height: 5px; }
 

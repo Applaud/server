@@ -96,7 +96,7 @@
 	  </div>
 	</div>
       </div>
-
+      {% endblock %}
       
       
       <div id="messages">
@@ -119,18 +119,18 @@
 	{% block content %}
 	{% endblock %}
       </div>
-      
-      {% block footer %}
-      <div id="footer">
-	<div id="copyright">
-	  All rights reserved - copyright 2012
-	</div>
-	
-	<div id="contact">
-	  <a href="mailto:pfogg@oberlin.edu">Contact</a>
-	</div>
+    </div>      
+    {% block footer %}
+    <div id="footer">
+      <div id="copyright">
+	All rights reserved - copyright 2012
       </div>
-      {% endblock %}
+      
+      <div id="contact">
+	<a href="mailto:pfogg@oberlin.edu">Contact</a>
+      </div>
     </div>
+    {% endblock %}
+    
   </body>
 </html>
