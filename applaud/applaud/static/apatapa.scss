@@ -75,6 +75,12 @@ $mainpadding: 15px;		// padding for main content
     box-shadow:$xoffset $yoffset $size $color;
 }
 
+@mixin gradient($startColor,$endColor){
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$startColor, endColorstr=$endColor)";
+	background: -webkit-linear-gradient(bottom, $startColor, $endColor);
+	background:-moz-linear-gradient(90deg, $startColor, $endColor);
+}
+
 body {
     font-family:"Helvetica", sans-serif;
 }
