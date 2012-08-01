@@ -79,7 +79,7 @@ def whereami(request):
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
         
-        ret = json.dumps({'nearby_businesses':business_list})
+    ret = json.dumps({'nearby_businesses':business_list})
 
     print business_list
 
