@@ -566,6 +566,8 @@ def post_photo(request):
     'image' as a file.
     """
     profile = request.user.userprofile
+    return HttpResponse('body: %s' % request.body)
+    sys.stderr.write('keys %s' % request.FILES.keys())
     image = request.FILES['image']
     business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
     business_photo = models.BusinessPhoto(business=business,
@@ -585,8 +587,4 @@ def get_photos(request):
     """
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
-    print business
-    stuff = json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]})
-    # return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
-    print stuff
-    return HttpResponse(stuff)
+    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))

@@ -17,8 +17,9 @@ import forms
 from applaud import models as applaud_models
 from applaud import settings
 import json
-
+from django.utils.timezone import utc
 import sys
+from django.contrib.auth.models import User
 
 @csrf_protect
 def activate(request, backend,
