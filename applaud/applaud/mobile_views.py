@@ -63,6 +63,7 @@ def whereami(request):
     lon = request.GET["longitude"]	
 
     from_goog = urllib2.urlopen("https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY))
+    print from_goog
 
     to_parse = json.loads(from_goog.read())
     business_list = []
