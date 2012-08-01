@@ -36,6 +36,7 @@ body {
     background-height: 100%;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background-color:rbga(255,255,255,0.5);
 }
 ol, ul {
     list-style: none;
@@ -74,13 +75,15 @@ $mainpadding: 15px;		// padding for main content
     box-shadow:$xoffset $yoffset $size $color;
 
 }
-
+html {
+    font-family:"Helvetica", sans-serif;
+}
 
 
 
 #main {
     margin-top:50px;
     width:1000px;
-    margin-left:100px;
+    margin-left:auto;
     margin-right:auto;
 }
