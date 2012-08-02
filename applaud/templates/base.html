@@ -13,6 +13,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}functions.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-dropdown.js"></script>
     <script type="text/javascript" >
       /**
       * URLS
@@ -82,7 +83,7 @@
 	    {% endblock %}
 	    {% if user.is_authenticated %}
 	    <div class="btn-group pull-right">
-	      <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+	      <button id="logout" class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">
 		{{ user.first_name }} {{ user.last_name }}
 		<span class="caret"></span>
 	      </a>
@@ -121,12 +122,12 @@
       </div>
     </div>      
     {% block footer %}
-    <div id="footer">
-      <p>&#169 Apatapa 2012</p>
-      <a href="http://www.apatapablog.com">Blog |</a>
-      <a href="#">Team |</a>
-      <a href="mailto:wyatthayman@gmail.com">Contact</a>
-    </div>
+    <!-- <div id="footer"> -->
+    <!--   <p>&#169 Apatapa 2012</p> -->
+    <!--   <a href="http://www.apatapablog.com">Blog |</a> -->
+    <!--   <a href="#">Team |</a> -->
+    <!--   <a href="mailto:wyatthayman@gmail.com">Contact</a> -->
+    <!-- </div> -->
     {% endblock %}
     
   </body>

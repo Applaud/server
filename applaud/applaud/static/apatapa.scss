@@ -98,3 +98,18 @@ body {
     bottom:0px;
     display:block;
 }
+
+.navbar-inner {
+    li {
+	margin-bottom:-10px;
+	font-size:12px;
+    }
+}
+#logout {
+    font-size:12px;
+    span {
+	color:white;
+	border-bottom-color:#fff;
+	border-top-color:#fff;
+    }
+}
