@@ -3,7 +3,6 @@
 {% block links %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}control_panel.css" />
-<link href="http://fonts.googleapis.com/css?family=The+Girl+Next+Door" rel="stylesheet" type="text/css">
 {% endblock %}
 {% block scripts %}
 {{ block.super }}
@@ -158,7 +157,7 @@
     </div>
   </div>
   <div id="control_panel_newsfeeds_div" name="control_panel_newsfeeds_div" class="control_panel_div">
-    <h1>NEWSFEED</h1>
+    <h1>Newsfeed</h1>
     <form id="newsfeed_form" name="newsfeed_form" action="{% url business_manage_newsfeed  %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <button type="button" id="add_newsfeed_button" name="add_newsfeed_button" class="add_newsfeed_button">Add Newsfeed Item</button>

@@ -52,8 +52,8 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-html, body {
-  font-size: inherit; }
+#main {
+  margin-top: 50px; }
 
 #employees li {
   padding-top: 25px; }
@@ -131,8 +131,7 @@ html, body {
   font-weight: bold; }
 
 #main {
-  height: 650px;
-  margin-top: 50px; }
+  height: 650px; }
 
 .choice_list {
   margin-top: 5px;
