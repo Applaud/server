@@ -15,7 +15,8 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
+from business_views import save_image
 from django.utils.timezone import utc
 
 # 'mobile_view' decorator.
@@ -63,7 +64,6 @@ def whereami(request):
     goog_query = "https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY)
     from_goog = urllib2.urlopen(goog_query)
 
-
     to_parse = json.loads(from_goog.read())
     business_list = []
     print "to_parse is....."
@@ -79,7 +79,7 @@ def whereami(request):
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
         
-        ret = json.dumps({'nearby_businesses':business_list})
+    ret = json.dumps({'nearby_businesses':business_list})
 
     print business_list
 
@@ -513,8 +513,8 @@ def employee_list(request):
     This is used by mobile devices to view all the employees for a business.
     '''
     data = json.load(request)
-    goog_id = data['goog_id']
-    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
 
     return HttpResponse(json.dumps(list(business.employeeprofile_set.all()),
                                    cls=EmployeeEncoder))
@@ -528,7 +528,6 @@ def get_survey(request):
     data = json.load(request)
     business_id = data['business_id']
     business = models.BusinessProfile.objects.get(id=business_id)
-
     survey = business.survey_set.all()[0]
     
     questions = []
@@ -599,8 +598,8 @@ def general_feedback(request):
 @csrf_protect
 def nfdata(request):
     data = json.load(request)
-    goog_id = data['goog_id']
-    business = models.BusinessProfile.objects.get(goog_id=goog_id)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
 
     nfitems = business.newsfeeditem_set.all()
     nfitem_list = []
@@ -609,3 +608,37 @@ def nfdata(request):
         nfitem_list.append(encoder.default(nfitem))
     ret = {'newsfeed_items':nfitem_list}
     return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+@mobile_view
+def post_photo(request):
+    """
+    Post a photo from the phone to the server. Called
+    with a POST.
+    
+    Expects 'business_id' and 'tags' as POST keys, and
+    'image' as a file.
+    """
+    profile = request.user.userprofile
+    return HttpResponse('body: %s' % request.body)
+    sys.stderr.write('keys %s' % request.FILES.keys())
+    image = request.FILES['image']
+    business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
+    business_photo = models.BusinessPhoto(business=business,
+                                          tags=json.loads(request.POST['tags']),
+                                          uploaded_by=profile)
+    business_photo.save()
+    filename = '%s_%s.jpg' % (profile.id,
+                       business.business_name)
+    save_image(business_photo.image, filename, image)
+    return HttpResponse('')
+
+#@mobile_view
+def get_photos(request):
+    """
+    Get all the photos associated with a particular business,
+    whose database ID is passed in by GET.
+    """
+    business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
+    encoder = BusinessPhotoEncoder()
+    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
