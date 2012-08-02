@@ -49,9 +49,8 @@ table {
 /******** variables ********/
 /***************************/
 body {
-    background-image: url("/media/cafeImage.jpg");
-    background-size: 80%;
-    background-height: 100%;
+    background-image: url("/media/restaurant.jpg");
+    background-width:1200px;
     background-repeat: no-repeat;
     background-attachment: fixed;
     height: 700px;
@@ -60,6 +59,10 @@ body {
     margin: 5px; }
 }
 #appStore {
+    float:right;
+    position:absolute;
+    bottom:0px;
+    right:100px;
     border-radius: 8px; }
 
 #video {
@@ -84,9 +87,11 @@ body {
     margin-top: 100px; }
 
 #info-div {
-    float: left;
-    width: 500px;
     background: rgba(200, 200, 200, 0.5);
+    width:500px;
+    margin-right:150px;
+    float:right;
+    
     border-radius: 12px;
     color: black;
     line-height: normal; }
@@ -104,4 +109,18 @@ body {
     #tagline {
 	font-size:12px;
     }
+}
+#footer{
+    position:absolute;
+    bottom:-60px;
+    right:100px;
+}
+#choice-buttons{
+    a{
+	margin-right:20px;
+    }
+    margin:10px;
+}
+#nav-buttons {
+    float:right;
 }
