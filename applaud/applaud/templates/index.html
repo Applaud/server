@@ -1,25 +1,53 @@
-{% extends "base.html" %}
-{% block title %}APATAPA{% endblock %}
-{% block header %}
-{% endblock %}
-{% block video %}
-  <iframe src="http://player.vimeo.com/video/19434428" width="800" height="450" align="center" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-{% endblock %} 
-{% block content %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}frontpage.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+
+  </head>
+  <body>
+
+    <img id="hand_image" src="/media/iphoneImageEdit.png" align="center" width="700" height="600" />
+    <!-- Modal Start -->
+    <div class="modal hide" id="myModal">
+      <div class="modal-body" id="video">
+	<button type="button" class="close" data-dismiss="modal">×</button>
+	<iframe src="http://player.vimeo.com/video/19434428" width="800" height="450" align="center" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+      </div>	
+    </div>
+    <!-- Modal Stop -->
+    <div id="name-tagline">
+      <p id="apatapa">Apatapa</p>
+      <p id="tagline">connect with your environment</p>
+    </div>
+    
+    <div id="frontpage-div">
+    <!-- Info Div Start -->
+    <div id="info-div">
+      <p>
+      	Apatapa connects people with their current location.  Using our website, businesses decide what a customer sees when they open Apatapa on their premises.  The beta version provides businesses with three customizable features: a newsfeed, employee evaluations, and a feedback center.  Newsfeed items are the first thing a customer sees when opening Apatapa — an announcement about a sale, a future event, or a new improvement.  Businesses can choose how their individual employees are evaluated and view results in the analytics center.  In the feedback center, businesses create questions and use the responses to improve customer experience and build loyalty.
+      </p>
+      </div>
+      <div id="signup-form">
+    	<!-- <form> -->
+    	<!--   <label>Label name</label> -->
+    	<!--   <input type="text" class="span3" placeholder="Type something…" > -->
+    	<!--   <label>Label name</label> -->
+    	<!--   <input type="text" class="span3" > -->
+	  
+    	<!--   <button type="submit" class="btn">Submit</button> -->
+    	<!-- </form> -->
+      </div>
+    </div>
+    <!-- Info Div Stop -->
+    <img src="/media/appStore.jpeg" id="appStore" width="160" height="60">
+    <a class="btn" data-toggle="modal" href="#myModal" id="videoButton" >Watch the Video</a>
+    <a class="btn" href="/accounts/login">Sign In!</a>
+  </body>
+</html>
 
 
-<div id="features">
-
-  <div class="content-title">
-    <h2>New Features</h2>
-  </div>
-  We have so many features!!!
-</div>
-
-<div id="partners">
-  <div class="content-title">
-    <h2>Partners</h2>
-  </div>
-  Partners go here.
-</div>
-{% endblock %}
