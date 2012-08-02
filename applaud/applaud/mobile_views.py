@@ -18,7 +18,6 @@ from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
 from business_views import save_image
 from django.utils.timezone import utc
-import StringIO
 
 # 'mobile_view' decorator.
 def mobile_view(view):
