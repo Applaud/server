@@ -84,14 +84,16 @@ var toggle_photo_url = "{% url business_toggle_photo %}"
 	    {% endblock %}
 	    {% if user.is_authenticated %}
 	    <div class="btn-group pull-right">
-	      <a class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">
-		{{ user.first_name }} {{ user.last_name }}
-		<span class="caret"></span>
-	      </a>
+
+	      <button id="logout" class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">
+		    {{ user.first_name }} {{ user.last_name }}
+		    <span class="caret"></span>
+	      </button>
+
 	      <ul class="dropdown-menu">
-		<li><a href="#">Profile</a></li>
-		<li class="divider"></li>
-		<li><a href="{% url auth_logout %}">Log out</a></li>
+		    <li><a href="#">Profile</a></li>
+		    <li class="divider"></li>
+		    <li><a href="{% url auth_logout %}">Log out</a></li>
 	      </ul>
 	    </div>
 	    {% endif %}

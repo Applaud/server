@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}frontpage.css" />
@@ -10,72 +10,59 @@
 
   </head>
   <body>
-
-    <img id="hand_image" src="/media/iphoneImageEdit.png" align="center" width="700" height="600" />
     <!-- Modal Start -->
     <div class="modal hide" id="myModal">
       <div class="modal-body" id="video">
-	<button type="button" class="close" data-dismiss="modal">×</button>
-	<iframe src="http://player.vimeo.com/video/19434428" width="800" height="450" align="center" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+	    <button type="button" class="close" data-dismiss="modal">×</button>
+	    <iframe src="http://player.vimeo.com/video/19434428" width="800" height="450" align="center" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
       </div>	
     </div>
     <!-- Modal Stop -->
-    <div id="name-tagline">
-      <p id="apatapa">Apatapa</p>
-      <p id="tagline">connect with your environment</p>
+
+    <!-- Top Bar Start -->
+    <div id="top-bar">
+      
+
     </div>
-    
-    <div id="frontpage-div">
+
+    <!-- Top Bar Stop -->
+
+
+    <div id="main">
+      <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" />
+      
       <!-- Info Div Start -->
-      <div id="info-div">
-	<p>
-      	  Apatapa connects people with their current location.  Using our website, businesses decide what a customer sees when they open Apatapa on their premises.  The beta version provides businesses with three customizable features: a newsfeed, employee evaluations, and a feedback center.  Newsfeed items are the first thing a customer sees when opening Apatapa — an announcement about a sale, a future event, or a new improvement.  Businesses can choose how their individual employees are evaluated and view results in the analytics center.  In the feedback center, businesses create questions and use the responses to improve customer experience and build loyalty.
-	</p>
+      <div id="info">          
+
+        <div id="info-head">
+          <img src="/media/Logo340.png" alt="Apatapa" />
+          <h2>Connect with your environment</h2>
+        </div>
+
+        <div id="info-main" class="row">   
+          <p>Lorem ipsum, quia dolor sit amet, consectetur, adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
+          <div id="nav-buttons">
+	        <a class="btn btn-large" data-toggle="modal" href="#myModal" id="videoButton" >Watch the Video</a>
+	        <a class="btn btn-large" href="/accounts/login">Sign In</a>
+	        <a class="btn btn-large" href="/accounts/member">Register</a>
+          </div>
+          <!-- <img src="/media/appStore.jpeg" id="appStore" width="160" height="60">       -->
+        </div>
 
       </div>
+      <!-- Info Div Stop -->
 
-      <!-- <form> -->
-      <!--   <label>Label name</label> -->
-      <!--   <input type="text" class="span3" placeholder="Type something…" > -->
-      <!--   <label>Label name</label> -->
-      <!--   <input type="text" class="span3" > -->
-      
-      <!--   <button type="submit" class="btn">Submit</button> -->
-      <!-- </form> -->
-
-      <div id="choice-buttons" class="row">
-
-	<a class="btn" data-toggle="modal" href="#myModal" id="videoButton" >Watch the Video</a>
-	<a class="btn" href="/accounts/login">Sign In</a>
-	<a class="btn" href="/accounts/member">Register</a>
-      </div>
-
-
-      <!-- <div id="signup-form"> -->
-      <!-- 	<form> -->
-      <!-- 	  <label>Label name</label> -->
-      <!-- 	  <input type="text" class="span3" placeholder="Type something…" > -->
-      <!-- 	  <label>Label name</label> -->
-      <!-- 	  <input type="text" class="span3" > -->
-      
-      <!-- 	  <button type="submit" class="btn">Submit</button> -->
-      <!-- 	</form> -->
-      <!-- </div> -->
-    </div>
-    <!-- Info Div Stop -->
-
-    <!-- <div id="nav-buttons" class="row"> -->
-    <!--   <a class="btn" href="#">Home</a> -->
-    <!--   <a class="btn" href="#">Apatapa Business</a> -->
-    <!-- </div> -->
-    <img src="/media/appStore.jpeg" id="appStore" width="160" height="60" />      
-    <div id="footer" class="row">
-      &#169 Apatapa 2012  
-      <a href="http://www.apatapablog.com">   | Blog |</a>
-      <a href="#">Team |</a>
-      <a href="mailto:wyatthayman@gmail.com">Contact</a>
+ 
     </div>
 
+
+    <!-- Bottom Bar Start -->
+    <div id="bottom-bar">
+      
+
+    </div>
+    <!-- Bottom Bar Stop -->
+    
   </body>
 </html>
 

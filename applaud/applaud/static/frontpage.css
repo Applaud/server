@@ -49,14 +49,31 @@ table {
 /******** variables ********/
 /***************************/
 body {
+  font-family: "Helvetica", cursive; }
+
+#top-bar {
+  z-index: 100;
+  opacity: .4;
+  filter: alpha(opacity=40);
+  height: 100px;
+  -moz-box-shadow: 0px 0px 6px #111111;
+  -webkit-box-shadow: 0px 0px 6px #111111;
+  box-shadow: 0px 0px 6px #111111; }
+
+#main {
+  width: 1200px;
+  height: 600px;
+  position: relative;
   background-image: url("/media/restaurant.jpg");
-  background-width: 1200px;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  height: 700px;
-  margin: auto; }
-  body p {
-    margin: 5px; }
+  margin-left: auto;
+  margin-right: auto; }
+
+#hand-image {
+  position: absolute;
+  bottom: 0;
+  height: 80%;
+  width: auto; }
 
 #appStore {
   float: right;
@@ -86,40 +103,30 @@ body {
   float: left;
   margin-top: 100px; }
 
-#frontpage-div {
-  padding: 10px;
-  float: left;
-  width: 500px; }
-
-#info-div {
-  background: rgba(200, 200, 200, 0.5);
-  width: 500px;
-  margin-right: 150px;
+#info {
+  width: 400px;
   float: right;
-  border-radius: 12px;
-  color: black;
-  line-height: normal; }
+  margin-right: 250px;
+  margin-top: 100px; }
 
-#name-tagline {
-  background-color: rgba(200, 200, 200, 0);
-  font-family: "Helvetica", cursive;
-  width: 200px;
-  float: right;
-  padding: 5px;
-  margin: 50px;
-  margin-right: 300px; }
-  #name-tagline #apatapa {
-    color: #640096;
-    font-size: 36px; }
-  #name-tagline #tagline {
-    font-size: 12px; }
+#info-head {
+  margin-left: -20px;
+  margin-bottom: 10px; }
+  #info-head img {
+    margin-left: -5px; }
 
-#footer {
-  position: absolute;
-  bottom: -60px;
-  right: 100px; }
+#info-main {
+  font-size: 115%; }
+  #info-main #nav-buttons {
+    margin-top: 15px; }
+    #info-main #nav-buttons a {
+      margin-right: 10px; }
 
-#choice-buttons {
-  margin: 10px; }
-  #choice-buttons a {
-    margin-right: 20px; }
+#bottom-bar {
+  z-index: 100;
+  opacity: .4;
+  filter: alpha(opacity=40);
+  height: 100px;
+  -moz-box-shadow: 0px 0px 6px #111111;
+  -webkit-box-shadow: 0px 0px 6px #111111;
+  box-shadow: 0px 0px 6px #111111; }
