@@ -261,10 +261,10 @@ h2 {
 }
 
 #sticky {
-    font-family: 'The Girl Next Door', 'Marker Felt', cursive;
+    font-family: 'Helvetica', sans-serif;
     background-color:rgb(255, 244, 144);
     width:200px;
-    font-size:20px;
+    font-size:16px;
     padding:20px;
     @include shadow(8px, #aaa, 0px, 10px);
     -moz-transform:rotate(-2deg);
