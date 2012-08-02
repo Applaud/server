@@ -11,7 +11,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 import applaud.settings
 from applaud import models
 from django.contrib.auth.models import User, Group
-from random  import random
+from random import random
+from applaud import business_views
+from applaud import settings
+import Image
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -48,12 +51,21 @@ business.save()
 business2 = models.BusinessProfile(user=user2, phone='0-987-654-3210', latitude=39.07279, longitude=-120.14223, goog_id='asdf987sdf765asdf875asdf685487we65r9867', business_name='Apatapa')
 business2.save()
 
+# keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
+#                                         latitude='37.928640', longitude='-122.5176380',
+#                                         goog_id='92dc1dbbf0596a27c330a754f9ed0bf93555e9ca', business_name="Pacific Catch",
+#                                         primary_color = '#e83723',
+#                                         secondary_color = '#e6d6bc')
+# keith_business.save()
+
+
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
-                                        latitude='37.928640', longitude='-122.5176380',
-                                        goog_id='92dc1dbbf0596a27c330a754f9ed0bf93555e9ca', business_name="Pacific Catch",
+                                        latitude='39.073778', longitude='-120.141402',
+                                        goog_id='8eaccc6443d4a16442baf5f3a0bd527594105436', business_name="Chambers Landing Bar & Grill",
                                         primary_color = '#e83723',
                                         secondary_color = '#e6d6bc')
 keith_business.save()
+
 
 # Business and Customer groups.
 business_group = Group(name='Business')
@@ -346,6 +358,20 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
+keith_photo = models.BusinessPhoto(business=keith_business,
+                                   tags=['tag', 'tagged', 'mystical'],
+                                   uploaded_by=userprofile)
+keith_photo.save()
+business_views.save_image(keith_photo.image,
+                          'keith_photo_test.jpg',
+                          settings.MEDIA_ROOT + 'noimage.png')
+
+keith_photo2 = models.BusinessPhoto(business=keith_business,
+                                   tags=['foo', 'bar'],
+                                   uploaded_by=userprofile2)
+business_views.save_image(keith_photo2.image,
+                          'keith_photo_numero_dos.jpg',
+                          settings.MEDIA_ROOT + 'noimage.png')
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)

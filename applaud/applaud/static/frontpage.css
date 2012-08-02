@@ -83,7 +83,8 @@ body {
   float: left;
   margin-top: 100px; }
 
-#info-div {
+#frontpage-div {
+  padding: 10px;
   float: left;
   width: 500px;
   background: rgba(200, 200, 200, 0.5);

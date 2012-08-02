@@ -82,8 +82,8 @@
     <li id="profile_button" class="profile_link cp_nav_button">Profile</li>
     <li id="employee_button" class="employee_link cp_nav_button">Employees</li>
     <li id="survey_button" class="survey_link cp_nav_button">Questions</li>
+    <li id="photos_button" class="photos_link cp_nav_button">Photos</li>
     <li id="newsfeed_button" class="newsfeed_link cp_nav_button">News Items</li>
-
   </ul>
 
   
@@ -199,6 +199,24 @@
     </form>
   </div>
   
+  <div id="control_panel_photos_div" name="control_panel_photos_div" class="control_panel_div">
+    <h1>Photos</h1>
+    <p>Here you can see photos that your customers have taken in your location and uploaded to Apatapa.</p>
+    <div id="photos">
+      {% for photo in business_profile.businessphoto_set.all %}
+      <div class="photo" id="photo_{{ photo.id }}_div">
+	<span class="photo_votes">{{ photo.votes }}</span>
+	<img class="business_photo" src="{{ MEDIA_URL }}{{ photo.image }}" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
+	<ul class="photo_tags">
+	  {% for tag in photo.tags %}
+	  <li>{{ tag }}</li>
+	  {% endfor %}
+	</ul>
+	<span class="photo_active_button {% if photo.active %}active{% endif %}" id="photo_{{ photo.id }}_active" name="{{ photo.id }}_active">{% if photo.active %}active{% else %}inactive{% endif %}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 
   <div id="control_panel_profile_div" name="control_panel_profile_div" class="control_panel_div">
     <h1>{{ business.business_name }}</h1>
@@ -212,7 +230,6 @@
       Your secondary colors (likewise!) <input type="text" class="color {hash:true,caps:false}" name="secondary_color" id="secondary_color_input" value="{{ business_profile.secondary_color }}" onchange="apatapa.business.iphone.refreshSecondary();" /><br />
       <button type="submit" id="save_profile_button" name="save_profile_button">Save Changes</button>
     </form>
-
   </div>
 </div>
 {% endblock %}

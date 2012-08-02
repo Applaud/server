@@ -318,10 +318,25 @@ class UserProfile(models.Model):
             if key != 'id':
                 setattr(self, key, value)
 
+class BusinessPhoto(models.Model):
+    """
+    A photo for a business.
+    
+    tags is a list of strings which describe this photo.
+    votes is a signed integer showing the aggregate votes this photo has received.
+    active is a boolean indicating whether or not this photo will be shown to users.
+    uploaded_by is the user who uploaded this photo.
+    """
+    image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    business = models.ForeignKey('BusinessProfile')
+    tags = SerializedStringsField()
+    upvotes = models.IntegerField(default=0)
+    downvotes = models.IntegerField(default=0)
+    active = models.BooleanField(default=0)
+    uploaded_by = models.ForeignKey('UserProfile')
 # # This needs to be implemented
 # class CorporateProfile(request):
     
-                
 # It's called MessageItem because messages was making django fussy
 class MessageItem(models.Model):
     subject = models.TextField(max_length=100, blank=True, null=True, default=" ")
@@ -346,4 +361,3 @@ class Inbox(models.Model):
     user = models.OneToOneField(User)
     def __unicode__(self):
         return str(self.user)
-    
