@@ -620,9 +620,6 @@ def post_photo(request):
     'image' as a file.
     """
     profile = request.user.userprofile
-    return HttpResponse('body: %s' % request.body)
-    sys.stderr.write('keys %s' % request.FILES.keys())
-    image = request.FILES['image']
     business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
     business_photo = models.BusinessPhoto(business=business,
                                           tags=json.loads(request.POST['tags']),
@@ -630,7 +627,7 @@ def post_photo(request):
     business_photo.save()
     filename = '%s_%s.jpg' % (profile.id,
                        business.business_name)
-    save_image(business_photo.image, filename, image)
+    save_image(business_photo.image, filename, request.FILES['image'])
     return HttpResponse('')
 
 #@mobile_view
