@@ -1,14 +1,17 @@
-@import "applaud.scss";
+@import "apatapa.scss";
 
 $deletecolor: rgb(255,100,100);
 $lightpink: rgb(255,235,250);
 $browncolor: rgb(44,30,30);	// dark brown color for header/footer
 $border-grey: #e0e0e0;
 $shadow-color: #aaa;
-
+html {
+    font-family:"Helvetica", sans-serif;
+}
 
 #main {
     height:100%;
+    width:1000px;
 }
 h2 {
     font-size:14pt;
@@ -21,6 +24,7 @@ h2 {
 
     width:550px;
     height:700px;
+
     
     #control_panel_heading {
 	margin: {
@@ -78,6 +82,7 @@ h2 {
     }
     @include shadow(3px);
     overflow:auto;
+    background-color:#fff;   
 }
 
 #control_panel_employees_div {

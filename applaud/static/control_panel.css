@@ -1,3 +1,84 @@
+<<<<<<< HEAD
+=======
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+/******** variables ********/
+/***************************/
+html {
+  font-family: "Helvetica", sans-serif; }
+
+#main {
+  margin-top: 50px;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto; }
+
+html {
+  font-family: "Helvetica", sans-serif; }
+
+#main {
+  height: 100%;
+  width: 1000px; }
+
+h2 {
+  font-size: 14pt; }
+
+>>>>>>> 9d0c4df10446b0b5dd1f29e3aa648a418958f99a
 #control_panel {
   padding-top: 8px;
   overflow: auto;
@@ -41,7 +122,17 @@
   border-left: none;
   border-right: none;
   padding: 20px;
+<<<<<<< HEAD
   margin-top: -8px; }
+=======
+  border-radius: 5px;
+  margin-top: -8px;
+  -moz-box-shadow: 0px 0px 3px #cccccc;
+  -webkit-box-shadow: 0px 0px 3px #cccccc;
+  box-shadow: 0px 0px 3px #cccccc;
+  overflow: auto;
+  background-color: #fff; }
+>>>>>>> 9d0c4df10446b0b5dd1f29e3aa648a418958f99a
   .control_panel_div #employee_button {
     height: 5px; }
 

@@ -21,7 +21,8 @@ ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL = '/accounts/profile'
 
 #SERVER_URL="http://ec2-107-22-6-55.compute-1.amazonaws.com"
-SERVER_URL="ec2-50-112-71-198.us-west-2.compute.amazonaws.com"
+#SERVER_URL="http://localhost:8000"
+SERVER_URL = 'apatapa.com'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
