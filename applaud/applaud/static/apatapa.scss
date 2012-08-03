@@ -78,8 +78,9 @@ $mainpadding: 15px;		// padding for main content
 	background:-moz-linear-gradient(90deg, $startColor, $endColor);
 }
 
-body {
+html, body {
     font-family:"Helvetica", sans-serif;
+    min-height:100%;
 }
 
 #main {
@@ -91,15 +92,19 @@ body {
 }
 
 #footer {
-    position:absolute;
+    position:relative;
     bottom:0px;
     display:block;
+    left:1000px;
 }
 
 .navbar-inner {
     li {
 	margin-bottom:-10px;
 	font-size:12px;
+    }
+    .brand {
+	margin-bottom:-10px;
     }
 }
 #logout {
@@ -108,5 +113,18 @@ body {
 	color:white;
 	border-bottom-color:#fff;
 	border-top-color:#fff;
+    }
+}
+
+#overview{
+    margin:100px;
+    width:100%;
+    #overview_content {
+	margin-left:70px;
+	background-color:#fff;
+	@include shadow(2px);
+	padding:30px;
+	border-radius:5px;
+	height:100%;
     }
 }

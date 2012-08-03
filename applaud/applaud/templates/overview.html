@@ -1,27 +1,69 @@
 {% extends "base.html" %}
-
+<title>{% block title %}Apatapa | Overview{% endblock %}</title>
 {% block links %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}apatapa.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />    
 {% endblock %}
-
 {% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}overview.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-hashchange.js"></script>
 
 {% endblock %}
 
-{% block title %}Apatapa | Overview{% endblock %}
 
-{% block content %}
-<h1>Overview</h1>
-<div id="overview_div">
-<p>
-Businesses already have digital identities: Facebook, Twitter, Yelp, and foursquare, to name a few.  Through all of these identities, businesses can host a variety of conversations with their customers.  We believe that a business should have a centralized identity that takes full advantage of the smartphones their customers carry.</p><br />
-</p>
-Apatapa connects people with their current location.  Using our website, businesses decide what a customer sees when they open Apatapa on their premises.  The beta version provides businesses with three customizable features: a newsfeed, employee evaluations, and a feedback center.  Newsfeed items are the first thing a customer sees when opening Apatapa — an announcement about a sale, a future event, or a new improvement.  Businesses can choose how their individual employees are evaluated and view results in the analytics center.  In the feedback center, businesses create questions and use the responses to improve customer experience and build loyalty.
-</p><br />
-<p>
-Version 1.0, which we will be releasing at the end of the summer, promises to have even more features that businesses can use to further engage their customers.
+{% block overview %}    
+<div id="overview_div" class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+      <div class="well sidebar-nav">
+	<ul class="nav nav-list">
+	  <li class="about"><a href="/overview/#about">About</a></li>
+	  <li class="team"> <a id="team-nav-link" href="/overview/#team">Team</a></li>
+	  <li class="terms"><a href="/overview/#terms">Terms & Conditions</a></li>
+	  <li class="privacy"><a href="/overview/#privacy">Privacy Policy</a></li>
+	  <li><a href="/vision">Vision</a></li>
+	</ul>
+      </div>
+    </div>
+    
+    <div class="span6" id="overview_content">
+      <div id="overview-about" class="overview-content">
+	<h2>What is Apatapa?</h2>
+	<p>Apatapa is a mobile application and a website, designed to allow users to interact with their location.</p>
+      </div>
 
-</p>
+      <div id="overview-team" class="overview-content">
+	<h2>The Apatapa Team</h2>
+	<div id="wyatt" class="team-person">
+	  <h3>Wyatt Hayman - CEO</h3>
+	  <p>At Oberlin, I had the opportunity to cultivate my leadership skills as the only captain of the Oberlin Men’s Varsity Soccer Team.  Having taken math through differential equations and a year of foundational computer science, I feel very comfortable solving technical problems.  Among other values, college was an entrepreneurial launchpad for me.  While at Oberlin I submitted four business ideas for funding.  After receiving $1500 to pursue a patent, I received $30,000 in seed funding from Oberlin to start Apatapa.  I selected Apatapa from an archive of over 600 business ideas that I developed throughout college.  After beginning work on Apatapa in September, I formed a diverse, highly technical, and extremely driven team.  My dream is to use entrepreneurial success to inspire large-scale, self-sustaining, social and environmental progress.  I continue working to establish a daily meditation practice as I explore the power of the brain; In 2010 I participated in a month-long silent meditation retreat that informs me every day.</p>
+	</div>
+	<div id="jack" class="team-person">
+	  <h3>Jack Kearney - CTO</h3>
+	  <p>I love building things. But I also feel compelled to construct. When I was little I used LEGOs; as I grew a bit older I started to use 2x4s and rope to make tree forts and zip lines; finally, in college I realized that this love extended beyond the purely tangible. I started a transportation service at Oberlin that took kids to and from New York. Even though this wasn’t strictly construction, creating something that a lot of people used was awesome! Around that same time, I took my first computer science class. From this I realized that starting a tech company was a perfect blend of hands-on building and entrepreneurship.  I’m thrilled by the prospect of a lot of people using something that I’ve helped to build.</p>
+	</div>
+	
+	<div id="shahab" class="team-person">
+	  <h3>Shahab Raza - COO</h3>
+	  <p>Having found myself as an 18-year-old far, far away from home in such a drastically different culture, it’s not so surprising that my four years at Oberlin were incredibly formative. I have continued enjoying problem solving, but each problem is now accompanied by a broader pursuit of Objective Truth.</p>	  
+	  <p>Sport has always been a massive part of my life. Indeed a large part of who I am – in regards to my drive and ambition, sensitivity working with other people, and comfort dealing with highs and lows - can be attributed to my time spent watching and playing.  I am in love with the game of soccer, the history, the expression of culture, the paradoxical harmony in chaos. I have missed only a handful of Arsenal games in the last five years. And a painful five years at that, so spare a thought.</p>
+
+	  <p>I don’t think we live in especially troubled times. We’re just more aware of injustices – wrongs that need to be righted. Here’s to that pursuit.</p>
+	</div>
+      </div>
+      
+      <div id="overview-terms" class="overview-content">
+	<h2> Terms & Conditions</h2>
+      </div>
+      <div id="overview-privacy" class="overview-content">
+	<h2>Privacy Policy</h2>
+      </div>
+      
+    </div>
+    
+  </div>
 </div>
-
+  
 {% endblock %}
+
