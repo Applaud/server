@@ -14,7 +14,8 @@
 <script type="text/javascript">
   $(document).ready(function() {
   apatapa.business.control_panel.init_control_panel( {{ feeds|length }}, {{ employee_list|length }});
-
+  $(".nav").children("li").removeClass("active");
+  $("#control-panel-nav").addClass("active");
   });
 </script>
 {% endblock %}
@@ -73,9 +74,6 @@
 </div>
 <div id="control_panel">
   
-  <div id="control_panel_heading" name="control_panel_heading">
-    <h1>Control Panel</h1>
-  </div>
 
   <ul id="control_panel_nav" name="control_panel_nav">
     <li id="home_button" class="home_link cp_nav_button selected"  name="home_button">Home</li>
