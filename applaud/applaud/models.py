@@ -327,7 +327,7 @@ class BusinessPhoto(models.Model):
     active is a boolean indicating whether or not this photo will be shown to users.
     uploaded_by is the user who uploaded this photo.
     """
-    image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
     business = models.ForeignKey('BusinessProfile')
     tags = SerializedStringsField()
     upvotes = models.IntegerField(default=0)

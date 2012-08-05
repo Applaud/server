@@ -115,7 +115,8 @@ class BusinessProfileEncoder(json.JSONEncoder):
                    'phone': o.phone,
                    'logo': logo_url,
                    'primary': o.primary_color,
-                   'secondary': o.secondary_color}
+                   'secondary': o.secondary_color,
+                   'generic': not o.user.is_active}
             return res
         else:
             return json.JSONEncoder.default(self, o)
