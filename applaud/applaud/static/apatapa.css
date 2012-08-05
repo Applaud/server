@@ -67,8 +67,7 @@ html, body {
 #footer {
   position: relative;
   bottom: 0px;
-  display: block;
-  left: 1000px; }
+  display: block; }
 
 .navbar-inner li {
   margin-bottom: -10px;
