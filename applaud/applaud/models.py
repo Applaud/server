@@ -91,8 +91,13 @@ class Rating(models.Model):
             return float('%.1f' % round(self.rating_value,1)) if self.rating_value else 0
         
 	def __unicode__(self):
+            if not self.rating_text:
 		return "%s:%s (%s)"%(self.title,
                                      self.rating_value,
+                                     self.date_created.strftime("%d/%m/%Y"))
+            else:
+                return "%s:%s (%s)"%(self.title,
+                                     self.rating_text,
                                      self.date_created.strftime("%d/%m/%Y"))
 
 class RatingProfile(models.Model):
