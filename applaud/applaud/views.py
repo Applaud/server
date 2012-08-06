@@ -216,6 +216,7 @@ class BusinessPhotoEncoder(json.JSONEncoder):
                     'upvotes': o.upvotes,
                     'downvotes': o.downvotes,
                     'active': o.active,
+                    'id': o.id,
                     'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
         else:
             return json.JSONEncoder.default(self, o)
