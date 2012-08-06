@@ -482,6 +482,25 @@ def get_polls(request):
     return HttpResponse(json.dumps(list(business.poll_set.all()),
                                    cls=SimplePollEncoder))
 
+@mobile_view
+@csrf_protect
+def submit_poll(request):
+    data = json.load(request)
+    poll = models.Poll.objects.get(id=data['id'])
+    
+    # Don't let users vote twice. Don't let them change votes.
+    try:
+        response = models.PollResponse(user=request.user.userprofile)
+    except:
+        pass
+    if not response:
+        response = models.PollResponse(user=request.user.userprofile,
+                                       value=data['value'],
+                                       poll=poll,
+                                       date_created=datetime.utcnow().replace(tzinfo=utc))
+        response.save()
+    return HttpResponse("")
+
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect

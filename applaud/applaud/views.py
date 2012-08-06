@@ -54,7 +54,7 @@ class SimplePollEncoder(json.JSONEncoder):
 
             res = { 'title':o.title,
                     'options':o.options,
-                    'user_creator':UserProfileEncoder().default(o.user) if o.user is not None else "",
+                    'user_creator':UserProfileEncoder().default(o.user) if o.user_creator is not None else "",
                     'responses':responses,
                     'business_id':o.business.id,
                     'id':o.id }
