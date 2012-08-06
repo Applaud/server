@@ -334,6 +334,8 @@ class BusinessPhoto(models.Model):
     downvotes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
+    
+    
 # # This needs to be implemented
 # class CorporateProfile(request):
     
@@ -361,3 +363,16 @@ class Inbox(models.Model):
     user = models.OneToOneField(User)
     def __unicode__(self):
         return str(self.user)
+
+class Vote(models.Model):
+    user = models.OneToOneField(User)
+    # True/1 is up, False/0 is down.
+    up_down = models.BooleanField()
+    date_created = models.DateTimeField()
+    businessphoto = models.ForeignKey('BusinessPhoto')
+
+class Comment(models.Model):
+    user = models.OneToOneField(User)
+    text = models.CharField(max_length=1000)
+    date_created = models.DateTimeField()
+    businessphoto = models.ForeignKey('BusinessPhoto')

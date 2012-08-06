@@ -630,7 +630,7 @@ def post_photo(request):
     save_image(business_photo.image, filename, request.FILES['image'])
     return HttpResponse('')
 
-#@mobile_view
+@mobile_view
 def get_photos(request):
     """
     Get all the photos associated with a particular business,
@@ -639,3 +639,47 @@ def get_photos(request):
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
     return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
+
+@mobile_view
+@csrf_protect
+def vote_photo(request):
+    """
+    Upvote or downvote a photo.
+    """
+    photo = models.BusinessPhoto.objects.get(id=request.POST['photo_id'])
+    user = request.user.userprofile
+    if len(models.Vote.objects.filter(user=user)):
+        return HttpResponse('no')
+    _vote_photo(True if request.POST['vote'] == 'up' else False,
+                photo, user)
+    return HttpResponse('')
+
+# Makes sure vote models are always in line with numeric votes in photos
+# up_down: True is up, False is down
+def _vote_photo(up_down, photo, user):
+    v = models.Vote(user=user,
+                    up_down=up_down
+                    date_created=datetime.utcnow().replace(tzinfo=utc),
+                    businessphoto=photo)
+    v.save()
+    if up_down:
+        photo.upvotes += 1
+    else:
+        photo.downvotes += 1
+    photo.save()
+
+@mobile_view
+@csrf_protect
+def comment_photo(request):
+    """
+    Comment on a photo. The mobile side of things should verify
+    that the text is less than 1000 chars.
+    """
+    user = request.user.userprofile
+    photo = models.BusinessPhoto.objects.get(id=request.POST['photo_id'])
+    c = models.Comment(user=user,
+                       text=request.POST['text'],
+                       date_created=datetime.utcnow().replace(tzinfo=utc),
+                       businessphoto=photo)
+    c.save()
+    return HttpResponse('')
