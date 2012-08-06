@@ -364,14 +364,14 @@ keith_photo = models.BusinessPhoto(business=keith_business,
 keith_photo.save()
 business_views.save_image(keith_photo.image,
                           'keith_photo_test.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+                          settings.MEDIA_ROOT + 'blob-fish.jpg')
 
 keith_photo2 = models.BusinessPhoto(business=keith_business,
                                    tags=['foo', 'bar'],
                                    uploaded_by=userprofile2)
 business_views.save_image(keith_photo2.image,
                           'keith_photo_numero_dos.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+                          settings.MEDIA_ROOT + 'blob-fish.jpg')
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)

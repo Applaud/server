@@ -658,7 +658,7 @@ def vote_photo(request):
 # up_down: True is up, False is down
 def _vote_photo(up_down, photo, user):
     v = models.Vote(user=user,
-                    up_down=up_down
+                    up_down=up_down,
                     date_created=datetime.utcnow().replace(tzinfo=utc),
                     businessphoto=photo)
     v.save()
