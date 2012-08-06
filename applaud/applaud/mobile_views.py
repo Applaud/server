@@ -640,3 +640,35 @@ def get_photos(request):
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
     return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
+
+def check_username(request):
+    ret = {}
+    if request.method == 'GET':
+        username = request.GET['username']
+        try:
+            user = User.objects.get(username=username)
+            ret['does_exist'] = True
+        except User.DoesNotExist:
+            ret['does_exist'] = False
+
+    return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+def register(request):
+    """ Register a user from a mobile device"""
+    if request.method == 'POST':
+        print "In register post if"
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        #username = request.POST['username']
+        password= request.POST['password']
+
+        u = User.objects.create_user(email,email,password)
+        u.first_name = first_name
+        u.last_name = last_name
+        u.save()
+        u_profile = UserProfile(user=u)
+        u_profile.save()
+        
+    return HttpResponse('')
