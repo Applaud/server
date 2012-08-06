@@ -12,6 +12,9 @@ urlpatterns = patterns('',
                        url(r'^whereami/$',views.whereami),
                        url(r'^checkin/$',views.checkin),
 
+                       # Getting and posting Polls data
+                       url(r'^get_polls/$', views.get_polls),
+
                        # Getting and posting employee data from iOS
                        url(r'^evaluate/$', views.evaluate),
                        url(r'^employees/$',views.employee_list),

@@ -54,6 +54,42 @@ class SerializedRatingsField(models.TextField):
         assert(isinstance(value, list) or isinstance(value, tuple))
         return json.dumps(value)
 
+# 
+# POLLS
+#
+class Poll(models.Model):
+    '''Models a poll. A Poll is a user-posed single-select, multiple-choice question
+    for which the results are displayed to the user upon submission.
+    '''
+
+    # Title of the poll
+    title = models.TextField(max_length=100)
+
+    # Business this poll is for
+    business = models.ForeignKey('BusinessProfile')
+
+    # Labels for multiple-choice type questions
+    options = SerializedStringsField()
+
+    # User who created the poll, if there was one
+    user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+
+class PollResponse(models.Model):
+    '''Models a response to a Poll. See above.
+    '''
+
+    user = models.OneToOneField('UserProfile')
+    value = models.IntegerField()
+    poll = models.ForeignKey('Poll')
+    date_created = models.DateField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.user.user.first_name + self.user.user.last_name + self.poll.title
+
+
 #
 # EMPLOYEE RATINGS
 #

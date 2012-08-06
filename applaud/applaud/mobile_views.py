@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -467,7 +467,21 @@ def _make_inactive_business(checkin_location):
         qt.save()
         
     return business
-   
+
+# Get a Poll
+@mobile_view
+@csrf_protect
+def get_polls(request):
+    '''get_poll
+
+    Returns encoded polls and simple responses for a POST request.
+    '''
+    data = json.load(request)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
+    return HttpResponse(json.dumps(list(business.poll_set.all()),
+                                   cls=SimplePollEncoder))
+
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect
