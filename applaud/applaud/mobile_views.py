@@ -494,6 +494,7 @@ def evaluate(request):
                            dimension=rated_dimension,
                            date_created=datetime.utcnow().replace(tzinfo=utc),
                            user=request.user.userprofile)
+                print "text rating"+value
             else:
                 r = Rating(title=rated_dimension.title,
                            rating_value=float(value),

@@ -125,10 +125,6 @@ friendlinessh.save()
 helpfulnessh = models.RatedDimension(title='Helpfulness',
                                      rating_profile=keith_hostess_profile)
 helpfulnessh.save()
-two_adj = models.RatedDimension(title='Describe with two adjectives',
-                                rating_profile=keith_hostess_profile,
-                                is_text=True)
-two_adj.save()
 
 
 profile3 = models.RatingProfile(title='Profile 3', business=business)

@@ -118,6 +118,13 @@ class RatingProfile(models.Model):
                                rating_profile=self)
             r.save()
 
+        if not 'Comments:' in [t.title  for t in self.rateddimension_set.all()]:
+            r = RatedDimension(title='Comments:',
+                               rating_profile=self,
+                               is_text=True)
+            r.save()
+
+
     def __unicode__(self):
         return self.title
     
