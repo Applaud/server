@@ -514,8 +514,18 @@ def create_poll(request):
     data = json.load(request)
 
     # Some sanity checking
-    if len(data['title']) == 0 or len(data['options']) < 2:
-        return HttpResponseBadRequest("")
+    if len(data['title']) == 0:
+        return HttpResponseBadRequest("Polls must ask a question.")
+    if len(data['options']) < 2:
+        return HttpResponseBadRequest("Your Poll must have at least two non-blank options.")
+    oldPoll = None
+    try:
+        oldPoll = models.Poll.objects.get(title=data['title'],
+                                          business=BusinessProfile.objects.get(id=data['business_id']))
+    except models.Poll.DoesNotExist:
+        pass
+    if oldPoll:
+        return HttpResponseBadRequest("Another Poll already exists for this business for that question.")
 
     poll = models.Poll(title=data['title'],
                        business=BusinessProfile.objects.get(id=data['business_id']),
