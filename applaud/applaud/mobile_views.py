@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension, Rating
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
@@ -489,8 +489,10 @@ def submit_poll(request):
     poll = models.Poll.objects.get(id=data['id'])
     
     # Don't let users vote twice. Don't let them change votes.
+    response = None
     try:
-        response = models.PollResponse(user=request.user.userprofile)
+        response = models.PollResponse.get(user=request.user.userprofile,
+                                           poll=poll)
     except:
         pass
     if not response:
@@ -499,8 +501,30 @@ def submit_poll(request):
                                        poll=poll,
                                        date_created=datetime.utcnow().replace(tzinfo=utc))
         response.save()
-    return HttpResponse("")
 
+    # Return changed (or not) poll
+    return HttpResponse(json.dumps(poll, cls=SimplePollEncoder))
+
+
+@mobile_view
+@csrf_protect
+def create_poll(request):
+    '''Creates a poll from request sent from iphone.
+    '''
+    data = json.load(request)
+
+    # Some sanity checking
+    if len(data['title']) == 0 or len(data['options']) < 2:
+        return HttpResponseBadRequest("")
+
+    poll = models.Poll(title=data['title'],
+                       business=BusinessProfile.objects.get(id=data['business_id']),
+                       options=data['options'],
+                       user_creator=request.user.userprofile)
+    poll.save()
+
+    return HttpResponse("")
+    
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect

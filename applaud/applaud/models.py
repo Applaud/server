@@ -81,14 +81,10 @@ class PollResponse(models.Model):
     '''Models a response to a Poll. See above.
     '''
 
-    user = models.OneToOneField('UserProfile')
+    user = models.ForeignKey('UserProfile')
     value = models.IntegerField()
     poll = models.ForeignKey('Poll')
     date_created = models.DateField(blank=True, null=True)
-    
-    def __unicode__(self):
-        return self.user.user.first_name + self.user.user.last_name + self.poll.title
-
 
 #
 # EMPLOYEE RATINGS
