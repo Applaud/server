@@ -641,10 +641,10 @@ def get_photos(request):
     encoder = BusinessPhotoEncoder()
     return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
 
-def check_username(request):
+def check_email(request):
     ret = {}
     if request.method == 'GET':
-        username = request.GET['username']
+        username = request.GET['email'].lower()
         try:
             user = User.objects.get(username=username)
             ret['does_exist'] = True
@@ -656,13 +656,16 @@ def check_username(request):
 @csrf_protect
 def register(request):
     """ Register a user from a mobile device"""
+    if request.method == 'GET':
+        token=get_token(request)
+        return HttpResponse(token)
+        
     if request.method == 'POST':
-        print "In register post if"
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        #username = request.POST['username']
-        password= request.POST['password']
+        data = json.load(request)
+        first_name = data['first_name']
+        last_name = data['last_name']
+        email = data['email'].lower()
+        password= data['password']
 
         u = User.objects.create_user(email,email,password)
         u.first_name = first_name
