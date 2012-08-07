@@ -491,9 +491,9 @@ def submit_poll(request):
     # Don't let users vote twice. Don't let them change votes.
     response = None
     try:
-        response = models.PollResponse.get(user=request.user.userprofile,
-                                           poll=poll)
-    except:
+        response = models.PollResponse.objects.get(user=request.user.userprofile,
+                                                   poll=poll)
+    except models.PollResponse.DoesNotExist:
         pass
     if not response:
         response = models.PollResponse(user=request.user.userprofile,
