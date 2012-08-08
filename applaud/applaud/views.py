@@ -63,6 +63,7 @@ class SimplePollEncoder(json.JSONEncoder):
                     'options':o.options,
                     'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
                     'responses':responses,
+                    'user_rating':o.user_rating,
                     'business_id':o.business.id,
                     'id':o.id }
             return res

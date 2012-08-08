@@ -65,6 +65,9 @@ class Poll(models.Model):
     # Title of the poll
     title = models.TextField(max_length=100)
 
+    # Rating of this poll (how well-liked it is)
+    user_rating = models.IntegerField(default=0)
+
     # Business this poll is for
     business = models.ForeignKey('BusinessProfile')
 
