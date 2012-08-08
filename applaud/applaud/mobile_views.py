@@ -479,8 +479,21 @@ def get_polls(request):
     data = json.load(request)
     business_id = data['business_id']
     business = models.BusinessProfile.objects.get(id=business_id)
-    return HttpResponse(json.dumps(list(business.poll_set.all()),
-                                   cls=SimplePollEncoder))
+
+    polls = business.poll_set.all()
+    encoder = SimplePollEncoder()
+    poll_list = []
+    for p in polls:
+        poll = encoder.default(p)
+        # Indicate whether this user should see results for this poll, either
+        # because they have already responded to it our were the creator
+        if request.user.userprofile is poll['user_creator'] or len(request.user.userprofile.pollresponse_set.filter(poll=p)) > 0:
+            poll['show_results'] = True
+        else:
+            poll['show_results'] = False
+        poll_list.append(poll)
+
+    return HttpResponse(json.dumps(poll_list))
 
 @mobile_view
 @csrf_protect

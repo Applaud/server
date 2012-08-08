@@ -43,6 +43,12 @@ def index(request):
 
 # Encodes a poll
 class SimplePollEncoder(json.JSONEncoder):
+    '''SimplePollEncoder
+
+    Encodes a Poll object into JSON, giving a simple representation of PollResponses
+    given for this Poll. A more complex PollEncoder might give more complete information
+    on PollResponses, such as when the response was made and who made it.
+    '''
     def default(self,o):
         if isinstance(o, models.Poll):
             # Count up number of responses for each option
