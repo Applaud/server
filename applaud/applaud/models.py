@@ -365,14 +365,14 @@ class Inbox(models.Model):
         return str(self.user)
 
 class Vote(models.Model):
-    user = models.OneToOneField(User)
+    user = models.ForeignKey('UserProfile')
     # True/1 is up, False/0 is down.
     up_down = models.BooleanField()
     date_created = models.DateTimeField()
     businessphoto = models.ForeignKey('BusinessPhoto')
 
 class Comment(models.Model):
-    user = models.OneToOneField(User)
+    user = models.ForeignKey('UserProfile')
     text = models.CharField(max_length=1000)
     date_created = models.DateTimeField()
     businessphoto = models.ForeignKey('BusinessPhoto')

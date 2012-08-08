@@ -221,6 +221,17 @@ class BusinessPhotoEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, o)
 
+class CommentEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Comment):
+            return {'user': UserProfileEncoder().default(o.user),
+                    'text': o.text,
+                    'date_created': o.date_created.strftime('%d/%m/%Y'),
+                    'businessphoto': o.businessphoto.id,
+                    'id': o.id}
+        else:
+            return json.JSONEncoder.default(self, o)
+
 def view_inbox(request):
     
     if request.user.is_authenticated():

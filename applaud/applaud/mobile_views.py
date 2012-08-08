@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -630,7 +630,7 @@ def post_photo(request):
     save_image(business_photo.image, filename, request.FILES['image'])
     return HttpResponse('')
 
-@mobile_view
+#@mobile_view
 def get_photos(request):
     """
     Get all the photos associated with a particular business,
@@ -646,13 +646,30 @@ def vote_photo(request):
     """
     Upvote or downvote a photo.
     """
-    photo = models.BusinessPhoto.objects.get(id=request.POST['photo_id'])
+    data = json.load(request)
+    photo = models.BusinessPhoto.objects.get(id=data['photo_id'])
     user = request.user.userprofile
-    if len(models.Vote.objects.filter(user=user)):
+    if not _check_vote(user, photo):
         return HttpResponse('no')
-    _vote_photo(True if request.POST['vote'] == 'up' else False,
+    _vote_photo(True if data['vote'] == 'up' else False,
                 photo, user)
     return HttpResponse('')
+
+# Check if a user has already voted on a photo.
+# IOSSIDE VERSION
+def check_vote(request):
+    user = request.user.userprofile
+    photo = models.BusinessPhoto.objects.get(id=int(request.GET['photo']))
+    if len(models.Vote.objects.filter(user=user)
+           .filter(businessphoto=photo)) == 0:
+        return HttpResponse('')
+    else:
+        return HttpResponse('no')
+
+# Check if a user has already voted on a photo.
+# SERVERSIDE VERSION
+def _check_vote(user, photo):
+    return len(models.Vote.objects.filter(user=user).filter(businessphoto=photo)) == 0
 
 # Makes sure vote models are always in line with numeric votes in photos
 # up_down: True is up, False is down
@@ -676,10 +693,19 @@ def comment_photo(request):
     that the text is less than 1000 chars.
     """
     user = request.user.userprofile
-    photo = models.BusinessPhoto.objects.get(id=request.POST['photo_id'])
+    data = json.load(request)
+    photo = models.BusinessPhoto.objects.get(id=data['photo_id'])
     c = models.Comment(user=user,
-                       text=request.POST['text'],
+                       text=data['text'],
                        date_created=datetime.utcnow().replace(tzinfo=utc),
                        businessphoto=photo)
     c.save()
-    return HttpResponse('')
+    return HttpResponse(json.dumps(c, cls=CommentEncoder))
+
+def photo_comments(request):
+    """
+    Return all the comments for a photo as JSON.
+    """
+    photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
+    encoder = CommentEncoder()
+    return HttpResponse(json.dumps([encoder.default(c) for c in photo.comment_set.all()]))
