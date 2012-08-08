@@ -516,7 +516,9 @@ def submit_poll(request):
         response.save()
 
     # Return changed (or not) poll
-    return HttpResponse(json.dumps(poll, cls=SimplePollEncoder))
+    poll = SimplePollEncoder().default(poll)
+    poll['show_results'] = True
+    return HttpResponse(json.dumps(poll))
 
 
 @mobile_view
