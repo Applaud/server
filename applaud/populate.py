@@ -369,6 +369,18 @@ business_views.save_image(keith_photo2.image,
                           'keith_photo_numero_dos.jpg',
                           settings.MEDIA_ROOT + 'noimage.png')
 
+# Make a poll
+poll = models.Poll(title="What is your favorite color?",
+                   business=keith_business,
+                   options=["Maroon","Violet","Purple","Bishops Purple"])
+poll.save()
+# Some responses to the poll
+pr = models.PollResponse(user=userprofile2,
+                         value=3,
+                         poll=poll,
+                         date_created=datetime.utcnow().replace(tzinfo=utc))
+pr.save()
+    
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
 inbox1.save()

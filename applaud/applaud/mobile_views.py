@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension, Rating
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -467,7 +467,89 @@ def _make_inactive_business(checkin_location):
         qt.save()
         
     return business
-   
+
+# Get a Poll
+@mobile_view
+@csrf_protect
+def get_polls(request):
+    '''get_poll
+
+    Returns encoded polls and simple responses for a POST request.
+    '''
+    data = json.load(request)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
+
+    polls = business.poll_set.all()
+    encoder = SimplePollEncoder()
+    poll_list = []
+    for p in polls:
+        poll = encoder.default(p)
+        # Indicate whether this user should see results for this poll, either
+        # because they have already responded to it our were the creator
+        if request.user.userprofile == p.user_creator or len(request.user.userprofile.pollresponse_set.filter(poll=p)) > 0:
+            poll['show_results'] = True
+        else:
+            poll['show_results'] = False
+        poll_list.append(poll)
+
+    return HttpResponse(json.dumps(poll_list))
+
+@mobile_view
+@csrf_protect
+def submit_poll(request):
+    data = json.load(request)
+    poll = models.Poll.objects.get(id=data['id'])
+    
+    # Don't let users vote twice. Don't let them change votes.
+    response = None
+    try:
+        response = models.PollResponse.objects.get(user=request.user.userprofile,
+                                                   poll=poll)
+    except models.PollResponse.DoesNotExist:
+        pass
+    if not response:
+        response = models.PollResponse(user=request.user.userprofile,
+                                       value=data['value'],
+                                       poll=poll,
+                                       date_created=datetime.utcnow().replace(tzinfo=utc))
+        response.save()
+
+    # Return changed (or not) poll
+    poll = SimplePollEncoder().default(poll)
+    poll['show_results'] = True
+    return HttpResponse(json.dumps(poll))
+
+
+@mobile_view
+@csrf_protect
+def create_poll(request):
+    '''Creates a poll from request sent from iphone.
+    '''
+    data = json.load(request)
+
+    # Some sanity checking
+    if len(data['title']) == 0:
+        return HttpResponseBadRequest("Polls must ask a question.")
+    if len(data['options']) < 2:
+        return HttpResponseBadRequest("Your Poll must have at least two non-blank options.")
+    oldPoll = None
+    try:
+        oldPoll = models.Poll.objects.get(title=data['title'],
+                                          business=BusinessProfile.objects.get(id=data['business_id']))
+    except models.Poll.DoesNotExist:
+        pass
+    if oldPoll:
+        return HttpResponseBadRequest("Another Poll already exists for this business for that question.")
+
+    poll = models.Poll(title=data['title'],
+                       business=BusinessProfile.objects.get(id=data['business_id']),
+                       options=data['options'],
+                       user_creator=request.user.userprofile)
+    poll.save()
+
+    return HttpResponse("")
+    
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect
