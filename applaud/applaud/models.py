@@ -75,7 +75,7 @@ class Poll(models.Model):
     options = SerializedStringsField()
 
     # When this poll was created
-    date_created = models.DateField(auto_now=True)
+    date_created = models.DateTimeField(auto_now=True)
 
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
