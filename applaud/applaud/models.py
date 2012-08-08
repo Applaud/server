@@ -74,6 +74,9 @@ class Poll(models.Model):
     # Labels for multiple-choice type questions
     options = SerializedStringsField()
 
+    # When this poll was created
+    date_created = models.DateField(auto_now=True)
+
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
 
