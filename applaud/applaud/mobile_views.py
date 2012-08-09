@@ -520,6 +520,15 @@ def submit_poll(request):
     poll['show_results'] = True
     return HttpResponse(json.dumps(poll))
 
+@mobile_view
+@csrf_protect
+def rate_poll(request):
+    data = json.load(request)
+    poll = models.Poll.objects.get(id=data['id'])
+    poll.user_rating = data['user_rating']
+    poll.save()
+
+    return HttpResponse("")
 
 @mobile_view
 @csrf_protect
