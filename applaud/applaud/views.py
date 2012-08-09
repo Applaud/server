@@ -244,7 +244,9 @@ class BusinessPhotoEncoder(json.JSONEncoder):
             url=''
             try:
                 url=o.image.url
+                thumbnail_url = o.thumbnail_image.url
                 return {'image': url,
+                        'thumbnail': thumbnail_url,
                         'business': o.business.id,
                         'tags': o.tags,
                         'upvotes': o.upvotes,
