@@ -772,7 +772,7 @@ def scale_dimensions(width, height, longest_side):
     return (int(width*ratio), int(height*ratio))
 
 # Also stolen! This makes saving an image to MEDIA_ROOT a bit more sensible.
-def save_image(model_image, filename, tmp_image):
+def save_image(model_image, filename, tmp_image, thumbnail=False):
     '''
     Saves an image to a NewsFeedItem.
 
@@ -780,11 +780,13 @@ def save_image(model_image, filename, tmp_image):
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
-
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
-    (width, height) = scale_dimensions(width, height, 200)
-    feed_image = feed_image.resize((width, height))
+    print "width is...."+width
+    print "height is....."+height
+    if thumbnail:
+        #(width, height) = scale_dimensions(width, height, 70) 
+        feed_image = feed_image.resize((width, height))
     imagefile = StringIO.StringIO()
     feed_image.save(imagefile, 'JPEG')
     # give it a unique name
