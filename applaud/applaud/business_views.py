@@ -780,38 +780,38 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
+    print 'in save_image'
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
-    print "width is...."+width
-    print "height is....."+height
-    
+    print "width is.... %s" % width
+    print "height is..... %s " % height
+    print thumbnail
     #(width, height) = scale_dimensions(width, height, 70) 
     #feed_image = feed_image.resize((width, height))
     if thumbnail:
         # 4-tuple to feed to feed image
+        print 'in thumbnail'
         thumbnail_size = 70
-        box = ((width-thumbnal_size)/2,(height-thumbnail_size)/2,(width+thumbnail_size)/2, (height+thumbnail_size)/2)
-        feed_image.crop()
-
+        box = ((width-thumbnail_size)/2,(height-thumbnail_size)/2,(width+thumbnail_size)/2, (height+thumbnail_size)/2)
+        feed_image = feed_image.crop(box)
+        print 'cropped'
+    print 'past first if'
     imagefile = StringIO.StringIO()
     feed_image.save(imagefile, 'JPEG')
-
+    print 'saved first time'
     # give it a unique name
     filename_parts = filename.split('.')
     if thumbnail:
-        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(),'-thumbnail-', filename_parts[1]      
+        filename = '%s%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(),'-thumbnail-', filename_parts[1])
     else:
-        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])      
-
-
+        print 'in else'
+        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
     # save it to disk so we have a real file to work with
     imagefile = open(os.path.join('/tmp', filename), 'w')
     feed_image.save(imagefile,'JPEG')
     imagefile = open(os.path.join('/tmp',filename), 'r')
     content = File(imagefile)
     model_image.save(filename, content)
-
-
 
 # The view that calls the control panel center, where a business can manage their employees, surveys and newsfeeds.
 @business_view

@@ -376,6 +376,7 @@ class BusinessPhoto(models.Model):
     uploaded_by is the user who uploaded this photo.
     """
     image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
+    thumbnail_image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
     business = models.ForeignKey('BusinessProfile')
     tags = SerializedStringsField()
     upvotes = models.IntegerField(default=0)
