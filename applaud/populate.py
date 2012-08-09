@@ -370,16 +370,164 @@ business_views.save_image(keith_photo2.image,
                           settings.MEDIA_ROOT + 'noimage.png')
 
 # Make a poll
-poll = models.Poll(title="What is your favorite color?",
+poll1 = models.Poll(title="Where should the next Pacific Catch be located?",
                    business=keith_business,
-                   options=["Maroon","Violet","Purple","Bishops Purple"])
-poll.save()
-# Some responses to the poll
-pr = models.PollResponse(user=userprofile2,
-                         value=3,
-                         poll=poll,
-                         date_created=datetime.utcnow().replace(tzinfo=utc))
-pr.save()
+                   options=['Burlingame', 'Orinda', 'Lucas Valley'])
+poll1.save()
+
+poll2 = models.Poll(title="What is your favorite tropical location?",
+                   business=keith_business,
+                   options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
+poll2.save()
+
+poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
+                   business=keith_business,
+                   options=['Snorkeling', 'Scuba'])
+poll3.save()
+
+poll4 = models.Poll(title="Would you prefer a special for:",
+                   business=keith_business,
+                   options=['Drinks', 'Sushi', 'Tacos'])
+poll4.save()
+
+poll5 = models.Poll(title="What live music would you prefer?",
+                   business=keith_business,
+                   options=['Jazz', 'Blues', 'Rock', 'Classical'])
+poll5.save()
+
+poll6 = models.Poll(title="Would you like our food to be:",
+                   business=keith_business,
+                   options=['More Spicy', 'Less Spicy', 'It\'s Perfect!'])
+poll6.save()
+
+# Function to make a repsonse to a poll
+# First parameter is the poll object, second is te response to choose
+def create_poll_response(poll, value):
+    pr = models.PollResponse(user=userprofile2,
+                             value=value,
+                             poll=poll,
+                             date_created=datetime.utcnow().replace(tzinfo=utc))
+    pr.save()
+
+# Create a lot of poll responses
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+
+
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+
     
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
