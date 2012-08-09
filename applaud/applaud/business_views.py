@@ -788,7 +788,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     #(width, height) = scale_dimensions(width, height, 70) 
     #feed_image = feed_image.resize((width, height))
     if thumbnail:
-        # 4-tuple to feed to feed image
+        # 4-tuple to give to feed_image
         thumbnail_size = 70
         box = ((width-thumbnal_size)/2,(height-thumbnail_size)/2,(width+thumbnail_size)/2, (height+thumbnail_size)/2)
         feed_image.crop()
