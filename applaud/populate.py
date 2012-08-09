@@ -125,10 +125,6 @@ friendlinessh.save()
 helpfulnessh = models.RatedDimension(title='Helpfulness',
                                      rating_profile=keith_hostess_profile)
 helpfulnessh.save()
-two_adj = models.RatedDimension(title='Describe with two adjectives',
-                                rating_profile=keith_hostess_profile,
-                                is_text=True)
-two_adj.save()
 
 
 profile3 = models.RatingProfile(title='Profile 3', business=business)
@@ -373,6 +369,18 @@ business_views.save_image(keith_photo2.image,
                           'keith_photo_numero_dos.jpg',
                           settings.MEDIA_ROOT + 'blob-fish.jpg')
 
+# Make a poll
+poll = models.Poll(title="What is your favorite color?",
+                   business=keith_business,
+                   options=["Maroon","Violet","Purple","Bishops Purple"])
+poll.save()
+# Some responses to the poll
+pr = models.PollResponse(user=userprofile2,
+                         value=3,
+                         poll=poll,
+                         date_created=datetime.utcnow().replace(tzinfo=utc))
+pr.save()
+    
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
 inbox1.save()

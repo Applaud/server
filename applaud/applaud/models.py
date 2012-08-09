@@ -54,6 +54,47 @@ class SerializedRatingsField(models.TextField):
         assert(isinstance(value, list) or isinstance(value, tuple))
         return json.dumps(value)
 
+# 
+# POLLS
+#
+class Poll(models.Model):
+    '''Models a poll. A Poll is a user-posed single-select, multiple-choice question
+    for which the results are displayed to the user upon submission.
+    '''
+
+    # Title of the poll
+    title = models.TextField(max_length=100)
+
+    # Rating of this poll (how well-liked it is)
+    user_rating = models.IntegerField(default=0)
+
+    # Business this poll is for
+    business = models.ForeignKey('BusinessProfile')
+
+    # Labels for multiple-choice type questions
+    options = SerializedStringsField()
+
+    # When this poll was created
+    date_created = models.DateTimeField(auto_now=True)
+
+    # User who created the poll, if there was one
+    user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+
+    # Users who have rated this poll
+    rators = models.ManyToManyField('UserProfile', blank=True, null=True, related_name="rated_poll_set")
+
+    def __unicode__(self):
+        return self.title
+
+class PollResponse(models.Model):
+    '''Models a response to a Poll. See above.
+    '''
+
+    user = models.ForeignKey('UserProfile')
+    value = models.IntegerField()
+    poll = models.ForeignKey('Poll')
+    date_created = models.DateField(blank=True, null=True)
+
 #
 # EMPLOYEE RATINGS
 #
@@ -117,6 +158,13 @@ class RatingProfile(models.Model):
             r = RatedDimension(title='Quality',
                                rating_profile=self)
             r.save()
+
+        if not 'Comments:' in [t.title  for t in self.rateddimension_set.all()]:
+            r = RatedDimension(title='Comments:',
+                               rating_profile=self,
+                               is_text=True)
+            r.save()
+
 
     def __unicode__(self):
         return self.title

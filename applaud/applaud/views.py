@@ -41,6 +41,37 @@ def index(request):
                                              'user_type': user_type},
                               context_instance=RequestContext(request))
 
+# Encodes a poll
+class SimplePollEncoder(json.JSONEncoder):
+    '''SimplePollEncoder
+
+    Encodes a Poll object into JSON, giving a simple representation of PollResponses
+    given for this Poll. A more complex PollEncoder might give more complete information
+    on PollResponses, such as when the response was made and who made it.
+    '''
+    def default(self,o):
+        if isinstance(o, models.Poll):
+            # Count up number of responses for each option
+            responses = []
+            counter = 0
+            for option in o.options:
+                responses.append({"title":option,
+                                  "count":len(models.PollResponse.objects.filter(poll=o, value=counter))})
+                counter += 1
+
+            res = { 'title':o.title,
+                    'options':o.options,
+                    'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
+                    'responses':responses,
+                    'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                    'user_rating':o.user_rating,
+                    'business_id':o.business.id,
+                    'id':o.id }
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)    
+        
+
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
