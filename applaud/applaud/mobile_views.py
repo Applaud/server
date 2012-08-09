@@ -582,6 +582,22 @@ def get_threads(request):
     business = models.BusinessProfile.objects.get(id=data['business_id'])
 
     return HttpResponse(json.dumps(list(business.thread_set.all()), cls=ThreadEncoder))
+
+@mobile_view
+@csrf_protect
+def create_thread(request):
+    '''create_thread
+
+    Create a thread for a business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    thread = models.Thread(title=data['title'],
+                           user_creator=request.user.userprofile,
+                           business=business)
+    thread.save()
+    return HttpResponse("")
     
 # Getting and posting employee data from iOS.
 @mobile_view
