@@ -376,8 +376,6 @@ class BusinessPhoto(models.Model):
     thumbnail_image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
     business = models.ForeignKey('BusinessProfile')
     tags = SerializedStringsField()
-    upvotes = models.IntegerField(default=0)
-    downvotes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
     

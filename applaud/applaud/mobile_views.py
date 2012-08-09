@@ -753,51 +753,6 @@ def get_photos(request):
 
 @mobile_view
 @csrf_protect
-def vote_photo(request):
-    """
-    Upvote or downvote a photo.
-    """
-    data = json.load(request)
-    photo = models.BusinessPhoto.objects.get(id=data['photo_id'])
-    user = request.user.userprofile
-    if not _check_vote(user, photo):
-        return HttpResponse('no')
-    _vote_photo(True if data['vote'] == 'up' else False,
-                photo, user)
-    return HttpResponse('')
-
-# Check if a user has already voted on a photo.
-# IOSSIDE VERSION
-def check_vote(request):
-    user = request.user.userprofile
-    photo = models.BusinessPhoto.objects.get(id=int(request.GET['photo']))
-    if len(models.Vote.objects.filter(user=user)
-           .filter(businessphoto=photo)) == 0:
-        return HttpResponse('')
-    else:
-        return HttpResponse('no')
-
-# Check if a user has already voted on a photo.
-# SERVERSIDE VERSION
-def _check_vote(user, photo):
-    return len(models.Vote.objects.filter(user=user).filter(businessphoto=photo)) == 0
-
-# Makes sure vote models are always in line with numeric votes in photos
-# up_down: True is up, False is down
-def _vote_photo(up_down, photo, user):
-    v = models.Vote(user=user,
-                    up_down=up_down,
-                    date_created=datetime.utcnow().replace(tzinfo=utc),
-                    businessphoto=photo)
-    v.save()
-    if up_down:
-        photo.upvotes += 1
-    else:
-        photo.downvotes += 1
-    photo.save()
-
-@mobile_view
-@csrf_protect
 def comment_photo(request):
     """
     Comment on a photo. The mobile side of things should verify

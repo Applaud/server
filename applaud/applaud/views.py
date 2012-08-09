@@ -253,8 +253,6 @@ class BusinessPhotoEncoder(json.JSONEncoder):
                         'thumbnail': thumbnail_url,
                         'business': o.business.id,
                         'tags': o.tags,
-                        'upvotes': o.upvotes,
-                        'downvotes': o.downvotes,
                         'active': o.active,
                         'id': o.id,
                         'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
