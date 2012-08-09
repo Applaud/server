@@ -66,7 +66,7 @@ class Poll(models.Model):
     title = models.TextField(max_length=100)
 
     # Rating of this poll (how well-liked it is)
-    user_rating = models.IntegerField(default=0)
+    votes = models.ManyToManyField('Vote')
 
     # Business this poll is for
     business = models.ForeignKey('BusinessProfile')
@@ -79,9 +79,6 @@ class Poll(models.Model):
 
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
-
-    # Users who have rated this poll
-    rators = models.ManyToManyField('UserProfile', blank=True, null=True, related_name="rated_poll_set")
 
     def __unicode__(self):
         return self.title
@@ -409,3 +406,11 @@ class Inbox(models.Model):
     user = models.OneToOneField(User)
     def __unicode__(self):
         return str(self.user)
+
+class Vote(models.Model):
+    positive = models.BooleanField()
+    date_created = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('UserProfile')
+
+    def __unicode__(self):
+        return self.user.user.first_name + self.user.user.last_name + "+" if self.positive else "-"
