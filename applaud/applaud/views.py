@@ -76,6 +76,40 @@ class SimplePollEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, o)    
         
 
+# Encodes a Thread
+class ThreadEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Thread):
+            encoder = ThreadPostEncoder()
+            upvotes = len(o.votes.filter(positive=True))
+            downvotes = len(o.votes.all())-upvotes
+            res = {'title':o.title,
+                   'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                   'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
+                   'upvotes':upvotes,
+                   'downvotes':downvotes,
+                   'posts':[encoder.default(p) for p in o.threadpost_set.all()],
+                   'id':o.id}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
+
+# Encodes a ThreadPost. Used by the ThreadEncoder
+class ThreadPostEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.ThreadPost):
+            upvotes = len(o.votes.filter(positive=True))
+            downvotes = len(o.votes.all())-upvotes
+            res = {'body':o.body,
+                   'user':UserProfileEncoder().default(o.user),
+                   'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                   'upvotes':upvotes,
+                   'downvotes':downvotes,
+                   'id':o.id}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
+                
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):

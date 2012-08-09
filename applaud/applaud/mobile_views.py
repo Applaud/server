@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -570,6 +570,18 @@ def create_poll(request):
     poll.save()
 
     return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def get_threads(request):
+    '''get_threads
+
+    Get all of the threads for a particular business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    return HttpResponse(json.dumps(list(business.thread_set.all()), cls=ThreadEncoder))
     
 # Getting and posting employee data from iOS.
 @mobile_view

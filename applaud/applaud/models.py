@@ -92,6 +92,34 @@ class PollResponse(models.Model):
     poll = models.ForeignKey('Poll')
     date_created = models.DateField(blank=True, null=True)
 
+# 
+# MINGLE
+#
+class Thread(models.Model):
+    title = models.CharField(max_length=200)
+    date_created = models.DateTimeField(auto_now=True)
+    user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+    business = models.ForeignKey('BusinessProfile')
+
+    # Rating of this Thread (how well-liked it is)
+    votes = models.ManyToManyField('Vote')
+
+
+    def __unicode__(self):
+        return self.title
+
+class ThreadPost(models.Model):
+    body = models.CharField(max_length=2000)
+    user = models.ForeignKey('UserProfile')
+    date_created = models.DateTimeField(auto_now=True)
+    thread = models.ForeignKey('Thread')
+
+    # Rating of this ThreadPost (how well-liked it is)
+    votes = models.ManyToManyField('Vote')
+
+    def __unicode__(self):
+        return self.body[:100] + " ("+self.user.user.first_name+" "+self.user.user.last_name+")"
+
 #
 # EMPLOYEE RATINGS
 #
