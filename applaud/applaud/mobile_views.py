@@ -730,6 +730,7 @@ def post_photo(request):
     filename = '%s_%s.jpg' % (profile.id,
                        business.business_name)
     save_image(business_photo.image, filename, request.FILES['image'])
+    save_image(business_photo.image, filename, request.FILES['image'], True)
     return HttpResponse('')
 
 #@mobile_view
@@ -740,7 +741,12 @@ def get_photos(request):
     """
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
-    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
+    photos: []
+    for photo in business.businessphoto_set.all():
+        if not photo:
+            photos.append(photo)
+
+    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all() if pho]}))
 
 @mobile_view
 @csrf_protect
