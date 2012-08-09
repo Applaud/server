@@ -58,13 +58,17 @@ class SimplePollEncoder(json.JSONEncoder):
                 responses.append({"title":option,
                                   "count":len(models.PollResponse.objects.filter(poll=o, value=counter))})
                 counter += 1
-
+    
+            votes = o.votes.all()
+            user_rating = 0
+            for v in votes:
+                user_rating += 1 if v.positive else -1
             res = { 'title':o.title,
                     'options':o.options,
                     'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
                     'responses':responses,
                     'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
-                    'user_rating':o.user_rating,
+                    'user_rating':user_rating,
                     'business_id':o.business.id,
                     'id':o.id }
             return res
