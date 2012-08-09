@@ -782,8 +782,8 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     '''
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
-    print "width is...."+width
-    print "height is....."+height
+    print "width is.... %s" % width
+    print "height is..... %s" % height
     if thumbnail:
         #(width, height) = scale_dimensions(width, height, 70) 
         feed_image = feed_image.resize((width, height))
