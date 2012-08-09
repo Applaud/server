@@ -65,14 +65,23 @@ class Poll(models.Model):
     # Title of the poll
     title = models.TextField(max_length=100)
 
+    # Rating of this poll (how well-liked it is)
+    user_rating = models.IntegerField(default=0)
+
     # Business this poll is for
     business = models.ForeignKey('BusinessProfile')
 
     # Labels for multiple-choice type questions
     options = SerializedStringsField()
 
+    # When this poll was created
+    date_created = models.DateTimeField(auto_now=True)
+
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+
+    # Users who have rated this poll
+    rators = models.ManyToManyField('UserProfile', blank=True, null=True, related_name="rated_poll_set")
 
     def __unicode__(self):
         return self.title

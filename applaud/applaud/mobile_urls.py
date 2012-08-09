@@ -16,6 +16,7 @@ urlpatterns = patterns('',
                        url(r'^get_polls/$', views.get_polls),
                        url(r'^submit_poll/$', views.submit_poll),
                        url(r'^create_poll/$', views.create_poll),
+                       url(r'^rate_poll/$', views.rate_poll),
 
                        # Getting and posting employee data from iOS
                        url(r'^evaluate/$', views.evaluate),
