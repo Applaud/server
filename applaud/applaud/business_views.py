@@ -807,25 +807,30 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             new_width = thumbnail_size*ratio
             size = (new_width, new_height)
             feed_image = feed_image.resize(size)
-            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, 0 ))
+            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, 0 )
             feed_image = feed_image.crop(box)
-
+    print 'out of if'
     imagefile = StringIO.StringIO()
     #feed_image.save(imagefile, 'JPEG')
-
+    print 'past feed_image.save'
     # give it a unique name
     filename_parts = filename.split('.')
     if thumbnail:
+        print 'in thumb if'
         filename = '%s%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(),'-thumbnail-', filename_parts[1])
+        print 'done'
     else:
         print 'in else'
         filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
     # save it to disk so we have a real file to work with
-    imagefile = open(os.path.join('/tmp', filename), 'w')
-    feed_image.save(imagefile,'JPEG')
-    imagefile = open(os.path.join('/tmp',filename), 'r')
-    content = File(imagefile)
-    model_image.save(filename, content)
+    try:
+        imagefile = open(os.path.join('/tmp', filename), 'w')
+        feed_image.save(imagefile,'JPEG')
+        imagefile = open(os.path.join('/tmp',filename), 'r')
+        content = File(imagefile)
+        model_image.save(filename, content)
+    except Exception as e:
+        print e
 
 # The view that calls the control panel center, where a business can manage their employees, surveys and newsfeeds.
 @business_view
