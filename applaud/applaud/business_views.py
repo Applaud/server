@@ -780,7 +780,6 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
-    print 'in save_image'
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
     print "width is.... %s" % width
@@ -792,13 +791,28 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
         # 4-tuple to feed to feed image
         print 'in thumbnail'
         thumbnail_size = 70
-        box = ((width-thumbnail_size)/2,(height-thumbnail_size)/2,(width+thumbnail_size)/2, (height+thumbnail_size)/2)
-        feed_image = feed_image.crop(box)
-        print 'cropped'
-    print 'past first if'
+        if height > width:
+            #Portrait
+            ratio = height/width
+            new_height = thumbnail_size*ratio
+            new_width = thumbnail_size
+            size = (new_width, new_height)
+            feed_image = feed_image.resize(size)
+            box = (0, (new_height-thumbnail_size)/2, 0, (new_height+thumbnail_size)/2)
+            feed_image = feed_image.crop(box)
+        else:
+            #Landscape
+            ratio = width/height
+            new_height = thumbnail_size
+            new_width = thumbnail_size*ratio
+            size = (new_width, new_height)
+            feed_image = feed_image.resize(size)
+            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, 0 ))
+            feed_image = feed_image.crop(box)
+
     imagefile = StringIO.StringIO()
-    feed_image.save(imagefile, 'JPEG')
-    print 'saved first time'
+    #feed_image.save(imagefile, 'JPEG')
+
     # give it a unique name
     filename_parts = filename.split('.')
     if thumbnail:
