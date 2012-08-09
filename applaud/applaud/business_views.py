@@ -780,7 +780,6 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
-    print 'in save_image'
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
     print "width is.... %s" % width
@@ -812,7 +811,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             feed_image = feed_image.crop(box)
 
     imagefile = StringIO.StringIO()
-    feed_image.save(imagefile, 'JPEG')
+    #feed_image.save(imagefile, 'JPEG')
 
     # give it a unique name
     filename_parts = filename.split('.')
