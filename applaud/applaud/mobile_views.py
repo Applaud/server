@@ -491,6 +491,11 @@ def get_polls(request):
             poll['show_results'] = True
         else:
             poll['show_results'] = False
+        # Indicate whether or not to show a "rate poll" widget for this user
+        if p in request.user.userprofile.rated_poll_set.all():
+            poll['can_rate'] = False
+        else:
+            poll['can_rate'] = True
         poll_list.append(poll)
 
     return HttpResponse(json.dumps(poll_list))
@@ -525,8 +530,13 @@ def submit_poll(request):
 def rate_poll(request):
     data = json.load(request)
     poll = models.Poll.objects.get(id=data['id'])
-    poll.user_rating = data['user_rating']
-    poll.save()
+
+    # Don't let users rate a poll twice
+    user = request.user.userprofile
+    if not poll in user.rated_poll_set.all():
+        poll.user_rating = data['user_rating']
+        poll.rators.add(user)
+        poll.save()
 
     return HttpResponse("")
 

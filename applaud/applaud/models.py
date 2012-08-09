@@ -80,6 +80,9 @@ class Poll(models.Model):
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
 
+    # Users who have rated this poll
+    rators = models.ManyToManyField('UserProfile', blank=True, null=True, related_name="rated_poll_set")
+
     def __unicode__(self):
         return self.title
 
