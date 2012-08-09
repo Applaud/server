@@ -241,14 +241,19 @@ class MessageItemEncoder(json.JSONEncoder):
 class BusinessPhotoEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.BusinessPhoto):
-            return {'image': o.image.url,
-                    'business': o.business.id,
-                    'tags': o.tags,
-                    'upvotes': o.upvotes,
-                    'downvotes': o.downvotes,
-                    'active': o.active,
-                    'id': o.id,
-                    'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            url=''
+            try:
+                url=o.image.url
+                return {'image': url,
+                        'business': o.business.id,
+                        'tags': o.tags,
+                        'upvotes': o.upvotes,
+                        'downvotes': o.downvotes,
+                        'active': o.active,
+                        'id': o.id,
+                        'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            except Exception as e:
+                return {}
         else:
             return json.JSONEncoder.default(self, o)
 

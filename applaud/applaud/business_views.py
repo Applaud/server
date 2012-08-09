@@ -784,14 +784,26 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     (width, height) = feed_image.size
     print "width is...."+width
     print "height is....."+height
+    
+    #(width, height) = scale_dimensions(width, height, 70) 
+    #feed_image = feed_image.resize((width, height))
     if thumbnail:
-        #(width, height) = scale_dimensions(width, height, 70) 
-        feed_image = feed_image.resize((width, height))
+        # 4-tuple to feed to feed image
+        thumbnail_size = 70
+        box = ((width-thumbnal_size)/2,(height-thumbnail_size)/2,(width+thumbnail_size)/2, (height+thumbnail_size)/2)
+        feed_image.crop()
+
     imagefile = StringIO.StringIO()
     feed_image.save(imagefile, 'JPEG')
+
     # give it a unique name
     filename_parts = filename.split('.')
-    filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
+    if thumbnail:
+        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(),'-thumbnail-', filename_parts[1]      
+    else:
+        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])      
+
+
     # save it to disk so we have a real file to work with
     imagefile = open(os.path.join('/tmp', filename), 'w')
     feed_image.save(imagefile,'JPEG')
