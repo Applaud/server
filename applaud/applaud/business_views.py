@@ -798,7 +798,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             new_width = thumbnail_size
             size = (new_width, new_height)
             feed_image = feed_image.resize(size)
-            box = (0, (new_height-thumbnail_size)/2, 0, (new_height+thumbnail_size)/2)
+            box = (0, (new_height-thumbnail_size)/2, new_width, (new_height+thumbnail_size)/2)
             feed_image = feed_image.crop(box)
         else:
             #Landscape
@@ -807,7 +807,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             new_width = thumbnail_size*ratio
             size = (new_width, new_height)
             feed_image = feed_image.resize(size)
-            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, 0 )
+            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, new_height)
             feed_image = feed_image.crop(box)
     print 'out of if'
     imagefile = StringIO.StringIO()
