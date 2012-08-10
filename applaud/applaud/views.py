@@ -163,6 +163,7 @@ class UserProfileEncoder(json.JSONEncoder):
         if isinstance(o, models.UserProfile):
             return {'first_name':o.user.first_name,
                     'last_name':o.user.last_name,
+                    'username':o.user.username,
                     'birth':o.date_of_birth.strftime("%d/%m/%Y"),
                     'id':o.id}
         else:
