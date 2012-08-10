@@ -571,6 +571,27 @@ def create_poll(request):
 
     return HttpResponse("")
 
+def _encode_thread(thread, user):
+    encoder = ThreadEncoder()
+    t = encoder.default(thread)
+    # Find votes on the thread
+    try:
+        v = thread.votes.get(user=user)
+        t['my_vote'] = 1 if v.positive else -1
+    except models.Vote.DoesNotExist:
+        t['my_vote'] = 0
+
+    # Find votes on each post within the thread
+    for post in t['posts']:
+        tp = models.ThreadPost.objects.get(id=post['id'])
+        try:
+            v = tp.votes.get(user=user)
+            post['my_vote'] = 1 if v.positive else -1
+        except models.Vote.DoesNotExist:
+            post['my_vote'] = 0
+            
+    return t
+
 @mobile_view
 @csrf_protect
 def get_threads(request):
@@ -581,7 +602,11 @@ def get_threads(request):
     data = json.load(request)
     business = models.BusinessProfile.objects.get(id=data['business_id'])
 
-    return HttpResponse(json.dumps(list(business.thread_set.all()), cls=ThreadEncoder))
+    thread_list = []
+    for thread in business.thread_set.all():
+        thread_list.append(_encode_thread(thread,request.user.userprofile))
+
+    return HttpResponse(json.dumps(thread_list))
 
 @mobile_view
 @csrf_protect
@@ -626,7 +651,8 @@ def submit_post(request):
                              user=request.user.userprofile,
                              thread=thread)
     post.save()
-    return HttpResponse(json.dumps(thread, cls=ThreadEncoder))
+
+    return HttpResponse(json.dumps(_encode_thread(thread,request.user.userprofile)))
 
 @mobile_view
 @csrf_protect
@@ -644,7 +670,7 @@ def rate_post(request):
         post.votes.add(v)
         post.save()
 
-    return HttpResponse(json.dumps(post.thread, cls=ThreadEncoder))
+    return HttpResponse(json.dumps(_encode_thread(post.thread,request.user.userprofile)))
 
 # Getting and posting employee data from iOS.
 @mobile_view
