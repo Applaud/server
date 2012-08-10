@@ -28,6 +28,7 @@ import settings
 import Image
 import StringIO
 import hashlib
+import stat
 
 # 'business_view' decorator.
 def business_view(view):
@@ -797,7 +798,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             new_height = thumbnail_size*ratio
             new_width = thumbnail_size
             size = (new_width, new_height)
-            feed_image = feed_image.resize(size)
+            feed_image = feed_image.resize(size, Image.ANTIALIAS)
             box = (0, (new_height-thumbnail_size)/2, new_width, (new_height+thumbnail_size)/2)
             feed_image = feed_image.crop(box)
         else:
@@ -806,7 +807,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             new_height = thumbnail_size
             new_width = thumbnail_size*ratio
             size = (new_width, new_height)
-            feed_image = feed_image.resize(size)
+            feed_image = feed_image.resize(size, Image.ANTIALIAS)
             box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, new_height)
             feed_image = feed_image.crop(box)
     print 'out of if'
@@ -824,11 +825,18 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
         filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
     # save it to disk so we have a real file to work with
     try:
+        print 'in try'
         imagefile = open(os.path.join('/tmp', filename), 'w')
+        print 'opened first'
         feed_image.save(imagefile,'JPEG')
+        os.chmod(os.path.join('/tmp', filename), 0666)
+        print 'opening'
         imagefile = open(os.path.join('/tmp',filename), 'r')
+        print 'opened'
         content = File(imagefile)
+        print 'about to save'
         model_image.save(filename, content)
+        os.remove(os.path.join('/tmp', filename))
     except Exception as e:
         print e
 

@@ -18,6 +18,13 @@ urlpatterns = patterns('',
                        url(r'^create_poll/$', views.create_poll),
                        url(r'^rate_poll/$', views.rate_poll),
 
+                       # Getting and posting Threads and ThreadPosts
+                       url(r'^get_threads/$', views.get_threads),
+                       url(r'^create_thread/$', views.create_thread),
+                       url(r'^rate_thread/$', views.rate_thread),
+                       url(r'^submit_post/$', views.submit_post),
+                       url(r'^rate_post/$', views.rate_post),
+
                        # Getting and posting employee data from iOS
                        url(r'^evaluate/$', views.evaluate),
                        url(r'^employees/$',views.employee_list),

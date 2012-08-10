@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, CommentEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -468,6 +468,20 @@ def _make_inactive_business(checkin_location):
         
     return business
 
+def _encode_poll(poll, user):
+    p = SimplePollEncoder().default(poll)
+    if user == poll.user_creator or len(user.pollresponse_set.filter(poll=poll)) > 0:
+        p['show_results'] = True
+    else:
+        p['show_results'] = False
+    try:
+        v = poll.votes.get(user=user)
+        p['my_vote'] = 1 if v.positive else -1
+    except models.Vote.DoesNotExist:
+        p['my_vote'] = 0
+
+    return p
+
 # Get a Poll
 @mobile_view
 @csrf_protect
@@ -484,19 +498,7 @@ def get_polls(request):
     encoder = SimplePollEncoder()
     poll_list = []
     for p in polls:
-        poll = encoder.default(p)
-        # Indicate whether this user should see results for this poll, either
-        # because they have already responded to it our were the creator
-        if request.user.userprofile == p.user_creator or len(request.user.userprofile.pollresponse_set.filter(poll=p)) > 0:
-            poll['show_results'] = True
-        else:
-            poll['show_results'] = False
-        # Indicate whether or not to show a "rate poll" widget for this user
-        if len(p.votes.filter(user=request.user.userprofile)) > 0:
-            poll['can_rate'] = False
-        else:
-            poll['can_rate'] = True
-        poll_list.append(poll)
+        poll_list.append(_encode_poll(p, request.user.userprofile))
 
     return HttpResponse(json.dumps(poll_list))
 
@@ -520,10 +522,8 @@ def submit_poll(request):
                                        date_created=datetime.utcnow().replace(tzinfo=utc))
         response.save()
 
-    # Return changed (or not) poll
-    poll = SimplePollEncoder().default(poll)
-    poll['show_results'] = True
-    return HttpResponse(json.dumps(poll))
+    # Easier to decode on iOS if this is a list (matches get_polls)
+    return HttpResponse(json.dumps([_encode_poll(poll, request.user.userprofile)]))
 
 @mobile_view
 @csrf_protect
@@ -540,7 +540,8 @@ def rate_poll(request):
         poll.votes.add(v)
         poll.save()
 
-    return HttpResponse("")
+    # Easier to decode on iOS if this is a list (matches get_polls)
+    return HttpResponse(json.dumps([_encode_poll(poll, request.user.userprofile)]))
 
 @mobile_view
 @csrf_protect
@@ -570,7 +571,108 @@ def create_poll(request):
     poll.save()
 
     return HttpResponse("")
-    
+
+def _encode_thread(thread, user):
+    encoder = ThreadEncoder()
+    t = encoder.default(thread)
+    # Find votes on the thread
+    try:
+        v = thread.votes.get(user=user)
+        t['my_vote'] = 1 if v.positive else -1
+    except models.Vote.DoesNotExist:
+        t['my_vote'] = 0
+
+    # Find votes on each post within the thread
+    for post in t['posts']:
+        tp = models.ThreadPost.objects.get(id=post['id'])
+        try:
+            v = tp.votes.get(user=user)
+            post['my_vote'] = 1 if v.positive else -1
+        except models.Vote.DoesNotExist:
+            post['my_vote'] = 0
+            
+    return t
+
+@mobile_view
+@csrf_protect
+def get_threads(request):
+    '''get_threads
+
+    Get all of the threads for a particular business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    thread_list = []
+    for thread in business.thread_set.all():
+        thread_list.append(_encode_thread(thread,request.user.userprofile))
+
+    return HttpResponse(json.dumps(thread_list))
+
+@mobile_view
+@csrf_protect
+def create_thread(request):
+    '''create_thread
+
+    Create a thread for a business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    thread = models.Thread(title=data['title'],
+                           user_creator=request.user.userprofile,
+                           business=business)
+    thread.save()
+    return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def rate_thread(request):
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['id'])
+
+    # Don't let users rate a thread twice
+    user = request.user.userprofile
+    if len(thread.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        thread.votes.add(v)
+        thread.save()
+
+    return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def submit_post(request):
+    ''' This is for users to post comments to a thread
+    '''
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['thread_id'])
+    post = models.ThreadPost(body=data['body'],
+                             user=request.user.userprofile,
+                             thread=thread)
+    post.save()
+
+    return HttpResponse(json.dumps(_encode_thread(thread,request.user.userprofile)))
+
+@mobile_view
+@csrf_protect
+def rate_post(request):
+    data = json.load(request)
+    post = models.ThreadPost.objects.get(id=data['id'])
+
+    print "Rating this post: "+str(post)
+
+    # Don't let users rate a threadpost twice
+    user = request.user.userprofile
+    if len(post.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        post.votes.add(v)
+        post.save()
+
+    return HttpResponse(json.dumps(_encode_thread(post.thread,request.user.userprofile)))
+
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect

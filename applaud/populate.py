@@ -366,6 +366,18 @@ pr = models.PollResponse(user=userprofile2,
                          date_created=datetime.utcnow().replace(tzinfo=utc))
 pr.save()
     
+# Make a thread
+thread = models.Thread(title="Tell us about your favorite recipe.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread.save()
+
+# Make a thread post
+post = models.ThreadPost(body="Snakes, snails, puppy-dog tails.",
+                         user=userprofile,
+                         thread=thread)
+post.save()
+
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
 inbox1.save()
