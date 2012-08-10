@@ -626,7 +626,7 @@ def submit_post(request):
                              user=request.user.userprofile,
                              thread=thread)
     post.save()
-    return HttpResponse(json.dumps(list(thread.threadpost_set.all()), cls=ThreadPostEncoder))
+    return HttpResponse(json.dumps(thread, cls=ThreadEncoder))
 
     
 # Getting and posting employee data from iOS.
