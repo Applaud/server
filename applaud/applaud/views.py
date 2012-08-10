@@ -290,7 +290,7 @@ class BusinessPhotoEncoder(json.JSONEncoder):
                         'tags': o.tags,
                         'active': o.active,
                         'id': o.id,
-                        'date_created', o.date.strftime('%m/%d/%Y'),
+                        'date_created': o.date.strftime('%m/%d/%Y'),
                         'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
             except Exception as e:
                 return {}
