@@ -598,6 +598,36 @@ def create_thread(request):
                            business=business)
     thread.save()
     return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def rate_thread(request):
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['id'])
+
+    # Don't let users rate a thread twice
+    user = request.user.userprofile
+    if len(thread.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        thread.votes.add(v)
+        thread.save()
+
+    return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def submit_post(request):
+    ''' This is for users to post comments to a thread
+    '''
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['thread_id'])
+    post = models.ThreadPost(body=data['body'],
+                             user=request.user.userprofile,
+                             thread=thread)
+    post.save()
+    return HttpResponse("")
+
     
 # Getting and posting employee data from iOS.
 @mobile_view
