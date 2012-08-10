@@ -23,6 +23,7 @@ urlpatterns = patterns('',
                        url(r'^create_thread/$', views.create_thread),
                        url(r'^rate_thread/$', views.rate_thread),
                        url(r'^submit_post/$', views.submit_post),
+                       url(r'^rate_post/$', views.rate_post),
 
                        # Getting and posting employee data from iOS
                        url(r'^evaluate/$', views.evaluate),

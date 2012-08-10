@@ -628,7 +628,24 @@ def submit_post(request):
     post.save()
     return HttpResponse(json.dumps(thread, cls=ThreadEncoder))
 
-    
+@mobile_view
+@csrf_protect
+def rate_post(request):
+    data = json.load(request)
+    post = models.ThreadPost.objects.get(id=data['id'])
+
+    print "Rating this post: "+str(post)
+
+    # Don't let users rate a threadpost twice
+    user = request.user.userprofile
+    if len(post.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        post.votes.add(v)
+        post.save()
+
+    return HttpResponse(json.dumps(post.thread, cls=ThreadEncoder))
+
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect
