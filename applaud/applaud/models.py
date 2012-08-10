@@ -378,6 +378,7 @@ class BusinessPhoto(models.Model):
     tags = SerializedStringsField()
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
+    date_created=models.DateTimeField(blank=True, null=True)
     
     
 # # This needs to be implemented
