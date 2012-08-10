@@ -67,7 +67,7 @@ class SimplePollEncoder(json.JSONEncoder):
                     'options':o.options,
                     'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
                     'responses':responses,
-                    'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                    'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
                     'user_rating':user_rating,
                     'business_id':o.business.id,
                     'id':o.id }
@@ -84,7 +84,7 @@ class ThreadEncoder(json.JSONEncoder):
             upvotes = len(o.votes.filter(positive=True))
             downvotes = len(o.votes.all())-upvotes
             res = {'title':o.title,
-                   'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                   'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
                    'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
                    'upvotes':upvotes,
                    'downvotes':downvotes,
@@ -102,7 +102,7 @@ class ThreadPostEncoder(json.JSONEncoder):
             downvotes = len(o.votes.all())-upvotes
             res = {'body':o.body,
                    'user':UserProfileEncoder().default(o.user),
-                   'date_created':o.date_created.strftime("%d/%m/%Y %H:%M:%S"),
+                   'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
                    'upvotes':upvotes,
                    'downvotes':downvotes,
                    'id':o.id}
@@ -164,7 +164,7 @@ class UserProfileEncoder(json.JSONEncoder):
             return {'first_name':o.user.first_name,
                     'last_name':o.user.last_name,
                     'username':o.user.username,
-                    'birth':o.date_of_birth.strftime("%d/%m/%Y"),
+                    'birth':o.date_of_birth.strftime("%m/%d/%Y"),
                     'id':o.id}
         else:
             return json.JSONEncoder.default(self, o)
@@ -256,7 +256,7 @@ class RatingEncoder(json.JSONEncoder):
         if isinstance(o, models.Rating):
             return {'value':o.rating_value,
                     'user':UserProfileEncoder().default(o.user),
-                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'date':o.date_created.strftime("%m/%d/%Y"),
                     'title':o.title}
         else:
             return json.JSONEncoder.default(self, o)
@@ -269,7 +269,7 @@ class MessageItemEncoder(json.JSONEncoder):
             print o.date_created
             return {'subject':o.subject,
                     'text':o.text,
-                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'date':o.date_created.strftime("%m/%d/%Y"),
                     'unread':o.unread,
                     'sender': {'first_name':o.sender.first_name,
                                'last_name':o.sender.last_name,
