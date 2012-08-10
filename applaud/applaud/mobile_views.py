@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -626,7 +626,7 @@ def submit_post(request):
                              user=request.user.userprofile,
                              thread=thread)
     post.save()
-    return HttpResponse("")
+    return HttpResponse(json.dumps(list(thread.threadpost_set.all()), cls=ThreadPostEncoder))
 
     
 # Getting and posting employee data from iOS.
