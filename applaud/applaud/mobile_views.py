@@ -523,7 +523,7 @@ def submit_poll(request):
         response.save()
 
     # Easier to decode on iOS if this is a list (matches get_polls)
-    return HttpResponse(json.dumps([_encode_poll(poll, request.user.userprofile)]))
+    return HttpResponse(json.dumps([_encode_poll(p, request.user.userprofile) for p in poll.business.poll_set.all()]))
 
 @mobile_view
 @csrf_protect
@@ -639,7 +639,10 @@ def rate_thread(request):
         thread.votes.add(v)
         thread.save()
 
-    return HttpResponse("")
+    user = request.user.userprofile
+    thread_list = [_encode_thread(t,user) for t in thread.business.thread_set.all()]
+
+    return HttpResponse(json.dumps(thread_list))
 
 @mobile_view
 @csrf_protect
