@@ -411,12 +411,14 @@ class BusinessPhoto(models.Model):
     uploaded_by is the user who uploaded this photo.
     """
     image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
+    thumbnail_image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
     business = models.ForeignKey('BusinessProfile')
     tags = SerializedStringsField()
-    upvotes = models.IntegerField(default=0)
-    downvotes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
+    date_created=models.DateTimeField(blank=True, null=True)
+    
+    
 # # This needs to be implemented
 # class CorporateProfile(request):
     
@@ -449,6 +451,13 @@ class Vote(models.Model):
     positive = models.BooleanField()
     date_created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('UserProfile')
+    businessphoto = models.ForeignKey('BusinessPhoto')
 
     def __unicode__(self):
         return self.user.user.first_name + self.user.user.last_name + "+" if self.positive else "-"
+
+class Comment(models.Model):
+    user = models.ForeignKey('UserProfile')
+    text = models.CharField(max_length=1000)
+    date_created = models.DateTimeField()
+    businessphoto = models.ForeignKey('BusinessPhoto')

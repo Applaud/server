@@ -15,7 +15,7 @@ from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
 
@@ -837,6 +837,8 @@ def post_photo(request):
     filename = '%s_%s.jpg' % (profile.id,
                        business.business_name)
     save_image(business_photo.image, filename, request.FILES['image'])
+    request.FILES['image'].seek(0)
+    save_image(business_photo.thumbnail_image, filename, request.FILES['image'], thumbnail=True)
     return HttpResponse('')
 
 #@mobile_view
@@ -847,4 +849,34 @@ def get_photos(request):
     """
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
-    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
+    photos = []
+    for photo in business.businessphoto_set.all():
+        p = encoder.default(photo)
+        if p:
+            photos.append(p)
+    return HttpResponse(json.dumps({'photos': photos}))
+
+@mobile_view
+@csrf_protect
+def comment_photo(request):
+    """
+    Comment on a photo. The mobile side of things should verify
+    that the text is less than 1000 chars.
+    """
+    user = request.user.userprofile
+    data = json.load(request)
+    photo = models.BusinessPhoto.objects.get(id=data['photo_id'])
+    c = models.Comment(user=user,
+                       text=data['text'],
+                       date_created=datetime.utcnow().replace(tzinfo=utc),
+                       businessphoto=photo)
+    c.save()
+    return HttpResponse(json.dumps(c, cls=CommentEncoder))
+
+def photo_comments(request):
+    """
+    Return all the comments for a photo as JSON.
+    """
+    photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
+    encoder = CommentEncoder()
+    return HttpResponse(json.dumps([encoder.default(c) for c in photo.comment_set.all()]))

@@ -359,21 +359,6 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
-keith_photo = models.BusinessPhoto(business=keith_business,
-                                   tags=['tag', 'tagged', 'mystical'],
-                                   uploaded_by=userprofile)
-keith_photo.save()
-business_views.save_image(keith_photo.image,
-                          'keith_photo_test.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
-
-keith_photo2 = models.BusinessPhoto(business=keith_business,
-                                   tags=['foo', 'bar'],
-                                   uploaded_by=userprofile2)
-business_views.save_image(keith_photo2.image,
-                          'keith_photo_numero_dos.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
-
 # Make a poll
 poll = models.Poll(title="What is your favorite color?",
                    business=keith_business,

@@ -286,13 +286,31 @@ class MessageItemEncoder(json.JSONEncoder):
 class BusinessPhotoEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.BusinessPhoto):
-            return {'image': o.image.url,
-                    'business': o.business.id,
-                    'tags': o.tags,
-                    'upvotes': o.upvotes,
-                    'downvotes': o.downvotes,
-                    'active': o.active,
-                    'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            url=''
+            try:
+                url=o.image.url
+                thumbnail_url = o.thumbnail_image.url
+                return {'image': url,
+                        'thumbnail': thumbnail_url,
+                        'business': o.business.id,
+                        'tags': o.tags,
+                        'active': o.active,
+                        'id': o.id,
+                        'date_created': o.date.strftime('%m/%d/%Y'),
+                        'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            except Exception as e:
+                return {}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+class CommentEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Comment):
+            return {'user': UserProfileEncoder().default(o.user),
+                    'text': o.text,
+                    'date_created': o.date_created.strftime('%d/%m/%Y'),
+                    'businessphoto': o.businessphoto.id,
+                    'id': o.id}
         else:
             return json.JSONEncoder.default(self, o)
 
