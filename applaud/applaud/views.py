@@ -160,10 +160,16 @@ class EmployeeEncoder(json.JSONEncoder):
 # Encodes a UserProfile into JSON format
 class UserProfileEncoder(json.JSONEncoder):
     def default(self, o):
+        profile_picture = ""
+        if o.profile_picture:
+            profile_picture = o.profile_picture.url
+        else:
+            profile_picture = settings.MEDIA_URL + "user_profpics/userpic%d.png"%o.default_picture
         if isinstance(o, models.UserProfile):
             return {'first_name':o.user.first_name,
                     'last_name':o.user.last_name,
                     'username':o.user.username,
+                    'profile_picture':profile_picture,
                     'birth':o.date_of_birth.strftime("%m/%d/%Y"),
                     'id':o.id}
         else:

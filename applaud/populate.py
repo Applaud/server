@@ -15,8 +15,6 @@ from django.contrib.auth.models import User, Group
 from random import random
 from applaud import business_views
 from applaud import settings
-import Image
-from django.core.files import File
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -41,18 +39,14 @@ userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-filename = "userpic%d.png"%which
-imagefile = open(os.path.join(settings.MEDIA_ROOT+"user_profpics/",filename), 'r')
-userprofile.profile_picture = settings.MEDIA_ROOT+"user_profpics/"+filename
+userprofile.default_picture = which
 userprofile.save()
 
 userprofile2 = models.UserProfile(user=enduser2,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-filename = "userpic%d.png"%which
-imagefile = open(os.path.join(settings.MEDIA_ROOT+"user_profpics/",filename), 'r')
-userprofile2.profile_picture = settings.MEDIA_ROOT+"user_profpics/"+filename
+userprofile2.default_picture = which
 userprofile2.save()
 
 

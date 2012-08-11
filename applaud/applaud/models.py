@@ -3,6 +3,7 @@ from django.forms import ValidationError
 from django.db import models
 import json
 from applaud import settings
+import random
 
 #
 # CUSTOM MODEL FIELDS
@@ -374,7 +375,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     date_of_birth = models.DateField(blank=True, null=True)
     first_time = models.BooleanField(default=1)
-    profile_picture = models.ImageField(blank=True, null=True, upload_to='user_profpics/')
+
+    # Using this to have a default profile picture. This circumvents having to save a new picture
+    # each time we want to use one of the defaults.
+    default_picture = models.IntegerField()
+
+    # The real profile picture. The user uploads this.
+    profile_picture = models.ImageField(blank=True,
+                                        null=True,
+                                        upload_to='user_profpics/')
+
     # Other valuable information that we can get from the user.
     SEX_TYPES = (
         ('Male', 'Male'),
