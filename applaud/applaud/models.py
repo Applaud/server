@@ -374,7 +374,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     date_of_birth = models.DateField(blank=True, null=True)
     first_time = models.BooleanField(default=1)
-    
+    profile_picture = models.ImageField(blank=True, null=True, upload_to='user_profpics/')
     # Other valuable information that we can get from the user.
     SEX_TYPES = (
         ('Male', 'Male'),
