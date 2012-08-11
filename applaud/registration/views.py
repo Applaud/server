@@ -262,8 +262,7 @@ def register(request, backend, success_url=None, form_class=None,
 
                     # Give a random profile picture
                     which = int(random.random()*6) + 1
-                    filename = "userpic%d.png"%which
-                    profile.profile_picture = settings.MEDIA_ROOT+"user_profpics/"+filename
+                    profile.default_picture = which
                     profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
