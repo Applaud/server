@@ -832,7 +832,8 @@ def post_photo(request):
     business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
     business_photo = models.BusinessPhoto(business=business,
                                           tags=json.loads(request.POST['tags']),
-                                          uploaded_by=profile)
+                                          uploaded_by=profile,
+                                          date_created=datetime.utcnow().replace(tzinfo=utc))
     business_photo.save()
     filename = '%s_%s.jpg' % (profile.id,
                        business.business_name)
@@ -884,7 +885,7 @@ def photo_comments(request):
 @csrf_protect
 def vote_photo(request):
     user = request.user.userprofile
-    data = json.loads(request)
+    data = json.load(request)
     photo = models.BusinessPhoto.objects.get(id=data['id'])
     v = models.Vote(positive=True,
                     date_created=datetime.utcnow().replace(tzinfo=utc),
@@ -898,7 +899,7 @@ def vote_photo(request):
 @csrf_protect
 def check_vote(request):
     user = request.user.userprofile
-    data = json.loads(request)
+    data = json.load(request)
     photo = models.BusinessPhoto.objects.get(id=data['id'])
     if len(photo.votes.filter(user=user)) == 0:
         return HttpResponse('yes')
