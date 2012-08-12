@@ -7,7 +7,6 @@ python manage.py syncdb --noinput
 python populate.py
 
 # If we're on a server, make sure permissions are OK
-if [ CURDIR = '/var/www/server/applaud' ]
-then
-    sudo chown www-data:www-data ${CURDIR}/applaud/test.db
+if [ `pwd | cut -c1-9` = "/var/www/" ]; then
+    sudo chown -R www-data:www-data /var/www
 fi
