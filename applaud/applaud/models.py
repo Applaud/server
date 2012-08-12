@@ -451,7 +451,6 @@ class Vote(models.Model):
     positive = models.BooleanField()
     date_created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('UserProfile')
-    businessphoto = models.ForeignKey('BusinessPhoto')
 
     def __unicode__(self):
         return self.user.user.first_name + self.user.user.last_name + "+" if self.positive else "-"
@@ -460,4 +459,4 @@ class Comment(models.Model):
     user = models.ForeignKey('UserProfile')
     text = models.CharField(max_length=1000)
     date_created = models.DateTimeField()
-    businessphoto = models.ForeignKey('BusinessPhoto')
+    businessphoto = models.ForeignKey('BusinessPhoto', blank=True, null=True)
