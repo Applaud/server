@@ -417,6 +417,7 @@ class BusinessPhoto(models.Model):
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
     date_created=models.DateTimeField(blank=True, null=True)
+    votes = models.ManyToManyField('Vote')
     
     
 # # This needs to be implemented

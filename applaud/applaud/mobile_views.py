@@ -841,7 +841,6 @@ def post_photo(request):
     save_image(business_photo.thumbnail_image, filename, request.FILES['image'], thumbnail=True)
     return HttpResponse('')
 
-#@mobile_view
 def get_photos(request):
     """
     Get all the photos associated with a particular business,
@@ -880,3 +879,27 @@ def photo_comments(request):
     photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
     encoder = CommentEncoder()
     return HttpResponse(json.dumps([encoder.default(c) for c in photo.comment_set.all()]))
+
+@mobile_view
+@csrf_protect
+def vote_photo(request):
+    user = request.user.userprofile
+    data = json.loads(request)
+    photo = models.BusinessPhoto.objects.get(id=data['id'])
+    v = models.Vote(positive=True,
+                    date_created=datetime.utcnow().replace(tzinfo=utc),
+                    user=user)
+    v.save()
+    photo.votes.add(v)
+    photo.save()
+    return HttpResponse('')
+
+@mobile_view
+@csrf_protect
+def check_vote(request):
+    user = request.user.userprofile
+    data = json.loads(request)
+    photo = models.BusinessPhoto.objects.get(id=data['id'])
+    if len(photo.votes.filter(user=user)) == 0:
+        return HttpResponse('yes')
+    return HttpResponse('no')
