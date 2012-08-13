@@ -28,6 +28,7 @@ import settings
 import Image
 import StringIO
 import hashlib
+import stat
 
 # 'business_view' decorator.
 def business_view(view):
@@ -772,7 +773,7 @@ def scale_dimensions(width, height, longest_side):
     return (int(width*ratio), int(height*ratio))
 
 # Also stolen! This makes saving an image to MEDIA_ROOT a bit more sensible.
-def save_image(model_image, filename, tmp_image):
+def save_image(model_image, filename, tmp_image, thumbnail=False):
     '''
     Saves an image to a NewsFeedItem.
 
@@ -780,24 +781,64 @@ def save_image(model_image, filename, tmp_image):
     filename = Filename to use when saving the actual file
     tmp_image = The file that currently exists from uploading.
     '''
-
     feed_image = Image.open(tmp_image)
     (width, height) = feed_image.size
-    (width, height) = scale_dimensions(width, height, 200)
-    feed_image = feed_image.resize((width, height))
+    print "width is.... %s" % width
+    print "height is..... %s " % height
+    print thumbnail
+    #(width, height) = scale_dimensions(width, height, 70) 
+    #feed_image = feed_image.resize((width, height))
+    if thumbnail:
+        # 4-tuple to feed to feed image
+        print 'in thumbnail'
+        thumbnail_size = 70
+        if height > width:
+            #Portrait
+            ratio = height/width
+            new_height = thumbnail_size*ratio
+            new_width = thumbnail_size
+            size = (new_width, new_height)
+            feed_image = feed_image.resize(size, Image.ANTIALIAS)
+            box = (0, (new_height-thumbnail_size)/2, new_width, (new_height+thumbnail_size)/2)
+            feed_image = feed_image.crop(box)
+        else:
+            #Landscape
+            ratio = width/height
+            new_height = thumbnail_size
+            new_width = thumbnail_size*ratio
+            size = (new_width, new_height)
+            feed_image = feed_image.resize(size, Image.ANTIALIAS)
+            box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, new_height)
+            feed_image = feed_image.crop(box)
+    print 'out of if'
     imagefile = StringIO.StringIO()
-    feed_image.save(imagefile, 'JPEG')
+    #feed_image.save(imagefile, 'JPEG')
+    print 'past feed_image.save'
     # give it a unique name
     filename_parts = filename.split('.')
-    filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
+    if thumbnail:
+        print 'in thumb if'
+        filename = '%s%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(),'-thumbnail-', filename_parts[1])
+        print 'done'
+    else:
+        print 'in else'
+        filename = '%s%s.%s' % (filename_parts[0], hashlib.md5(imagefile.getvalue()).hexdigest(), filename_parts[1])
     # save it to disk so we have a real file to work with
-    imagefile = open(os.path.join('/tmp', filename), 'w')
-    feed_image.save(imagefile,'JPEG')
-    imagefile = open(os.path.join('/tmp',filename), 'r')
-    content = File(imagefile)
-    model_image.save(filename, content)
-
-
+    try:
+        print 'in try'
+        imagefile = open(os.path.join('/tmp', filename), 'w')
+        print 'opened first'
+        feed_image.save(imagefile,'JPEG')
+        os.chmod(os.path.join('/tmp', filename), 0666)
+        print 'opening'
+        imagefile = open(os.path.join('/tmp',filename), 'r')
+        print 'opened'
+        content = File(imagefile)
+        print 'about to save'
+        model_image.save(filename, content)
+        os.remove(os.path.join('/tmp', filename))
+    except Exception as e:
+        print e
 
 # The view that calls the control panel center, where a business can manage their employees, surveys and newsfeeds.
 @business_view
