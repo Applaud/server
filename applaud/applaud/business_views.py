@@ -441,11 +441,13 @@ def stats(request):
             else:
                 return_data['employees'].append(encoded_employee)
 
-
         #Assumes a business only has a single survey
         survey = profile.survey_set.all()[0]
-        
-        for question in survey.question_set.all():
+        print survey
+
+        questions = survey.question_set.all()
+
+        for question in questions:
             print "loopin"
             all_ratings = sorted(list(question.questionresponse_set.all()), key=lambda e: e.date_created)
             encoded_question = views.QuestionEncoder().default(question)
@@ -455,7 +457,9 @@ def stats(request):
                 return_data['questions']=[encoded_question]
             else:
                 return_data['questions'].append(encoded_question)
-            
+
+        print "out of for"
+
         return HttpResponse(json.dumps({'data':return_data}),
                             mimetype='application/json')
             
