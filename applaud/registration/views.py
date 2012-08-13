@@ -298,6 +298,10 @@ def register_user(request, backend, success_url=None, form_class=forms.UserRegis
     return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='user')
 
 def mobile_login(request):
+    if request.method == 'GET':
+        token=get_token(request)
+        return HttpResponse(token)
+
     if request.method == 'POST':
         user = auth.authenticate( username=request.POST['username'],
                                   password=request.POST['password'] )
