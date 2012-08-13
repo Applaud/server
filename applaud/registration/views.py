@@ -22,6 +22,7 @@ import json
 from django.utils.timezone import utc
 import sys
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 
 @csrf_protect
 def activate(request, backend,

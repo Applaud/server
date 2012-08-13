@@ -18,6 +18,7 @@ from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
+import random
 
 # 'mobile_view' decorator.
 def mobile_view(view):
@@ -946,12 +947,12 @@ def register(request):
         last_name = data['last_name']
         email = data['email'].lower()
         password= data['password']
-        
+        default_picture = random.randint(1, 6)
         u = User.objects.create_user(email,email,password)
         u.first_name = first_name
         u.last_name = last_name
         u.save()
-        u_profile = UserProfile(user=u)
+        u_profile = UserProfile(user=u, default_picture=default_picture)
         u_profile.save()
         
     return HttpResponse('')
@@ -961,6 +962,6 @@ def register(request):
 def set_profile_picture(request):
     user = request.user.userprofile
     photo = request.FILES['image']
-    filename = '%d_%s' % (user.id, user.email)
+    filename = '%d_%s' % (user.id, user.user.username)
     save_image(user.profile_picture, filename, photo)
     return HttpResponse('')
