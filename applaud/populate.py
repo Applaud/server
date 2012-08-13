@@ -419,8 +419,6 @@ poll1.save()
 poll2 = models.Poll(title="What is your favorite tropical location?",
                    business=keith_business,
                    options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
-thread.votes.add(vote2)
-thread.votes.add(vote3)
 poll2.save()
 
 poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
@@ -578,9 +576,9 @@ create_poll_response(poll6, 0)
 thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
                        user_creator=userprofile2,
                        business=keith_business)
+thread.save()
 thread.votes.add(vote1)
 thread.save()
-
 
 # Make a thread post
 post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
@@ -598,10 +596,11 @@ post2.save()
 thread2 = models.Thread(title="Fun drink ideas.",
                        user_creator=userprofile2,
                        business=keith_business)
-thread.votes.add(vote2)
-thread.votes.add(vote3)
-thread.votes.add(vote1)
-thread.save()
+thread2.save()
+thread2.votes.add(vote2)
+thread2.votes.add(vote3)
+thread2.votes.add(vote1)
+thread2.save()
 
 # Make a thread post
 post1 = models.ThreadPost(body="Rum, tequila, orange juice, cranberry juice, blended",
@@ -612,9 +611,10 @@ post1.save()
 post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
                          user=userprofile3,
                          thread=thread2)
+post2.save()
 thread.votes.add(vote2)
 thread.votes.add(vote3)
-post2.save()
+thread.save()
 
 post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
                          user=userprofile4,
