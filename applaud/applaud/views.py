@@ -309,7 +309,7 @@ class CommentEncoder(json.JSONEncoder):
         if isinstance(o, models.Comment):
             return {'user': UserProfileEncoder().default(o.user),
                     'text': o.text,
-                    'date_created': o.date_created.strftime('%d/%m/%Y'),
+                    'date_created': o.date_created.strftime('%m/%d/%Y'),
                     'businessphoto': o.businessphoto.id,
                     'id': o.id}
         else:
