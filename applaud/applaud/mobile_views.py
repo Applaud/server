@@ -915,8 +915,8 @@ def check_vote(request):
     user = request.user.userprofile
     data = json.load(request)
     # Making the check_vote function general as ALL GETOUT
-    class = eval(data['type'])
-    model = class.objects.get(id=data['id'])
+    cls = eval(data['type'])
+    model = cls.objects.get(id=data['id'])
     if len(model.votes.filter(user=user)) == 0:
         return HttpResponse('yes')
     return HttpResponse('no')
