@@ -7,17 +7,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript">
-      $(document).ready( function(){
-          $("#video-button").click( function(){
-              console.log("BLAHHHHHH");
-
-              $('#myModal').modal({
-                  backdrop: true
-              });
-          });
-      });
-    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}frontpage.js"></script>
   </head>
   <body>
 
@@ -36,6 +26,8 @@
         <img src="/media/Logo340.png" alt="Apatapa" />
         <img src="/media/divider.png" alt="divider" />
         <a class="btn btn-large" id="video-button" ><i class="icon-play"></i> Watch the Video</a>
+        <img src="/media/divider.png" alt="divider" />
+	<a class="btn btn-large" id="features-button">Apatapa Features</a>
         <img src="/media/divider.png" alt="divider" />
         <a class="btn btn-large btn-primary" id="sign-in" href="/accounts/login">Sign In</a>        
       </div>
@@ -66,8 +58,27 @@
 
  
     </div>
+    
 
+    <!-- Features Div Start -->
+    <div id="features">
+      <div id="features-head">
+	<h2>Features</h2>
+	
+	<div class="btn-group">
+	  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+	    Action
+	    <span class="caret"></span>
+	  </a>
+	  <ul class="dropdown-menu">
+	    <li><a href="#">Applaud</a></li>
+	    <li class="divider"></li>
+	    <!-- dropdown menu links -->
+	  </ul>
+	</div>
 
+      </div>
+    </div>
     <!-- Bottom Bar Start -->
     <div id="bottom-bar">
       <div id="footer" class="row">
