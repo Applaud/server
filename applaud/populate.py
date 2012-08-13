@@ -39,6 +39,10 @@ enduser4.first_name="Peter"
 enduser4.last_name="Fogg"
 enduser4.save()
 
+enduser5 = User.objects.create_user('wyatt', 'mamabear@berensteinbears.com', 'apatapa')
+enduser5.first_name="Wyatt"
+enduser5.last_name="Hayman"
+enduser5.save()
 
 
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
@@ -69,6 +73,12 @@ userprofile3.default_picture = 3
 userprofile3.save()
 
 
+userprofile4 = models.UserProfile(user=enduser4,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile4.default_picture = 4
+userprofile4.save()
 
 
 # Make a BusinessProfile.
@@ -565,6 +575,46 @@ post2 = models.ThreadPost(body="Garlic and cumin may be sweet additions to that"
                          user=userprofile3,
                          thread=thread)
 post2.save()
+
+
+# Make a thread
+thread2 = models.Thread(title="Fun drink ideas.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread.save()
+
+# Make a thread post
+post1 = models.ThreadPost(body="Rum, tequila, orange juice, cranberry juice, blended",
+                         user=userprofile2,
+                         thread=thread2)
+post1.save()
+
+post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
+                         user=userprofile3,
+                         thread=thread2)
+post2.save()
+
+post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
+                         user=userprofile4,
+                         thread=thread2)
+post3.save()
+
+
+post4 = models.ThreadPost(body="Thanks! I made it up.  I call it a Plains because it refreshes like an open plain with a summer breeze.",
+                         user=userprofile3,
+                         thread=thread2)
+post4.save()
+
+post5 = models.ThreadPost(body="Just ordered one! They gave it to me for free because it came recommended on apatapa! Loved it!! Thanks for the tip",
+                         user=userprofile4,
+                         thread=thread2)
+post5.save()
+
+post6 = models.ThreadPost(body="I've had something like that before - but haven't in a long time! Tried it again FOR FREE thanks to you, Ravi!",
+                         user=userprofile,
+                         thread=thread2)
+post6.save()
+
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
