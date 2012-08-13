@@ -454,7 +454,7 @@ class Inbox(models.Model):
         return str(self.user)
 
 class Vote(models.Model):
-    positive = models.BooleanField()
+    positive = models.BooleanField(default=1)
     date_created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('UserProfile')
 

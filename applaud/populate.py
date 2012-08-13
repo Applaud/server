@@ -399,6 +399,17 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
+# Votes
+vote1 = models.Vote(user=userprofile2)
+vote1.save()
+
+vote2 = models.Vote(user=userprofile2)
+vote2.save()
+
+vote3 = models.Vote(user=userprofile3)
+vote3.save()
+
+
 # Make a poll
 poll1 = models.Poll(title="Where should the next Pacific Catch be located?",
                    business=keith_business,
@@ -408,6 +419,8 @@ poll1.save()
 poll2 = models.Poll(title="What is your favorite tropical location?",
                    business=keith_business,
                    options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
+thread.votes.add(vote2)
+thread.votes.add(vote3)
 poll2.save()
 
 poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
@@ -438,6 +451,7 @@ def create_poll_response(poll, value):
                              poll=poll,
                              date_created=datetime.utcnow().replace(tzinfo=utc))
     pr.save()
+    
 
 # Create a lot of poll responses
 create_poll_response(poll2, 1)
@@ -558,12 +572,15 @@ create_poll_response(poll6, 0)
 create_poll_response(poll6, 0)
 create_poll_response(poll6, 0)
 
+
     
 # Make a thread
 thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
                        user_creator=userprofile2,
                        business=keith_business)
+thread.votes.add(vote1)
 thread.save()
+
 
 # Make a thread post
 post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
@@ -581,6 +598,9 @@ post2.save()
 thread2 = models.Thread(title="Fun drink ideas.",
                        user_creator=userprofile2,
                        business=keith_business)
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+thread.votes.add(vote1)
 thread.save()
 
 # Make a thread post
@@ -592,6 +612,8 @@ post1.save()
 post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
                          user=userprofile3,
                          thread=thread2)
+thread.votes.add(vote2)
+thread.votes.add(vote3)
 post2.save()
 
 post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
@@ -614,6 +636,7 @@ post6 = models.ThreadPost(body="I've had something like that before - but haven'
                          user=userprofile,
                          thread=thread2)
 post6.save()
+
 
 
 # some messages and inbox items
