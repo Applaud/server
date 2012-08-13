@@ -53,6 +53,7 @@ urlpatterns = patterns('',
                        # Registering
                        url(r'^check_email/$', views.check_email),
                        url(r'^register/$', views.register),
+                       url(r'^set_profile_picture/$', view.set_profile_picture),
                        
                        # Getting the CSRF token for mobile devices
                        url(r'^newsfeed/$',views.nfdata),

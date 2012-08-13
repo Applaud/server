@@ -946,7 +946,7 @@ def register(request):
         last_name = data['last_name']
         email = data['email'].lower()
         password= data['password']
-
+        
         u = User.objects.create_user(email,email,password)
         u.first_name = first_name
         u.last_name = last_name
@@ -954,4 +954,13 @@ def register(request):
         u_profile = UserProfile(user=u)
         u_profile.save()
         
+    return HttpResponse('')
+
+@csrf_protect
+@mobile_view
+def set_profile_picture(request):
+    user = request.user.userprofile
+    photo = request.FILES['image']
+    filename = '%d_%s' % (user.id, user.email)
+    save_image(user.profile_picture, filename, photo)
     return HttpResponse('')
