@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
 from django.core.urlresolvers import reverse
 import urllib2
+from django.middleware.csrf import get_token
 from registration.backends import get_backend
 import forms
 from applaud import models as applaud_models

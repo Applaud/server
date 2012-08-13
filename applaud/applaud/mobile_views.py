@@ -11,6 +11,7 @@ import settings
 import sys
 import json
 import urllib2
+import random
 from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
@@ -948,10 +949,12 @@ def register(request):
         email = data['email'].lower()
         password= data['password']
         default_picture = random.randint(1, 6)
+
         u = User.objects.create_user(email,email,password)
         u.first_name = first_name
         u.last_name = last_name
         u.save()
+
         u_profile = UserProfile(user=u, default_picture=default_picture)
         u_profile.save()
         
