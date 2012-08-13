@@ -311,6 +311,7 @@ class CommentEncoder(json.JSONEncoder):
             return {'user': UserProfileEncoder().default(o.user),
                     'text': o.text,
                     'date_created': o.date_created.strftime('%m/%d/%Y'),
+                    'votes': len(o.votes.all())
                     'businessphoto': o.businessphoto.id,
                     'id': o.id}
         else:

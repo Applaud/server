@@ -883,14 +883,28 @@ def photo_comments(request):
 
 @mobile_view
 @csrf_protect
-def vote_photo(request):
+def vote_comment(request):
     user = request.user.userprofile
     data = json.load(request)
-    photo = models.BusinessPhoto.objects.get(id=data['id'])
+    comment = models.Comment.objects.get(id=data['id'])
     v = models.Vote(positive=True,
                     date_created=datetime.utcnow().replace(tzinfo=utc),
                     user=user)
     v.save()
+    comment.votes.add(v)
+    comment.save()
+    return HttpResponse('')
+
+@mobile_view
+@csrf_protect
+def vote_photo(request):
+    user = request.user.userprofile
+    data = json.load(request)
+    v = models.Vote(positive=True,
+                    date_created=datetime.utcnow().replace(tzinfo=utc),
+                    user=user)
+    v.save()
+    photo = models.BusinessPhoto.objects.get(id=data['id'])
     photo.votes.add(v)
     photo.save()
     return HttpResponse('')
@@ -900,7 +914,9 @@ def vote_photo(request):
 def check_vote(request):
     user = request.user.userprofile
     data = json.load(request)
-    photo = models.BusinessPhoto.objects.get(id=data['id'])
-    if len(photo.votes.filter(user=user)) == 0:
+    # Making the check_vote function general as ALL GETOUT
+    class = eval(data['type'])
+    model = class.objects.get(id=data['id'])
+    if len(model.votes.filter(user=user)) == 0:
         return HttpResponse('yes')
     return HttpResponse('no')
