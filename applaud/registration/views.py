@@ -3,6 +3,8 @@ Views which allow users to create and activate accounts.
 """
 
 
+import Image
+import random
 from datetime import datetime
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -258,6 +260,10 @@ def register(request, backend, success_url=None, form_class=None,
 
                     profile=applaud_models.UserProfile(user=new_user,
                                                        first_time=True)
+
+                    # Give a random profile picture
+                    which = int(random.random()*6) + 1
+                    profile.default_picture = which
                     profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)

@@ -8,13 +8,13 @@ import sys
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 
+from applaud import settings
 import applaud.settings
 from applaud import models
 from django.contrib.auth.models import User, Group
 from random import random
 from applaud import business_views
 from applaud import settings
-import Image
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -38,10 +38,15 @@ keith_user.save()
 userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
+which = int(random()*6) + 1
+userprofile.default_picture = which
 userprofile.save()
+
 userprofile2 = models.UserProfile(user=enduser2,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
+which = int(random()*6) + 1
+userprofile2.default_picture = which
 userprofile2.save()
 
 
@@ -114,7 +119,8 @@ friendlinessw = models.RatedDimension(title='Friendliness',
                                       rating_profile=keith_waiter_profile)
 friendlinessw.save()
 helpfulnessw = models.RatedDimension(title='Helpfulness',
-                                     rating_profile=keith_waiter_profile)
+                                     rating_profile=keith_waiter_profile, 
+                                     is_text = True)
 helpfulnessw.save()
 
 keith_hostess_profile = models.RatingProfile(title='Hostess', business=keith_business)
@@ -167,6 +173,10 @@ emp_user5 = User.objects.create_user('LaLa', 'lala@aol.com', 'apatapa')
 emp_user5.first_name = 'Sarah'
 emp_user5.last_name = 'Jane'
 emp_user5.save()
+emp_user7 = User.objects.create_user('luke', 'llovett@cs.oberlin.edu', 'apatapa')
+emp_user7.first_name = 'Luke'
+emp_user7.last_name = 'Lovett'
+emp_user7.save()
 
 
 # Make a few Employees.
@@ -247,6 +257,10 @@ sarah = models.EmployeeProfile(business=keith_business,
                                rating_profile=keith_waiter_profile,
                                bio='I grew up in Mill Valley and I hope to never leave. I would love to start my own chocolate studio.')
 sarah.save()
+luke = models.EmployeeProfile(business=keith_business,
+                              user=emp_user7,
+                              rating_profile=keith_waiter_profile)
+luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
@@ -354,20 +368,177 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
-keith_photo = models.BusinessPhoto(business=keith_business,
-                                   tags=['tag', 'tagged', 'mystical'],
-                                   uploaded_by=userprofile)
-keith_photo.save()
-business_views.save_image(keith_photo.image,
-                          'keith_photo_test.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+# Make a poll
+poll1 = models.Poll(title="Where should the next Pacific Catch be located?",
+                   business=keith_business,
+                   options=['Burlingame', 'Orinda', 'Lucas Valley'])
+poll1.save()
 
-keith_photo2 = models.BusinessPhoto(business=keith_business,
-                                   tags=['foo', 'bar'],
-                                   uploaded_by=userprofile2)
-business_views.save_image(keith_photo2.image,
-                          'keith_photo_numero_dos.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+poll2 = models.Poll(title="What is your favorite tropical location?",
+                   business=keith_business,
+                   options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
+poll2.save()
+
+poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
+                   business=keith_business,
+                   options=['Snorkeling', 'Scuba'])
+poll3.save()
+
+poll4 = models.Poll(title="Would you prefer a special for:",
+                   business=keith_business,
+                   options=['Drinks', 'Sushi', 'Tacos'])
+poll4.save()
+
+poll5 = models.Poll(title="What live music would you prefer?",
+                   business=keith_business,
+                   options=['Jazz', 'Blues', 'Rock', 'Classical'])
+poll5.save()
+
+poll6 = models.Poll(title="Would you like our food to be:",
+                   business=keith_business,
+                   options=['More Spicy', 'Less Spicy', 'It\'s Perfect!'])
+poll6.save()
+
+# Function to make a repsonse to a poll
+# First parameter is the poll object, second is te response to choose
+def create_poll_response(poll, value):
+    pr = models.PollResponse(user=userprofile2,
+                             value=value,
+                             poll=poll,
+                             date_created=datetime.utcnow().replace(tzinfo=utc))
+    pr.save()
+
+# Create a lot of poll responses
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+
+
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+
+    
+# Make a thread
+thread = models.Thread(title="Tell us about your favorite recipe.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread.save()
+
+# Make a thread post
+post = models.ThreadPost(body="Snakes, snails, puppy-dog tails.",
+                         user=userprofile,
+                         thread=thread)
+post.save()
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
