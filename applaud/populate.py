@@ -173,6 +173,10 @@ emp_user5 = User.objects.create_user('LaLa', 'lala@aol.com', 'apatapa')
 emp_user5.first_name = 'Sarah'
 emp_user5.last_name = 'Jane'
 emp_user5.save()
+emp_user7 = User.objects.create_user('luke', 'llovett@cs.oberlin.edu', 'apatapa')
+emp_user7.first_name = 'Luke'
+emp_user7.last_name = 'Lovett'
+emp_user7.save()
 
 
 # Make a few Employees.
@@ -253,6 +257,10 @@ sarah = models.EmployeeProfile(business=keith_business,
                                rating_profile=keith_waiter_profile,
                                bio='I grew up in Mill Valley and I hope to never leave. I would love to start my own chocolate studio.')
 sarah.save()
+luke = models.EmployeeProfile(business=keith_business,
+                              user=emp_user7,
+                              rating_profile=keith_waiter_profile)
+luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
