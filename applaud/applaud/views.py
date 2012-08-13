@@ -166,11 +166,15 @@ class UserProfileEncoder(json.JSONEncoder):
         else:
             profile_picture = settings.MEDIA_URL + "user_profpics/userpic%d.png"%o.default_picture
         if isinstance(o, models.UserProfile):
+            birthday = ''
+            if o.date_of_birth is not None:
+                birthday = o.date_of_birth.strftime("%m/%d/%Y")
+
             return {'first_name':o.user.first_name,
                     'last_name':o.user.last_name,
                     'username':o.user.username,
                     'profile_picture':profile_picture,
-                    'birth':o.date_of_birth.strftime("%m/%d/%Y"),
+                    'birth':birthday,
                     'id':o.id}
         else:
             return json.JSONEncoder.default(self, o)

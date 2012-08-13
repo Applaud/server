@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
 from django.core.urlresolvers import reverse
 import urllib2
+from django.middleware.csrf import get_token
 from registration.backends import get_backend
 from django.middleware.csrf import get_token
 import forms
@@ -23,6 +24,7 @@ import json
 from django.utils.timezone import utc
 import sys
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 
 @csrf_protect
 def activate(request, backend,
