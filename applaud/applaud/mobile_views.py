@@ -920,3 +920,38 @@ def check_vote(request):
     if len(model.votes.filter(user=user)) == 0:
         return HttpResponse('yes')
     return HttpResponse('no')
+
+def check_email(request):
+    ret = {}
+    if request.method == 'GET':
+        username = request.GET['email'].lower()
+        try:
+            user = User.objects.get(username=username)
+            ret['does_exist'] = True
+        except User.DoesNotExist:
+            ret['does_exist'] = False
+
+    return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+def register(request):
+    """ Register a user from a mobile device"""
+    if request.method == 'GET':
+        token=get_token(request)
+        return HttpResponse(token)
+        
+    if request.method == 'POST':
+        data = json.load(request)
+        first_name = data['first_name']
+        last_name = data['last_name']
+        email = data['email'].lower()
+        password= data['password']
+
+        u = User.objects.create_user(email,email,password)
+        u.first_name = first_name
+        u.last_name = last_name
+        u.save()
+        u_profile = UserProfile(user=u)
+        u_profile.save()
+        
+    return HttpResponse('')

@@ -49,8 +49,11 @@ urlpatterns = patterns('',
                        url(r'^vote_photo/$', views.vote_photo),
                        url(r'^vote_comment/$', views.vote_comment),
                        url(r'^check_vote/$', views.check_vote),
+
+                       # Registering
+                       url(r'^check_email/$', views.check_email),
+                       url(r'^register/$', views.register),
                        
                        # Getting the CSRF token for mobile devices
                        url(r'^newsfeed/$',views.nfdata),
-
                        )                      
