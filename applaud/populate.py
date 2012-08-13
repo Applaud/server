@@ -29,6 +29,22 @@ enduser2.first_name="John"
 enduser2.last_name="Harris"
 enduser2.save()
 
+enduser3 = User.objects.create_user('ravi', 'mamabear@berensteinbears.com', 'apatapa')
+enduser3.first_name="Ravi"
+enduser3.last_name="Ramachandran"
+enduser3.save()
+
+enduser4 = User.objects.create_user('peter', 'mamabear@berensteinbears.com', 'apatapa')
+enduser4.first_name="Peter"
+enduser4.last_name="Fogg"
+enduser4.save()
+
+enduser5 = User.objects.create_user('wyatt', 'mamabear@berensteinbears.com', 'apatapa')
+enduser5.first_name="Wyatt"
+enduser5.last_name="Hayman"
+enduser5.save()
+
+
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
 keith_user.first_name = 'Keith'
 keith_user.last_name = 'Cox'
@@ -39,15 +55,30 @@ userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-userprofile.default_picture = which
+userprofile.default_picture = 1
 userprofile.save()
 
 userprofile2 = models.UserProfile(user=enduser2,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-userprofile2.default_picture = which
+userprofile2.default_picture = 2
 userprofile2.save()
+
+userprofile3 = models.UserProfile(user=enduser3,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile3.default_picture = 3
+userprofile3.save()
+
+
+userprofile4 = models.UserProfile(user=enduser4,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile4.default_picture = 4
+userprofile4.save()
 
 
 # Make a BusinessProfile.
@@ -368,29 +399,245 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
+# Votes
+vote1 = models.Vote(user=userprofile2)
+vote1.save()
+
+vote2 = models.Vote(user=userprofile2)
+vote2.save()
+
+vote3 = models.Vote(user=userprofile3)
+vote3.save()
+
+
 # Make a poll
-poll = models.Poll(title="What is your favorite color?",
+poll1 = models.Poll(title="Where should the next Pacific Catch be located?",
                    business=keith_business,
-                   options=["Maroon","Violet","Purple","Bishops Purple"])
-poll.save()
-# Some responses to the poll
-pr = models.PollResponse(user=userprofile2,
-                         value=3,
-                         poll=poll,
-                         date_created=datetime.utcnow().replace(tzinfo=utc))
-pr.save()
+                   options=['Burlingame', 'Orinda', 'Lucas Valley'])
+poll1.save()
+
+poll2 = models.Poll(title="What is your favorite tropical location?",
+                   business=keith_business,
+                   options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+poll2.save()
+
+poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
+                   business=keith_business,
+                   options=['Snorkeling', 'Scuba'])
+poll3.save()
+
+poll4 = models.Poll(title="Would you prefer a special for:",
+                   business=keith_business,
+                   options=['Drinks', 'Sushi', 'Tacos'])
+poll4.save()
+
+poll5 = models.Poll(title="What live music would you prefer?",
+                   business=keith_business,
+                   options=['Jazz', 'Blues', 'Rock', 'Classical'])
+poll5.save()
+
+poll6 = models.Poll(title="Would you like our food to be:",
+                   business=keith_business,
+                   options=['More Spicy', 'Less Spicy', 'It\'s Perfect!'])
+poll6.save()
+
+# Function to make a repsonse to a poll
+# First parameter is the poll object, second is te response to choose
+def create_poll_response(poll, value):
+    pr = models.PollResponse(user=userprofile2,
+                             value=value,
+                             poll=poll,
+                             date_created=datetime.utcnow().replace(tzinfo=utc))
+    pr.save()
+    
+
+# Create a lot of poll responses
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+
+
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+
+
     
 # Make a thread
-thread = models.Thread(title="Tell us about your favorite recipe.",
+thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
                        user_creator=userprofile2,
                        business=keith_business)
+thread.votes.add(vote1)
+thread.save()
+
+
+# Make a thread post
+post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
+                         user=userprofile2,
+                         thread=thread)
+post1.save()
+
+post2 = models.ThreadPost(body="Garlic and cumin may be sweet additions to that",
+                         user=userprofile3,
+                         thread=thread)
+post2.save()
+
+
+# Make a thread
+thread2 = models.Thread(title="Fun drink ideas.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+thread.votes.add(vote1)
 thread.save()
 
 # Make a thread post
-post = models.ThreadPost(body="Snakes, snails, puppy-dog tails.",
+post1 = models.ThreadPost(body="Rum, tequila, orange juice, cranberry juice, blended",
+                         user=userprofile2,
+                         thread=thread2)
+post1.save()
+
+post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
+                         user=userprofile3,
+                         thread=thread2)
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+post2.save()
+
+post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
+                         user=userprofile4,
+                         thread=thread2)
+post3.save()
+
+
+post4 = models.ThreadPost(body="Thanks! I made it up.  I call it a Plains because it refreshes like an open plain with a summer breeze.",
+                         user=userprofile3,
+                         thread=thread2)
+post4.save()
+
+post5 = models.ThreadPost(body="Just ordered one! They gave it to me for free because it came recommended on apatapa! Loved it!! Thanks for the tip",
+                         user=userprofile4,
+                         thread=thread2)
+post5.save()
+
+post6 = models.ThreadPost(body="I've had something like that before - but haven't in a long time! Tried it again FOR FREE thanks to you, Ravi!",
                          user=userprofile,
-                         thread=thread)
-post.save()
+                         thread=thread2)
+post6.save()
+
+
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)

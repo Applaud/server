@@ -3,6 +3,15 @@
 {% block links %}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}registration.css" />
 {% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+  $(document).ready( function(){
+
+
+  });
+</script>
+{% endblock %}
 {% block navbar %}
 {% endblock %}
 {% block content %}
@@ -10,24 +19,29 @@
   <div id="login-box">
     
     <div id="login-header">
-      <h1>Apatapa</h1>
-    </div>
-    
-    <div id="login-form">
-      <form method="post" action="." class="centerform">
-        {% csrf_token %}
-        <p><label for="id_username">Username:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
-        <p><label for="id_password">Password:</label> <input type="password" name="password" id="id_password" /></p>
-        <input class="btn" type="submit" value="{% trans 'Log in' %}" />
-        <input type="hidden" name="next" value="{{ next }}" />
-      </form>
-    </div>
-      
-    <div class="login-extra">
-      <p>{% trans "Forgot password" %}? <a href="{% url auth_password_reset %}">{% trans "Reset it" %}</a>!</p>
-      <p>{% trans "Not member" %}? <a href="{% url registration_register %}">{% trans "Register" %}</a>!</p>
+       <!-- <h1>Apatapa</h1> -->
+       <img src="/media/Logo340.png" alt="Apatapa" />
     </div>
 
+    <div id="login-main">
+    
+      <div id="login-form">
+        <form method="post" action="." class="centerform">
+          {% csrf_token %}
+          <p><label for="id_username">Username:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
+          <p><label for="id_password">Password:</label> <input type="password" name="password" id="id_password" /></p>
+          <input class="btn btn-primary btn-large" type="submit" value="{% trans 'Log in' %}" />
+          <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+      </div>
+      
+      <div id="login-extra">
+        <p><a href="{% url registration_register %}">Register!</a></p> 
+       <p><a href="{% url auth_password_reset %}">Forgot Password?</a></p>
+      </div>
+
+    </div>
+    
   </div>
 </div>
 {% endblock %}

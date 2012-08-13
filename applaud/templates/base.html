@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   {% load i18n %}
   <head>
@@ -13,6 +13,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}functions.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-dropdown.js"></script>
     <script type="text/javascript" >
       /**
       * URLS
@@ -39,10 +40,10 @@
       var list_newsfeed_url = "{% url business_newsfeed_list %}";
       var manage_newsfeed_url = "{% url business_manage_newsfeed %}";
 
-// Control Panel URL
-var control_panel_home = "{% url business_control_panel %}"
-var get_employee_info_url = "{% url business_get_employee_info %}"
-var toggle_photo_url = "{% url business_toggle_photo %}"
+      // Control Panel URL
+      var control_panel_home = "{% url business_control_panel %}"
+      var get_employee_info_url = "{% url business_get_employee_info %}"
+      var toggle_photo_url = "{% url business_toggle_photo %}"
 
       //Business Analytics URL
       var business_stats_url ="{% url business_stats %}"
@@ -72,7 +73,7 @@ var toggle_photo_url = "{% url business_toggle_photo %}"
 		<li class="divider-vertical"></li>
 		<li><a href="{% url analytics %}">Stats</a></li>
 		<li class="divider-vertical"></li>
-		<li><a href="{% url business_control_panel %}">Control Panel</a></li>
+		<li id="control-panel-nav"><a href="{% url business_control_panel %}">Control Panel</a></li>
 		<li class="divider-vertical"></li>
 		<li><a href="/messages">Messages</a></li>
 		<li class="divider-vertical"></li>
@@ -83,10 +84,12 @@ var toggle_photo_url = "{% url business_toggle_photo %}"
 	    {% endblock %}
 	    {% if user.is_authenticated %}
 	    <div class="btn-group pull-right">
-	      <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
+
+	      <button id="logout" class="btn btn-inverse dropdown-toggle" href="#" data-toggle="dropdown">
 		{{ user.first_name }} {{ user.last_name }}
 		<span class="caret"></span>
-	      </a>
+	      </button>
+
 	      <ul class="dropdown-menu">
 		<li><a href="#">Profile</a></li>
 		<li class="divider"></li>
@@ -98,6 +101,11 @@ var toggle_photo_url = "{% url business_toggle_photo %}"
 	</div>
       </div>
       {% endblock %}
+
+      <div id="overview">
+	{% block overview %}
+	{% endblock %}
+      </div>
       
       
       <div id="messages">
@@ -120,16 +128,18 @@ var toggle_photo_url = "{% url business_toggle_photo %}"
 	{% block content %}
 	{% endblock %}
       </div>
-    </div>      
+    </div>
+
+
+    
     {% block footer %}
-    <div id="footer">
-      <div id="copyright">
-	All rights reserved - copyright 2012
-      </div>
-      
-      <div id="contact">
-	<a href="mailto:pfogg@oberlin.edu">Contact</a>
-      </div>
+    <div id="footer" class="footer">
+      &#169 Apatapa 2012    
+      <a href="http://www.apatapablog.com">Blog |</a>
+      <a href="/overview/#about">About |</a>
+      <a href="/overview/#terms">Terms & Conditions | </a>
+      <a href="/overview/#privacy">Privacy Policy | </a>
+      <a href="mailto:wyatthayman@gmail.com">Contact</a>
     </div>
     {% endblock %}
     

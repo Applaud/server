@@ -259,7 +259,7 @@ class Survey(models.Model):
         self.validate()
 
     def validate(self):
-        # Every survey has a "General Feedback" question
+        #Every survey has a "General Feedback" question
         general_feedback_questions = list(self.question_set.filter(general_feedback=True))
         if len(general_feedback_questions) == 0:
             q = Question(label=FEEDBACK_LABEL,
@@ -454,7 +454,7 @@ class Inbox(models.Model):
         return str(self.user)
 
 class Vote(models.Model):
-    positive = models.BooleanField()
+    positive = models.BooleanField(default=1)
     date_created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('UserProfile')
 

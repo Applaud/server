@@ -21,7 +21,6 @@ time, mark, audio, video {
   margin: 0;
   padding: 0;
   border: 0;
-  font: inherit;
   vertical-align: baseline; }
 
 /* HTML5 display-role reset for older browsers */
@@ -32,10 +31,8 @@ footer, header, hgroup, menu, nav, section {
 body {
   line-height: 1;
   background-image: url("/static/SmallTile.png");
-  background-size: 100%;
-  background-height: 100%;
-  background-repeat: no-repeat;
-  background-attachment: fixed; }
+  background-color: rbga(255, 255, 255, 0.5);
+  background-size: 1100px; }
 
 ol, ul {
   list-style: none; }
@@ -57,14 +54,46 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-html {
-  font-family: "Helvetica", sans-serif; }
+html, body {
+  font-family: "Helvetica", sans-serif;
+  min-height: 100%; }
 
 #main {
-  margin-top: 50px;
+  margin-top: 60px;
   width: 1000px;
   margin-left: auto;
   margin-right: auto; }
+
+#footer {
+  position: relative;
+  bottom: 0px;
+  display: block; }
+
+.navbar-inner li {
+  margin-bottom: -10px;
+  font-size: 12px; }
+.navbar-inner .brand {
+  margin-bottom: -10px; }
+
+#logout {
+  font-size: 12px; }
+  #logout span {
+    color: white;
+    border-bottom-color: #fff;
+    border-top-color: #fff; }
+
+#overview {
+  margin: 100px;
+  width: 100%; }
+  #overview #overview_content {
+    margin-left: 70px;
+    background-color: #fff;
+    -moz-box-shadow: 0px 0px 2px #cccccc;
+    -webkit-box-shadow: 0px 0px 2px #cccccc;
+    box-shadow: 0px 0px 2px #cccccc;
+    padding: 30px;
+    border-radius: 5px;
+    height: 100%; }
 
 html {
   font-family: "Helvetica", sans-serif; }
@@ -244,10 +273,10 @@ h2 {
       border-radius: 5px; }
 
 #sticky {
-  font-family: 'The Girl Next Door', 'Marker Felt', cursive;
+  font-family: 'Helvetica', sans-serif;
   background-color: #fff490;
   width: 200px;
-  font-size: 20px;
+  font-size: 16px;
   padding: 20px;
   -moz-box-shadow: 0px 10px 8px #aaaaaa;
   -webkit-box-shadow: 0px 10px 8px #aaaaaa;

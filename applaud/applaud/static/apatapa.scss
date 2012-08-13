@@ -31,11 +31,8 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
     background-image: url("/static/SmallTile.png");
-    background-size: 100%;
-    background-height: 100%;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     background-color:rbga(255,255,255,0.5);
+    background-size:1100px;
 }
 
 ol, ul {
@@ -81,8 +78,9 @@ $mainpadding: 15px;		// padding for main content
 	background:-moz-linear-gradient(90deg, $startColor, $endColor);
 }
 
-body {
+html, body {
     font-family:"Helvetica", sans-serif;
+    min-height:100%;
 }
 
 #main {
@@ -94,7 +92,38 @@ body {
 }
 
 #footer {
-    position:absolute;
+    position:relative;
     bottom:0px;
     display:block;
+}
+
+.navbar-inner {
+    li {
+	margin-bottom:-10px;
+	font-size:12px;
+    }
+    .brand {
+	margin-bottom:-10px;
+    }
+}
+#logout {
+    font-size:12px;
+    span {
+	color:white;
+	border-bottom-color:#fff;
+	border-top-color:#fff;
+    }
+}
+
+#overview{
+    margin:100px;
+    width:100%;
+    #overview_content {
+	margin-left:70px;
+	background-color:#fff;
+	@include shadow(2px);
+	padding:30px;
+	border-radius:5px;
+	height:100%;
+    }
 }
