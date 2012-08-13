@@ -29,6 +29,18 @@ enduser2.first_name="John"
 enduser2.last_name="Harris"
 enduser2.save()
 
+enduser3 = User.objects.create_user('ravi', 'mamabear@berensteinbears.com', 'apatapa')
+enduser3.first_name="Ravi"
+enduser3.last_name="Ramachandran"
+enduser3.save()
+
+enduser4 = User.objects.create_user('peter', 'mamabear@berensteinbears.com', 'apatapa')
+enduser4.first_name="Peter"
+enduser4.last_name="Fogg"
+enduser4.save()
+
+
+
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
 keith_user.first_name = 'Keith'
 keith_user.last_name = 'Cox'
@@ -39,15 +51,24 @@ userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-userprofile.default_picture = which
+userprofile.default_picture = 1
 userprofile.save()
 
 userprofile2 = models.UserProfile(user=enduser2,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
 which = int(random()*6) + 1
-userprofile2.default_picture = which
+userprofile2.default_picture = 2
 userprofile2.save()
+
+userprofile3 = models.UserProfile(user=enduser3,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile3.default_picture = 3
+userprofile3.save()
+
+
 
 
 # Make a BusinessProfile.
@@ -381,16 +402,21 @@ pr = models.PollResponse(user=userprofile2,
 pr.save()
     
 # Make a thread
-thread = models.Thread(title="Tell us about your favorite recipe.",
+thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
                        user_creator=userprofile2,
                        business=keith_business)
 thread.save()
 
 # Make a thread post
-post = models.ThreadPost(body="Snakes, snails, puppy-dog tails.",
-                         user=userprofile,
+post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
+                         user=userprofile2,
                          thread=thread)
-post.save()
+post1.save()
+
+post2 = models.ThreadPost(body="Garlic and cumin may be sweet additions to that",
+                         user=userprofile3,
+                         thread=thread)
+post2.save()
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)
