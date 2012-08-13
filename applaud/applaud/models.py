@@ -259,7 +259,7 @@ class Survey(models.Model):
         self.validate()
 
     def validate(self):
-        # Every survey has a "General Feedback" question
+        #Every survey has a "General Feedback" question
         general_feedback_questions = list(self.question_set.filter(general_feedback=True))
         if len(general_feedback_questions) == 0:
             q = Question(label=FEEDBACK_LABEL,
