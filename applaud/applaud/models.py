@@ -76,7 +76,7 @@ class Poll(models.Model):
     options = SerializedStringsField()
 
     # When this poll was created
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
 
     # User who created the poll, if there was one
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
@@ -98,7 +98,7 @@ class PollResponse(models.Model):
 #
 class Thread(models.Model):
     title = models.CharField(max_length=200)
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
     business = models.ForeignKey('BusinessProfile')
 
@@ -112,7 +112,7 @@ class Thread(models.Model):
 class ThreadPost(models.Model):
     body = models.CharField(max_length=2000)
     user = models.ForeignKey('UserProfile')
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     thread = models.ForeignKey('Thread')
 
     # Rating of this ThreadPost (how well-liked it is)

@@ -68,7 +68,7 @@ class SimplePollEncoder(json.JSONEncoder):
                     'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
                     'responses':responses,
                     'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
-                    'user_rating':user_rating,
+                    'upvotes':user_rating,
                     'business_id':o.business.id,
                     'id':o.id }
             return res
