@@ -119,7 +119,8 @@ friendlinessw = models.RatedDimension(title='Friendliness',
                                       rating_profile=keith_waiter_profile)
 friendlinessw.save()
 helpfulnessw = models.RatedDimension(title='Helpfulness',
-                                     rating_profile=keith_waiter_profile)
+                                     rating_profile=keith_waiter_profile, 
+                                     is_text = True)
 helpfulnessw.save()
 
 keith_hostess_profile = models.RatingProfile(title='Hostess', business=keith_business)
