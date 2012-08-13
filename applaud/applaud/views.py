@@ -146,7 +146,7 @@ class EmployeeEncoder(json.JSONEncoder):
                 image_url = settings.MEDIA_URL+image_url
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
-		   'bio':o.bio,
+		   'bio':o.bio if o.bio else "",
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimension_list},
