@@ -60,7 +60,7 @@ class SimplePollEncoder(json.JSONEncoder):
                 counter += 1
 
             for i in range(len(responses)):
-                int rank = 1
+                rank = 1
                 for j in range(len(responses)):
                     if responses[j]["count"] > responses[i]["count"]:
                         rank+=1
