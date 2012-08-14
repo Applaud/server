@@ -58,7 +58,14 @@ class SimplePollEncoder(json.JSONEncoder):
                 responses.append({"title":option,
                                   "count":len(models.PollResponse.objects.filter(poll=o, value=counter))})
                 counter += 1
-    
+
+            for i in range(len(responses)):
+                int rank = 1
+                for j in range(len(responses)):
+                    if responses[j]["count"] > responses[i]["count"]:
+                        rank+=1
+                responses[i]["rank"] = rank
+                
             votes = o.votes.all()
             user_rating = 0
             for v in votes:

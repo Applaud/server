@@ -611,9 +611,10 @@ post1.save()
 post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
                          user=userprofile3,
                          thread=thread2)
+post2.save()
 thread.votes.add(vote2)
 thread.votes.add(vote3)
-post2.save()
+thread.save()
 
 post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
                          user=userprofile4,
