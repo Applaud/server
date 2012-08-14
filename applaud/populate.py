@@ -578,7 +578,8 @@ thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
                        business=keith_business)
 thread.save()
 thread.votes.add(vote1)
-thread.save()
+thread.votes.add(vote2)
+thread.votes.add(vote3)
 
 # Make a thread post
 post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
@@ -600,7 +601,6 @@ thread2.save()
 thread2.votes.add(vote2)
 thread2.votes.add(vote3)
 thread2.votes.add(vote1)
-thread2.save()
 
 # Make a thread post
 post1 = models.ThreadPost(body="Rum, tequila, orange juice, cranberry juice, blended",
