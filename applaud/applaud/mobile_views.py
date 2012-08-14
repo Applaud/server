@@ -966,5 +966,5 @@ def set_profile_picture(request):
     user = request.user.userprofile
     photo = request.FILES['image']
     filename = '%d_%s' % (user.id, user.user.username)
-    save_image(user.profile_picture, filename, photo)
+    save_image(user.profile_picture, filename, photo, thumbnail=True)
     return HttpResponse('')
