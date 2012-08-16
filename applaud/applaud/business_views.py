@@ -809,7 +809,7 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             # feed_image = feed_image.crop(box)
         else:
             #Landscape
-            
+            pass
             # ratio = width/height
             # new_height = thumbnail_size
             # new_width = thumbnail_size*ratio
