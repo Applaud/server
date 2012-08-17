@@ -68,9 +68,6 @@ def whereami(request):
 
     to_parse = json.loads(from_goog.read())
     business_list = []
-    print "to_parse is....."
-    print to_parse
-
 
     for entry in to_parse["results"]:
         business_list.append({
@@ -467,7 +464,7 @@ def _make_inactive_business(checkin_location):
         q1.save()
         qt = models.Question(label='How do you think technology could improve %s?' %business.business_name, type='TA', survey=survey)
         qt.save()
-        
+}        
     return business
 
 def _encode_poll(poll, user):
@@ -879,9 +876,18 @@ def photo_comments(request):
     """
     Return all the comments for a photo as JSON.
     """
-    photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
+    photo = model.BusinessPhoto.objects.get(id=request.GET['photo'])
     encoder = CommentEncoder()
-    return HttpResponse(json.dumps([encoder.default(c) for c in photo.comment_set.all()]))
+    user = request.user.userprofile
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(photo.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+        
+    return HttpResponse(json.dumps(comments))
 
 @mobile_view
 @csrf_protect
