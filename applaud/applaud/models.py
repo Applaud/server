@@ -342,6 +342,13 @@ class BusinessProfile(models.Model):
     # up at the top of this file.
     primary_color = models.CharField(default=settings.DEFAULT_PRIMARY_COLOR,max_length=7)
     secondary_color = models.CharField(default=settings.DEFAULT_SECONDARY_COLOR,max_length=7)
+    
+    # Which of the features are active for this business?
+    isApplaud = models.BooleanField(default=1)
+    isNewsfeed = models.BooleanField(default=1)
+    isMingle = models.BooleanField(default=1)
+    isPolls = models.BooleanField(default=1)
+    isPhotos = models.BooleanField(default=1)
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
