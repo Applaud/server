@@ -464,6 +464,6 @@ class Vote(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey('UserProfile')
     text = models.CharField(max_length=1000)
-    date_created = models.DateTimeField()
+    date_created = models.DateTimeField(auto_now=True)
     votes = models.ManyToManyField('Vote')
     businessphoto = models.ForeignKey('BusinessPhoto', blank=True, null=True)

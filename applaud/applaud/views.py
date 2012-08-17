@@ -192,6 +192,11 @@ class BusinessProfileEncoder(json.JSONEncoder):
                    'logo': logo_url,
                    'primary': o.primary_color,
                    'secondary': o.secondary_color,
+                   'features':{"newsfeed":"yes",
+                               "applaud":"yes",
+                               "polls":"yes", 
+                               "mingle":"yes",
+                               "photos":"yes"},
                    'generic': not o.user.is_active}
             return res
         else:

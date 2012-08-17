@@ -94,12 +94,10 @@ def checkin(request):
 	    business = BusinessProfile.objects.get(goog_id=checkin_location['goog_id'])
 	except BusinessProfile.DoesNotExist:
             # Make an inactive business account
-            print "exception found...."
             business = _make_inactive_business(checkin_location)
         
         ret = json.dumps(business, cls=BusinessProfileEncoder)
-        print "ret is....."
-        print ret
+
 	return HttpResponse(ret)
 
 
@@ -117,8 +115,6 @@ def _make_inactive_business(checkin_location):
     business_user.save()
     business.user = business_user
     business.save()
-    print "goog_id of business just created is...."+checkin_location['goog_id']
-    print "about to create survey"
     survey = models.Survey(title='Feedback',
                            description='We would love to hear your thoughts on how we can improve our business.',
                            business=business)
