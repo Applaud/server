@@ -870,6 +870,7 @@ def comment_photo(request):
                        date_created=datetime.utcnow().replace(tzinfo=utc),
                        businessphoto=photo)
     c.save()
+    encoder = CommentEncoder()
     comments = []
     for c in photo.comment_set.all():
         new_c = encoder.default(c)
