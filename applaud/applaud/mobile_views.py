@@ -884,7 +884,7 @@ def photo_comments(request):
     """
     Return all the comments for a photo as JSON.
     """
-    photo = model.BusinessPhoto.objects.get(id=request.GET['photo'])
+    photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
     encoder = CommentEncoder()
     user = request.user.userprofile
     comments = []
