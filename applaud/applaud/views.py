@@ -203,11 +203,11 @@ class BusinessProfileEncoder(json.JSONEncoder):
                    'logo': logo_url,
                    'primary': o.primary_color,
                    'secondary': o.secondary_color,
-                   'features':{"newsfeed":"yes",
-                               "applaud":"yes",
-                               "polls":"yes", 
-                               "mingle":"yes",
-                               "photos":"yes"},
+                   'features':{"newsfeed":"1",
+                               "applaud":"1",
+                               "polls":"1", 
+                               "mingle":"1",
+                               "photos":"1"},
                    'generic': not o.user.is_active}
             return res
         else:
