@@ -874,7 +874,7 @@ def comment_photo(request):
     comments = []
     for c in photo.comment_set.all():
         new_c = encoder.default(c)
-        if(len(photo.votes.filter(user=user)) < 1):
+        if(len(c.votes.filter(user=user)) < 1):
             new_c['has_voted'] = 0
         else:
             new_c['has_voted'] = 1
@@ -891,7 +891,7 @@ def photo_comments(request):
     comments = []
     for c in photo.comment_set.all():
         new_c = encoder.default(c)
-        if(len(photo.votes.filter(user=user)) < 1):
+        if(len(c.votes.filter(user=user)) < 1):
             new_c['has_voted'] = 0
         else:
             new_c['has_voted'] = 1
