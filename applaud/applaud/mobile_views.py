@@ -11,6 +11,7 @@ import settings
 import sys
 import json
 import urllib2
+import random
 from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
@@ -18,6 +19,7 @@ from registration import forms as registration_forms
 from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
+import random
 
 # 'mobile_view' decorator.
 def mobile_view(view):
@@ -66,9 +68,6 @@ def whereami(request):
 
     to_parse = json.loads(from_goog.read())
     business_list = []
-    print "to_parse is....."
-    print to_parse
-
 
     for entry in to_parse["results"]:
         business_list.append({
@@ -867,7 +866,16 @@ def comment_photo(request):
                        date_created=datetime.utcnow().replace(tzinfo=utc),
                        businessphoto=photo)
     c.save()
-    return HttpResponse(json.dumps(c, cls=CommentEncoder))
+    encoder = CommentEncoder()
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(c.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+        comments.append(new_c)
+    return HttpResponse(json.dumps(comments))
 
 def photo_comments(request):
     """
@@ -875,7 +883,17 @@ def photo_comments(request):
     """
     photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
     encoder = CommentEncoder()
-    return HttpResponse(json.dumps([encoder.default(c) for c in photo.comment_set.all()]))
+    user = request.user.userprofile
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(c.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+        comments.append(new_c)
+
+    return HttpResponse(json.dumps(comments))
 
 @mobile_view
 @csrf_protect
@@ -942,12 +960,23 @@ def register(request):
         last_name = data['last_name']
         email = data['email'].lower()
         password= data['password']
+        default_picture = random.randint(1, 6)
 
         u = User.objects.create_user(email,email,password)
         u.first_name = first_name
         u.last_name = last_name
         u.save()
-        u_profile = UserProfile(user=u)
+
+        u_profile = UserProfile(user=u, default_picture=default_picture)
         u_profile.save()
         
+    return HttpResponse('')
+
+@csrf_protect
+@mobile_view
+def set_profile_picture(request):
+    user = request.user.userprofile
+    photo = request.FILES['image']
+    filename = '%d_%s' % (user.id, user.user.username)
+    save_image(user.profile_picture, filename, photo, thumbnail=True)
     return HttpResponse('')
