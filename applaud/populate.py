@@ -100,6 +100,7 @@ keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         goog_id='8eaccc6443d4a16442baf5f3a0bd527594105436', business_name="Chambers Landing Bar & Grill",
                                         primary_color = '#e83723',
                                         secondary_color = '#aaaaaa')
+keith_business.isApplaud = False
 keith_business.save()
 
 
