@@ -464,7 +464,7 @@ def _make_inactive_business(checkin_location):
         q1.save()
         qt = models.Question(label='How do you think technology could improve %s?' %business.business_name, type='TA', survey=survey)
         qt.save()
-}        
+        
     return business
 
 def _encode_poll(poll, user):
@@ -870,7 +870,15 @@ def comment_photo(request):
                        date_created=datetime.utcnow().replace(tzinfo=utc),
                        businessphoto=photo)
     c.save()
-    return HttpResponse(json.dumps(c, cls=CommentEncoder))
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(photo.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+
+    return HttpResponse(json.dumps(comments))
 
 def photo_comments(request):
     """
