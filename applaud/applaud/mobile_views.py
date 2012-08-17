@@ -877,7 +877,7 @@ def comment_photo(request):
             new_c['has_voted'] = 0
         else:
             new_c['has_voted'] = 1
-
+        comments.append(new_c)
     return HttpResponse(json.dumps(comments))
 
 def photo_comments(request):
@@ -894,7 +894,8 @@ def photo_comments(request):
             new_c['has_voted'] = 0
         else:
             new_c['has_voted'] = 1
-        
+        comments.append(new_c)
+
     return HttpResponse(json.dumps(comments))
 
 @mobile_view
