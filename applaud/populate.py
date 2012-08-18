@@ -98,8 +98,9 @@ business2.save()
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         latitude='39.073778', longitude='-120.141402',
                                         goog_id='8eaccc6443d4a16442baf5f3a0bd527594105436', business_name="Chambers Landing Bar & Grill",
-                                        primary_color = '#e83723',
-                                        secondary_color = '#aaaaaa')
+                                        primary_color = '#8abbdb',
+                                        secondary_color = '#e3e3e3')
+#keith_business.isApplaud = False
 keith_business.save()
 
 
