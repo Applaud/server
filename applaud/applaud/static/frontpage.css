@@ -61,7 +61,6 @@ body {
 #top-bar-content {
   margin-left: auto;
   margin-right: auto;
-  width: 1200px;
   padding-left: 60px; }
   #top-bar-content img, #top-bar-content a {
     margin-right: 20px; }
@@ -93,11 +92,6 @@ body {
   right: 100px;
   border-radius: 8px; }
 
-#hand_image {
-  z-index: 1;
-  float: left;
-  margin-top: 100px; }
-
 #info {
   width: 400px;
   float: right;
@@ -114,8 +108,12 @@ body {
 
 #info-main {
   font-size: 115%; }
-  #info-main #nav-buttons {
-    margin-top: 15px; }
+  #info-main form #user-select {
+    width: 200px; }
+    #info-main form #user-select p {
+      display: inline; }
+    #info-main form #user-select #user-select-business {
+      float: right; }
 
 #bottom-bar {
   z-index: 100;

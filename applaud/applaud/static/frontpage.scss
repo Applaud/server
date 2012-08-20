@@ -72,7 +72,7 @@ body {
 #top-bar-content {
     margin-left:auto;
     margin-right:auto;
-    width:1200px;
+    //width:1200px;
     padding-left:60px;
     
     img, a {
@@ -114,22 +114,9 @@ body {
     border-radius: 8px;
 }
 
-#myModal {
-
-}
-#video {
-
-}
-
-#hand_image {
-    z-index: 1;
-    float: left;
-    margin-top: 100px;
-}
-
-
+$infoWidth : 400px;
 #info {
-    width:400px;
+    width:$infoWidth;
     float:right;
     margin-right:250px;
     margin-top:50px;
@@ -148,9 +135,18 @@ body {
 
 #info-main {
     font-size:115%;
-    #nav-buttons {
-        margin-top:15px;
-    }    
+    form {
+        #user-select{
+            width:200px;
+            p {
+                display: inline;
+            }
+            #user-select-business{
+                float:right;
+            }
+        }
+                
+    }
 }
 
 

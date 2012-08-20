@@ -7,25 +7,15 @@
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript">
-      $(document).ready( function(){
-          $("#video-button").click( function(){
-              console.log("BLAHHHHHH");
-
-              $('#myModal').modal({
-                  backdrop: true
-              });
-          });
-      });
-    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}frontpage.js"></script>
   </head>
   <body>
 
-    <!-- Modal Start -->
-    <div class="modal hide" id="myModal">
-      <div class="modal-body" id="video">
-	    <button type="button" class="close" data-dismiss="modal">×</button>
-	    <iframe src="http://player.vimeo.com/video/19434428" width="1200" height="600" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+    <!-- <\!-- Modal Start -\-> -->
+    <!-- <div class="modal hide" id="myModal"> -->
+    <!--   <div class="modal-body" id="video"> -->
+	<!--     <button type="button" class="close" data-dismiss="modal">×</button> -->
+	<!--     <iframe src="http://player.vimeo.com/video/19434428" width="1200" height="600" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> -->
       </div>	
     </div>
     <!-- Modal Stop -->
@@ -52,12 +42,32 @@
         <div id="info-head">
           <h2>Connect with your environment</h2>
         </div>
-
+        
         <div id="info-main" class="row">   
           <p>Lorem ipsum, quia dolor sit amet, consectetur, adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
-          <div id="nav-buttons">
-	        <a class="btn btn-large" href="/accounts/member">Register</a>
-          </div>
+          <h3>Register:</h3>
+          <form id="registration-form">
+            <div id="user-select">
+              <span id="user-select-user">
+                <p>User:</p>
+                <input type="radio" name="user-type" value="user" />
+              </span>
+              <span id="user-select-business">
+                <p>Business:</p>
+                <input type="radio" name="user-type" value="business" />
+              </span>
+            </div>
+            <input type="text" value="Email" name="email" class="control-group"/>
+            <input type="text" value="First name" name="first" class="control-group"/>
+            <input type="text" value="Last name (optional)" name="last" class="control-group"/>
+            <input type="text" value="Password" name="password" class="control-group"/><br />
+            <button class=".btn btn-large">Register</button>
+          </form>
+
+          <!-- <div id="nav-buttons"> -->
+	      <!--   <a class="btn btn-large" href="/accounts/member">Register as a user</a> -->
+          <!--   <a class="btn btn-large" href="/accounts/business">Register as a business</a> -->
+          <!-- </div> -->
           <!-- <img src="/media/appStore.jpeg" id="appStore" width="160" height="60">       -->
         </div>
 
