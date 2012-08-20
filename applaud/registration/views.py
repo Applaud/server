@@ -3,6 +3,8 @@ Views which allow users to create and activate accounts.
 """
 
 
+import Image
+import random
 from datetime import datetime
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -12,7 +14,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth
 from django.core.urlresolvers import reverse
 import urllib2
+from django.middleware.csrf import get_token
 from registration.backends import get_backend
+from django.middleware.csrf import get_token
 import forms
 from applaud import models as applaud_models
 from applaud import settings
@@ -20,6 +24,7 @@ import json
 from django.utils.timezone import utc
 import sys
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 
 @csrf_protect
 def activate(request, backend,
@@ -257,6 +262,10 @@ def register(request, backend, success_url=None, form_class=None,
 
                     profile=applaud_models.UserProfile(user=new_user,
                                                        first_time=True)
+
+                    # Give a random profile picture
+                    which = int(random.random()*6) + 1
+                    profile.default_picture = which
                     profile.save()
             if success_url is None:
                 to, args, kwargs = backend.post_registration_redirect(request, new_user)
@@ -298,6 +307,10 @@ def register_user(request, backend, success_url=None, form_class=forms.UserRegis
     return register(request, backend, success_url, form_class, disallowed_url, template_name, profile_type='user')
 
 def mobile_login(request):
+    if request.method == 'GET':
+        token=get_token(request)
+        return HttpResponse(token)
+
     if request.method == 'POST':
         user = auth.authenticate( username=request.POST['username'],
                                   password=request.POST['password'] )

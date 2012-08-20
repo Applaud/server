@@ -204,7 +204,7 @@
       {% for photo in business_profile.businessphoto_set.all %}
       <div class="photo" id="photo_{{ photo.id }}_div">
 	<span class="photo_votes">{{ photo.votes }}</span>
-	<img class="business_photo" src="{{ MEDIA_URL }}{{ photo.image }}" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
+	<img class="business_photo" src="{{ photo.image.url }}" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />
 	<ul class="photo_tags">
 	  {% for tag in photo.tags %}
 	  <li>{{ tag }}</li>

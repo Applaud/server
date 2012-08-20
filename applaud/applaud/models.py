@@ -3,6 +3,7 @@ from django.forms import ValidationError
 from django.db import models
 import json
 from applaud import settings
+import random
 
 #
 # CUSTOM MODEL FIELDS
@@ -54,6 +55,72 @@ class SerializedRatingsField(models.TextField):
         assert(isinstance(value, list) or isinstance(value, tuple))
         return json.dumps(value)
 
+# 
+# POLLS
+#
+class Poll(models.Model):
+    '''Models a poll. A Poll is a user-posed single-select, multiple-choice question
+    for which the results are displayed to the user upon submission.
+    '''
+
+    # Title of the poll
+    title = models.TextField(max_length=100)
+
+    # Rating of this poll (how well-liked it is)
+    votes = models.ManyToManyField('Vote')
+
+    # Business this poll is for
+    business = models.ForeignKey('BusinessProfile')
+
+    # Labels for multiple-choice type questions
+    options = SerializedStringsField()
+
+    # When this poll was created
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    # User who created the poll, if there was one
+    user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+
+class PollResponse(models.Model):
+    '''Models a response to a Poll. See above.
+    '''
+
+    user = models.ForeignKey('UserProfile')
+    value = models.IntegerField()
+    poll = models.ForeignKey('Poll')
+    date_created = models.DateField(blank=True, null=True)
+
+# 
+# MINGLE
+#
+class Thread(models.Model):
+    title = models.CharField(max_length=200)
+    date_created = models.DateTimeField(auto_now_add=True)
+    user_creator = models.ForeignKey('UserProfile', blank=True, null=True)
+    business = models.ForeignKey('BusinessProfile')
+
+    # Rating of this Thread (how well-liked it is)
+    votes = models.ManyToManyField('Vote')
+
+
+    def __unicode__(self):
+        return self.title
+
+class ThreadPost(models.Model):
+    body = models.CharField(max_length=2000)
+    user = models.ForeignKey('UserProfile')
+    date_created = models.DateTimeField(auto_now_add=True)
+    thread = models.ForeignKey('Thread')
+
+    # Rating of this ThreadPost (how well-liked it is)
+    votes = models.ManyToManyField('Vote')
+
+    def __unicode__(self):
+        return self.body[:100] + " ("+self.user.user.first_name+" "+self.user.user.last_name+")"
+
 #
 # EMPLOYEE RATINGS
 #
@@ -91,8 +158,13 @@ class Rating(models.Model):
             return float('%.1f' % round(self.rating_value,1)) if self.rating_value else 0
         
 	def __unicode__(self):
+            if not self.rating_text:
 		return "%s:%s (%s)"%(self.title,
                                      self.rating_value,
+                                     self.date_created.strftime("%d/%m/%Y"))
+            else:
+                return "%s:%s (%s)"%(self.title,
+                                     self.rating_text,
                                      self.date_created.strftime("%d/%m/%Y"))
 
 class RatingProfile(models.Model):
@@ -117,6 +189,13 @@ class RatingProfile(models.Model):
             r = RatedDimension(title='Quality',
                                rating_profile=self)
             r.save()
+
+        if not 'Comments:' in [t.title  for t in self.rateddimension_set.all()]:
+            r = RatedDimension(title='Comments:',
+                               rating_profile=self,
+                               is_text=True)
+            r.save()
+
 
     def __unicode__(self):
         return self.title
@@ -180,7 +259,7 @@ class Survey(models.Model):
         self.validate()
 
     def validate(self):
-        # Every survey has a "General Feedback" question
+        #Every survey has a "General Feedback" question
         general_feedback_questions = list(self.question_set.filter(general_feedback=True))
         if len(general_feedback_questions) == 0:
             q = Question(label=FEEDBACK_LABEL,
@@ -263,6 +342,13 @@ class BusinessProfile(models.Model):
     # up at the top of this file.
     primary_color = models.CharField(default=settings.DEFAULT_PRIMARY_COLOR,max_length=7)
     secondary_color = models.CharField(default=settings.DEFAULT_SECONDARY_COLOR,max_length=7)
+    
+    # Which of the features are active for this business?
+    isApplaud = models.BooleanField(default=1)
+    isNewsfeed = models.BooleanField(default=1)
+    isMingle = models.BooleanField(default=1)
+    isPolls = models.BooleanField(default=1)
+    isPhotos = models.BooleanField(default=1)
 
     # This is used to store the unique ID from Google Places.
     # This is ONLY used to see if we have a location from GP in the Applaud database.
@@ -301,7 +387,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     date_of_birth = models.DateField(blank=True, null=True)
     first_time = models.BooleanField(default=1)
-    
+
+    # Using this to have a default profile picture. This circumvents having to save a new picture
+    # each time we want to use one of the defaults.
+    default_picture = models.IntegerField()
+
+    # The real profile picture. The user uploads this.
+    profile_picture = models.ImageField(blank=True,
+                                        null=True,
+                                        upload_to='user_profpics/')
+
     # Other valuable information that we can get from the user.
     SEX_TYPES = (
         ('Male', 'Male'),
@@ -327,13 +422,16 @@ class BusinessPhoto(models.Model):
     active is a boolean indicating whether or not this photo will be shown to users.
     uploaded_by is the user who uploaded this photo.
     """
-    image = models.ImageField(blank=True, null=True, upload_to=settings.MEDIA_ROOT)
+    image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
+    thumbnail_image = models.ImageField(blank=True, null=True, upload_to='business_photos/')
     business = models.ForeignKey('BusinessProfile')
     tags = SerializedStringsField()
-    upvotes = models.IntegerField(default=0)
-    downvotes = models.IntegerField(default=0)
     active = models.BooleanField(default=0)
     uploaded_by = models.ForeignKey('UserProfile')
+    date_created=models.DateTimeField(blank=True, null=True)
+    votes = models.ManyToManyField('Vote')
+    
+    
 # # This needs to be implemented
 # class CorporateProfile(request):
     
@@ -361,3 +459,18 @@ class Inbox(models.Model):
     user = models.OneToOneField(User)
     def __unicode__(self):
         return str(self.user)
+
+class Vote(models.Model):
+    positive = models.BooleanField(default=1)
+    date_created = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('UserProfile')
+
+    def __unicode__(self):
+        return self.user.user.first_name + self.user.user.last_name + "+" if self.positive else "-"
+
+class Comment(models.Model):
+    user = models.ForeignKey('UserProfile')
+    text = models.CharField(max_length=1000)
+    date_created = models.DateTimeField(auto_now=True)
+    votes = models.ManyToManyField('Vote')
+    businessphoto = models.ForeignKey('BusinessPhoto', blank=True, null=True)

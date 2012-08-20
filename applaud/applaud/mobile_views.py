@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 from applaud.models import RatingProfile, BusinessProfile, EmployeeProfile, RatedDimension, Rating
 from django.template import RequestContext, Template
 from django.contrib.auth.forms import UserCreationForm
@@ -11,13 +11,15 @@ import settings
 import sys
 import json
 import urllib2
+import random
 from applaud import forms
 from applaud import models
 from applaud.models import UserProfile
 from registration import forms as registration_forms
-from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder
+from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, QuestionEncoder, NewsFeedItemEncoder, BusinessPhotoEncoder, SimplePollEncoder, ThreadEncoder, ThreadPostEncoder, CommentEncoder
 from business_views import save_image
 from django.utils.timezone import utc
+import random
 
 # 'mobile_view' decorator.
 def mobile_view(view):
@@ -66,9 +68,6 @@ def whereami(request):
 
     to_parse = json.loads(from_goog.read())
     business_list = []
-    print "to_parse is....."
-    print to_parse
-
 
     for entry in to_parse["results"]:
         business_list.append({
@@ -94,12 +93,10 @@ def checkin(request):
 	    business = BusinessProfile.objects.get(goog_id=checkin_location['goog_id'])
 	except BusinessProfile.DoesNotExist:
             # Make an inactive business account
-            print "exception found...."
             business = _make_inactive_business(checkin_location)
         
         ret = json.dumps(business, cls=BusinessProfileEncoder)
-        print "ret is....."
-        print ret
+
 	return HttpResponse(ret)
 
 
@@ -117,8 +114,6 @@ def _make_inactive_business(checkin_location):
     business_user.save()
     business.user = business_user
     business.save()
-    print "goog_id of business just created is...."+checkin_location['goog_id']
-    print "about to create survey"
     survey = models.Survey(title='Feedback',
                            description='We would love to hear your thoughts on how we can improve our business.',
                            business=business)
@@ -467,7 +462,215 @@ def _make_inactive_business(checkin_location):
         qt.save()
         
     return business
-   
+
+def _encode_poll(poll, user):
+    p = SimplePollEncoder().default(poll)
+    if user == poll.user_creator or len(user.pollresponse_set.filter(poll=poll)) > 0:
+        p['show_results'] = True
+    else:
+        p['show_results'] = False
+    try:
+        v = poll.votes.get(user=user)
+        p['my_vote'] = 1 if v.positive else -1
+    except models.Vote.DoesNotExist:
+        p['my_vote'] = 0
+
+    return p
+
+# Get a Poll
+@mobile_view
+@csrf_protect
+def get_polls(request):
+    '''get_poll
+
+    Returns encoded polls and simple responses for a POST request.
+    '''
+    data = json.load(request)
+    business_id = data['business_id']
+    business = models.BusinessProfile.objects.get(id=business_id)
+
+    polls = business.poll_set.all()
+    encoder = SimplePollEncoder()
+    poll_list = []
+    for p in polls:
+        poll_list.append(_encode_poll(p, request.user.userprofile))
+
+    return HttpResponse(json.dumps(poll_list))
+
+@mobile_view
+@csrf_protect
+def submit_poll(request):
+    data = json.load(request)
+    poll = models.Poll.objects.get(id=data['id'])
+    
+    # Don't let users vote twice. Don't let them change votes.
+    response = None
+    try:
+        response = models.PollResponse.objects.get(user=request.user.userprofile,
+                                                   poll=poll)
+    except models.PollResponse.DoesNotExist:
+        pass
+    if not response:
+        response = models.PollResponse(user=request.user.userprofile,
+                                       value=data['value'],
+                                       poll=poll,
+                                       date_created=datetime.utcnow().replace(tzinfo=utc))
+        response.save()
+
+    # Easier to decode on iOS if this is a list (matches get_polls)
+    return HttpResponse(json.dumps([_encode_poll(p, request.user.userprofile) for p in poll.business.poll_set.all()]))
+
+@mobile_view
+@csrf_protect
+def rate_poll(request):
+    data = json.load(request)
+    poll = models.Poll.objects.get(id=data['id'])
+
+    # Don't let users rate a poll twice
+    user = request.user.userprofile
+    if len(poll.votes.filter(user=user)) < 1:
+        print "Voting... will vote "+str((data['user_rating']==1))
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        poll.votes.add(v)
+        poll.save()
+
+    # Easier to decode on iOS if this is a list (matches get_polls)
+    return HttpResponse(json.dumps([_encode_poll(p, request.user.userprofile) for p in poll.business.poll_set.all()]))
+
+@mobile_view
+@csrf_protect
+def create_poll(request):
+    '''Creates a poll from request sent from iphone.
+    '''
+    data = json.load(request)
+
+    # Some sanity checking
+    if len(data['title']) == 0:
+        return HttpResponseBadRequest("Polls must ask a question.")
+    if len(data['options']) < 2:
+        return HttpResponseBadRequest("Your Poll must have at least two non-blank options.")
+    oldPoll = None
+    try:
+        oldPoll = models.Poll.objects.get(title=data['title'],
+                                          business=BusinessProfile.objects.get(id=data['business_id']))
+    except models.Poll.DoesNotExist:
+        pass
+    if oldPoll:
+        return HttpResponseBadRequest("Another Poll already exists for this business for that question.")
+
+    poll = models.Poll(title=data['title'],
+                       business=BusinessProfile.objects.get(id=data['business_id']),
+                       options=data['options'],
+                       user_creator=request.user.userprofile)
+    poll.save()
+
+    return HttpResponse("")
+
+def _encode_thread(thread, user):
+    encoder = ThreadEncoder()
+    t = encoder.default(thread)
+    # Find votes on the thread
+    try:
+        v = thread.votes.get(user=user)
+        t['my_vote'] = 1 if v.positive else -1
+    except models.Vote.DoesNotExist:
+        t['my_vote'] = 0
+
+    # Find votes on each post within the thread
+    for post in t['posts']:
+        tp = models.ThreadPost.objects.get(id=post['id'])
+        try:
+            v = tp.votes.get(user=user)
+            post['my_vote'] = 1 if v.positive else -1
+        except models.Vote.DoesNotExist:
+            post['my_vote'] = 0
+            
+    return t
+
+@mobile_view
+@csrf_protect
+def get_threads(request):
+    '''get_threads
+
+    Get all of the threads for a particular business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    thread_list = []
+    for thread in business.thread_set.all():
+        thread_list.append(_encode_thread(thread,request.user.userprofile))
+
+    return HttpResponse(json.dumps(thread_list))
+
+@mobile_view
+@csrf_protect
+def create_thread(request):
+    '''create_thread
+
+    Create a thread for a business.
+    '''
+    data = json.load(request)
+    business = models.BusinessProfile.objects.get(id=data['business_id'])
+
+    thread = models.Thread(title=data['title'],
+                           user_creator=request.user.userprofile,
+                           business=business)
+    thread.save()
+    return HttpResponse("")
+
+@mobile_view
+@csrf_protect
+def rate_thread(request):
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['id'])
+
+    # Don't let users rate a thread twice
+    user = request.user.userprofile
+    if len(thread.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        thread.votes.add(v)
+        thread.save()
+
+    user = request.user.userprofile
+    thread_list = [_encode_thread(t,user) for t in thread.business.thread_set.all()]
+
+    return HttpResponse(json.dumps(thread_list))
+
+@mobile_view
+@csrf_protect
+def submit_post(request):
+    ''' This is for users to post comments to a thread
+    '''
+    data = json.load(request)
+    thread = models.Thread.objects.get(id=data['thread_id'])
+    post = models.ThreadPost(body=data['body'],
+                             user=request.user.userprofile,
+                             thread=thread)
+    post.save()
+
+    return HttpResponse(json.dumps(_encode_thread(thread,request.user.userprofile)))
+
+@mobile_view
+@csrf_protect
+def rate_post(request):
+    data = json.load(request)
+    post = models.ThreadPost.objects.get(id=data['id'])
+
+    print "Rating this post: "+str(post)
+
+    # Don't let users rate a threadpost twice
+    user = request.user.userprofile
+    if len(post.votes.filter(user=user)) < 1:
+        v = models.Vote(user=user, positive=(data['user_rating']==1))
+        v.save()
+        post.votes.add(v)
+        post.save()
+
+    return HttpResponse(json.dumps(_encode_thread(post.thread,request.user.userprofile)))
+
 # Getting and posting employee data from iOS.
 @mobile_view
 @csrf_protect
@@ -494,6 +697,7 @@ def evaluate(request):
                            dimension=rated_dimension,
                            date_created=datetime.utcnow().replace(tzinfo=utc),
                            user=request.user.userprofile)
+                print "text rating"+value
             else:
                 r = Rating(title=rated_dimension.title,
                            rating_value=float(value),
@@ -620,20 +824,19 @@ def post_photo(request):
     'image' as a file.
     """
     profile = request.user.userprofile
-    return HttpResponse('body: %s' % request.body)
-    sys.stderr.write('keys %s' % request.FILES.keys())
-    image = request.FILES['image']
     business = models.BusinessProfile.objects.get(id=request.POST['business_id'])
     business_photo = models.BusinessPhoto(business=business,
                                           tags=json.loads(request.POST['tags']),
-                                          uploaded_by=profile)
+                                          uploaded_by=profile,
+                                          date_created=datetime.utcnow().replace(tzinfo=utc))
     business_photo.save()
     filename = '%s_%s.jpg' % (profile.id,
                        business.business_name)
-    save_image(business_photo.image, filename, image)
+    save_image(business_photo.image, filename, request.FILES['image'])
+    request.FILES['image'].seek(0)
+    save_image(business_photo.thumbnail_image, filename, request.FILES['image'], thumbnail=True)
     return HttpResponse('')
 
-#@mobile_view
 def get_photos(request):
     """
     Get all the photos associated with a particular business,
@@ -641,4 +844,139 @@ def get_photos(request):
     """
     business = models.BusinessProfile.objects.get(id=int(request.GET['id']))
     encoder = BusinessPhotoEncoder()
-    return HttpResponse(json.dumps({'photos': [encoder.default(photo) for photo in business.businessphoto_set.all()]}))
+    photos = []
+    for photo in business.businessphoto_set.all():
+        p = encoder.default(photo)
+        if p:
+            photos.append(p)
+    return HttpResponse(json.dumps({'photos': photos}))
+
+@mobile_view
+@csrf_protect
+def comment_photo(request):
+    """
+    Comment on a photo. The mobile side of things should verify
+    that the text is less than 1000 chars.
+    """
+    user = request.user.userprofile
+    data = json.load(request)
+    photo = models.BusinessPhoto.objects.get(id=data['photo_id'])
+    c = models.Comment(user=user,
+                       text=data['text'],
+                       date_created=datetime.utcnow().replace(tzinfo=utc),
+                       businessphoto=photo)
+    c.save()
+    encoder = CommentEncoder()
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(c.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+        comments.append(new_c)
+    return HttpResponse(json.dumps(comments))
+
+def photo_comments(request):
+    """
+    Return all the comments for a photo as JSON.
+    """
+    photo = models.BusinessPhoto.objects.get(id=request.GET['photo'])
+    encoder = CommentEncoder()
+    user = request.user.userprofile
+    comments = []
+    for c in photo.comment_set.all():
+        new_c = encoder.default(c)
+        if(len(c.votes.filter(user=user)) < 1):
+            new_c['has_voted'] = 0
+        else:
+            new_c['has_voted'] = 1
+        comments.append(new_c)
+
+    return HttpResponse(json.dumps(comments))
+
+@mobile_view
+@csrf_protect
+def vote_comment(request):
+    user = request.user.userprofile
+    data = json.load(request)
+    comment = models.Comment.objects.get(id=data['id'])
+    v = models.Vote(positive=True,
+                    date_created=datetime.utcnow().replace(tzinfo=utc),
+                    user=user)
+    v.save()
+    comment.votes.add(v)
+    comment.save()
+    return HttpResponse('')
+
+@mobile_view
+@csrf_protect
+def vote_photo(request):
+    user = request.user.userprofile
+    data = json.load(request)
+    v = models.Vote(positive=True,
+                    date_created=datetime.utcnow().replace(tzinfo=utc),
+                    user=user)
+    v.save()
+    photo = models.BusinessPhoto.objects.get(id=data['id'])
+    photo.votes.add(v)
+    photo.save()
+    return HttpResponse('')
+
+@mobile_view
+@csrf_protect
+def check_vote(request):
+    user = request.user.userprofile
+    data = json.load(request)
+    # Making the check_vote function general as ALL GETOUT
+    cls = eval(data['type'])
+    model = cls.objects.get(id=data['id'])
+    if len(model.votes.filter(user=user)) == 0:
+        return HttpResponse('yes')
+    return HttpResponse('no')
+
+def check_email(request):
+    ret = {}
+    if request.method == 'GET':
+        username = request.GET['email'].lower()
+        try:
+            user = User.objects.get(username=username)
+            ret['does_exist'] = True
+        except User.DoesNotExist:
+            ret['does_exist'] = False
+
+    return HttpResponse(json.dumps(ret))
+
+@csrf_protect
+def register(request):
+    """ Register a user from a mobile device"""
+    if request.method == 'GET':
+        token=get_token(request)
+        return HttpResponse(token)
+        
+    if request.method == 'POST':
+        data = json.load(request)
+        first_name = data['first_name']
+        last_name = data['last_name']
+        email = data['email'].lower()
+        password= data['password']
+        default_picture = random.randint(1, 6)
+
+        u = User.objects.create_user(email,email,password)
+        u.first_name = first_name
+        u.last_name = last_name
+        u.save()
+
+        u_profile = UserProfile(user=u, default_picture=default_picture)
+        u_profile.save()
+        
+    return HttpResponse('')
+
+@csrf_protect
+@mobile_view
+def set_profile_picture(request):
+    user = request.user.userprofile
+    photo = request.FILES['image']
+    filename = '%d_%s' % (user.id, user.user.username)
+    save_image(user.profile_picture, filename, photo, thumbnail=True)
+    return HttpResponse('')

@@ -92,18 +92,23 @@ body {
   right: 100px;
   border-radius: 8px; }
 
-#info {
+#hand_image {
+  z-index: 1;
+  float: left;
+  margin-top: 100px; }
+
+#info, #features {
   width: 400px;
   float: right;
   margin-right: 250px;
   margin-top: 50px; }
 
-#info-head {
+#info-head, #features-head {
   margin-left: -20px;
   margin-bottom: 10px;
   font-weight: normal;
   font-size: 200%; }
-  #info-head img {
+  #info-head img, #features-head img {
     margin-left: -5px; }
 
 #info-main {

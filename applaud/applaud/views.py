@@ -41,6 +41,82 @@ def index(request):
                                              'user_type': user_type},
                               context_instance=RequestContext(request))
 
+# Encodes a poll
+class SimplePollEncoder(json.JSONEncoder):
+    '''SimplePollEncoder
+
+    Encodes a Poll object into JSON, giving a simple representation of PollResponses
+    given for this Poll. A more complex PollEncoder might give more complete information
+    on PollResponses, such as when the response was made and who made it.
+    '''
+    def default(self,o):
+        if isinstance(o, models.Poll):
+            # Count up number of responses for each option
+            responses = []
+            counter = 0
+            for option in o.options:
+                responses.append({"title":option,
+                                  "count":len(models.PollResponse.objects.filter(poll=o, value=counter))})
+                counter += 1
+
+            for i in range(len(responses)):
+                rank = 1
+                for j in range(len(responses)):
+                    if responses[j]["count"] > responses[i]["count"]:
+                        rank+=1
+                responses[i]["rank"] = rank
+                
+            votes = o.votes.all()
+            user_rating = 0
+            for v in votes:
+                user_rating += 1 if v.positive else -1
+            res = { 'title':o.title,
+                    'options':o.options,
+                    'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
+                    'responses':responses,
+                    'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
+                    'upvotes':user_rating,
+                    'business_id':o.business.id,
+                    'id':o.id }
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)    
+        
+
+# Encodes a Thread
+class ThreadEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Thread):
+            encoder = ThreadPostEncoder()
+            upvotes = len(o.votes.filter(positive=True))
+            downvotes = len(o.votes.all())-upvotes
+            res = {'title':o.title,
+                   'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
+                   'user_creator':UserProfileEncoder().default(o.user_creator) if o.user_creator is not None else "",
+                   'upvotes':upvotes,
+                   'downvotes':downvotes,
+                   'posts':[encoder.default(p) for p in o.threadpost_set.all()],
+                   'id':o.id}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
+
+# Encodes a ThreadPost. Used by the ThreadEncoder
+class ThreadPostEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.ThreadPost):
+            upvotes = len(o.votes.filter(positive=True))
+            downvotes = len(o.votes.all())-upvotes
+            res = {'body':o.body,
+                   'user':UserProfileEncoder().default(o.user),
+                   'date_created':o.date_created.strftime("%m/%d/%Y %H:%M:%S"),
+                   'upvotes':upvotes,
+                   'downvotes':downvotes,
+                   'id':o.id}
+            return res
+        else:
+            return json.JSONEncoder.default(self, o)
+                
 # Encodes a RatingProfile into JSON format
 class RatingProfileEncoder(json.JSONEncoder):
     def default(self, o):
@@ -77,7 +153,7 @@ class EmployeeEncoder(json.JSONEncoder):
                 image_url = settings.MEDIA_URL+image_url
 	    res = {'first_name':o.user.first_name,
 		   'last_name':o.user.last_name,
-		   'bio':o.bio,
+		   'bio':o.bio if o.bio else "",
 		   'ratings':
 		       {'rating_title':"" if o.rating_profile.title is None else o.rating_profile.title,
 			'dimensions':dimension_list},
@@ -91,10 +167,21 @@ class EmployeeEncoder(json.JSONEncoder):
 # Encodes a UserProfile into JSON format
 class UserProfileEncoder(json.JSONEncoder):
     def default(self, o):
+        profile_picture = ""
+        if o.profile_picture:
+            profile_picture = o.profile_picture.url
+        else:
+            profile_picture = settings.MEDIA_URL + "user_profpics/userpic%d.png"%o.default_picture
         if isinstance(o, models.UserProfile):
+            birthday = ''
+            if o.date_of_birth is not None:
+                birthday = o.date_of_birth.strftime("%m/%d/%Y")
+
             return {'first_name':o.user.first_name,
                     'last_name':o.user.last_name,
-                    'birth':o.date_of_birth.strftime("%d/%m/%Y"),
+                    'username':o.user.username,
+                    'profile_picture':profile_picture,
+                    'birth':birthday,
                     'id':o.id}
         else:
             return json.JSONEncoder.default(self, o)
@@ -115,7 +202,13 @@ class BusinessProfileEncoder(json.JSONEncoder):
                    'phone': o.phone,
                    'logo': logo_url,
                    'primary': o.primary_color,
-                   'secondary': o.secondary_color}
+                   'secondary': o.secondary_color,
+                   'features':{"newsfeed":o.isNewsfeed,
+                               "applaud":o.isApplaud,
+                               "polls":o.isPolls, 
+                               "mingle":o.isMingle,
+                               "photos":o.isPhotos},
+                   'generic': not o.user.is_active}
             return res
         else:
             return json.JSONEncoder.default(self, o)
@@ -185,7 +278,7 @@ class RatingEncoder(json.JSONEncoder):
         if isinstance(o, models.Rating):
             return {'value':o.rating_value,
                     'user':UserProfileEncoder().default(o.user),
-                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'date':o.date_created.strftime("%m/%d/%Y"),
                     'title':o.title}
         else:
             return json.JSONEncoder.default(self, o)
@@ -198,7 +291,7 @@ class MessageItemEncoder(json.JSONEncoder):
             print o.date_created
             return {'subject':o.subject,
                     'text':o.text,
-                    'date':o.date_created.strftime("%d/%m/%Y"),
+                    'date':o.date_created.strftime("%m/%d/%Y"),
                     'unread':o.unread,
                     'sender': {'first_name':o.sender.first_name,
                                'last_name':o.sender.last_name,
@@ -209,13 +302,34 @@ class MessageItemEncoder(json.JSONEncoder):
 class BusinessPhotoEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, models.BusinessPhoto):
-            return {'image': o.image.url,
-                    'business': o.business.id,
-                    'tags': o.tags,
-                    'upvotes': o.upvotes,
-                    'downvotes': o.downvotes,
-                    'active': o.active,
-                    'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            url=''
+            try:
+                url=o.image.url
+                thumbnail_url = o.thumbnail_image.url
+                return {'image': url,
+                        'thumbnail': thumbnail_url,
+                        'business': o.business.id,
+                        'tags': o.tags,
+                        'active': o.active,
+                        'id': o.id,
+                        'date_created': o.date_created.strftime('%m/%d/%Y'),
+                        'votes': len(o.votes.all()),
+                        'uploaded_by': UserProfileEncoder().default(o.uploaded_by)}
+            except Exception as e:
+                print e
+                return {}
+        else:
+            return json.JSONEncoder.default(self, o)
+
+class CommentEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, models.Comment):
+            return {'user': UserProfileEncoder().default(o.user),
+                    'text': o.text,
+                    'date_created': o.date_created.strftime('%m/%d/%Y %H:%M:%S'),
+                    'votes': len(o.votes.all()),
+                    'businessphoto': o.businessphoto.id,
+                    'id': o.id}
         else:
             return json.JSONEncoder.default(self, o)
 

@@ -8,13 +8,13 @@ import sys
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'applaud.settings')
 
+from applaud import settings
 import applaud.settings
 from applaud import models
 from django.contrib.auth.models import User, Group
 from random import random
 from applaud import business_views
 from applaud import settings
-import Image
 
 # Make a User.
 user = User.objects.create_user('Boo Furgers', 'boofurgers@aol.com', 'applaud')
@@ -29,6 +29,22 @@ enduser2.first_name="John"
 enduser2.last_name="Harris"
 enduser2.save()
 
+enduser3 = User.objects.create_user('ravi', 'mamabear@berensteinbears.com', 'apatapa')
+enduser3.first_name="Ravi"
+enduser3.last_name="Ramachandran"
+enduser3.save()
+
+enduser4 = User.objects.create_user('peter', 'mamabear@berensteinbears.com', 'apatapa')
+enduser4.first_name="Peter"
+enduser4.last_name="Fogg"
+enduser4.save()
+
+enduser5 = User.objects.create_user('wyatt', 'mamabear@berensteinbears.com', 'apatapa')
+enduser5.first_name="Wyatt"
+enduser5.last_name="Hayman"
+enduser5.save()
+
+
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
 keith_user.first_name = 'Keith'
 keith_user.last_name = 'Cox'
@@ -38,11 +54,31 @@ keith_user.save()
 userprofile = models.UserProfile(user=enduser,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
+which = int(random()*6) + 1
+userprofile.default_picture = 1
 userprofile.save()
+
 userprofile2 = models.UserProfile(user=enduser2,
                                  date_of_birth=datetime.utcnow().replace(tzinfo=utc),
                                  first_time=0)
+which = int(random()*6) + 1
+userprofile2.default_picture = 2
 userprofile2.save()
+
+userprofile3 = models.UserProfile(user=enduser3,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile3.default_picture = 3
+userprofile3.save()
+
+
+userprofile4 = models.UserProfile(user=enduser4,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile4.default_picture = 4
+userprofile4.save()
 
 
 # Make a BusinessProfile.
@@ -62,8 +98,9 @@ business2.save()
 keith_business = models.BusinessProfile(user=keith_user, phone='1-585-385-2224',
                                         latitude='39.073778', longitude='-120.141402',
                                         goog_id='8eaccc6443d4a16442baf5f3a0bd527594105436', business_name="Chambers Landing Bar & Grill",
-                                        primary_color = '#e83723',
-                                        secondary_color = '#e6d6bc')
+                                        primary_color = '#8abbdb',
+                                        secondary_color = '#e3e3e3')
+#keith_business.isApplaud = False
 keith_business.save()
 
 
@@ -114,7 +151,8 @@ friendlinessw = models.RatedDimension(title='Friendliness',
                                       rating_profile=keith_waiter_profile)
 friendlinessw.save()
 helpfulnessw = models.RatedDimension(title='Helpfulness',
-                                     rating_profile=keith_waiter_profile)
+                                     rating_profile=keith_waiter_profile, 
+                                     is_text = True)
 helpfulnessw.save()
 
 keith_hostess_profile = models.RatingProfile(title='Hostess', business=keith_business)
@@ -125,10 +163,6 @@ friendlinessh.save()
 helpfulnessh = models.RatedDimension(title='Helpfulness',
                                      rating_profile=keith_hostess_profile)
 helpfulnessh.save()
-two_adj = models.RatedDimension(title='Describe with two adjectives',
-                                rating_profile=keith_hostess_profile,
-                                is_text=True)
-two_adj.save()
 
 
 profile3 = models.RatingProfile(title='Profile 3', business=business)
@@ -171,6 +205,10 @@ emp_user5 = User.objects.create_user('LaLa', 'lala@aol.com', 'apatapa')
 emp_user5.first_name = 'Sarah'
 emp_user5.last_name = 'Jane'
 emp_user5.save()
+emp_user7 = User.objects.create_user('luke', 'llovett@cs.oberlin.edu', 'apatapa')
+emp_user7.first_name = 'Luke'
+emp_user7.last_name = 'Lovett'
+emp_user7.save()
 
 
 # Make a few Employees.
@@ -251,6 +289,10 @@ sarah = models.EmployeeProfile(business=keith_business,
                                rating_profile=keith_waiter_profile,
                                bio='I grew up in Mill Valley and I hope to never leave. I would love to start my own chocolate studio.')
 sarah.save()
+luke = models.EmployeeProfile(business=keith_business,
+                              user=emp_user7,
+                              rating_profile=keith_waiter_profile)
+luke.save()
 
 # Make some Ratings. Only "master" has ratings.
 # 'master' can be rated on 'awesomeness' and 'slickness'
@@ -358,20 +400,246 @@ qr4 = models.QuestionResponse(question=q4,
                               user=userprofile2)
 qr4.save()
 
-keith_photo = models.BusinessPhoto(business=keith_business,
-                                   tags=['tag', 'tagged', 'mystical'],
-                                   uploaded_by=userprofile)
-keith_photo.save()
-business_views.save_image(keith_photo.image,
-                          'keith_photo_test.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+# Votes
+vote1 = models.Vote(user=userprofile2)
+vote1.save()
 
-keith_photo2 = models.BusinessPhoto(business=keith_business,
-                                   tags=['foo', 'bar'],
-                                   uploaded_by=userprofile2)
-business_views.save_image(keith_photo2.image,
-                          'keith_photo_numero_dos.jpg',
-                          settings.MEDIA_ROOT + 'noimage.png')
+vote2 = models.Vote(user=userprofile2)
+vote2.save()
+
+vote3 = models.Vote(user=userprofile3)
+vote3.save()
+
+
+# Make a poll
+poll1 = models.Poll(title="Where should the next Pacific Catch be located?",
+                   business=keith_business,
+                   options=['Burlingame', 'Orinda', 'Lucas Valley'])
+poll1.save()
+
+poll2 = models.Poll(title="What is your favorite tropical location?",
+                   business=keith_business,
+                   options=['Hawaii', 'Florida', 'Bali', 'The Bahamas'])
+poll2.save()
+
+poll3 = models.Poll(title="Do you prefer snorkeling or scuba diving?",
+                   business=keith_business,
+                   options=['Snorkeling', 'Scuba'])
+poll3.save()
+
+poll4 = models.Poll(title="Would you prefer a special for:",
+                   business=keith_business,
+                   options=['Drinks', 'Sushi', 'Tacos'])
+poll4.save()
+
+poll5 = models.Poll(title="What live music would you prefer?",
+                   business=keith_business,
+                   options=['Jazz', 'Blues', 'Rock', 'Classical'])
+poll5.save()
+
+poll6 = models.Poll(title="Would you like our food to be:",
+                   business=keith_business,
+                   options=['More Spicy', 'Less Spicy', 'It\'s Perfect!'])
+poll6.save()
+
+# Function to make a repsonse to a poll
+# First parameter is the poll object, second is te response to choose
+def create_poll_response(poll, value):
+    pr = models.PollResponse(user=userprofile2,
+                             value=value,
+                             poll=poll,
+                             date_created=datetime.utcnow().replace(tzinfo=utc))
+    pr.save()
+    
+
+# Create a lot of poll responses
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 1)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 2)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 3)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+create_poll_response(poll2, 0)
+
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 1)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+create_poll_response(poll3, 0)
+
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 1)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 2)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+create_poll_response(poll1, 0)
+
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 1)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 2)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 3)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+create_poll_response(poll5, 0)
+
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 1)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 2)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+create_poll_response(poll4, 0)
+
+
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 1)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 2)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+create_poll_response(poll6, 0)
+
+
+    
+# Make a thread
+thread = models.Thread(title="Tell us about your favorite mahi mahi recipe.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread.save()
+thread.votes.add(vote1)
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+
+
+# Make a thread post
+post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some balsamic vinegar!",
+                         user=userprofile2,
+                         thread=thread)
+post1.save()
+
+post2 = models.ThreadPost(body="Garlic and cumin may be sweet additions to that",
+                         user=userprofile3,
+                         thread=thread)
+post2.save()
+
+
+# Make a thread
+thread2 = models.Thread(title="Fun drink ideas.",
+                       user_creator=userprofile2,
+                       business=keith_business)
+thread2.save()
+thread2.votes.add(vote2)
+thread2.votes.add(vote3)
+thread2.votes.add(vote1)
+
+# Make a thread post
+post1 = models.ThreadPost(body="Rum, tequila, orange juice, cranberry juice, blended",
+                         user=userprofile2,
+                         thread=thread2)
+post1.save()
+
+post2 = models.ThreadPost(body="Ginger, lemon, lime, tequila, sugar, ginger ale",
+                         user=userprofile3,
+                         thread=thread2)
+post2.save()
+thread.votes.add(vote2)
+thread.votes.add(vote3)
+thread.save()
+
+post3 = models.ThreadPost(body="Oooo! I love ginger drinks! There aren't enough of them and this sounds great!",
+                         user=userprofile4,
+                         thread=thread2)
+post3.save()
+
+
+post4 = models.ThreadPost(body="Thanks! I made it up.  I call it a Plains because it refreshes like an open plain with a summer breeze.",
+                         user=userprofile3,
+                         thread=thread2)
+post4.save()
+
+post5 = models.ThreadPost(body="Just ordered one! They gave it to me for free because it came recommended on apatapa! Loved it!! Thanks for the tip",
+                         user=userprofile4,
+                         thread=thread2)
+post5.save()
+
+post6 = models.ThreadPost(body="I've had something like that before - but haven't in a long time! Tried it again FOR FREE thanks to you, Ravi!",
+                         user=userprofile,
+                         thread=thread2)
+post6.save()
+
+
 
 # some messages and inbox items
 inbox1 = models.Inbox(user=keith_business.user)

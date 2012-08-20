@@ -88,7 +88,6 @@ body {
 }
 
 #main {
-//    z-index:-1;
     width:1200px;
     height:600px;
     position: relative;
@@ -114,15 +113,28 @@ body {
     border-radius: 8px;
 }
 
-$infoWidth : 400px;
-#info {
-    width:$infoWidth;
+#myModal {
+
+}
+#video {
+
+}
+
+#hand_image {
+    z-index: 1;
+    float: left;
+    margin-top: 100px;
+}
+
+
+#info, #features {
+    width:400px;
     float:right;
     margin-right:250px;
     margin-top:50px;
 }
 
-#info-head {
+#info-head, #features-head {
     margin-left:-20px;
     margin-bottom: 10px;
     font-weight:normal;
