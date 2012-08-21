@@ -24,7 +24,12 @@ var frontPage = frontPage || {};
         $('#error-div').css("padding-top","0px");
         $('#error-div').css("padding-bottom","0px");
         $('#error-div').css("margin-bottom","0px");
-        
+
+        // Remove the status images
+        $('#email-status-image').empty();
+        $('#first-status-image').empty();
+        $('#password-status-image').empty();
+
         // Remove the list of errors from the errorElements array
         frontPage.errorElements = [];
 
@@ -90,37 +95,6 @@ var frontPage = frontPage || {};
 
     }
 
-    frontPage.validateUserType = function(){
-        var userType = $('.radio-control-group :checked').val();
-
-        // Check to see if user type has been selected
-        if( ! userType ){
-            var errorElement = $('<li></li>');
-            errorElement.text("Please select 'User' or 'Business'.");
-            $('#error-div ul').append(errorElement);
-            frontPage.errorElements.push($('.radio-control-group'));       
-        }
-    }
-
-    frontPage.validateEmail = function(){
-        var email = $('input[name="email"]').val();        
-        // Check for valid email
-        var patt = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
-        if( ! patt.test(email) ){
-              $('#email-control-group').addClass("error");
-            var errorElement = $('<li></li>');
-            errorElement.text("Invalid email.");
-            $('#error-div ul').append(errorElement);
-            // If not already in the error array, add it
-            if( ! $.inArray($('#email-control-group :input'), frontPage.errorElements) ){
-                frontPage.errorElements.push($('#email-control-group :input'));
-                var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
-                $('#email-status-image').append(exMarkImage);
-            }
-            return false;
-        }
-        return true;
-    }
     
     // Makes a get request to the server to check if an account with a particular email address already exists
     frontPage.checkIfEmailUsed = function(){
@@ -134,22 +108,51 @@ var frontPage = frontPage || {};
 
                   // The email already exists
                   if( data['does_exist'] ){
-                      var errorElement = $('<li></li>');
-                      errorElement.text("An account with that email address already exists.");
-                      $('#error-div ul').append(errorElement);
-                      // If this is not already in the error array, add it
-                      if( ! $.inArray($('#email-control-group :input'), frontPage.errorElements) ){
+                      // If email is not already in the error array, add it
+                      if( $.inArray($('#email-control-group :input'), frontPage.errorElements) < 0 ){
+                          var errorElement = $('<li></li>');
+                          errorElement.text("An account with that email address already exists.");
+                          $('#error-div ul').append(errorElement);
                           frontPage.errorElements.push($('#email-control-group :input'));
                           var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
-                          var joke = $('<p>JOKE JOKE JOKE</p>');
-                         // $('#email-status-image').append(exMarkImage);
-                          $('#email-status-image').append(joke);
+                          $('#email-status-image').append(exMarkImage);
                       }
-
                       return false;
                   }
                   return true;
               });
+    }
+
+    frontPage.validateUserType = function(){
+        var userType = $('.radio-control-group :checked').val();
+
+        // Check to see if user type has been selected
+        if( ! userType ){
+            var errorElement = $('<li></li>');
+            errorElement.text("Please select 'User' or 'Business'.");
+            $('#error-div ul').append(errorElement);
+            frontPage.errorElements.push($('.radio-control-group'));       
+        }
+    }
+
+    frontPage.validateEmail = function(){
+        var email = $('input[name="email"]').val();      
+
+        // Check for valid email
+        var patt = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+        // If the pattern doesn't fit or the error has already been accounted for (i.e. it is already associated to an account)
+        if( ! patt.test(email) ||  $.inArray($('#email-control-group :input'), frontPage.errorElements) === -1 ){
+            $('#email-control-group').addClass("error");
+            var errorElement = $('<li></li>');
+            errorElement.text("Invalid email.");
+            $('#error-div ul').append(errorElement);
+            
+            frontPage.errorElements.push($('#email-control-group :input'));
+            var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
+            $('#email-status-image').append(exMarkImage);
+            return false;
+        }
+        return true;
     }
 
     frontPage.validateFirstName = function(){
@@ -161,6 +164,8 @@ var frontPage = frontPage || {};
             var errorElement = $('<li></li>');
             errorElement.text("You didn't enter a name.");
             $('#error-div ul').append(errorElement);
+            var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
+            $("#first-status-image").append(exMarkImage);
             frontPage.errorElements.push($('#first-control-group :input'));
             return false;
         }
@@ -189,6 +194,8 @@ var frontPage = frontPage || {};
             // Other password checks??
 
             $('#error-div ul').append(errorElement);
+            var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
+            $('#password-status-image').append(exMarkImage);
             frontPage.errorElements.push($('#password-control-group :input'));
             return false;
         }
@@ -199,6 +206,7 @@ var frontPage = frontPage || {};
         frontPage.validateEmail();
         frontPage.validateFirstName();
         frontPage.validatePassword();
+        frontPage.validateUserType();
         
         // If there are any errors, style up the error div
         if( frontPage.errorElements.length > 0 ){

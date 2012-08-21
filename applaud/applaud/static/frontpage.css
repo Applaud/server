@@ -55,14 +55,14 @@ body {
       font-size: 110%; }
     #info-main form input[type=text] {
       border-radius: 4px;
-      width: 300px;
+      width: 375px;
       height: 25px;
       margin-bottom: 0px;
       font-size: 110%; }
   #info-main #error-div {
     background-color: rgba(185, 74, 72, 0.7);
     border-radius: 5px;
-    width: 300px; }
+    width: 385px; }
     #info-main #error-div ul {
       font-weight: bold;
       margin-left: 5px;
