@@ -8,6 +8,12 @@
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}frontpage.js"></script>
+    <script type="text/javascript">
+      $(document).ready( function(){
+          frontPage.bindForm();
+          frontPage.bindClearErrorHandlers();
+      });
+    </script>
   </head>
   <body>
 
@@ -36,7 +42,8 @@
 
 
     <div id="main">
-      <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" />
+    
+      <!-- <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" /> -->
       
       <!-- Info Div Start -->
       <div id="info">          
@@ -49,22 +56,68 @@
           <p>Lorem ipsum, quia dolor sit amet, consectetur, adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
           <h3>Register:</h3>
           <form id="registration-form">
-            <div id="user-select">
-              <span id="user-select-user">
-                <p>User:</p>
-                <input type="radio" name="user-type" value="user" />
-              </span>
-              <span id="user-select-business">
-                <p>Business:</p>
-                <input type="radio" name="user-type" value="business" />
-              </span>
-            </div>
-            <input type="text" value="Email" name="email" class="control-group"/>
-            <input type="text" value="First name" name="first" class="control-group"/>
-            <input type="text" value="Last name (optional)" name="last" class="control-group"/>
-            <input type="text" value="Password" name="password" class="control-group"/><br />
-            <button class=".btn btn-large">Register</button>
+            <fieldset>
+              <div class="control-group radio-control-group">
+                <label class="radio inline">
+                  <input type="radio" name="user-type" value="user" />
+                  User
+                </label>
+
+                <label class="radio inline">
+                  <input type="radio" name="user-type" value="business" />
+                  Business
+                </label>
+              </div>
+
+              <!-- Email Group -->
+              <div id="email-control-group" class="control-group">
+                <div class="controls">
+                  <input class="input-xlarge" type="text" value="Email" name="email"/>
+                  <span id="email-status-image"></span>
+                  <span id="email-help-inline" class="help-inline"></span>
+                </div>
+              </div>
+              <!-- End Email Group -->
+
+              <!-- First Name Group -->
+              <div id="first-control-group" class="control-group">
+                <div class="controls">
+                  <input class="input-xlarge" type="text" value="First name" name="first"/>
+                  <span id="first-status-image"></span>
+                  <span id="first-help-inline" class="help-inline"></span>
+                </div>
+              </div>
+              <!-- End First Name Group -->
+
+              <!-- Last Name Group -->
+              <div id="last-control-group" class="control-group">
+                <div class="controls">
+                  <input class="input-xlarge" type="text" value="Last name (optional)" name="last"/>
+                  <span id="last-help-inline" class="help-inline"></span>
+                </div>
+              </div>
+              <!-- End Last Name Group -->
+
+              <!-- Password Group -->
+              <div id="password-control-group" class="control-group">
+                <div class="controls">
+                  <input class="input-xlarge" type="text" value="Password" name="password"/>
+                  <span id="password-status-image"></span>
+                  <span id="password-help-inline" class="help-inline"></span>
+                </div>
+              </div>
+              <!-- End Password Group -->
+
+              <div id="error-div">
+                <ul>
+                </ul>
+              </div>
+
+              <button id="register-button" class="btn btn-primary btn-large" type="submit">Register</button>
+
+            </fieldset>
           </form>
+          
 
           <!-- <div id="nav-buttons"> -->
 	      <!--   <a class="btn btn-large" href="/accounts/member">Register as a user</a> -->
@@ -81,24 +134,25 @@
     
 
     <!-- Features Div Start -->
-    <div id="features">
-      <div id="features-head">
-	<h2>Features</h2>
+    <!-- <div id="features"> -->
+    <!--   <div id="features-head"> -->
+	<!-- <h2>Features</h2> -->
 	
-	<div class="btn-group">
-	  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-	    Action
-	    <span class="caret"></span>
-	  </a>
-	  <ul class="dropdown-menu">
-	    <li><a href="#">Applaud</a></li>
-	    <li class="divider"></li>
-	    <!-- dropdown menu links -->
-	  </ul>
-	</div>
+	<!-- <div class="btn-group"> -->
+	<!--   <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> -->
+	<!--     Action -->
+	<!--     <span class="caret"></span> -->
+	<!--   </a> -->
+	<!--   <ul class="dropdown-menu"> -->
+	<!--     <li><a href="#">Applaud</a></li> -->
+	<!--     <li class="divider"></li> -->
+	<!--     <\!-- dropdown menu links -\-> -->
+	<!--   </ul> -->
+	<!-- </div> -->
 
-      </div>
-    </div>
+    <!--   </div> -->
+    <!-- </div> -->
+
     <!-- Bottom Bar Start -->
     <div id="bottom-bar">
       <div id="footer" class="row">

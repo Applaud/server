@@ -1,53 +1,3 @@
-/******************************
- * -----   CSS RESET   -----  *
- ******************************/
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-   */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  vertical-align: baseline; }
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block; }
-
-ol, ul {
-  list-style: none; }
-
-blockquote, q {
-  quotes: none; }
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none; }
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
-/******************************
- * ---- END CSS RESET  -----  *
- ******************************/
-/******** variables ********/
-/***************************/
 body {
   font-family: "Helvetica", cursive; }
 
@@ -85,40 +35,38 @@ body {
   height: 80%;
   width: auto; }
 
-#appStore {
-  float: right;
-  position: absolute;
-  bottom: 0px;
-  right: 100px;
-  border-radius: 8px; }
-
-#hand_image {
-  z-index: 1;
-  float: left;
-  margin-top: 100px; }
-
-#info, #features {
+#info {
   width: 400px;
   float: right;
   margin-right: 250px;
   margin-top: 50px; }
 
-#info-head, #features-head {
+#info-head {
   margin-left: -20px;
   margin-bottom: 10px;
   font-weight: normal;
   font-size: 200%; }
-  #info-head img, #features-head img {
-    margin-left: -5px; }
 
 #info-main {
   font-size: 115%; }
-  #info-main form #user-select {
-    width: 200px; }
-    #info-main form #user-select p {
-      display: inline; }
-    #info-main form #user-select #user-select-business {
-      float: right; }
+  #info-main form {
+    line-height: 80%; }
+    #info-main form label {
+      font-size: 110%; }
+    #info-main form input[type=text] {
+      border-radius: 4px;
+      width: 300px;
+      height: 25px;
+      margin-bottom: 0px;
+      font-size: 110%; }
+  #info-main #error-div {
+    background-color: rgba(185, 74, 72, 0.7);
+    border-radius: 5px;
+    width: 300px; }
+    #info-main #error-div ul {
+      font-weight: bold;
+      margin-left: 5px;
+      list-style-type: none; }
 
 #bottom-bar {
   z-index: 100;

@@ -1,55 +1,3 @@
-
-/******************************
- * -----   CSS RESET   -----  *
- ******************************/
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-   */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    vertical-align: baseline; }
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block; }
-
-ol, ul {
-    list-style: none; }
-
-blockquote, q {
-    quotes: none; }
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none; }
-
-table {
-    border-collapse: collapse;
-    border-spacing: 0; }
-
-/******************************
- * ---- END CSS RESET  -----  *
- ******************************/
-/******** variables ********/
-/***************************/
-
 @mixin shadow($size, $color:#ccc, $xoffset:0px, $yoffset:0px) {
     -moz-box-shadow:$xoffset $yoffset $size $color;
     -webkit-box-shadow:$xoffset $yoffset $size $color;
@@ -57,14 +5,11 @@ table {
 }
 
 body {
-//    background: url("/media/background.png");
     font-family:"Helvetica", cursive;
 }
 
 #top-bar {
     z-index:100;
-//    opacity:.4;
-//    filter:alpha(opacity=40);
     height:100px;
     @include shadow(6px, #111);
 }
@@ -105,73 +50,52 @@ body {
     width:auto;
 }
 
-#appStore {
-    float:right;
-    position:absolute;
-    bottom:0px;
-    right:100px;
-    border-radius: 8px;
-}
-
-#myModal {
-
-}
-#video {
-
-}
-
-#hand_image {
-    z-index: 1;
-    float: left;
-    margin-top: 100px;
-}
-
-
-#info, #features {
+#info {
     width:400px;
     float:right;
     margin-right:250px;
     margin-top:50px;
 }
 
-#info-head, #features-head {
+#info-head {
     margin-left:-20px;
     margin-bottom: 10px;
     font-weight:normal;
     font-size:200%;
-
-    img {
-        margin-left:-5px;
-    }
 }
 
 #info-main {
     font-size:115%;
     form {
-        #user-select{
-            width:200px;
-            p {
-                display: inline;
-            }
-            #user-select-business{
-                float:right;
-            }
+        $larger-font-size:110%;
+        line-height:80%;
+        label{
+            font-size:$larger-font-size;
         }
-                
+        input[type=text] {
+            border-radius: 4px;
+            width: 300px;
+            height:25px;
+            margin-bottom:0px;
+            font-size:$larger-font-size;
+        }
+    }
+    #error-div{
+        background-color:rgba(185,74,72, .7);
+        border-radius:5px;
+        width: 300px;
+        ul{
+            font-weight:bold;
+            margin-left:5px;
+            list-style-type:none;
+        }
     }
 }
 
 
 #bottom-bar {
     z-index:100;
-//    opacity:.4;
-//    filter:alpha(opacity=40);
     height:100px;
     @include shadow(6px, #111);
-}
-
-
-#choice-buttons{
-
 }
 
