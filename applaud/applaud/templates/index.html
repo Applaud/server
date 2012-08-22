@@ -7,6 +7,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}frontpage.js"></script>
     <script type="text/javascript">
       $(document).ready( function(){
@@ -57,7 +58,9 @@
           <h3>Register:</h3>
           <form id="registration-form">
             <fieldset>
-              <div class="control-group radio-control-group">
+
+              <!-- User Select Group -->
+              <div id="user-control-group" class="control-group radio-control-group">
                 <label class="radio inline">
                   <input type="radio" name="user-type" value="user" />
                   User
@@ -68,6 +71,7 @@
                   Business
                 </label>
               </div>
+              <!-- End User Select Group -->
 
               <!-- Email Group -->
               <div id="email-control-group" class="control-group">

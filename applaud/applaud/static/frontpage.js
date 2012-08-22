@@ -16,6 +16,7 @@ var frontPage = frontPage || {};
     // The jQuery objects of any invalid form elements
     frontPage.errorElements = [];
 
+    // Clears the errors from the screen and performs other necessary cleanup
     frontPage.clearErrors = function(){
         // Remove the list of errors from the div
         $('#error-div ul').empty();
@@ -37,6 +38,8 @@ var frontPage = frontPage || {};
         $('#email-control-group').removeClass('error');
         $('#first-control-group').removeClass('error');
         $('#password-control-group').removeClass('error');
+
+        // TODO: Give focus to the field of the first occuring error
     }
 
     frontPage.bindClearErrorHandlers = function(){
@@ -44,7 +47,7 @@ var frontPage = frontPage || {};
 
         // Window loses focus
         $(window).blur( function(event){
-            //frontPage.clearErrors();
+            frontPage.clearErrors();
         });
         
         // Any of the invalid fields are edited
@@ -54,45 +57,47 @@ var frontPage = frontPage || {};
             }
         });
 
+        // Any other times?
 
+        // TODO: The document is clicked
+        // $(document).click( function(event){
+        //     if( frontPage.errorElements.length > 0 && event.target !== $('#register-button') ){
+        //         console.log("here");
+        //         frontPage.clearErrors();
+        //     }
+        // });
     }
-
+    
+    // Binds form events to their callbacks
     frontPage.bindForm = function(){
+        // Handle the default text when text fields go in and out of focus
+        apatapa.forms.handleDefaultText(frontPage.defaultText);
+
+        // When email goes out of focus, immediately check it on the server
+        $("input[name='email']").blur(function(){
+            frontPage.checkIfEmailUsed();
+        });
+        
+        // When the register button is pressed, validate the data in the form and proceed with registration if all good
         $('#register-button').click( function(event){
             event.preventDefault();
             frontPage.clearErrors();
 
             // Form is valid, proceed with registration
             if(frontPage.validateForm()){
-                console.log("it's valid");
+                var userType = $('.radio-control-group :checked').val();
+
+                // 'User' radio button pressed, create the account and take them to their profile
+                if( userType === "user" ){
+                    // TODO: Implement
+                }
+                // 'Business' radio button pressed, take them to another page to complete registration
+                else if( userType === "business" ){
+                    // TODO: Implement
+                }
+
             }
         });
-
-        var selector = $('input[type=text]');
-
-        // Remove default text when field gains focus
-        selector.focus( function(){
-            var name = $(this).attr('name');
-            var text = frontPage.defaultText[name];
-            if($(this).val() === text ){
-                $(this).val("");
-            }
-        });
-
-        // Insert default text when field loses focus
-        selector.blur( function(){
-            var name = $(this).attr('name');
-            var text = frontPage.defaultText[name];
-            if($(this).val() === ""){
-                $(this).val(text);
-            }
-        });
-
-        // When email goes out of focus, immediately check it on the server
-        $("input[name='email']").blur(function(){
-            frontPage.checkIfEmailUsed();
-        });
-
     }
 
     
@@ -203,10 +208,10 @@ var frontPage = frontPage || {};
     }
 
     frontPage.validateForm = function(){
-        frontPage.validateEmail();
-        frontPage.validateFirstName();
-        frontPage.validatePassword();
-        frontPage.validateUserType();
+        var isValid = frontPage.validateUserType() &&
+            frontPage.validateEmail() &&
+            frontPage.validateFirstName() &&
+            frontPage.validatePassword();
         
         // If there are any errors, style up the error div
         if( frontPage.errorElements.length > 0 ){
