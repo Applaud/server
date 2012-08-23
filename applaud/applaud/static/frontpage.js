@@ -59,13 +59,6 @@ var frontPage = frontPage || {};
 
         // Any other times?
 
-        // TODO: The document is clicked
-        // $(document).click( function(event){
-        //     if( frontPage.errorElements.length > 0 && event.target !== $('#register-button') ){
-        //         console.log("here");
-        //         frontPage.clearErrors();
-        //     }
-        // });
     }
     
     // Binds form events to their callbacks

@@ -79,7 +79,8 @@
     <li id="home_button" class="home_link cp_nav_button selected"  name="home_button">Home</li>
     <li id="profile_button" class="profile_link cp_nav_button">Profile</li>
     <li id="employee_button" class="employee_link cp_nav_button">Employees</li>
-    <li id="survey_button" class="survey_link cp_nav_button">Questions</li>
+    <li id="survey_button" class="survey_link cp_nav_button">Mingle</li>
+    <li id="survey_button" class="survey_link cp_nav_button">Polls</li>
     <li id="photos_button" class="photos_link cp_nav_button">Photos</li>
     <li id="newsfeed_button" class="newsfeed_link cp_nav_button">News Items</li>
   </ul>
@@ -201,7 +202,7 @@
     <h1>Photos</h1>
     <p>Here you can see photos that your customers have taken in your location and uploaded to Apatapa.</p>
     <div id="photos">
-      {% for photo in business_profile.businessphoto_set.all %}
+      {% for photo in photos %}
       <div class="photo" id="photo_{{ photo.id }}_div">
 	<span class="photo_votes">{{ photo.votes }}</span>
 	<img class="business_photo" src="{{ photo.image.url }}" alt="{% if photo.tags.0 %}{{ photo.tags.0 }}{% else %}{{ business_profile.business_name }}{% endif %}" />

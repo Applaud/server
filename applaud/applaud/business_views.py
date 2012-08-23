@@ -840,16 +840,28 @@ def control_panel(request):
         # All the newsfeed items that have been created so far.
         newsfeed_list = profile.newsfeeditem_set.all()
 
-        # The survey is a list of questions. Survey_list will be a list of surveys.
-        survey_list = profile.survey_set.all()
+        # The survey is a list of questions. Survey_list will be a list of surveys. -- NO LONGER NEEDED
+        #survey_list = profile.survey_set.all()
+        
+        # The photos for a business
+        photos = profile.businessphoto_set.all()
+
+        # All of the polls associated with the business
+        polls = profile.poll_set.all()
+
+        # All of the mingle threads associated with the business
+        threads = profile.thread_set.all()
 
         return render_to_response('business_control_panel.html',
                                   {'employee_list':employee_list,
                                    'rating_profile_list':rating_profile_list,
                                    'business_profile': profile,
                                    'feeds':newsfeed_list,
-                                   'survey_list':survey_list},
+                                   'photos': photos,
+                                   'polls': polls,
+                                   'threads':threads},
                                   context_instance=RequestContext(request))
+
     # Method is post.
     else:
         return HttpResponseRedirect('/business/controlpanel')
