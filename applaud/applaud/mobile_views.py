@@ -952,8 +952,8 @@ def check_email(request):
             ret['does_exist'] = True
         except User.DoesNotExist:
             ret['does_exist'] = False
-
-    return HttpResponse(json.dumps(ret))
+            return HttpResponse(json.dumps(ret))
+    return HttpResponse()
 
 @csrf_protect
 def register(request):

@@ -39,11 +39,10 @@ enduser4.first_name="Peter"
 enduser4.last_name="Fogg"
 enduser4.save()
 
-enduser5 = User.objects.create_user('wyatt', 'mamabear@berensteinbears.com', 'apatapa')
+enduser5 = User.objects.create_user('wyatthayman@gmail.com', 'wyatthayman@gmail.com', 'thekids99')
 enduser5.first_name="Wyatt"
 enduser5.last_name="Hayman"
 enduser5.save()
-
 
 keith_user = User.objects.create_user('Keith', 'foo@bar.com', 'apatapa')
 keith_user.first_name = 'Keith'
@@ -80,6 +79,12 @@ which = int(random()*6) + 1
 userprofile4.default_picture = 4
 userprofile4.save()
 
+userprofile5 = models.UserProfile(user=enduser5,
+                                 date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                 first_time=0)
+which = int(random()*6) + 1
+userprofile5.default_picture = 5
+userprofile5.save()
 
 # Make a BusinessProfile.
 business = models.BusinessProfile(user=user, phone='1.123.123.1234', latitude=39.07279, longitude=-120.14223, goog_id="677679492a58049a7eae079e0890897eb953d79b", business_name="Boo Furgers")

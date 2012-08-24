@@ -59,43 +59,45 @@ function handleResults ( results, status ) {
  * Google Maps API. Calls handleResults when the request is complete.
  */
 function codeAddress() {
-    var address = $('#business_addr_street').val();
-    address += ' '+$('#business_addr_city').val();
-    address += ' '+$('#business_addr_state').val();
-    address += ' '+$('#business_addr_country').val();
-    address += ' '+$('#business_addr_zip').val();
+    var address = $('input[name="address"]').val();
+    var city = $('input[name="city"]').val();
+    var state = $('input[name="state"]').val();
+    var country = $('input[name="country"]').val();
+    
+    var to_goog = address + ' ' + ' ' + city + ' ' + state + ' ' + country;
 
-    geocoder.geocode( { 'address': address}, function(results, status) {
-	var business_results = [];
-	if (status == google.maps.GeocoderStatus.OK) {
-	    var lat = results[0].geometry.location.lat();
-	    var lng = results[0].geometry.location.lng();
-	    var address = results[0].formatted_address;
+    geocoder.geocode( { 'address': to_goog}, function(results, status) {
+	    var business_results = [];
+	    if (status == google.maps.GeocoderStatus.OK) {
+	        var lat = results[0].geometry.location.lat();
+	        var lng = results[0].geometry.location.lng();
+	        var address = results[0].formatted_address;
+            
+	        // Set address and coordinate hidden fields here
+	        $('#id_address').val( address );
+	        $('#id_latitude').val( lat );
+	        $('#id_longitude').val( lng );
 
-	    // Set address and coordinate hidden fields here
-	    $('#id_address').val( address );
-	    $('#id_latitude').val( lat );
-	    $('#id_longitude').val( lng );
+	        var loc = new google.maps.LatLng(lat,lng);
+	        var request = {
+		        location: loc,
+		        radius: '100',
+		        name: $('#id_business_name').val()
+	        };
 
-	    var loc = new google.maps.LatLng(lat,lng);
-	    var request = {
-		location: loc,
-		radius: '100',
-		name: $('#id_business_name').val()
-	    };
+	        var map = new google.maps.Map(document.getElementById('googlemap'),
+					                      { mapTypeId: google.maps.MapTypeId.ROADMAP,
+					                        center: loc,
+					                        zoom: 15 });
 
-	    var map = new google.maps.Map(document.getElementById('googlemap'),
-					  { mapTypeId: google.maps.MapTypeId.ROADMAP,
-					    center: loc,
-					    zoom: 15 });
+	        var gplaces = new google.maps.places.PlacesService( map );
 
-	    var gplaces = new google.maps.places.PlacesService( map );
-
-	    gplaces.search( request, handleResults );
-	} else {
-	    searchError();
+	        gplaces.search( request, handleResults );
+	    }
+        else {
+	        searchError();
             console.log("Could not make request to Maps api: "+status);
-	}
+	    }
     });
 }
 

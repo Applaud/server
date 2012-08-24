@@ -4,11 +4,12 @@
 {% block scripts %}
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E&sensor=false"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}address_search.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
 {% endblock %}
 
 {% block links %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}business_registration.css" />
+
 {% endblock %}
 
 {% block title %}Register{% endblock %}
@@ -18,74 +19,50 @@
 <div id="registrationform">
   <form method="post" action=".">
     {% csrf_token %}
-    <p>Please provide a primary contact for your business.</p>
-    <div id="user_info">
-      <div id="user_info_firstname">
-	{{ form.first_name.errors }}
-	<label for="id_first_name">First name</label>
-	{{ form.first_name }}
-      </div>
-
-      <div id="user_info_lastname">
-	{{ form.last_name.errors }}
-	<label for="id_last_name">Last name</label>
-	{{ form.last_name }}
-      </div>
-
-      <div id="user_info_email">
-	{{ form.email.errors }}
-	<label for="id_email">Email</label>
-	{{ form.email }}
-      </div>
-
-      <div id="user_info_phone">
-	{{ form.phone.errors }}
-	<label for="id_phone">Phone</label>
-	{{ form.phone }}
-      </div>
-    </div>
-
-
-    <div id="business_info">
-      <div id="business_info_businessname">
-	{{ form.business_name.errors }}
-	<label for="id_business_name">Business name</label>
-	{{ form.business_name }}
-      </div>
-
-      <div id="business_info_username">
-	{{ form.username.errors }}
-	<label for="id_username">Username</label>
-	{{ form.username }}
-      </div>
-      
-      <div id="business_info_password">
-	{{ form.password.errors }}
-	<label for="id_password">Password</label>
-	{{ form.password1 }}
-      </div>
-
-      <div id="business_info_password2">
-	{{ form.password2.errors }}
-	<label for="id_password2">Password (again)</label>
-	{{ form.password2 }}
-      </div>
-    </div>
     
-    <input type="hidden" id="id_address" name="address" />
-    <input type="hidden" id="id_latitude" name="latitude" />
-    <input type="hidden" id="id_longitude" name="longitude" />
-    <input type="hidden" id="id_goog_id" name="goog_id" />
+    <input type="hidden" id="prev-email" name="email" />
+    <input type="hidden" id="prev-first" name="first" />
+    <input type="hidden" id="prev-last" name="last" />
+    <input type="hidden" id="prev-password" name="password" />
 
-    <input type="submit" value="{% trans 'Submit' %}" />
+    <!-- Address Group -->
+    <div id="address-control-group" class="control-group">
+      <div class="controls">
+        <input class="input-xlarge" type="text" value="Address" name="address"/>
+      </div>
+    </div>
+    <!-- End Address Group -->
+
+    <!-- City Group -->
+    <div id="city-control-group" class="control-group">
+      <div class="controls">
+        <input class="input-xlarge" type="text" value="City" name="city"/>
+      </div>
+    </div>
+    <!-- End City Group -->
+
+    <!-- State Group -->
+    <div id="state-control-group" class="control-group">
+      <div class="controls">
+        <input class="input-xlarge" type="text" value="State" name="state"/>
+      </div>
+    </div>
+    <!-- End State Group -->
+
+    <!-- Country Group -->
+    <div id="country-control-group" class="control-group">
+      <div class="controls">
+        <input class="input-xlarge" type="text" value="Country" name="country"/>
+      </div>
+    </div>
+    <!-- End Country Group -->
+
+
+
   </form>
 </div>
 
 <div id="business_search">
-  <p>In order to provide the most accurate location-based services for your customers, please search for your address here and select the location that most applies to you.</p>
-  {% if form.latitude.errors or form.longitude.errors or form.address.errors or form.goog_id.errors %}
-  <p class="formerror">Please find a valid address for your business.</p>
-  {% endif %}
   <div class="searchform_element">
     <label for="business_addr_street">Street Address</label>
     <input type="text" id="business_addr_street" name="business_addr_street" >
