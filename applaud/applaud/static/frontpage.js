@@ -1,7 +1,7 @@
 /*
  * frontPage.js - The javascript file for the frontpage of apatapa.com
  *
- *
+o *
  */
 
 var frontPage = frontPage || {};

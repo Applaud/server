@@ -6,6 +6,9 @@ urlpatterns = patterns('',
                        # First time visiting the site
                        url(r'^welcome/$', views.business_welcome),
                        
+                       # Retrieving all of the data
+                       url(r'^data/$', views.business_data),
+
                        # Employee stuff
                        url(r'^manage_employees/$',
                            views.manage_employees,
