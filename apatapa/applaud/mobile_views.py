@@ -78,6 +78,14 @@ def whereami(request):
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
         
+    # Making the omnipresent Apatapa HQ
+    business_list.append({"name":"The Slow Train Cafe",
+                          "types":["establishment"],
+                          "goog_id":'8eaccc6443d4a16442baf5f3a0bd527594105436',
+                          "latitude":'39.073778',
+                          "longitude":'-120.141402'
+                          })
+                        
     ret = json.dumps({'nearby_businesses':business_list})
 
     print business_list
@@ -944,8 +952,8 @@ def check_email(request):
             ret['does_exist'] = True
         except User.DoesNotExist:
             ret['does_exist'] = False
-
-    return HttpResponse(json.dumps(ret))
+            return HttpResponse(json.dumps(ret))
+    return HttpResponse()
 
 @csrf_protect
 def register(request):
