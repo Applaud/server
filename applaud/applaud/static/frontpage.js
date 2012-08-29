@@ -231,5 +231,18 @@ var frontPage = frontPage || {};
 
         return isValid;
     }
+
+    frontPage.initPage = function () {
+	$(".features-text").hide();
+	console.log("features");
+	$("#features-button").click( function() {
+	    frontPage.showFeatures();
+	});
+    }
+	
+    frontPage.showFeatures = function() {
+	$(".main-text").toggle(500);
+	$(".features-text").toggle(500);
+    }
 })(frontPage);
 

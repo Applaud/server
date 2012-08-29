@@ -13,6 +13,7 @@
       $(document).ready( function(){
           frontPage.bindForm();
           frontPage.bindClearErrorHandlers();
+          frontPage.initPage();
       });
     </script>
   </head>
@@ -32,9 +33,22 @@
       <div id="top-bar-content">
         <img src="/media/Logo340.png" alt="Apatapa" />
         <img src="/media/divider.png" alt="divider" />
-        <a class="btn btn-large" id="video-button" ><i class="icon-play"></i> Watch the Video</a>
+        <!-- <a class="btn btn-large" id="video-button" ><i class="icon-play"></i> Watch the Video</a> -->
+	<a class="btn btn-large" id="overview-button" href="/overview/#about">About Us</a>
         <img src="/media/divider.png" alt="divider" />
-	<a class="btn btn-large" id="features-button">Apatapa Features</a>
+	<a class="btn btn-large" id="features-button" href="#">Features</a>
+	<!-- <div class="btn-group"> -->
+	<!--   <button class="btn btn-large dropdown-toggle" id="features-button">Apatapa Features -->
+	<!--     <span class="caret"></span> -->
+	<!--   </button> -->
+	<!--   <ul class="dropdown-menu"> -->
+	<!--     <li><a id="feature-link-news">News</a></li> -->
+	<!--     <li><a id="feature-link-applaud">Applaud</a></li> -->
+	<!--     <li><a id="feature-link-polls">Polls</a></li> -->
+	<!--     <li><a id="feature-link-mingle">Mingle</a></li> -->
+	<!--     <li><a id="feature-link-photos">Photos</a></li> -->
+	<!--   </ul> -->
+	<!-- </div> -->
         <img src="/media/divider.png" alt="divider" />
         <a class="btn btn-large btn-primary" id="sign-in" href="/accounts/login">Sign In</a>        
       </div>
@@ -44,83 +58,91 @@
 
     <div id="main">
     
-      <!-- <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" /> -->
+      <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" />
       
       <!-- Info Div Start -->
       <div id="info">          
 
-        <div id="info-head">
+        <div id="info-head" class=" main-text">
           <h2>Connect with your environment</h2>
         </div>
         
-        <div id="info-main" class="row">   
+	<div class="features-text">
+	  <h2>Apatapa Features</h2>
+	</div>
+
+	<div id="info-features" class="row features-text">
+	  <p>Apatapa lets you do so much!</p>
+
+	  </div>
+        <div id="info-main" class="row main-text">   
           <p>Lorem ipsum, quia dolor sit amet, consectetur, adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
-          <h3>Register:</h3>
-          <form id="registration-form">
-            <fieldset>
+          <!-- <h3>Register:</h3> -->
+          <!-- <form id="registration-form"> -->
+          <!--   <fieldset> -->
 
-              <!-- User Select Group -->
-              <div id="user-control-group" class="control-group radio-control-group">
-                <label class="radio inline">
-                  <input type="radio" name="user-type" value="user" />
-                  User
-                </label>
+          <!--     <\!-- User Select Group -\-> -->
+          <!--     <div id="user-control-group" class="control-group radio-control-group"> -->
+          <!--       <label class="radio inline"> -->
+          <!--         <input type="radio" name="user-type" value="user" /> -->
+          <!--         User -->
+          <!--       </label> -->
 
-                <label class="radio inline">
-                  <input type="radio" name="user-type" value="business" />
-                  Business
-                </label>
-              </div>
-              <!-- End User Select Group -->
+          <!--       <label class="radio inline"> -->
+          <!--         <input type="radio" name="user-type" value="business" /> -->
+          <!--         Business -->
+          <!--       </label> -->
+          <!--     </div> -->
+          <!--     <\!-- End User Select Group -\-> -->
 
-              <!-- Email Group -->
-              <div id="email-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Email" name="email"/>
-                  <span id="email-status-image"></span>
-                  <span id="email-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Email Group -->
+          <!--     <\!-- Email Group -\-> -->
+          <!--     <div id="email-control-group" class="control-group"> -->
+          <!--       <div class="controls"> -->
+          <!--         <input class="input-xlarge" type="text" value="Email" name="email"/> -->
+          <!--         <span id="email-status-image"></span> -->
+          <!--         <span id="email-help-inline" class="help-inline"></span> -->
+          <!--       </div> -->
+          <!--     </div> -->
+          <!--     <\!-- End Email Group -\-> -->
 
-              <!-- First Name Group -->
-              <div id="first-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="First name" name="first"/>
-                  <span id="first-status-image"></span>
-                  <span id="first-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End First Name Group -->
+          <!--     <\!-- First Name Group -\-> -->
+          <!--     <div id="first-control-group" class="control-group"> -->
+          <!--       <div class="controls"> -->
+          <!--         <input class="input-xlarge" type="text" value="First name" name="first"/> -->
+          <!--         <span id="first-status-image"></span> -->
+          <!--         <span id="first-help-inline" class="help-inline"></span> -->
+          <!--       </div> -->
+          <!--     </div> -->
+          <!--     <\!-- End First Name Group -\-> -->
 
-              <!-- Last Name Group -->
-              <div id="last-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Last name (optional)" name="last"/>
-                  <span id="last-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Last Name Group -->
+          <!--     <\!-- Last Name Group -\-> -->
+          <!--     <div id="last-control-group" class="control-group"> -->
+          <!--       <div class="controls"> -->
+          <!--         <input class="input-xlarge" type="text" value="Last name (optional)" name="last"/> -->
+          <!--         <span id="last-help-inline" class="help-inline"></span> -->
+          <!--       </div> -->
+          <!--     </div> -->
+          <!--     <\!-- End Last Name Group -\-> -->
 
-              <!-- Password Group -->
-              <div id="password-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Password" name="password"/>
-                  <span id="password-status-image"></span>
-                  <span id="password-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Password Group -->
+          <!--     <\!-- Password Group -\-> -->
+          <!--     <div id="password-control-group" class="control-group"> -->
+          <!--       <div class="controls"> -->
+          <!--         <input class="input-xlarge" type="text" value="Password" name="password"/> -->
+          <!--         <span id="password-status-image"></span> -->
+          <!--         <span id="password-help-inline" class="help-inline"></span> -->
+          <!--       </div> -->
+          <!--     </div> -->
+          <!--     <\!-- End Password Group -\-> -->
 
-              <div id="error-div">
-                <ul>
-                </ul>
-              </div>
+          <!--     <div id="error-div"> -->
+          <!--       <ul> -->
+          <!--       </ul> -->
+          <!--     </div> -->
 
-              <button id="register-button" class="btn btn-primary btn-large" type="submit">Register</button>
+          <!--     <button id="register-button" class="btn btn-primary btn-large" type="submit">Register</button> -->
 
-            </fieldset>
-          </form>
+          <!--   </fieldset> -->
+          <!-- </form> -->
           
 
           <!-- <div id="nav-buttons"> -->
@@ -129,6 +151,7 @@
           <!-- </div> -->
           <!-- <img src="/media/appStore.jpeg" id="appStore" width="160" height="60">       -->
         </div>
+	
 
       </div>
       <!-- Info Div Stop -->

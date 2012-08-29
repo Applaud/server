@@ -12,7 +12,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-left: 60px; }
-  #top-bar-content img, #top-bar-content a {
+  #top-bar-content img, #top-bar-content a, #top-bar-content button, #top-bar-content div {
     margin-right: 20px; }
   #top-bar-content #sign-in {
     float: right;
