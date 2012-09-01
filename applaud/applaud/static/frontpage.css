@@ -20,6 +20,10 @@ body {
     margin-right: 30px;
     font-weight: bold; }
 
+#carousel {
+  position: absolute;
+  margin-top: 200px; }
+
 #main {
   width: 1200px;
   height: 600px;
@@ -41,7 +45,7 @@ body {
   margin-right: 250px;
   margin-top: 50px; }
 
-#info-head {
+#info-head, #features-head {
   margin-left: -20px;
   margin-bottom: 10px;
   font-weight: normal;
