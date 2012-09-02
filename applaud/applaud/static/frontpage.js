@@ -234,15 +234,51 @@ var frontPage = frontPage || {};
 
     frontPage.initPage = function () {
 	$(".features-text").hide();
-	console.log("features");
+	$(".features-display").hide();
+	frontPage.initFeatures();
+
 	$("#features-button").click( function() {
-	    frontPage.showFeatures();
+	    if($(this).html() == "Features") {
+		frontPage.showFeatures();
+		$(this).html("Home");
+	    }
+	    else {
+		frontPage.hideFeatures();
+		$(this).html("Features");
+	    }
 	});
     }
-	
-    frontPage.showFeatures = function() {
-	$(".main-text").toggle(500);
-	$(".features-text").toggle(500);
+    frontPage.hideFeatures = function () {
+	$(".features-display").hide();
+	$(".features-text").hide();
+	$(".main-text").fadeIn("slow");
+    }
+
+    frontPage.showFeatures = function () {
+	$(".main-text").hide();
+	$(".features-display").fadeIn("slow");
+	$("#features-text-0").fadeIn("slow");
+    }
+    
+    frontPage.initFeatures = function() {
+	var counter=0;
+	$("#carousel-right").click( function() {
+	    $(".features-text").hide();
+	    counter=counter+1;
+	    counter=counter%5;
+	    console.log(counter);
+	    $("#features-text-"+counter+"").fadeIn("slow");
+	});
+	$("#carousel-left").click( function() {
+	    $("#features-text-"+counter+"").hide();
+	    counter=counter-1;
+	    counter=counter%5;
+	    console.log(counter);
+	    if(counter==-1){ counter=4; }
+
+	    $("#features-text-"+counter+"").fadeIn("slow");
+	});
+
     }
 })(frontPage);
 
