@@ -34,6 +34,13 @@ body {
 #carousel-left, #carousel-right{
     position:absolute;
     margin-top:150px;
+    z-index:2;
+}
+#carousel-left{
+    margin-left:85px;
+}
+#carousel-right{
+    margin-right:85px;
 }
 #main {
     width:1200px;
