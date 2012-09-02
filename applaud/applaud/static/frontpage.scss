@@ -20,7 +20,7 @@ body {
     //width:1200px;
     padding-left:60px;
     
-    img, a {
+    img, a, button, div {
         margin-right:20px;
     }
     
@@ -31,7 +31,10 @@ body {
         font-weight:bold;
    }
 }
-
+#carousel-left, #carousel-right{
+    position:absolute;
+    margin-top:150px;
+}
 #main {
     width:1200px;
     height:600px;
@@ -57,7 +60,7 @@ body {
     margin-top:50px;
 }
 
-#info-head {
+#info-head, #features-head {
     margin-left:-20px;
     margin-bottom: 10px;
     font-weight:normal;

@@ -12,13 +12,17 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-left: 60px; }
-  #top-bar-content img, #top-bar-content a {
+  #top-bar-content img, #top-bar-content a, #top-bar-content button, #top-bar-content div {
     margin-right: 20px; }
   #top-bar-content #sign-in {
     float: right;
     margin-top: 31px;
     margin-right: 30px;
     font-weight: bold; }
+
+#carousel-left, #carousel-right {
+  position: absolute;
+  margin-top: 150px; }
 
 #main {
   width: 1200px;
@@ -41,7 +45,7 @@ body {
   margin-right: 250px;
   margin-top: 50px; }
 
-#info-head {
+#info-head, #features-head {
   margin-left: -20px;
   margin-bottom: 10px;
   font-weight: normal;

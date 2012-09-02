@@ -1,3 +1,19 @@
+
+// $(document).ready( function(){
+//     $("#features").hide();
+//     console.log("reading the javscript file");
+//     $("#video-button").click( function(){
+//         $('#myModal').modal({
+//             backdrop: true
+//         });
+//     });
+
+//     $("#features-button").click( function () {
+// 	$("#info").hide();
+// 	$("#features").show();
+//     });
+// });
+
 /*
  * frontPage.js - The javascript file for the frontpage of apatapa.com
  *
@@ -215,4 +231,54 @@ var frontPage = frontPage || {};
 
         return isValid;
     }
+
+    frontPage.initPage = function () {
+	$(".features-text").hide();
+	$(".features-display").hide();
+	frontPage.initFeatures();
+
+	$("#features-button").click( function() {
+	    if($(this).html() == "Features") {
+		frontPage.showFeatures();
+		$(this).html("Home");
+	    }
+	    else {
+		frontPage.hideFeatures();
+		$(this).html("Features");
+	    }
+	});
+    }
+    frontPage.hideFeatures = function () {
+	$(".features-display").hide();
+	$(".features-text").hide();
+	$(".main-text").fadeIn("slow");
+    }
+
+    frontPage.showFeatures = function () {
+	$(".main-text").hide();
+	$(".features-display").fadeIn("slow");
+	$("#features-text-0").fadeIn("slow");
+    }
+    
+    frontPage.initFeatures = function() {
+	var counter=0;
+	$("#carousel-right").click( function() {
+	    $(".features-text").hide();
+	    counter=counter+1;
+	    counter=counter%5;
+	    console.log(counter);
+	    $("#features-text-"+counter+"").fadeIn("slow");
+	});
+	$("#carousel-left").click( function() {
+	    $("#features-text-"+counter+"").hide();
+	    counter=counter-1;
+	    counter=counter%5;
+	    console.log(counter);
+	    if(counter==-1){ counter=4; }
+
+	    $("#features-text-"+counter+"").fadeIn("slow");
+	});
+
+    }
 })(frontPage);
+
