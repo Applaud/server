@@ -1,31 +1,52 @@
-$(document).ready( function () {
-    $(".overview-content").hide();
-    if(location.hash) {
-	var name = location.hash.substring(1);
-	show_overview_div(name);
-    }
-    $(".collapse").collapse();
-});
-function show_overview_div(name) {
-    $(".overview-content").hide();
-    $("#overview-"+name).show();
-    $(".nav").children().removeClass("active");
-    $("."+name).addClass("active");
-};
+////////////////////////////////////////////////////////////////////////////////////////////////
+// overview.js - The javascript file for the product, team, and legal overview of apatapa.com //
+////////////////////////////////////////////////////////////////////////////////////////////////
+if( ! apatapa.overview ){
+    apatapa.overview = {};
+}
 
-// The hash functions trigger events even when clicked on the page iteself
-$(function(){
-// Bind an event to window.onhashchange that, when the hash changes, gets the
-// hash and adds the class "selected" to any matching nav link.
-    $(window).hashchange( function(){
-	var hash = location.hash;
-	
-	// Set the page title based on the hash.
-	document.title = 'Apatapa | ' + hash.substring(1,2).toUpperCase() + hash.substring(2);
-	show_overview_div(hash.substring(1))
-    })
+( function( _ns ){
     
-    // Since the event is only triggered when the hash changes, we need to trigger
-    // the event now, to handle the hash the page may have loaded with.
-	$(window).hashchange();
-});
+    var sections = ['about', 'team', 'terms', 'privacy'];
+
+    // A function to call whenever a particular section should be displayed
+    _ns.showSection = function( sectionName ){
+
+        // Make the appropriate tab selected
+        $(".content-link").removeClass("selected");
+        $("#"+sectionName+"-content-link").addClass("selected");
+
+        // Hide the other groups, show the appropriate one
+        $(".content-group").hide();
+        $("#"+sectionName+"-content-group").show();
+
+    }
+
+    // Call when the page is loaded
+    $(document).ready( function () {
+        // Grab the url to see if a particular tag was passed in
+        var url = location.href;
+        var tag = url.split("#")[1].toLowerCase();
+        
+        // If the tag is one of the sections, navigate to it
+        if( sections.indexOf( tag ) !== -1 ){
+            _ns.showSection( tag );
+        }
+        // Otherwise, just start the page off displaying the 'About' section
+        else{
+            _ns.showSection( "about" );
+        }
+
+        // Bind the Nav Bar links
+        $(".content-link").click( function() {
+            // Grab the name of the clicked section
+            var name = $(this).attr('id').split("-")[0];
+            console.log(name);
+            _ns.showSection( name );
+        });
+    });
+    
+}( apatapa.overview ))
+
+
+

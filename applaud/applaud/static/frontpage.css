@@ -28,16 +28,12 @@ body {
   width: 1200px;
   height: 600px;
   position: relative;
-  background-image: url("/media/restaurant.jpg");
+  background-image: url("/media/TheOne.JPG");
+  background-position: 40% 60%;
+  background-size: 160%;
   background-repeat: no-repeat;
   margin-left: auto;
   margin-right: auto; }
-
-#hand-image {
-  position: absolute;
-  bottom: 0;
-  height: 80%;
-  width: auto; }
 
 #info {
   width: 400px;

@@ -1,24 +1,6 @@
-
-// $(document).ready( function(){
-//     $("#features").hide();
-//     console.log("reading the javscript file");
-//     $("#video-button").click( function(){
-//         $('#myModal').modal({
-//             backdrop: true
-//         });
-//     });
-
-//     $("#features-button").click( function () {
-// 	$("#info").hide();
-// 	$("#features").show();
-//     });
-// });
-
-/*
- * frontPage.js - The javascript file for the frontpage of apatapa.com
- *
-o *
- */
+//////////////////////////////////////////////////////////////////////////
+// frontpage.js - The javascript file for the front page of apatapa.com //
+//////////////////////////////////////////////////////////////////////////
 
 var frontPage = frontPage || {};
 
@@ -232,6 +214,7 @@ var frontPage = frontPage || {};
         return isValid;
     }
 
+    
     frontPage.initPage = function () {
 	$(".features-text").hide();
 	$(".features-display").hide();
@@ -248,6 +231,7 @@ var frontPage = frontPage || {};
 	    }
 	});
     }
+
     frontPage.hideFeatures = function () {
 	$(".features-display").hide();
 	$(".features-text").hide();
@@ -262,6 +246,7 @@ var frontPage = frontPage || {};
     
     frontPage.initFeatures = function() {
 	var counter=0;
+
 	$("#carousel-right").click( function() {
 	    $(".features-text").hide();
 	    counter=counter+1;
@@ -269,6 +254,8 @@ var frontPage = frontPage || {};
 	    console.log(counter);
 	    $("#features-text-"+counter+"").fadeIn("slow");
 	});
+
+
 	$("#carousel-left").click( function() {
 	    $("#features-text-"+counter+"").hide();
 	    counter=counter-1;
