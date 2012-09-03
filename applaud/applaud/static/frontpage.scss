@@ -37,10 +37,10 @@ body {
     z-index:2;
 }
 #carousel-left{
-    margin-left:85px;
+    margin-left:65px;
 }
 #carousel-right{
-    margin-right:85px;
+    margin-right:65px;
 }
 #main {
     width:1200px;
@@ -105,7 +105,11 @@ body {
 
 #bottom-bar {
     z-index:100;
-    height:100px;
+    height:50px;
     @include shadow(6px, #111);
 }
 
+#footer {
+    margin-top:20px;
+    margin-left:30px;
+}
