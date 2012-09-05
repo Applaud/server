@@ -32,25 +32,26 @@ def create_news(title, body, business):
                              body=body,
                              date=datetime.utcnow().replace(tzinfo=utc),
                              date_edited=datetime.utcnow().replace(tzinfo=utc),
-                             business=buiness)
+                             business=business)
     news.save()
                              
 
 # Slow Train
 
-st_user = User.objects.create_user('Slow Train', 'jessa@slowtraincafe.com', 'oclove')
 
 # Need to change this when running on the server
-# slowtrain = models.BusinessProfile.objects.get(pk=23)
-
-slowtrain = models.BusinessProfile(user=st_user,
-                                   latitude = 41.291624,
-                                   longitude = -82.215433,
-                                   goog_id="cd4842ff78103167deeaf236fd198dd59b88ad78",
-                                   business_name="The Slow Train Cafe",
-                                   primary_color="#873920",
-                                   secondary_color="#f0f0f0")
-slowtrain.save()
+try:
+    slowtrain = models.BusinessProfile.objects.get(business_name="The Slow Train Cafe")
+except BusinessProfile.DoesNotExist:
+    st_user = User.objects.create_user('Slow Train', 'jessa@slowtraincafe.com', 'oclove')
+    slowtrain = models.BusinessProfile(user=st_user,
+                                       latitude = 41.291624,
+                                       longitude = -82.215433,
+                                       goog_id="cd4842ff78103167deeaf236fd198dd59b88ad78",
+                                       business_name="The Slow Train Cafe",
+                                       primary_color="#873920",
+                                       secondary_color="#f0f0f0")
+    slowtrain.save()
 
 st = models.BusinessProfile(user=slowtrain.user,
                             latitude = slowtrain.latitude, 
@@ -147,25 +148,45 @@ create_poll("Would you rather have a Slow Train...",
 #############
 
 
-feve_user = User.objects.create_user('The Feve', 'jayfeve@gmail.com', 'feve')
+
 
 # Need to change this when running on the server
-# slowtrain = models.BusinessProfile.objects.get(pk=13)
+try:
+    thefeve = models.BusinessProfile.objects.get(business_name="The Feve")
+except BusinessProfile.DoesNotExist:
+    feve_user = User.objects.create_user('The Feve', 'jayfeve@gmail.com', 'feve')
+    thefeve = models.BusinessProfile(user=feve_user,
+                                     latitude = 41.290828,
+                                     longitude = -82.21759,
+                                     goog_id="90337243a42c2dc414a467d8ec6fc09746a2f03d",
+                                     business_name="The Feve",
+                                     primary_color="#873920",
+                                     secondary_color="#f0f0f0")
 
-feve = models.BusinessProfile(user=feve_user
-                                   latitude = 41.290828
-                                   longitude = -82.21759,
-                                   goog_id="90337243a42c2dc414a467d8ec6fc09746a2f03d",
-                                   business_name="The Feve",
-                                   primary_color="#873920",
-                                   secondary_color="#f0f0f0")
+# Changing the colors for when we get it from the business profiles already in the server
+thefeve.primary_color="#873920"
+thefeve.secondary_color="#f0f0f0"
+thefeve.save()
+
+feve = models.BusinessProfile(user=thefeve.user,
+                            latitude = thefeve.latitude, 
+                            longitude = thefeve.longitude,
+                            goog_id = thefeve.goog_id,
+                            business_name = thefeve.business_name,
+                            primary_color = thefeve.primary_color,
+                            secondary_color = thefeve.secondary_color)
+thefeve.delete()
 feve.save()
 
 create_news("The Feve party room",
-            "Soon the Feve’s party room will be available for private events and more space for drinking!  If you would like to inquire about booking the room, please contact Jason: jayfeve@gmail.com",
+            "Soon the Feve\'s party room will be available for private events and more space for drinking!  If you would like to inquire about booking the room, please contact Jason: jayfeve@gmail.com",
             feve)
 
-create_user("Artists/Musicians!",
+create_news("Upstairs Specials",
+            "Monday: All night happy hour. Tuesday: $4 for ten wings. Wednesday: Long Islands. Thursday: Shots and Tots. Friday: Happy happy hour. Saturday: $5 shot and a beer",
+            feve)
+
+create_news("Artists/Musicians!",
             "If you would like to have your art on the walls, or to play a show at the Feve, please contact Jason: jayfeve@gmail.com",
             feve)
 
@@ -174,7 +195,7 @@ create_thread("What is the best thing to order at the Feve?", feve)
 create_thread("How could the Feve improve?", feve)
 create_thread("What is your favorite part of the Feve?", feve)
 create_thread("What are your opinions on the Feve art?", feve)
-create_thread("Would you rather…", feve)
+create_thread("Would you rather...", feve)
 create_thread("Best bar tricks", feve)
 create_thread("What should the Feve drinking game be?", feve)
 create_thread("The best Feve brunch dishes", feve)
