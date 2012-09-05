@@ -30,6 +30,7 @@ def create_poll(title, options, business):
 def create_news(title, body, business):
     news=models.NewsFeedItem(title=title,
                              body=body,
+                             subtitle="",
                              date=datetime.utcnow().replace(tzinfo=utc),
                              date_edited=datetime.utcnow().replace(tzinfo=utc),
                              business=business)
@@ -68,11 +69,13 @@ nf1 = models.NewsFeedItem(title="The Slow (Food) Train",
                           body="All of our food is prepared fresh, throughout each week, by local chefs and bakers who use wholesome, all-natural ingredients, utilizing local farms and sustainable resources whenever possible.",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
+                          subtitle="",
                           business=st)
 nf1.save()
 
 nf2 = models.NewsFeedItem(title="Wine Night every Tuesday and Thursday",
                           body="From 4pm to close. $3 glasses and cocktails!",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
@@ -80,6 +83,7 @@ nf2.save()
 
 nf3 = models.NewsFeedItem(title="The Slow Train is expanding",
                           body="Starting this fall, you can swing by our coffee bar across the street from The Feve",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
@@ -87,6 +91,7 @@ nf3.save()
 
 nf4 = models.NewsFeedItem(title="If you would us to display your art, set up a show or event...",
                           body="Please email ztesler@gmail.com",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
@@ -94,6 +99,7 @@ nf4.save()
 
 nf5 = models.NewsFeedItem(title="Draw a mural on our chalkboard!",
                           body="To sign up, please email josh@slowtraincafe.com",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
@@ -101,6 +107,7 @@ nf5.save()
 
 nf6 = models.NewsFeedItem(title="We have switched to plastic cups",
                           body="We have switched because too many glasses were taken from Slow Train.  We would love to hear your suggestions for environmental sustainability at the Slow Train, including strategies for returning to glassware.",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
@@ -108,6 +115,7 @@ nf6.save()
 
 nf7 = models.NewsFeedItem(title="The Slow Train was started by Oberlin alumni!",
                           body="Jessa New (\'01) and Zach Tesler (\'07) partnered up to start the Slow Train in 2010.",
+                          subtitle="",
                           date=datetime.utcnow().replace(tzinfo=utc),
                           date_edited=datetime.utcnow().replace(tzinfo=utc),
                           business=st)
