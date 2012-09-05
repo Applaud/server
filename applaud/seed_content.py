@@ -41,7 +41,7 @@ def create_news(title, body, business):
 
 # Need to change this when running on the server
 try:
-    slowtrain = models.BusinessProfile.objects.get(business_name="The Slow Train Cafe")
+    slowtrain = models.BusinessProfile.objects.get(goog_id="cd4842ff78103167deeaf236fd198dd59b88ad78")
 except BusinessProfile.DoesNotExist:
     st_user = User.objects.create_user('Slow Train', 'jessa@slowtraincafe.com', 'oclove')
     slowtrain = models.BusinessProfile(user=st_user,
@@ -152,7 +152,7 @@ create_poll("Would you rather have a Slow Train...",
 
 # Need to change this when running on the server
 try:
-    thefeve = models.BusinessProfile.objects.get(business_name="The Feve")
+    thefeve = models.BusinessProfile.objects.get(goog_id="90337243a42c2dc414a467d8ec6fc09746a2f03d")
 except BusinessProfile.DoesNotExist:
     feve_user = User.objects.create_user('The Feve', 'jayfeve@gmail.com', 'feve')
     thefeve = models.BusinessProfile(user=feve_user,
