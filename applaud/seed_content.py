@@ -36,14 +36,18 @@ def create_news(title, body, business):
                              date_edited=datetime.utcnow().replace(tzinfo=utc),
                              business=business)
     news.save()
-                             
+
+# Creating the user profiles that are needed in order to make the threads work
+
 
 # Slow Train
 
 
 # Need to change this when running on the server
+st_user=""
 try:
     slowtrain = models.BusinessProfile.objects.get(goog_id="cd4842ff78103167deeaf236fd198dd59b88ad78")
+    st_user=slowtrain.user
 except models.BusinessProfile.DoesNotExist:
     st_user = User.objects.create_user('Slow Train', 'jessa@slowtraincafe.com', 'oclove')
     slowtrain = models.BusinessProfile(user=st_user,
@@ -64,6 +68,15 @@ st = models.BusinessProfile(user=slowtrain.user,
                             secondary_color = slowtrain.secondary_color)
 slowtrain.delete()
 st.save()
+
+st_userprofile = models.UserProfile(user=User.objects.create_user("slowtrain_user", 'jessa@slowtraincafe.com', 'oclove'),
+                                    date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                    first_time=0)
+st_userprofile.user.first_name="Slow"
+st_userprofile.user.last_name="Train"
+st_userprofile.default_picture=1;
+st_userprofile.save()
+
 
 # NewsFeedItems
 nf1 = models.NewsFeedItem(title="The Slow (Food) Train",
@@ -160,8 +173,10 @@ create_poll("Would you rather have a Slow Train...",
 
 
 # Need to change this when running on the server
+feve_user=""
 try:
     thefeve = models.BusinessProfile.objects.get(goog_id="90337243a42c2dc414a467d8ec6fc09746a2f03d")
+    feve_user = thefeve.user
 except models.BusinessProfile.DoesNotExist:
     feve_user = User.objects.create_user('The Feve', 'jayfeve@gmail.com', 'feve')
     thefeve = models.BusinessProfile(user=feve_user,
@@ -186,6 +201,13 @@ feve = models.BusinessProfile(user=thefeve.user,
                             secondary_color = thefeve.secondary_color)
 thefeve.delete()
 feve.save()
+
+feve_userprofile = models.UserProfile(user=feve_user,
+                                    date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+                                    first_time=0)
+feve_userprofile.default_picture=1;
+feve_userprofile.save()
+
 
 create_news("The Feve party room",
             "Soon the Feve\'s party room will be available for private events and more space for drinking!  If you would like to inquire about booking the room, please contact Jason: jayfeve@gmail.com",
