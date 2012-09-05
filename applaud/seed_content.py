@@ -18,10 +18,10 @@ from applaud import settings
 
 
 # Standard functions
-def create_thread(title, business):
+def create_thread(title, business, userprofile):
     thread = models.Thread(title=title,
                            business=business,
-                           user_creator = models.UserProfile.objects.get(pk=1))
+                           user_creator = userprofile)
     thread.save()
 
 def create_poll(title, options, business):
@@ -69,13 +69,14 @@ st = models.BusinessProfile(user=slowtrain.user,
 slowtrain.delete()
 st.save()
 
-st_userprofile = models.UserProfile(user=User.objects.create_user("slowtrain_user", 'jessa@slowtraincafe.com', 'oclove'),
-                                    date_of_birth=datetime.utcnow().replace(tzinfo=utc),
-                                    first_time=0)
-st_userprofile.user.first_name="Slow"
-st_userprofile.user.last_name="Train"
-st_userprofile.default_picture=1;
-st_userprofile.save()
+st_userprofile = User.objects.get(username="slowtrain_user").userprofile
+# st_userprofile = models.UserProfile(user=User.objects.create_user("slowtrain_user", 'jessa@slowtraincafe.com', 'oclove'),
+#                                     date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+#                                     first_time=0)
+# st_userprofile.user.first_name="Slow"
+# st_userprofile.user.last_name="Train"
+# st_userprofile.default_picture=1;
+# st_userprofile.save()
 
 
 # NewsFeedItems
@@ -138,14 +139,14 @@ nf7.save()
 
 # Creating mingle threads
 
-create_thread("What is the best thing to order at Slow Train?",st)
-create_thread("What events do you wish took place at Slow Train?", st)
-create_thread("What do you think of the remodel?", st)
-create_thread("Is there anything you would like to see improve abouut Slow Train?", st)
-create_thread("Best live music you have seen at Slow Train", st)
-create_thread("What contests should Slow Train hold?", st)
-create_thread("What tea do you wish we served here?", st)
-create_thread("If the Slow Train were a train where would you want it to be taking you right now?", st)
+create_thread("What is the best thing to order at Slow Train?",st, st_userprofile)
+create_thread("What events do you wish took place at Slow Train?", st, st_userprofile)
+create_thread("What do you think of the remodel?", st, st_userprofile)
+create_thread("Is there anything you would like to see improve abouut Slow Train?", st, st_userprofile)
+create_thread("Best live music you have seen at Slow Train", st, st_userprofile)
+create_thread("What contests should Slow Train hold?", st, st_userprofile)
+create_thread("What tea do you wish we served here?", st, st_userprofile)
+create_thread("If the Slow Train were a train where would you want it to be taking you right now?", st, st_userprofile)
 
 
 # Polls 
@@ -202,11 +203,12 @@ feve = models.BusinessProfile(user=thefeve.user,
 thefeve.delete()
 feve.save()
 
-feve_userprofile = models.UserProfile(user=feve_user,
-                                    date_of_birth=datetime.utcnow().replace(tzinfo=utc),
-                                    first_time=0)
-feve_userprofile.default_picture=1;
-feve_userprofile.save()
+feve_userprofile = User.objects.get(username="The Feve").userprofile
+# feve_userprofile = models.UserProfile(user=feve_user,
+#                                     date_of_birth=datetime.utcnow().replace(tzinfo=utc),
+#                                     first_time=0)
+# feve_userprofile.default_picture=1;
+# feve_userprofile.save()
 
 
 create_news("The Feve party room",
@@ -222,15 +224,15 @@ create_news("Artists/Musicians!",
             feve)
 
 
-create_thread("What is the best thing to order at the Feve?", feve)
-create_thread("How could the Feve improve?", feve)
-create_thread("What is your favorite part of the Feve?", feve)
-create_thread("What are your opinions on the Feve art?", feve)
-create_thread("Would you rather...", feve)
-create_thread("Best bar tricks", feve)
-create_thread("What should the Feve drinking game be?", feve)
-create_thread("The best Feve brunch dishes", feve)
-create_thread("What should Feve brunch do next?", feve)
+create_thread("What is the best thing to order at the Feve?", feve, feve_userprofile)
+create_thread("How could the Feve improve?", feve, feve_userprofile)
+create_thread("What is your favorite part of the Feve?", feve, feve_userprofile)
+create_thread("What are your opinions on the Feve art?", feve, feve_userprofile)
+create_thread("Would you rather...", feve, feve_userprofile)
+create_thread("Best bar tricks", feve, feve_userprofile)
+create_thread("What should the Feve drinking game be?", feve, feve_userprofile)
+create_thread("The best Feve brunch dishes", feve, feve_userprofile)
+create_thread("What should Feve brunch do next?", feve, feve_userprofile)
 
 create_poll("Did you get your free drink on your 21st birthday?",
             ['Yes','No'], feve)
