@@ -217,7 +217,7 @@ class NewsFeedItem(models.Model):
 	'''Models an item in the newsfeed.
 	'''
 	title = models.CharField(max_length=100)
-	subtitle = models.TextField(max_length=100)
+	subtitle = models.TextField(max_length=100, blank=True, null=True)
 	body = models.TextField(max_length=500)
 	date = models.DateTimeField(editable=False)
         business = models.ForeignKey('BusinessProfile')

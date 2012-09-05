@@ -594,7 +594,8 @@ post1 = models.ThreadPost(body="Honey-Glazed mahi mahi, with honey and some bals
                          thread=thread)
 post1.save()
 
-post2 = models.ThreadPost(body="Garlic and cumin may be sweet additions to that",
+post2 = models.ThreadPost(body="Garlic and cumin
+ may be sweet additions to that",
                          user=userprofile3,
                          thread=thread)
 post2.save()
