@@ -79,7 +79,7 @@ def whereami(request):
                 })
         
     # Making the omnipresent Apatapa HQ
-    business_list.append({"name":"The Slow Train Cafe",
+    business_list.append({"name":"Apatapa HQ",
                           "types":["establishment"],
                           "goog_id":'8eaccc6443d4a16442baf5f3a0bd527594105436',
                           "latitude":'39.073778',
