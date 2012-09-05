@@ -89,7 +89,7 @@ nf3 = models.NewsFeedItem(title="The Slow Train is expanding",
                           business=st)
 nf3.save()
 
-nf4 = models.NewsFeedItem(title="If you would us to display your art, set up a show or event...",
+nf4 = models.NewsFeedItem(title="If you would like us to display your art, set up a show or event...",
                           body="Please email ztesler@gmail.com",
                           subtitle=" ",
                           date=datetime.utcnow().replace(tzinfo=utc),
