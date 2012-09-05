@@ -20,7 +20,8 @@ from applaud import settings
 # Standard functions
 def create_thread(title, business):
     thread = models.Thread(title=title,
-                           business=business)
+                           business=business,
+                           user_creator = models.UserProfile.objects.get(pk=1))
     thread.save()
 
 def create_poll(title, options, business):
@@ -43,7 +44,7 @@ def create_news(title, body, business):
 # Need to change this when running on the server
 try:
     slowtrain = models.BusinessProfile.objects.get(goog_id="cd4842ff78103167deeaf236fd198dd59b88ad78")
-except BusinessProfile.DoesNotExist:
+except models.BusinessProfile.DoesNotExist:
     st_user = User.objects.create_user('Slow Train', 'jessa@slowtraincafe.com', 'oclove')
     slowtrain = models.BusinessProfile(user=st_user,
                                        latitude = 41.291624,
@@ -161,7 +162,7 @@ create_poll("Would you rather have a Slow Train...",
 # Need to change this when running on the server
 try:
     thefeve = models.BusinessProfile.objects.get(goog_id="90337243a42c2dc414a467d8ec6fc09746a2f03d")
-except BusinessProfile.DoesNotExist:
+except models.BusinessProfile.DoesNotExist:
     feve_user = User.objects.create_user('The Feve', 'jayfeve@gmail.com', 'feve')
     thefeve = models.BusinessProfile(user=feve_user,
                                      latitude = 41.290828,

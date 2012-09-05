@@ -4,6 +4,7 @@ CURDIR=`pwd`
 
 rm ${CURDIR}/applaud/test.db
 python manage.py syncdb --noinput
+python populate.py
 python seed_content.py
 
 # If we're on a server, make sure permissions are OK
