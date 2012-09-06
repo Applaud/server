@@ -203,7 +203,7 @@ feve = models.BusinessProfile(user=thefeve.user,
 thefeve.delete()
 feve.save()
 
-feve_userprofile = User.objects.get(username="The Feve").userprofile
+feve_userprofile = User.objects.get(username="Feve").userprofile
 # feve_userprofile = models.UserProfile(user=feve_user,
 #                                     date_of_birth=datetime.utcnow().replace(tzinfo=utc),
 #                                     first_time=0)
