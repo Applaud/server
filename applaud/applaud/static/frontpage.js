@@ -14,15 +14,24 @@ var frontPage = frontPage || {};
     // The jQuery objects of any invalid form elements
     frontPage.errorElements = [];
 
+    // The timer for switching the feature
+    frontPage.featureTimer;
+    
+    // The time between automagically switching between pictures (in milliseconds)
+    frontPage.featureTimerLength = 1000000;//4000;
+
+    // The counter determining the current feature
+    frontPage.featureCounter = 0;
+    
     // Clears the errors from the screen and performs other necessary cleanup
     frontPage.clearErrors = function(){
         // Remove the list of errors from the div
-        $('#error-div ul').empty();
+        $('#form-error ul').empty();
 
         // Get rid of the other error div styling
-        $('#error-div').css("padding-top","0px");
-        $('#error-div').css("padding-bottom","0px");
-        $('#error-div').css("margin-bottom","0px");
+        $('#form-error').css("padding-top","0px");
+        $('#form-error').css("padding-bottom","0px");
+        $('#form-error').css("margin-bottom","0px");
 
         // Remove the status images
         $('#email-status-image').empty();
@@ -61,6 +70,7 @@ var frontPage = frontPage || {};
     
     // Binds form events to their callbacks
     frontPage.bindForm = function(){
+
         // Handle the default text when text fields go in and out of focus
         apatapa.forms.handleDefaultText(frontPage.defaultText);
 
@@ -76,16 +86,8 @@ var frontPage = frontPage || {};
 
             // Form is valid, proceed with registration
             if(frontPage.validateForm()){
-                var userType = $('.radio-control-group :checked').val();
+                console.log("Form is valid!!!!");
 
-                // 'User' radio button pressed, create the account and take them to their profile
-                if( userType === "user" ){
-                    // TODO: Implement
-                }
-                // 'Business' radio button pressed, take them to another page to complete registration
-                else if( userType === "business" ){
-                    // TODO: Implement
-                }
 
             }
         });
@@ -95,7 +97,6 @@ var frontPage = frontPage || {};
     // Makes a get request to the server to check if an account with a particular email address already exists
     frontPage.checkIfEmailUsed = function(){
         var email = $('input[name="email"]').val();
-
         // Check to see if email is already being used
         $.get('mobile/check_email/',
               {email:email},
@@ -108,7 +109,7 @@ var frontPage = frontPage || {};
                       if( $.inArray($('#email-control-group :input'), frontPage.errorElements) < 0 ){
                           var errorElement = $('<li></li>');
                           errorElement.text("An account with that email address already exists.");
-                          $('#error-div ul').append(errorElement);
+                          $('#form-error ul').append(errorElement);
                           frontPage.errorElements.push($('#email-control-group :input'));
                           var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
                           $('#email-status-image').append(exMarkImage);
@@ -118,7 +119,8 @@ var frontPage = frontPage || {};
                   return true;
               });
     }
-
+    
+    // Currently unused -- should be implemented down the line
     frontPage.validateUserType = function(){
         var userType = $('.radio-control-group :checked').val();
 
@@ -126,7 +128,7 @@ var frontPage = frontPage || {};
         if( ! userType ){
             var errorElement = $('<li></li>');
             errorElement.text("Please select 'User' or 'Business'.");
-            $('#error-div ul').append(errorElement);
+            $('#form-error ul').append(errorElement);
             frontPage.errorElements.push($('.radio-control-group'));       
         }
     }
@@ -137,11 +139,11 @@ var frontPage = frontPage || {};
         // Check for valid email
         var patt = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
         // If the pattern doesn't fit or the error has already been accounted for (i.e. it is already associated to an account)
-        if( ! patt.test(email) ||  $.inArray($('#email-control-group :input'), frontPage.errorElements) === -1 ){
+        if( ! patt.test(email) ||  $.inArray($('#email-control-group :input'), frontPage.errorElements) !== -1 ){
             $('#email-control-group').addClass("error");
             var errorElement = $('<li></li>');
             errorElement.text("Invalid email.");
-            $('#error-div ul').append(errorElement);
+            $('#form-error ul').append(errorElement);
             
             frontPage.errorElements.push($('#email-control-group :input'));
             var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
@@ -150,7 +152,8 @@ var frontPage = frontPage || {};
         }
         return true;
     }
-
+    
+    // This function is currently not used
     frontPage.validateFirstName = function(){
         var firstName = $('input[name="first"]').val();
 
@@ -159,7 +162,7 @@ var frontPage = frontPage || {};
             $('#first-control-group').addClass("error");
             var errorElement = $('<li></li>');
             errorElement.text("You didn't enter a name.");
-            $('#error-div ul').append(errorElement);
+            $('#form-error ul').append(errorElement);
             var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
             $("#first-status-image").append(exMarkImage);
             frontPage.errorElements.push($('#first-control-group :input'));
@@ -189,7 +192,7 @@ var frontPage = frontPage || {};
 
             // Other password checks??
 
-            $('#error-div ul').append(errorElement);
+            $('#form-error ul').append(errorElement);
             var exMarkImage = $('<img src="media/ExMark.png" alt="Ex Mark" />');
             $('#password-status-image').append(exMarkImage);
             frontPage.errorElements.push($('#password-control-group :input'));
@@ -199,16 +202,16 @@ var frontPage = frontPage || {};
     }
 
     frontPage.validateForm = function(){
-        var isValid = frontPage.validateUserType() &&
-            frontPage.validateEmail() &&
-            frontPage.validateFirstName() &&
-            frontPage.validatePassword();
+        var isValid = frontPage.validateEmail() &&
+            frontPage.validatePassword(); //&&
+            //frontPage.validateFirstName() &&    
+            //frontPage.validateUserType();
         
         // If there are any errors, style up the error div
         if( frontPage.errorElements.length > 0 ){
-            $("#error-div").css("padding-top", "5px");
-            $("#error-div").css("padding-bottom", "5px");
-            $("#error-div").css("margin-bottom", "5px");            
+            $("#form-error").css("padding-top", "5px");
+            $("#form-error").css("padding-bottom", "5px");
+            $("#form-error").css("margin-bottom", "5px");            
         }        
 
         return isValid;
@@ -216,56 +219,51 @@ var frontPage = frontPage || {};
 
     
     frontPage.initPage = function () {
-	$(".features-text").hide();
-	$(".features-display").hide();
-	frontPage.initFeatures();
+        // Hide all of the features but the first
+	    $(".feature").hide();
+	    $("#feature-0").show();
 
-	$("#features-button").click( function() {
-	    if($(this).html() == "Features") {
-		frontPage.showFeatures();
-		$(this).html("Home");
-	    }
-	    else {
-		frontPage.hideFeatures();
-		$(this).html("Features");
-	    }
-	});
+        // Assign the picture timer
+        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength);
+
+        // Bind the carousel buttons
+	    $("#carousel-right").click( function() {
+	        frontPage.shiftRight();
+	    });
+
+	    $("#carousel-left").click( function() {
+            frontPage.shiftLeft();
+	    });
     }
+    frontPage.shiftRight = function() {
+        // Stop and restart the timer whenever we shift
+        clearTimeout( frontPage.featureTimer );
+        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength );
+        
+        $(".feature").hide();
 
-    frontPage.hideFeatures = function () {
-	$(".features-display").hide();
-	$(".features-text").hide();
-	$(".main-text").fadeIn("slow");
-    }
-
-    frontPage.showFeatures = function () {
-	$(".main-text").hide();
-	$(".features-display").fadeIn("slow");
-	$("#features-text-0").fadeIn("slow");
+	    frontPage.featureCounter += 1;
+        if(frontPage.featureCounter === 6){
+            frontPage.featureCounter = 0;
+        }
+        
+	    $("#feature-"+frontPage.featureCounter).fadeIn("slow");
     }
     
-    frontPage.initFeatures = function() {
-	var counter=0;
+    frontPage.shiftLeft = function() {
+        // Stop and reset the timer whenever we shift
+        clearTimeout( frontPage.featureTimer );
+        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength );
 
-	$("#carousel-right").click( function() {
-	    $(".features-text").hide();
-	    counter=counter+1;
-	    counter=counter%5;
-	    console.log(counter);
-	    $("#features-text-"+counter+"").fadeIn("slow");
-	});
+        $(".feature-image").hide();
 
+        // Calculate the new index
+	    frontPage.featureCounter -= 1;
+	    if(frontPage.featureCounter === -1){
+            frontPage.featureCounter = 5;
+        }
 
-	$("#carousel-left").click( function() {
-	    $("#features-text-"+counter+"").hide();
-	    counter=counter-1;
-	    counter=counter%5;
-	    console.log(counter);
-	    if(counter==-1){ counter=4; }
-
-	    $("#features-text-"+counter+"").fadeIn("slow");
-	});
-
+	    $("#feature-image-"+frontPage.featureCounter).fadeIn("slow");
     }
 })(frontPage);
 
