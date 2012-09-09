@@ -21,7 +21,7 @@ var frontPage = frontPage || {};
     frontPage.featureTimerLength = 1000000;//4000;
 
     // The counter determining the current feature
-    frontPage.featureCounter = 0;
+    frontPage.styleCounter = 1;
     
     // Clears the errors from the screen and performs other necessary cleanup
     frontPage.clearErrors = function(){
@@ -75,9 +75,9 @@ var frontPage = frontPage || {};
         apatapa.forms.handleDefaultText(frontPage.defaultText);
 
         // When email goes out of focus, immediately check it on the server
-        $("input[name='email']").blur(function(){
-            frontPage.checkIfEmailUsed();
-        });
+        // $("input[name='email']").blur(function(){
+        //     frontPage.checkIfEmailUsed();
+        // });
         
         // When the register button is pressed, validate the data in the form and proceed with registration if all good
         $('#register-button').click( function(event){
@@ -86,9 +86,13 @@ var frontPage = frontPage || {};
 
             // Form is valid, proceed with registration
             if(frontPage.validateForm()){
-                console.log("Form is valid!!!!");
-
-
+                var email = $('input[name="email"]').val();
+                $.get('register_beta/',
+                      {beta_user:email},
+                      function(d){
+                          console.log(d);
+                      }
+                     );
             }
         });
     }
@@ -202,8 +206,8 @@ var frontPage = frontPage || {};
     }
 
     frontPage.validateForm = function(){
-        var isValid = frontPage.validateEmail() &&
-            frontPage.validatePassword(); //&&
+        var isValid = frontPage.validateEmail();// &&
+            //frontPage.validatePassword(); //&&
             //frontPage.validateFirstName() &&    
             //frontPage.validateUserType();
         
@@ -219,14 +223,11 @@ var frontPage = frontPage || {};
 
     
     frontPage.initPage = function () {
-        // Hide all of the features but the first
-	    $(".feature").hide();
-	    $("#feature-0").show();
+        frontPage.makeStyle1();
 
-        // Assign the picture timer
-        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength);
+        // TODO: Timer
 
-        // Bind the carousel buttons
+        // // Bind the carousel buttons
 	    $("#carousel-right").click( function() {
 	        frontPage.shiftRight();
 	    });
@@ -236,34 +237,86 @@ var frontPage = frontPage || {};
 	    });
     }
     frontPage.shiftRight = function() {
-        // Stop and restart the timer whenever we shift
-        clearTimeout( frontPage.featureTimer );
-        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength );
-        
-        $(".feature").hide();
+        // TODO: Timer
 
-	    frontPage.featureCounter += 1;
-        if(frontPage.featureCounter === 6){
-            frontPage.featureCounter = 0;
+	    frontPage.styleCounter += 1;
+        if(frontPage.styleCounter === 4){
+            frontPage.styleCounter = 1;
         }
-        
-	    $("#feature-"+frontPage.featureCounter).fadeIn("slow");
+        frontPage.makeStyle();
     }
     
     frontPage.shiftLeft = function() {
-        // Stop and reset the timer whenever we shift
-        clearTimeout( frontPage.featureTimer );
-        frontPage.featureTimer = window.setTimeout( "frontPage.shiftRight()", frontPage.featureTimerLength );
-
-        $(".feature-image").hide();
+        // TODO: Timer
 
         // Calculate the new index
-	    frontPage.featureCounter -= 1;
-	    if(frontPage.featureCounter === -1){
-            frontPage.featureCounter = 5;
+	    frontPage.styleCounter -= 1;
+	    if(frontPage.styleCounter === 0){
+            frontPage.styleCounter = 3;
         }
+        
+        frontPage.makeStyle();
 
-	    $("#feature-image-"+frontPage.featureCounter).fadeIn("slow");
     }
+    
+    // This function determines the appropriate style and calls the corresponding function
+    frontPage.makeStyle = function(){
+        switch (frontPage.styleCounter){
+            case 1:
+              frontPage.makeStyle1();
+              break;
+
+            case 2:
+              frontPage.makeStyle2();
+              break;
+
+            case 3:
+              frontPage.makeStyle3();
+              break;
+        }
+    }
+
+
+    // The following functions change the css of the page so as to match the particular picture
+
+    frontPage.makeStyle1 = function() {
+        $(".style-image").hide();
+        $(".feature").hide();
+
+        $("#style-1-image").show();
+        $("#feature-1").show();
+        
+        // $("#main").css({
+        //     'background-image' : 'url("/media/TheOne.JPG")',
+        //     'background-position' : '40% 60%',
+        //     'background-size' : '140%',
+        //     'background-repeat': 'no-repeat'
+        // });
+    }
+
+    frontPage.makeStyle2 = function() {
+        $(".style-image").hide();
+        $(".feature").hide();
+
+        $("#style-2-image").show();
+        $("#feature-2").show();
+    }
+
+    frontPage.makeStyle3 = function() {
+        $(".style-image").hide();
+        $(".feature").hide();
+
+        $("#style-3-image").show();
+        $("#feature-3").show();
+
+        // $("#main").css({
+        //     'background-image' : 'url("/media/TheSecondOne.JPG")',
+        //     'background-position' : '40% 60%',
+        //     'background-size' : '140%',
+        //     'background-repeat': 'no-repeat'
+        // });
+    }
+
+
 })(frontPage);
 

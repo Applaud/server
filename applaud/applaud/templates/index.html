@@ -1,7 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
   <head>
+    <title>Apatapa</title>
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}frontpage.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -39,6 +39,10 @@
 
     <div id="main">
 
+      <img class="style-image" id="style-1-image" src="/media/TheOne.jpg" />
+      <img class="style-image" id="style-2-image" src="/media/TheSecondOne2.jpg" />
+      <img class="style-image" id="style-3-image" src="/media/TheThirdOne.jpg" />    
+
       <a id="carousel-left" class="carousel-control left features-display" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a id="carousel-right" class="carousel-control right features-display" href="#myCarousel" data-slide="next">&rsaquo;</a>
     
@@ -48,73 +52,33 @@
         <!-- Info Features Start -->
         <div id="features-info">
 
-          <div class="feature" id="feature-0">
-            <div class="feature-image">
-              <img src="/media/features/Default.png" alt="Feature" />
-            </div>
+          <div class="feature" id="feature-1">
             <div class="feature-text">
               <h2>Ditch the comment card</h2>
-              <p>Apatapa is a modern feedback and customer engagement tool. Using our website, you can tailor the content, look, and feel of Apatapa when a user opens it on location.</p>
+              <p>Apatapa is a modern feedback and customer engagement tool.</p>
+              </div>
+          </div>
+
+          <div class="feature" id="feature-2">
+            <div class="feature-text">
+              <h2>Learn from your customers</h2>
+              <p></p>
             </div>
           </div>
 
-	      <div class="feature" id="feature-1">
-            <div class="feature-image">
-              <img src="/media/features/News.png" alt="Feature" />
-            </div>
+          <div class="feature" id="feature-3">
             <div class="feature-text">
-	          <h2>News</h2>
-	          <p>This is the business' newsfeed. Here you can find information about deals, specials, upcoming events. In the future you'll be able to share those with friends through facebook and twitter.</p>
+              <h2>Control the buzz</h2>
+              <p></p>
             </div>
-	      </div>
-
-	    
-	      <div class="feature" id="feature-2">
-            <div class="feature-image">
-              <img src="/media/features/Polls.png" alt="Feature" />
-            </div>
-            <div class="feature-text">
-	          <h2>Polls</h2>
-	          <p>This is a description of Polls</p>
-            </div>
-	      </div>
-
-	      <div class="feature" id="feature-3">
-            <div class="feature-image">
-              <img src="/media/features/Mingle.png" alt="Feature" />
-            </div>
-            <div class="feature-text">
-	          <h2>Mingle</h2>
-	          <p>This is a description of Mingle</p>
-            </div>
-	      </div>
-          
-          <div class="feature" id="feature-4">
-            <div class="feature-image feature-image-1">
-              <img src="/media/features/Applaud.png" alt="Feature" />
-            </div>
-            <div class="feature-text">
-	          <h2>Applaud</h2>
-	          <p>This is a description of Applaud</p>
-            </div>
-	      </div>
-  
-	      <div class="feature" id="feature-5">
-            <div class="feature-image">
-              <img src="/media/features/Photos.png" alt="Photo Feature" />
-            </div>
-            <div class="feature-text">
-	          <h2>Photos</h2>
-	          <p>This is a description of Photos</p>
-            </div>
-	      </div>
+          </div>
 
         </div>
         <!-- Info Features Stop -->
 
         <!-- Registration Start -->
         <div id="registration">
-        <h2>Register your business now</h2>
+        <h2>Register for our beta test now</h2>
           <form id="registration-form">
             <fieldset>
 
@@ -123,20 +87,10 @@
                 <div class="controls">
                   <input class="input-xlarge" type="text" value="Email" name="email"/>
                   <span id="email-status-image"></span>
-                  <span id="email-help-inline" class="help-inline"></span>
                 </div>
               </div>
               <!-- End Email Group -->
 
-              <!-- Password Group -->
-              <div id="password-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Password" name="password"/>
-                  <span id="password-status-image"></span>
-                  <span id="password-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Password Group -->
 
               <div id="form-error">
                 <ul>
@@ -160,9 +114,8 @@
       <div id="bottom-bar">
         <div id="footer" class="row">
 	      &#169 Apatapa 2012  
-	      <a href="http://www.apatapablog.com">   | Blog |</a>
 	      <a href="/overview/#team">Team |</a>
-	      <a href="mailto:wyatthayman@gmail.com">Contact | </a>
+	      <a href="mailto:apatapa@apatapa.com">Contact | </a>
 	      <a href="/overview/#terms">Terms & Conditions | </a>
 	      <a href="/overview/#privacy">Privacy Policy</a>
         </div>

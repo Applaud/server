@@ -397,3 +397,20 @@ def send_message(request):
         message.save()
     return HttpResponse('')
 
+def register_beta(request):
+    # GET request
+    if request.method == 'GET':
+        if 'beta_user' in request.GET:
+            email = request.GET['beta_user']
+            print email
+            beta_user = models.BetaUser(email=email)
+            beta_user.save()
+            print "could save"
+            #Should send an email confirming their beta testing....
+            return HttpResponse('Success')
+
+    # POST request...
+    else:
+        return HttpResponse('Post')
+
+

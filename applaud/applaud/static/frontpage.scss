@@ -46,19 +46,36 @@ body {
     width:1200px;
     height:600px;
     position: relative;
-    background-image: url("/media/TheOne.JPG");
-    background-position:40% 60%;
-    background-size: 140%;
-    background-repeat: no-repeat;
     margin-left:auto;
     margin-right:auto;
+    overflow:hidden;
+
+    img {
+        position:absolute;
+        z-index:-1;
+        display:none;
+    }
+
+    // Particular styles for each of the three pictures
+    #style-1-image {
+        margin-top:-100px;
+    }
+
+    #style-2-image {
+        margin-top:-150px;
+
+    }
+
+    #style-3-image {
+        
+    }
 }
 
 #info {
-    position: relative;
-    left: 300px;
-    top: 100px;
-    width: 800px;
+    /* position: relative; */
+    /* left: 300px; */
+    /* top: 100px; */
+    /* width: 800px; */
     overflow: none;
 }
 
@@ -87,6 +104,23 @@ body {
             line-height: 120%;
         }
     }
+    
+    //Style particular to the features
+
+    #feature-1 {
+
+        position:relative;
+        left:200px;
+        top:50px;
+    }
+
+    #feature-2 {
+
+    }
+
+    #feature-3 {
+
+    }
 }
 
 #registration {
@@ -104,10 +138,15 @@ body {
             height:25px;
             margin-bottom:0px;
         }
+        #email-status-image {
+            position:relative;
+            right:35px;
+        }
     }
     #form-error{
         background-color:rgba(185,74,72, .7);
         border-radius:5px;
+        font-size:14px;
         width: 385px;
         ul{
             font-weight:bold;
@@ -124,7 +163,7 @@ body {
 }
 
 #footer {
-//    margin-top:20px;
+    text-align:center;
     margin-left:30px;
 }
 

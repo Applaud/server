@@ -7,7 +7,7 @@ if( ! apatapa.overview ){
 
 ( function( _ns ){
     
-    var sections = ['about', 'team', 'terms', 'privacy'];
+    var sections = ['about', 'team', 'features', 'terms', 'privacy'];
 
     // A function to call whenever a particular section should be displayed
     _ns.showSection = function( sectionName ){
