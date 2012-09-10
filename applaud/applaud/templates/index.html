@@ -1,7 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
   <head>
+    <title>Apatapa</title>
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}frontpage.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.js"></script>
@@ -13,165 +13,129 @@
       $(document).ready( function(){
           frontPage.bindForm();
           frontPage.bindClearErrorHandlers();
+          frontPage.initPage();
       });
     </script>
   </head>
   <body>
 
-    <!-- <\!-- Modal Start -\-> -->
-    <!-- <div class="modal hide" id="myModal"> -->
-    <!--   <div class="modal-body" id="video"> -->
-	<!--     <button type="button" class="close" data-dismiss="modal">×</button> -->
-	<!--     <iframe src="http://player.vimeo.com/video/19434428" width="1200" height="600" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> -->
-      </div>	
-    </div>
-    <!-- Modal Stop -->
 
     <!-- Top Bar Start -->
     <div id="top-bar">
       <div id="top-bar-content">
         <img src="/media/Logo340.png" alt="Apatapa" />
         <img src="/media/divider.png" alt="divider" />
-        <a class="btn btn-large" id="video-button" ><i class="icon-play"></i> Watch the Video</a>
+        <!-- <a class="btn btn-large" id="video-button" ><i class="icon-play"></i> Watch the Video</a> -->
+	    <!-- <a class="btn btn-large" id="features-button" href="#">Features</a> -->
+	    <a class="btn btn-large" id="overview-button" href="/overview/#about">About</a>
         <img src="/media/divider.png" alt="divider" />
-	<a class="btn btn-large" id="features-button">Apatapa Features</a>
-        <img src="/media/divider.png" alt="divider" />
+
         <a class="btn btn-large btn-primary" id="sign-in" href="/accounts/login">Sign In</a>        
       </div>
     </div>
     <!-- Top Bar Stop -->
+    
 
 
     <div id="main">
+
+      <img class="style-image" id="style-1-image" src="/media/TheSecondOne2.jpg" />
+      <img class="style-image" id="style-2-image" src="/media/TheThirdOne.jpg" />    
+      <img class="style-image" id="style-3-image" src="/media/TheOne.jpg" />
+
+      <a id="carousel-left" class="carousel-control left features-display" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a id="carousel-right" class="carousel-control right features-display" href="#myCarousel" data-slide="next">&rsaquo;</a>
     
-      <!-- <img id="hand-image" src="/media/iphoneImageEdit.png" alt="iPhone" /> -->
-      
       <!-- Info Div Start -->
       <div id="info">          
 
-        <div id="info-head">
-          <h2>Connect with your environment</h2>
+        <!-- Info Features Start -->
+        <div id="features-info">
+
+          <div class="feature" id="feature-1">
+            <div class="feature-text">
+              <h2>Ditch the comment card</h2>
+              <p>Offer feedback in real-time, directly to the business you're currently visiting. Had a great experience, have a suggestion, or just want to vent? Use Apatapa to say it directly to the business.</p>
+            </div>
+
+          </div>
+
+          <div class="feature" id="feature-2">
+            <div class="feature-text">
+              <h2>Learn from your customers</h2>
+              <p>As a business, Apatapa arms you with all the opinions of the people who really matter - your customers. Use our web service to access data in real-time, understand the suggestions and improve your product!</p>
+            </div>
+          </div>
+
+          <div class="feature" id="feature-3">
+            <div class="feature-text">
+              <h2>Engage with your business</h2>
+              <p>If you're in your favorite establishment , find out about deals and upcoming events, share your opinions, converse and engage directly with the business. All through Apatapa!</p>
+            </div>
+          </div>
+
+          <!-- Registration Start -->
+          <div class="registration" id="registration-1">
+            <h2>Sign up to receive more information!</h2>
+            <form id="registration-form">
+              <fieldset>
+                <!-- User Select Group -->
+                <div id="user-control-group" class="control-group radio-control-group">
+                  <label class="radio inline">
+                    <input type="radio" name="user-type" value="user" />
+                    Customer
+                  </label>
+
+                  <label class="radio inline">
+                    <input type="radio" name="user-type" value="business" />
+                    Business Owner
+                  </label>
+                </div>
+                <!-- End User Select Group -->
+
+                <!-- Email Group -->
+                <div id="email-control-group" class="control-group">
+                  <div class="controls">
+                    <input class="input-xlarge" type="text" value="Email" name="email"/>
+                    <span id="email-status-image"></span>
+                  </div>
+                </div>
+                <!-- End Email Group -->
+                
+                
+                <div id="form-error">
+                  <ul>
+                  </ul>
+                </div>
+                
+                <button id="register-button" class="btn btn-primary btn-large" type="submit">Sign Up</button>
+                
+              </fieldset>
+            </form>
+          </div>
+          <!-- Registration Stop -->
+
         </div>
+        <!-- Info Features Stop -->
         
-        <div id="info-main" class="row">   
-          <p>Lorem ipsum, quia dolor sit amet, consectetur, adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
-          <h3>Register:</h3>
-          <form id="registration-form">
-            <fieldset>
+      </div>
+      <!-- Info Div Stop --> 
 
-              <!-- User Select Group -->
-              <div id="user-control-group" class="control-group radio-control-group">
-                <label class="radio inline">
-                  <input type="radio" name="user-type" value="user" />
-                  User
-                </label>
+      </div>
+      <!-- Main Stop -->
 
-                <label class="radio inline">
-                  <input type="radio" name="user-type" value="business" />
-                  Business
-                </label>
-              </div>
-              <!-- End User Select Group -->
-
-              <!-- Email Group -->
-              <div id="email-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Email" name="email"/>
-                  <span id="email-status-image"></span>
-                  <span id="email-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Email Group -->
-
-              <!-- First Name Group -->
-              <div id="first-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="First name" name="first"/>
-                  <span id="first-status-image"></span>
-                  <span id="first-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End First Name Group -->
-
-              <!-- Last Name Group -->
-              <div id="last-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Last name (optional)" name="last"/>
-                  <span id="last-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Last Name Group -->
-
-              <!-- Password Group -->
-              <div id="password-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Password" name="password"/>
-                  <span id="password-status-image"></span>
-                  <span id="password-help-inline" class="help-inline"></span>
-                </div>
-              </div>
-              <!-- End Password Group -->
-
-              <div id="error-div">
-                <ul>
-                </ul>
-              </div>
-
-              <button id="register-button" class="btn btn-primary btn-large" type="submit">Register</button>
-
-            </fieldset>
-          </form>
-          
-
-          <!-- <div id="nav-buttons"> -->
-	      <!--   <a class="btn btn-large" href="/accounts/member">Register as a user</a> -->
-          <!--   <a class="btn btn-large" href="/accounts/business">Register as a business</a> -->
-          <!-- </div> -->
-          <!-- <img src="/media/appStore.jpeg" id="appStore" width="160" height="60">       -->
+      <!-- Bottom Bar Start -->
+      <div id="bottom-bar">
+        <div id="footer" class="row">
+	      &#169 Apatapa 2012  
+	      <a href="/overview/#team">Team |</a>
+	      <a href="mailto:apatapa@apatapa.com">Contact | </a>
+	      <a href="/overview/#terms">Terms & Conditions | </a>
+	      <a href="/overview/#privacy">Privacy Policy</a>
         </div>
-
       </div>
-      <!-- Info Div Stop -->
-
- 
-    </div>
-    
-
-    <!-- Features Div Start -->
-    <!-- <div id="features"> -->
-    <!--   <div id="features-head"> -->
-	<!-- <h2>Features</h2> -->
-	
-	<!-- <div class="btn-group"> -->
-	<!--   <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> -->
-	<!--     Action -->
-	<!--     <span class="caret"></span> -->
-	<!--   </a> -->
-	<!--   <ul class="dropdown-menu"> -->
-	<!--     <li><a href="#">Applaud</a></li> -->
-	<!--     <li class="divider"></li> -->
-	<!--     <\!-- dropdown menu links -\-> -->
-	<!--   </ul> -->
-	<!-- </div> -->
-
-    <!--   </div> -->
-    <!-- </div> -->
-
-    <!-- Bottom Bar Start -->
-    <div id="bottom-bar">
-      <div id="footer" class="row">
-	&#169 Apatapa 2012  
-	<a href="http://www.apatapablog.com">   | Blog |</a>
-	<a href="/overview/#team">Team |</a>
-	<a href="mailto:wyatthayman@gmail.com">Contact | </a>
-	<a href="/overview/#terms">Terms & Conditions | </a>
-	<a href="/overview/#privacy">Privacy Policy</a>
-      </div>
+      <!-- Bottom Bar Stop -->
       
-
-    </div>
-    <!-- Bottom Bar Stop -->
-    
   </body>
 </html>
 
