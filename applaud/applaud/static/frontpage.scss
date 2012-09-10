@@ -18,7 +18,7 @@ body {
     margin-left:auto;
     margin-right:auto;
     padding-left:60px;
-    
+
     img, a, button, div {
         margin-right:20px;
     }
@@ -53,12 +53,18 @@ body {
     img {
         position:absolute;
         z-index:-1;
-        display:none;
+    }
+
+    // General styles for the three images
+    .style-image {
+        background-color:#fff;
     }
 
     // Particular styles for each of the three pictures
     #style-1-image {
         margin-top:-100px;
+        height: 130%;
+        width: 130%;
     }
 
     #style-2-image {
@@ -67,31 +73,16 @@ body {
     }
 
     #style-3-image {
-        
+        margin-top:-100px;
     }
 }
 
 #info {
-    /* position: relative; */
-    /* left: 300px; */
-    /* top: 100px; */
-    /* width: 800px; */
     overflow: none;
-}
-
-.feature-image {
-        float:right;
-        position:relative;
-        top:90px;
-        right:105px;
-        img {
-            height: 240px;
-        }
 }
 
 .feature {
     height: 100px;
-    margin-bottom:50px;
     .feature-text {
         width: 400px;
         h2 {
@@ -104,34 +95,29 @@ body {
             line-height: 120%;
         }
     }
-    
-    //Style particular to the features
+}    
 
-    #feature-1 {
+//Style particular to the features
+#feature-1 {
 
-        position:relative;
-        left:200px;
-        top:50px;
-    }
-
-    #feature-2 {
-
-    }
-
-    #feature-3 {
-
-    }
 }
 
+#feature-2 {
+}
+
+#feature-3 {
+
+}
+
+
 #registration {
+
     h2 {
         font-size:140%;
         font-weight: normal;
     }
     form {
         line-height:80%;
-        label{
-        }
         input[type=text] {
             border-radius: 4px;
             width: 375px;

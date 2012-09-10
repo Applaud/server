@@ -39,9 +39,9 @@
 
     <div id="main">
 
-      <img class="style-image" id="style-1-image" src="/media/TheOne.jpg" />
-      <img class="style-image" id="style-2-image" src="/media/TheSecondOne2.jpg" />
-      <img class="style-image" id="style-3-image" src="/media/TheThirdOne.jpg" />    
+      <img class="style-image" id="style-1-image" src="/media/TheSecondOne2.jpg" />
+      <img class="style-image" id="style-2-image" src="/media/TheThirdOne.jpg" />    
+      <img class="style-image" id="style-3-image" src="/media/TheOne.jpg" />
 
       <a id="carousel-left" class="carousel-control left features-display" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a id="carousel-right" class="carousel-control right features-display" href="#myCarousel" data-slide="next">&rsaquo;</a>
@@ -55,54 +55,68 @@
           <div class="feature" id="feature-1">
             <div class="feature-text">
               <h2>Ditch the comment card</h2>
-              <p>Apatapa is a modern feedback and customer engagement tool.</p>
-              </div>
+              <p>Offer feedback in real-time, directly to the business you're currently visiting. Had a great experience, have a suggestion, or just want to vent? Use Apatapa to say it directly to the business.</p>
+            </div>
+
           </div>
 
           <div class="feature" id="feature-2">
             <div class="feature-text">
               <h2>Learn from your customers</h2>
-              <p></p>
+              <p>As a business, Apatapa arms you with all the opinions of the people who really matter - your customers. Use our web service to access data in real-time, understand the suggestions and improve your product!</p>
             </div>
           </div>
 
           <div class="feature" id="feature-3">
             <div class="feature-text">
-              <h2>Control the buzz</h2>
-              <p></p>
+              <h2>Engage with your business</h2>
+              <p>If you're in your favorite establishment , find out about deals and upcoming events, share your opinions, converse and engage directly with the business. All through Apatapa!</p>
             </div>
           </div>
 
+          <!-- Registration Start -->
+          <div class="registration" id="registration-1">
+            <h2>Sign up to receive more information!</h2>
+            <form id="registration-form">
+              <fieldset>
+                <!-- User Select Group -->
+                <div id="user-control-group" class="control-group radio-control-group">
+                  <label class="radio inline">
+                    <input type="radio" name="user-type" value="user" />
+                    Customer
+                  </label>
+
+                  <label class="radio inline">
+                    <input type="radio" name="user-type" value="business" />
+                    Business Owner
+                  </label>
+                </div>
+                <!-- End User Select Group -->
+
+                <!-- Email Group -->
+                <div id="email-control-group" class="control-group">
+                  <div class="controls">
+                    <input class="input-xlarge" type="text" value="Email" name="email"/>
+                    <span id="email-status-image"></span>
+                  </div>
+                </div>
+                <!-- End Email Group -->
+                
+                
+                <div id="form-error">
+                  <ul>
+                  </ul>
+                </div>
+                
+                <button id="register-button" class="btn btn-primary btn-large" type="submit">Sign Up</button>
+                
+              </fieldset>
+            </form>
+          </div>
+          <!-- Registration Stop -->
+
         </div>
         <!-- Info Features Stop -->
-
-        <!-- Registration Start -->
-        <div id="registration">
-        <h2>Register for our beta test now</h2>
-          <form id="registration-form">
-            <fieldset>
-
-              <!-- Email Group -->
-              <div id="email-control-group" class="control-group">
-                <div class="controls">
-                  <input class="input-xlarge" type="text" value="Email" name="email"/>
-                  <span id="email-status-image"></span>
-                </div>
-              </div>
-              <!-- End Email Group -->
-
-
-              <div id="form-error">
-                <ul>
-                </ul>
-              </div>
-
-              <button id="register-button" class="btn btn-primary btn-large" type="submit">Register</button>
-
-            </fieldset>
-          </form>
-        </div>
-        <!-- Registration Stop -->
         
       </div>
       <!-- Info Div Stop --> 

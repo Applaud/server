@@ -18,7 +18,7 @@ var frontPage = frontPage || {};
     frontPage.featureTimer;
     
     // The time between automagically switching between pictures (in milliseconds)
-    frontPage.featureTimerLength = 1000000;//4000;
+    frontPage.featureTimerLength =  4000;
 
     // The counter determining the current feature
     frontPage.styleCounter = 1;
@@ -223,9 +223,12 @@ var frontPage = frontPage || {};
 
     
     frontPage.initPage = function () {
+        $(".style-image").hide();
+        $("#style-1-image").show();
+        //$("#style-1-image").fadeIn(300, function(){});
         frontPage.makeStyle1();
 
-        // TODO: Timer
+//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
 
         // // Bind the carousel buttons
 	    $("#carousel-right").click( function() {
@@ -237,7 +240,8 @@ var frontPage = frontPage || {};
 	    });
     }
     frontPage.shiftRight = function() {
-        // TODO: Timer
+//        clearInterval( frontPage.featureTimer );
+//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
 
 	    frontPage.styleCounter += 1;
         if(frontPage.styleCounter === 4){
@@ -247,7 +251,8 @@ var frontPage = frontPage || {};
     }
     
     frontPage.shiftLeft = function() {
-        // TODO: Timer
+//        clearInterval( frontPage.featureTimer );
+//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
 
         // Calculate the new index
 	    frontPage.styleCounter -= 1;
@@ -280,41 +285,63 @@ var frontPage = frontPage || {};
     // The following functions change the css of the page so as to match the particular picture
 
     frontPage.makeStyle1 = function() {
-        $(".style-image").hide();
+        $("#features-info").hide();
         $(".feature").hide();
 
-        $("#style-1-image").show();
-        $("#feature-1").show();
+        // Needs to change depending on if its shifting right or left
+        $("#style-3-image").fadeOut('slow', function(){});
+        $("#style-1-image").fadeIn('slow', function(){});
         
-        // $("#main").css({
-        //     'background-image' : 'url("/media/TheOne.JPG")',
-        //     'background-position' : '40% 60%',
-        //     'background-size' : '140%',
-        //     'background-repeat': 'no-repeat'
-        // });
+        // Stylin'.....
+        $("#info").css({'color':'rgb(51, 51, 51)'});
+        $(".feature").css({'margin-bottom':'40px'});
+        $("#features-info").css({
+            'position':'relative',
+            'left': '300px',
+            'top': '50px'});
+        
+        $("#feature-1").show();
+        $("#features-info").fadeIn( 'slow', function(){});
     }
 
     frontPage.makeStyle2 = function() {
-        $(".style-image").hide();
+        $("#features-info").hide();
         $(".feature").hide();
 
-        $("#style-2-image").show();
+        // Needs to change depending on if its shifting right or left
+        $("#style-1-image").fadeOut('slow', function(){});
+        $("#style-2-image").fadeIn('slow', function(){});
+
+        // Stylin'.....
+        $("#info").css({'color':'#eeeeee'});
+        $(".feature").css({'margin-bottom':'60px'});
+        $("#features-info").css({
+            'position':'relative',
+            'left': '420px',
+            'top': '50px'});
+
         $("#feature-2").show();
+        $("#features-info").fadeIn( 'slow', function(){});
     }
 
     frontPage.makeStyle3 = function() {
-        $(".style-image").hide();
+        $("#features-info").hide();
         $(".feature").hide();
 
-        $("#style-3-image").show();
-        $("#feature-3").show();
+        $("#style-2-image").fadeOut('slow', function(){});
+        $("#style-3-image").fadeIn('slow', function(){});
 
-        // $("#main").css({
-        //     'background-image' : 'url("/media/TheSecondOne.JPG")',
-        //     'background-position' : '40% 60%',
-        //     'background-size' : '140%',
-        //     'background-repeat': 'no-repeat'
-        // });
+        // Stylin'.....
+        $("#info").css({'color':'rgb(51,51,51)'});
+        $(".feature").css({'margin-bottom':'40px'});
+        $("#features-info").css({
+            'position':'relative',
+            'left': '320px',
+            'top': '50px'
+        });
+       
+        $("#feature-3").show();
+        $("#features-info").fadeIn( 'slow', function(){});
     }
 
 
