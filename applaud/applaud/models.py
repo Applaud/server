@@ -474,3 +474,6 @@ class Comment(models.Model):
     date_created = models.DateTimeField(auto_now=True)
     votes = models.ManyToManyField('Vote')
     businessphoto = models.ForeignKey('BusinessPhoto', blank=True, null=True)
+
+class BetaUser(models.Model):
+    email = models.CharField(max_length=100)

@@ -28,8 +28,12 @@ urlpatterns = patterns('',
                        (r'^employee/', include(employee_urls)),
                        (r'^user/', include(user_urls)),
                        (r'^overview/', direct_to_template,
-                        {'template':'overview.html'}),
 
+                        {'template':'overview.html'}),
+                       
+                       # Register the email of a beta user
+                        (r'^register_beta/', views.register_beta),
+                        
                        (r'^about/', direct_to_template,
                         {'template':'about.html'}),
 

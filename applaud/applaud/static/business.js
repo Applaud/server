@@ -342,8 +342,6 @@ if (! apatapa.business) {
 	/**
 	 * listProfiles(data)
 	 *
-	 * data - JSON data returned by AJAX call for deleting/inserting a profile.
-	 * Re-builds the list of profiles.
 	 */
 	var listProfiles = function(data) {
 	    // Clear the current list
@@ -527,18 +525,19 @@ if (! apatapa.business) {
 	    return false;
 	}
 
-	/**
-	 * Initilialize the page for managing ratingprofiles.
-	 */
-	_ns.initRatingProfilesPage = function() {
+	 // Initilialize the page for managing ratingprofiles.
+	_ns.initRatingProfilesPage = function(rating_profiles) {
 	    // New profile form is invisible
 	    $('#new_ratingprofile').hide();
-	    // Get all the rating profiles
-	    $.ajax( {
-		url: list_ratingprofiles_url,
-		success: listProfiles,
-		error: function() { alert("Something went wrong."); }
-	    });
+
+	    // // Get all the rating profiles
+	    // $.ajax( {
+		// url: list_ratingprofiles_url,
+		// success: listProfiles,
+		// error: function() { alert("Something went wrong."); }
+	    // });
+
+        
 
 	    bind_edit_buttons();		// Edit a single dimension's text
 	    bind_deactivate_buttons();	// Deactivate one dimension

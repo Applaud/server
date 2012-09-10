@@ -28,6 +28,9 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
 MANAGERS = ADMINS
 
 CWD=os.path.dirname(__file__)

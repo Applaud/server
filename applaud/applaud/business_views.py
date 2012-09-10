@@ -832,43 +832,51 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
     except Exception as e:
         print e
 
+# Takes a BusinessProfile as an argument and returns all of the data associated with that business
+# json.loads(json.dumps(...)) looks weird! But, it makes sense!
+@business_view
+def business_data(request):
+    profile = request.user.businessprofile
+
+    # The return dictionary
+    ret = {}
+    
+    if request.method == 'GET':
+
+        # First all the employeees
+        ret['employees'] = json.loads(json.dumps(list(profile.employeeprofile_set.all()),
+                                      cls=views.EmployeeEncoder))
+    
+        # All the rating profiles for the business.
+        ret['rating_profiles'] = json.loads(json.dumps(list(profile.ratingprofile_set.all()),
+                                            cls=views.RatingProfileEncoder))
+
+        # All the newsfeed items that have been created so far.
+        ret['newsfeed'] = json.loads(json.dumps(list(profile.newsfeeditem_set.all()),
+                                          cls=views.NewsFeedItemEncoder))
+
+        # The photos for a business
+        ret['photos'] = json.loads(json.dumps(list(profile.businessphoto_set.all()),
+                                   cls=views.BusinessPhotoEncoder))
+
+        # All of the polls associated with the business
+        ret['polls'] = json.loads(json.dumps(list(profile.poll_set.all()),
+                                  cls=views.SimplePollEncoder))
+        # All of the threads (and thread posts)
+        ret['threads'] = json.loads(json.dumps(list(profile.thread_set.all()),
+                                    cls=views.ThreadEncoder))
+
+    return HttpResponse(json.dumps(ret), mimetype='application/json')
+
 # The view that calls the control panel center, where a business can manage their employees, surveys and newsfeeds.
 @business_view
 def control_panel(request):
     
     profile = request.user.businessprofile
-    
+
     if request.method == 'GET':
-        # First all the employeees
-        employee_list = profile.employeeprofile_set.order_by('user__last_name')
-        
-        # All the rating profiles for the business.
-        rating_profile_list = profile.ratingprofile_set.all()
-
-        # All the newsfeed items that have been created so far.
-        newsfeed_list = profile.newsfeeditem_set.all()
-
-        # The survey is a list of questions. Survey_list will be a list of surveys. -- NO LONGER NEEDED
-        #survey_list = profile.survey_set.all()
-        
-        # The photos for a business
-        photos = profile.businessphoto_set.all()
-
-        # All of the polls associated with the business
-        polls = profile.poll_set.all()
-
-        # All of the mingle threads associated with the business
-        threads = profile.thread_set.all()
-
-        return render_to_response('business_control_panel.html',
-                                  {'employee_list':employee_list,
-                                   'rating_profile_list':rating_profile_list,
-                                   'business_profile': profile,
-                                   'feeds':newsfeed_list,
-                                   'photos': photos,
-                                   'polls': polls,
-                                   'threads':threads},
-                                  context_instance=RequestContext(request))
+            
+        return render_to_response('new_business_control_panel.html', context_instance=RequestContext(request))
 
     # Method is post.
     else:
@@ -903,6 +911,14 @@ def get_employee_info(request):
     return render_to_response('business_control_panel.html',
                               {'employee':encoded_employee},
                               context_instance=RequestContext(request))
+
+def get_thread_posts(request):
+    profile = request.user.businessprofile
+    if request.method == 'GET':
+        thread_id = request.GET['thread_id']
+        thread = models.Thread.objects.get(id=thread_id)
+        thread_posts = json.dumps(list(thread.threadpost_set.all()), cls = views.ThreadPostEncoder)
+        return HttpResponse(thread_posts, mimetype='application/json')
 
 # Toggle a photo from active (shown to customers) to inactive,
 # or vice versa.
