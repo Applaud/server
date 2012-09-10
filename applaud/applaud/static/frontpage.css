@@ -67,25 +67,28 @@ body {
       font-size: 12pt;
       line-height: 120%; }
 
-#registration h2 {
+#feature-2 h2 {
+  font-size: 23pt; }
+
+.registration h2 {
   font-size: 140%;
   font-weight: normal; }
-#registration form {
+.registration form {
   line-height: 80%; }
-  #registration form input[type=text] {
+  .registration form input[type=text] {
     border-radius: 4px;
     width: 375px;
     height: 25px;
     margin-bottom: 0px; }
-  #registration form #email-status-image {
+  .registration form #email-status-image {
     position: relative;
     right: 35px; }
-#registration #form-error {
+.registration #form-error {
   background-color: rgba(185, 74, 72, 0.7);
   border-radius: 5px;
   font-size: 14px;
   width: 385px; }
-  #registration #form-error ul {
+  .registration #form-error ul {
     font-weight: bold;
     margin-left: 5px;
     list-style-type: none; }

@@ -226,7 +226,7 @@ var frontPage = frontPage || {};
         $(".style-image").hide();
         $("#style-1-image").show();
         //$("#style-1-image").fadeIn(300, function(){});
-        frontPage.makeStyle1();
+        frontPage.makeStyle1( 'right' );
 
 //        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
 
@@ -247,7 +247,7 @@ var frontPage = frontPage || {};
         if(frontPage.styleCounter === 4){
             frontPage.styleCounter = 1;
         }
-        frontPage.makeStyle();
+        frontPage.makeStyle( 'right' );
     }
     
     frontPage.shiftLeft = function() {
@@ -260,61 +260,74 @@ var frontPage = frontPage || {};
             frontPage.styleCounter = 3;
         }
         
-        frontPage.makeStyle();
+        frontPage.makeStyle( 'left' );
 
     }
     
     // This function determines the appropriate style and calls the corresponding function
-    frontPage.makeStyle = function(){
+    frontPage.makeStyle = function( direction ){
+        frontPage.clearErrors();        
         switch (frontPage.styleCounter){
             case 1:
-              frontPage.makeStyle1();
+              frontPage.makeStyle1( direction );
               break;
 
             case 2:
-              frontPage.makeStyle2();
+              frontPage.makeStyle2( direction );
               break;
 
             case 3:
-              frontPage.makeStyle3();
+              frontPage.makeStyle3( direction );
               break;
         }
     }
 
 
     // The following functions change the css of the page so as to match the particular picture
-
-    frontPage.makeStyle1 = function() {
+    // Each should take one parameter indicating the direction to shift from
+    frontPage.makeStyle1 = function( direction ) {
         $("#features-info").hide();
         $(".feature").hide();
 
         // Needs to change depending on if its shifting right or left
-        $("#style-3-image").fadeOut('slow', function(){});
-        $("#style-1-image").fadeIn('slow', function(){});
-        
+        if( direction === 'right' ){
+            $("#style-3-image").fadeOut('slow', function(){});
+            $("#style-1-image").fadeIn('slow', function(){});
+        }
+        else if ( direction === 'left' ){
+            $("#style-2-image").fadeOut('slow', function(){});
+            $("#style-1-image").fadeIn('slow', function(){});
+        }
+
         // Stylin'.....
         $("#info").css({'color':'rgb(51, 51, 51)'});
         $(".feature").css({'margin-bottom':'40px'});
         $("#features-info").css({
             'position':'relative',
-            'left': '300px',
+            'left': '50px',
             'top': '50px'});
         
         $("#feature-1").show();
         $("#features-info").fadeIn( 'slow', function(){});
     }
 
-    frontPage.makeStyle2 = function() {
+    frontPage.makeStyle2 = function( direction ) {
         $("#features-info").hide();
         $(".feature").hide();
 
         // Needs to change depending on if its shifting right or left
-        $("#style-1-image").fadeOut('slow', function(){});
-        $("#style-2-image").fadeIn('slow', function(){});
+        if ( direction === 'right' ){
+            $("#style-1-image").fadeOut('slow', function(){});
+            $("#style-2-image").fadeIn('slow', function(){});
+        }
+        else if ( direction === 'left' ){
+            $("#style-3-image").fadeOut('slow', function(){});
+            $("#style-2-image").fadeIn('slow', function(){});
+        }
 
         // Stylin'.....
         $("#info").css({'color':'#eeeeee'});
-        $(".feature").css({'margin-bottom':'60px'});
+        $(".feature").css({'margin-bottom':'50px'});
         $("#features-info").css({
             'position':'relative',
             'left': '420px',
@@ -324,13 +337,18 @@ var frontPage = frontPage || {};
         $("#features-info").fadeIn( 'slow', function(){});
     }
 
-    frontPage.makeStyle3 = function() {
+    frontPage.makeStyle3 = function( direction ) {
         $("#features-info").hide();
         $(".feature").hide();
-
-        $("#style-2-image").fadeOut('slow', function(){});
-        $("#style-3-image").fadeIn('slow', function(){});
-
+        
+        if ( direction === 'right' ) {
+            $("#style-2-image").fadeOut('slow', function(){});
+            $("#style-3-image").fadeIn('slow', function(){});
+        }
+        else if ( direction === 'left' ) {
+            $("#style-1-image").fadeOut('slow', function(){});
+            $("#style-3-image").fadeIn('slow', function(){});
+        }
         // Stylin'.....
         $("#info").css({'color':'rgb(51,51,51)'});
         $(".feature").css({'margin-bottom':'40px'});
