@@ -5,7 +5,7 @@ import os
 GOOGLE_API_KEY="AIzaSyCbw9_6Mokk_mKwnH02OYyB6t5MrepFV_E"
 GOOGLE_PLACES_RADIUS=100
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # Make sure the user gets logged out when the browser closes.

@@ -801,9 +801,17 @@ def save_image(model_image, filename, tmp_image, thumbnail=False):
             feed_image = feed_image.resize((thumbnail_size, thumbnail_size), Image.ANTIALIAS)
         else:
             #Landscape
+            # ratio = width/height
+            # new_height = thumbnail_size
+            # new_width = thumbnail_size*ratio
+            # size = (new_width, new_height)
+            # feed_image = feed_image.resize(size, Image.ANTIALIAS)
+            # box = ((new_width-thumbnail_size)/2, 0, (new_width+thumbnail_size)/2, new_height)
+            # feed_image = feed_image.crop(box)
             box = (40, 0, 280, 240)
             feed_image = feed_image.crop(box)
             feed_image = feed_image.resize((thumbnail_size, thumbnail_size), Image.ANTIALIAS)
+
     imagefile = StringIO.StringIO()
     #feed_image.save(imagefile, 'JPEG')
     # give it a unique name
