@@ -1,0 +1,141 @@
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-color: rbga(255, 255, 255, 0.5);
+  background-size: 1100px; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+/******** variables ********/
+/***************************/
+body {
+  font-family: "Helvetica", sans-serif; }
+
+#main {
+  margin-top: 60px;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto; }
+
+#footer {
+  position: absolute;
+  bottom: 0px;
+  display: block; }
+
+.navbar-inner li {
+  margin-bottom: -10px;
+  font-size: 12px; }
+
+#logout {
+  font-size: 12px; }
+  #logout span {
+    color: white;
+    border-bottom-color: #fff;
+    border-top-color: #fff; }
+
+#login {
+  position: absolute;
+  left: 50%;
+  top: 50%; }
+
+#login-box {
+  width: 400px;
+  height: 255px;
+  background-image: url("/media/background.png");
+  position: relative;
+  left: -50%;
+  bottom: 100px;
+  padding-bottom: 8px;
+  -moz-box-shadow: 0px 0px 4px #999999;
+  -webkit-box-shadow: 0px 0px 4px #999999;
+  box-shadow: 0px 0px 4px #999999;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ccc;
+  border-radius: 6px; }
+
+#login-header {
+  font-size: 150%;
+  margin-bottom: 15px;
+  padding-top: 7px;
+  padding-bottom: 3px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  margin-left: 15px;
+  margin-right: 20px; }
+
+#login-main {
+  margin-left: 20px;
+  margin-right: 20px; }
+
+#login-form {
+  margin-bottom: 35px; }
+  #login-form p {
+    min-height: 40px; }
+  #login-form label, #login-form input {
+    display: inline; }
+  #login-form label {
+    position: relative;
+    top: 6px;
+    font-size: 115%;
+    font-weight: bold; }
+  #login-form .btn {
+    float: right;
+    border-color: #777;
+    border-radius: 5px;
+    font-weight: bold; }
+  #login-form input {
+    float: right;
+    border-color: #bbb;
+    border-width: 1px;
+    border-radius: 3px; }
+
+#login-extra {
+  font-size: 120%;
+  line-height: 150%; }
