@@ -203,6 +203,7 @@ def register(request, backend, success_url=None, form_class=None,
 
         if form.is_valid():
             new_user = backend.register(request, **form.cleaned_data)
+
             # django-registration does not take care of names. Do it here.
             new_user.first_name = request.POST['first_name']
             new_user.last_name = request.POST['last_name']

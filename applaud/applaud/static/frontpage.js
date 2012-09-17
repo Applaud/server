@@ -2,6 +2,13 @@
 // frontpage.js - The javascript file for the front page of apatapa.com //
 //////////////////////////////////////////////////////////////////////////
 
+// Functions to launch when the page is fully loaded
+$(document).ready( function(){
+    frontPage.bindForm();
+    frontPage.bindClearErrorHandlers();
+    frontPage.initPage();
+});
+
 var frontPage = frontPage || {};
 
 (function (frontPage) {
@@ -87,9 +94,17 @@ var frontPage = frontPage || {};
             // Form is valid, proceed with registration
             if(frontPage.validateForm()){
                 var email = $('input[name="email"]').val();
+                var userType = $('input[type=radio]:checked').val();
+                
                 $.get('register_beta/',
-                      {beta_user:email},
+                      {beta_user:email,
+                       type:userType},
                       function(d){
+                          // Switch the page over to thank them!
+                          
+                          $('#registration-1').hide();
+                          $('#after-registration').show();
+
                           console.log(d);
                       }
                      );
@@ -126,15 +141,17 @@ var frontPage = frontPage || {};
     
     // Currently unused -- should be implemented down the line
     frontPage.validateUserType = function(){
-        var userType = $('.radio-control-group :checked').val();
+        var userType = $('input[type=radio]:checked').val();
 
         // Check to see if user type has been selected
         if( ! userType ){
             var errorElement = $('<li></li>');
-            errorElement.text("Please select 'User' or 'Business'.");
+            errorElement.text("Please select 'Customer' or 'Business Owner'.");
             $('#form-error ul').append(errorElement);
             frontPage.errorElements.push($('.radio-control-group'));       
+            return false;
         }
+        return true;
     }
 
     frontPage.validateEmail = function(){
@@ -206,10 +223,10 @@ var frontPage = frontPage || {};
     }
 
     frontPage.validateForm = function(){
-        var isValid = frontPage.validateEmail();// &&
+        var isValid = frontPage.validateEmail() &&
+            frontPage.validateUserType();
             //frontPage.validatePassword(); //&&
             //frontPage.validateFirstName() &&    
-            //frontPage.validateUserType();
         
         // If there are any errors, style up the error div
         if( frontPage.errorElements.length > 0 ){
@@ -225,12 +242,9 @@ var frontPage = frontPage || {};
     frontPage.initPage = function () {
         $(".style-image").hide();
         $("#style-1-image").show();
-        //$("#style-1-image").fadeIn(300, function(){});
         frontPage.makeStyle1( 'right' );
 
-//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
-
-        // // Bind the carousel buttons
+        // Bind the carousel buttons
 	    $("#carousel-right").click( function() {
 	        frontPage.shiftRight();
 	    });
@@ -238,11 +252,14 @@ var frontPage = frontPage || {};
 	    $("#carousel-left").click( function() {
             frontPage.shiftLeft();
 	    });
+
+        // Hide the after-registration div
+        $('#after-registration').hide();
+        
     }
     frontPage.shiftRight = function() {
-//        clearInterval( frontPage.featureTimer );
-//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
-
+        
+        // Calculate the new index
 	    frontPage.styleCounter += 1;
         if(frontPage.styleCounter === 4){
             frontPage.styleCounter = 1;
@@ -251,8 +268,6 @@ var frontPage = frontPage || {};
     }
     
     frontPage.shiftLeft = function() {
-//        clearInterval( frontPage.featureTimer );
-//        frontPage.featureTimer = setInterval("frontPage.shiftRight()", frontPage.featureTimerLength);
 
         // Calculate the new index
 	    frontPage.styleCounter -= 1;
@@ -271,17 +286,14 @@ var frontPage = frontPage || {};
             case 1:
               frontPage.makeStyle1( direction );
               break;
-
             case 2:
               frontPage.makeStyle2( direction );
               break;
-
             case 3:
               frontPage.makeStyle3( direction );
               break;
         }
     }
-
 
     // The following functions change the css of the page so as to match the particular picture
     // Each should take one parameter indicating the direction to shift from

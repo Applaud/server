@@ -400,12 +400,31 @@ def send_message(request):
 def register_beta(request):
     # GET request
     if request.method == 'GET':
-        if 'beta_user' in request.GET:
+        if 'beta_user' in request.GET and 'type' in request.GET:
             email = request.GET['beta_user']
+            user_type = request.GET['type']
+        
             print email
-            beta_user = models.BetaUser(email=email)
+            print user_type
+            
+            beta_user = models.BetaUser(email=email, user_type=user_type)
             beta_user.save()
-            print "could save"
+
+            subject =  "Thank you for registering with Apatapa!"
+            msg = """We're excited to have you on board! We'll keep you posted about any updates or changes. Also, we'd love to hear your feedback! Please contact us with any questions, comments, or concerns at apatapa@apatapa.com.
+
+Best,
+The Apatapa Team
+"""
+            from_email = "info@apatapa.com"
+            to_emails = [email]
+            
+            # send_mail( subject,
+            #            msg,
+            #            from_email,
+            #            to_emails,
+            #            fail_silently=False )
+            
             #Should send an email confirming their beta testing....
             return HttpResponse('Success')
 

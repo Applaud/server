@@ -9,13 +9,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}apatapa.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}frontpage.js"></script>
-    <script type="text/javascript">
-      $(document).ready( function(){
-          frontPage.bindForm();
-          frontPage.bindClearErrorHandlers();
-          frontPage.initPage();
-      });
-    </script>
   </head>
   <body>
 
@@ -39,9 +32,9 @@
 
     <div id="main">
 
-      <img class="style-image" id="style-1-image" src="/media/TheSecondOne2.JPG" />
-      <img class="style-image" id="style-2-image" src="/media/TheThirdOne.JPG" />    
-      <img class="style-image" id="style-3-image" src="/media/TheOne.JPG" />
+      <img class="style-image" id="style-1-image" src="/media/TheSecondOne.jpg" />
+      <img class="style-image" id="style-2-image" src="/media/TheThirdOne.jpg" />    
+      <img class="style-image" id="style-3-image" src="/media/TheOne.jpg" />
 
       <a id="carousel-left" class="carousel-control left features-display" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a id="carousel-right" class="carousel-control right features-display" href="#myCarousel" data-slide="next">&rsaquo;</a>
@@ -114,6 +107,12 @@
             </form>
           </div>
           <!-- Registration Stop -->
+
+          <!-- After Registration Start -->
+          <div id="after-registration">
+            <h2>Thanks! You'll receive a message shortly!</h2>
+          </div>
+          <!-- After Registration Stop -->
 
         </div>
         <!-- Info Features Stop -->

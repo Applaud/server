@@ -477,3 +477,4 @@ class Comment(models.Model):
 
 class BetaUser(models.Model):
     email = models.CharField(max_length=100)
+    user_type = models.CharField(max_length=100)
