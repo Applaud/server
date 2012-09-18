@@ -1,0 +1,224 @@
+/************
+ * Variables
+ */
+$deletecolor: rgb(255,100,100);
+$lightpink: rgb(255,235,250);
+$browncolor: rgb(44,30,30);	// dark brown color for header/footer
+
+/************
+ * Styles that apply to all pages
+ */
+form {
+    display:inline;
+}
+
+h3 {
+    font-size:16pt;
+    font-weight:bold;
+    text-transform:uppercase;
+    color:$browncolor;
+}
+
+strong {
+    font-weight:bold;
+}
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
+    margin:5px;
+    background-color:$lightpink;
+    padding:5px;
+}
+
+.profile_image {
+    width:64px;
+    height:64px;
+    vertical-align:middle;
+}
+/* any form field/label pair */
+.formfield {
+    display:block;
+    margin: {
+	top:10px;
+	bottom:10px;
+    }
+    input, textarea {
+	margin-top:5px;
+	width:100%;
+	font-family:'Lucida Grande';
+	font-size:11px;
+	vertical-align:text-top;
+    }
+}
+
+
+/* iphone preview */
+#iphone_preview {
+    background-image:url('/static/iphoneTemplate.png');
+    width:362px;
+    height:710px;
+    float:right;
+    font-family:"Helvetica", sans-serif;
+
+    #iphone_screen {
+	position:relative;
+	left:21px;
+	top:135px;
+	background-color:cyan;
+	width:320px;
+	height:411px;
+	overflow:hidden;
+
+	.navbar {
+	    position:relative;
+	    left:0px;
+	    top:0px;
+	    text-align:center;
+	    height:44px;
+	    background-color:orange;
+	    p {
+		font-size:20px;
+		font-weight:bold;
+		color:#ffffff;
+		position:relative;
+		top:12px;
+	    }
+	}
+	.listitem {
+	    height:44px;
+	    width:100%;
+	    display:block;
+	    border: {
+		top:1px solid #e0e0e0;
+	    }
+	    .heading{
+		position:relative;
+		top:6px;
+		left:10px;
+
+		font-size:18px;
+		font-weight:bold;
+		display:block;
+	    }
+	    .subtitle {
+		position:relative;
+		top:10px;
+		left:10px;
+		color:rgb(125,125,125);
+		font-size:14px;
+	    }
+	}
+    }
+}
+
+/************
+ * Newsfeed
+ */
+.feed {
+    padding:10px;
+    /* the title in summary view */
+    .nftitle {
+	font-weight:bold;
+	display:block;
+	margin-bottom:15px;
+    }
+    /* the date created in summary view */
+    .nfdate {
+	margin-right:10px;
+    }
+    /* last time edited in summaryview */
+    .nfdateedited {
+
+    }
+    /* edit and delete buttons together */
+    .deleteedit {
+	width:180px;
+	text-align:right;
+	float:right;
+    }
+    .nf_cancel_button, .nf_edit_button {
+	display:inline;
+    }
+    /* The date paragraph. */
+    p {
+	margin:5px auto;
+    }
+    /* Textareas look better when they match text field inputs. */
+    .image_input {
+	float:left;
+    }
+    /* the image input with image preview */
+    .imagediv {
+	height:68px;
+	display: block;
+	img {
+    	    float:left;
+    	    vertical-align:text-center;
+	    width:64px;
+	    height:64px;
+	    margin-right:10px;
+	}
+	/* the image input */
+	.imgfield {
+	    input {
+		width:80%;
+		margin-top:5px;
+		font-family:'Lucida Grande';
+		font-size:11px;
+		vertical-align:text-top;
+	    }
+	}
+    }
+}
+
+/************
+ * Questions
+ */
+
+.question_visible_div {
+    textarea {
+	width:90%;
+    }
+    .expand_button, .contract_button {
+	float:right;
+    }
+}
+/* option list for a question */
+.question_optionlist {
+    padding-top:10px;
+
+    label {
+	padding-right:5px;
+    }
+
+    .question_item {
+	padding: {
+	    left:20px;
+	    top:5px;
+	}
+    }
+}
+
+/************
+ * Employee management
+ */
+/* #newemployeeform { */
+/*     margin: { */
+/* 	top: 30px; */
+/* 	bottom: 30px; */
+/*     } */
+/*     display:block; */
+/* } */
+
+/* .profile_title { */
+/*     margin-right: 15px; */
+/*     display: inline; */
+/* } */
+
+/* .employee_name { */
+/*     padding-left:10px; */
+/* } */
+
+/* .del_emp_button { */
+/*     background-color:$deletecolor; */
+/*     margin-left:10px; */
+/* } */

@@ -1,0 +1,308 @@
+@import "apatapa.scss";
+
+$deletecolor: rgb(255,100,100);
+$lightpink: rgb(255,235,250);
+$browncolor: rgb(44,30,30);	// dark brown color for header/footer
+$border-grey: #e0e0e0;
+$shadow-color: #aaa;
+html {
+    font-family:"Helvetica", sans-serif;
+}
+
+#main {
+    height:100%;
+    width:1000px;
+}
+h2 {
+    font-size:14pt;
+}
+
+#control_panel {
+    padding: {
+	top:8px;
+    }
+
+    width:550px;
+    height:700px;
+
+    
+    #control_panel_heading {
+	margin: {
+	    left:10px
+	}
+    }
+}
+
+#control_panel_nav {
+//    background-color:#333333;
+    margin: {
+	top:5px;
+	bottom:10px;
+    }
+    padding: {
+	left:25px;
+	bottom:0px;
+	top:5px;
+    }
+    li {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	display:inline;
+	border:2px solid;
+	border-color:$border-grey;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff)";
+	background: -webkit-linear-gradient(bottom, $border-grey, #ffffff);
+	background:-moz-linear-gradient(90deg, $border-grey, #ffffff);
+	padding:0 10px;
+	cursor:pointer;
+	font-size:10pt;
+    }
+    li.selected {
+	background:#ffffff;
+	border-bottom-color:#ffffff;
+	z-index:1;
+    }
+}
+
+.control_panel_div {
+    border: 2px solid;
+    border-color:$border-grey;
+    border-top-radius:15px;
+    border-bottom:none;
+    border-left:none;
+    border-right:none;
+    padding: 20px;
+    border-radius:5px;
+    #employee_button {
+	height:5px;
+    }
+    margin: {
+	top:-8px;
+    }
+    @include shadow(3px);
+    overflow:auto;
+    background-color:#fff;   
+}
+
+#control_panel_employees_div {
+    .cp_employee_div {
+	margin:5px;
+	background-color:$lightpink;
+	.cp_employee_row {
+	    height:40px;
+	    .profileexpand {
+		float:right;
+	    }
+	}
+	.extra_employee_row {
+	    margin:5px;
+	}
+	h2 {
+	    display:inline;
+	}
+    }
+    #newemployeeform {
+	margin: {
+	    top: 30px;
+	    bottom: 30px;
+	}
+	.employee_info {
+	    margin:5px;
+	}
+	h2 {
+	    margin: {
+		bottom:10px;
+		left:0;
+	    }
+	}
+	display:block;
+    }
+
+    .profile_title {
+	margin-right: 15px;
+	display: inline;
+    }
+
+    .employee_name {
+	padding-left:10px;
+    }
+
+    .del_emp_button {
+	background-color:$deletecolor;
+	margin-left:10px;
+    }
+}
+
+#newsfeeds {
+
+
+
+}
+
+#control_panel_survey_div {
+
+}
+
+
+#home_div {
+
+
+
+}
+
+#iphone_preview {
+    background-image:url('/static/iphoneTemplate.png');
+    width:362px;
+    height:710px;
+    float:right;
+    font-family:"Helvetica", sans-serif;
+    -moz-box-shadow:0px 3px 8px $shadow-color;
+    -webkit-box-shadow:0px 3px 8px $shadow-color;
+    box-shadow:0px 3px 8px $shadow-color;
+    border-radius:50px;
+    #iphone_screen {
+	position:relative;
+	left:21px;
+	top:135px;
+	background-color:#bbb;
+	width:320px;
+	height:411px;
+	overflow:hidden;
+	.iphone_description {
+	    position:relative;
+	    height:60px;
+	    padding:10px;
+	    text-align:center;
+	}
+	#iphone_home_message {
+	    position:relative;
+	    height:60px;
+	    padding:10px;
+	    vertical-align:middle;
+	    margin:10px;
+	    margin-top:25px;
+	}
+	.navbar {
+	    position:relative;
+	    left:0px;
+	    top:0px;
+	    text-align:center;
+	    height:44px;
+	    background-color:#fff;
+//	    background-image:-webkit-linear-gradient(bottom, #400075, #640096);
+	    p {
+		font-size:20px;
+		font-weight:bold;
+		color:#ffffff;
+		position:relative;
+		top:12px;
+	    }
+	}
+	.listitem {
+	    width:100%;
+	    height:44px;
+	    display:block;
+	    //position:relative;
+	    //top:44px;
+	    border: {
+		top:1px solid #e0e0e0;
+	    }
+	    .heading{
+		position:relative;
+		top:6px;
+		left:10px;
+		font-size:18px;
+		font-weight:bold;
+		display:block;
+	    }
+	    .subtitle {
+		position:relative;
+		top:10px;
+		left:10px;
+
+		color:rgb(125,125,125);
+		font-size:14px;
+	    }
+	}
+    }
+    .tab_bar{
+	width:320px;
+	height:49px;
+	left:21px;
+	top:136px;
+	position: relative;
+	background:-moz-linear-gradient(90deg, rgb(5,5,5) 40%, rgb(75,75,75));
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5))";
+	background: -webkit-linear-gradient(bottom, rgb(5,5,5) 40%, rgb(75,75,75));
+	
+	/* Setting the font-size to 0 so that the tab bar divs can be inline with no space between them */
+	font-size:0px;
+	
+	.tab_bar_div {
+	    position:relative;
+	    top:0px;
+	    height:49px;
+	    width:64px;
+	    display:inline-block;
+	    color:#fff;
+	    background-color:transparent;
+	    font-size:8px;
+	}
+	.tab_bar_selected {
+	    background:-moz-linear-gradient(90deg, rgb(45,45,45) 40%, rgb(105,105,105));
+	    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45));
+	    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45))";
+	    background: -webkit-linear-gradient(bottom, rgb(45,45,45) 40%, rgb(105,105,105));	    
+	    border-radius:5px;
+	}
+    }
+}
+
+#sticky {
+    font-family: 'Helvetica', sans-serif;
+    background-color:rgb(255, 244, 144);
+    width:200px;
+    font-size:16px;
+    padding:20px;
+    @include shadow(8px, #aaa, 0px, 10px);
+    -moz-transform:rotate(-2deg);
+    -webkit-transform:rotate(-2deg);
+}
+
+#control_panel_photos_div {
+    .photo {
+	margin: 5px auto;
+	background-color:$lightpink;
+	padding:10px;
+	.photo_votes {
+	    position:relative;
+	    flaot:left;
+	}
+	ul {
+	    position:relative;
+	    left:25px;
+	    margin:5px auto;
+	    li {
+		display:inline;
+		font-size:10pt;
+	    }
+	}
+	img {
+	    position:relative;
+	    left:25px;
+	    margin:10px auto;
+	}
+	.photo_active_button {
+	    // margin:5px auto;
+	    width:auto;
+	    position:relative;
+	    left:25px;
+	    padding:3px;
+	    border-style:solid;
+	    border-width:2px;
+	    border-color:black;
+	}
+    }
+}

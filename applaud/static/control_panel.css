@@ -1,0 +1,299 @@
+/******************************
+ * -----   CSS RESET   -----  *
+ ******************************/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1;
+  background-image: url("/static/SmallTile.png");
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: rbga(255, 255, 255, 0.5); }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/******************************
+ * ---- END CSS RESET  -----  *
+ ******************************/
+/******** variables ********/
+/***************************/
+body {
+  font-family: "Helvetica", sans-serif; }
+
+#main {
+  margin-top: 60px;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto; }
+
+#footer {
+  position: absolute;
+  bottom: 0px;
+  display: block; }
+
+.navbar-inner li {
+  margin-bottom: -10px;
+  font-size: 12px; }
+
+#logout {
+  font-size: 12px; }
+  #logout span {
+    color: white;
+    border-bottom-color: #fff;
+    border-top-color: #fff; }
+
+html {
+  font-family: "Helvetica", sans-serif; }
+
+#main {
+  height: 100%;
+  width: 1000px; }
+
+h2 {
+  font-size: 14pt; }
+
+#control_panel {
+  padding-top: 8px;
+  width: 550px;
+  height: 700px; }
+  #control_panel #control_panel_heading {
+    margin-left: 10px; }
+
+#control_panel_nav {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding-left: 25px;
+  padding-bottom: 0px;
+  padding-top: 5px; }
+  #control_panel_nav li {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: inline;
+    border: 2px solid;
+    border-color: #e0e0e0;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$border-grey, endColorstr=#ffffff)";
+    background: -webkit-linear-gradient(bottom, #e0e0e0, white);
+    background: -moz-linear-gradient(90deg, #e0e0e0, white);
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 10pt; }
+  #control_panel_nav li.selected {
+    background: #ffffff;
+    border-bottom-color: #ffffff;
+    z-index: 1; }
+
+.control_panel_div {
+  border: 2px solid;
+  border-color: #e0e0e0;
+  border-top-radius: 15px;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: -8px;
+  -moz-box-shadow: 0px 0px 3px #cccccc;
+  -webkit-box-shadow: 0px 0px 3px #cccccc;
+  box-shadow: 0px 0px 3px #cccccc;
+  overflow: auto;
+  background-color: #fff; }
+  .control_panel_div #employee_button {
+    height: 5px; }
+
+#control_panel_employees_div .cp_employee_div {
+  margin: 5px;
+  background-color: #ffebfa; }
+  #control_panel_employees_div .cp_employee_div .cp_employee_row {
+    height: 40px; }
+    #control_panel_employees_div .cp_employee_div .cp_employee_row .profileexpand {
+      float: right; }
+  #control_panel_employees_div .cp_employee_div .extra_employee_row {
+    margin: 5px; }
+  #control_panel_employees_div .cp_employee_div h2 {
+    display: inline; }
+#control_panel_employees_div #newemployeeform {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: block; }
+  #control_panel_employees_div #newemployeeform .employee_info {
+    margin: 5px; }
+  #control_panel_employees_div #newemployeeform h2 {
+    margin-bottom: 10px;
+    margin-left: 0; }
+#control_panel_employees_div .profile_title {
+  margin-right: 15px;
+  display: inline; }
+#control_panel_employees_div .employee_name {
+  padding-left: 10px; }
+#control_panel_employees_div .del_emp_button {
+  background-color: #ff6464;
+  margin-left: 10px; }
+
+#iphone_preview {
+  background-image: url("/static/iphoneTemplate.png");
+  width: 362px;
+  height: 710px;
+  float: right;
+  font-family: "Helvetica", sans-serif;
+  -moz-box-shadow: 0px 3px 8px #aaaaaa;
+  -webkit-box-shadow: 0px 3px 8px #aaaaaa;
+  box-shadow: 0px 3px 8px #aaaaaa;
+  border-radius: 50px; }
+  #iphone_preview #iphone_screen {
+    position: relative;
+    left: 21px;
+    top: 135px;
+    background-color: #bbb;
+    width: 320px;
+    height: 411px;
+    overflow: hidden; }
+    #iphone_preview #iphone_screen .iphone_description {
+      position: relative;
+      height: 60px;
+      padding: 10px;
+      text-align: center; }
+    #iphone_preview #iphone_screen #iphone_home_message {
+      position: relative;
+      height: 60px;
+      padding: 10px;
+      vertical-align: middle;
+      margin: 10px;
+      margin-top: 25px; }
+    #iphone_preview #iphone_screen .navbar {
+      position: relative;
+      left: 0px;
+      top: 0px;
+      text-align: center;
+      height: 44px;
+      background-color: #fff; }
+      #iphone_preview #iphone_screen .navbar p {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        position: relative;
+        top: 12px; }
+    #iphone_preview #iphone_screen .listitem {
+      width: 100%;
+      height: 44px;
+      display: block;
+      border-top: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: #7d7d7d;
+        font-size: 14px; }
+  #iphone_preview .tab_bar {
+    width: 320px;
+    height: 49px;
+    left: 21px;
+    top: 136px;
+    position: relative;
+    background: -moz-linear-gradient(90deg, #050505 40%, #4b4b4b);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(75,75,75), endColorstr=rgb(5,5,5))";
+    background: -webkit-linear-gradient(bottom, #050505 40%, #4b4b4b);
+    /* Setting the font-size to 0 so that the tab bar divs can be inline with no space between them */
+    font-size: 0px; }
+    #iphone_preview .tab_bar .tab_bar_div {
+      position: relative;
+      top: 0px;
+      height: 49px;
+      width: 64px;
+      display: inline-block;
+      color: #fff;
+      background-color: transparent;
+      font-size: 8px; }
+    #iphone_preview .tab_bar .tab_bar_selected {
+      background: -moz-linear-gradient(90deg, #2d2d2d 40%, #696969);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45));
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=rgb(105,105,105), endColorstr=rgb(45,45,45))";
+      background: -webkit-linear-gradient(bottom, #2d2d2d 40%, #696969);
+      border-radius: 5px; }
+
+#sticky {
+  font-family: 'Helvetica', sans-serif;
+  background-color: #fff490;
+  width: 200px;
+  font-size: 16px;
+  padding: 20px;
+  -moz-box-shadow: 0px 10px 8px #aaaaaa;
+  -webkit-box-shadow: 0px 10px 8px #aaaaaa;
+  box-shadow: 0px 10px 8px #aaaaaa;
+  -moz-transform: rotate(-2deg);
+  -webkit-transform: rotate(-2deg); }
+
+#control_panel_photos_div .photo {
+  margin: 5px auto;
+  background-color: #ffebfa;
+  padding: 10px; }
+  #control_panel_photos_div .photo .photo_votes {
+    position: relative;
+    flaot: left; }
+  #control_panel_photos_div .photo ul {
+    position: relative;
+    left: 25px;
+    margin: 5px auto; }
+    #control_panel_photos_div .photo ul li {
+      display: inline;
+      font-size: 10pt; }
+  #control_panel_photos_div .photo img {
+    position: relative;
+    left: 25px;
+    margin: 10px auto; }
+  #control_panel_photos_div .photo .photo_active_button {
+    width: auto;
+    position: relative;
+    left: 25px;
+    padding: 3px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black; }
