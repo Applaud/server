@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}applaud.css" />
+
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}user.css" />
+{% endblock %}
+
+{% block scripts %}
+<script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}/jquery.js"></script>
+
+<!-- <script rel="javascript" type="text/javascript" src="{{ STATIC_URL }}/user_analytics.js"></script> -->
+<script type="text/javascript">
+  $(document).ready( function() {
+  $(".plus").click( function() {
+  $(this).parent().parent().siblings(".hidden").show();
+  });
+
+  $(".minus").click( function() {
+  $(this).parent().parent().siblings(".hidden").hide();
+  });
+  });
+
+</script>
+{% endblock %}
+
+
+{% block title %}User Landing{% endblock %}
+
+{% block navigation_links %}
+{{ block.super }}
+<!-- functional links for end users -->
+  <ul id="nav_link">
+    <li> My Apatapa: </li>
+    <li><a href="{% url user_home %}"> Responses </a></li>
+    <li><a href="{% url edit_user_profile %}">Profile</a></li>
+    <li><a href="/messages">Messages</a></li>    
+  </ul>
+
+
+{% endblock %}
+
+{% block content %}
+Hello {{ user.username }}!
+
+
+<h1> My Previous Responses </h1>
+
+
+<div class="feedback">
+
+ <h2>General Feedback</h2>
+
+
+  {% for feed in feedback %}
+  <table>
+    <tr>
+      <td>{{ feed.business }}</td>
+      <td>{{ feed.feedback }}</td>
+    </tr>
+  </table>
+  {% endfor %}
+
+
+</div>
+
+<br />
+<h2>My Ratings</h2>
+<div class="rating">
+
+  
+
+  {% for key,value in rating_date.items %}
+  <table>
+    <tr class="visible" id="row_number_{{ forloop.counter }}">
+      <td class="table_date">{{ key }}</td>
+      <td class="table_business">{{ value.0.employee.business.business_name }}</td>       
+      <td>{{ value.0.employee.user.first_name }} {{ value.0.employee.user.last_name }}</td>
+      <td style="width:15%"><button class="plus">+</button><button class="minus">-</button></td>
+      
+    </tr>
+    <tr class="hidden">
+      {% for r in value %}
+      <td class="table_rating"> {{ r.dimension }}: {{ r.rounded_rating }}</td>
+      {% endfor %}
+    </tr>
+  </table>
+  {% endfor %}
+</div>
+
+<br />
+<div class="responses">
+  <h2>Responses to Questions</h2>
+  {% for key,value in response_date.items %}
+
+  <table width="100%">
+    <tr class="visible" id="row_number_{{ forloop.counter }}">
+      <td class="table_date">{{ key }}</td>
+      <td class="table_business">{{ value.0.question.survey.business.business_name }}</td>       
+      <td><button class="plus">+</button><button class="minus">-</button></td>
+    </tr>
+    <tr class="hidden">
+      <td>{{ value.0.question.survey.title }}</td>
+      <td>{{ value.0.question.survey.description }}</td>
+
+    </tr>
+      {% for q in value %}
+    <tr class="hidden">
+      <td>{{ q.question }}</td>
+      <td>{{ q }}</td>
+    </tr>
+    {% endfor %}
+
+ </table> 
+ {% endfor %}
+</div>
+
+{% endblock %}
