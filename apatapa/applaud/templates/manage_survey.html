@@ -1,0 +1,47 @@
+{% extends "business.html" %}
+{% block title %}Create survey{% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script language="javascript" type="text/javascript">
+$(document).ready(function() {
+    apatapa.business.survey.initSurveyPage();
+    });
+</script>
+{% endblock %}
+{% block links %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" src="{{ STATIC_URL }}business.css" />
+{% endblock %}
+{% block content %}
+{{ block.super }}
+<h1>Questions</h1>
+
+<div id="survey_div">
+  {% if title_err %}
+  <h2>{{ title_err }}</h2>
+  {% endif %}
+  {% if questions_err %}
+  <h2>{{ dimensions_err }}</h2>
+  {% endif %}
+
+  <form action="" method="post" id="survey_form">
+    <input type="hidden" value="{{ survey_id }}" id="survey_id" />
+    {% csrf_token %}
+   
+    <div id="surveyinfo" name="surveyinfo">
+      <div id="titlediv" name="titlediv">
+	<label for="title">Title</label>
+	<input type="text" id="survey_title" name="title" />
+      </div>
+      <div id="descriptiondiv" name="descriptiondiv">
+	<label for="description">Description</label>
+	<input type="text" id="survey_description" name="description" />
+      </div>
+    <input type="submit" id="addquestion_button" value="Add Question" />
+    </div>
+
+
+    <input type="submit" value="Create Survey" class="button" id="submit_button"/><br />
+  </form>
+</div>
+{% endblock %}

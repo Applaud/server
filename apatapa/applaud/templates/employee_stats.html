@@ -1,0 +1,51 @@
+{% extends "employee.html" %}
+{% block title %}Your Statistics{% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}employee_stats.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}stats.js"></script>
+{% endblock %}
+{% block links %}
+<!-- <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee_stats.css" /> -->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
+{% endblock %}
+{% block content %}
+ 
+<div id="employee"></div>
+
+<div id="graph_vs_table">
+<button id="graph"> Graph </button>
+<button id="table"> Table </button>
+<div id="graph_table" class="graph_view">
+    <div id="gt_dims"></div>
+    <div id="emp_graph"></div>
+    <div id="date_slider_text">
+    </div>
+    <p id="dateslider_label"></p>
+    <div id="gt_dateslider" name="dateslider"></div>
+</div>
+<form>
+{% csrf_token %}
+</form>
+
+<table class="table_view">
+      {% for date,dict in rating_dict.items %}
+      {% for user,ratings in dict.items %}
+  <tr class="visible">
+    <td>
+      {{ user.user.first_name }}
+      {{ user.user.last_name }}
+    </td>
+    <td>{{ ratings.0.date_created }} </td>
+  </tr>
+  {% for rating in ratings %}
+  <tr class="hidden">
+    <td></td>
+    <td>{{ rating.dimension }}</td>
+    <td>{% if rating.dimension.is_text %} {{ rating.rating_text }} {% else %}{{rating.rounded_rating }} {% endif %} </td></tr>
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+</table>
+{% endblock %}

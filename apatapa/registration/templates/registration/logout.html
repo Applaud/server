@@ -1,0 +1,8 @@
+{% extends "base_registration.html" %}
+{% load i18n %}
+
+{% block content %}
+{{ block.super }}
+<p>{% trans "Logged out" %}</p>
+<p><a href="{% url auth_login %}">Log in</a></p>
+{% endblock %}

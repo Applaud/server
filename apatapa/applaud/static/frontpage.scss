@@ -1,0 +1,158 @@
+@mixin shadow($size, $color:#ccc, $xoffset:0px, $yoffset:0px) {
+    -moz-box-shadow:$xoffset $yoffset $size $color;
+    -webkit-box-shadow:$xoffset $yoffset $size $color;
+    box-shadow:$xoffset $yoffset $size $color;
+}
+
+body {
+    font-family:"Helvetica", cursive;
+}
+
+#top-bar {
+    z-index:100;
+    height:100px;
+    @include shadow(6px, #111);
+}
+
+#top-bar-content {
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:60px;
+
+    img, a, button, div {
+        margin-right:20px;
+    }
+    
+    #sign-in {
+        float:right;
+        margin-top:31px;
+        margin-right:20px;
+        font-weight:bold;
+   }
+}
+
+#carousel-left, #carousel-right{
+    position:absolute;
+    margin-top:150px;
+    z-index:2;
+}
+#carousel-left{
+    margin-left:65px;
+}
+#carousel-right{
+    margin-right:65px;
+}
+#main {
+    width:1200px;
+    height:600px;
+    position: relative;
+    margin-left:auto;
+    margin-right:auto;
+    overflow:hidden;
+
+    img {
+        position:absolute;
+        z-index:-1;
+    }
+
+    // General styles for the three images
+    .style-image {
+        background-color:#fff;
+    }
+
+    // Particular styles for each of the three pictures
+    #style-1-image {
+        margin-top:-100px;
+        height: 130%;
+        width: 130%;
+    }
+
+    #style-2-image {
+        margin-top:-150px;
+
+    }
+
+    #style-3-image {
+        margin-top:-100px;
+    }
+}
+
+#info {
+    overflow: none;
+}
+
+.feature {
+    height: 100px;
+    .feature-text {
+        width: 400px;
+        h2 {
+            font-size: 25pt;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 12pt;
+            line-height: 120%;
+        }
+    }
+}    
+
+//Style particular to the features
+#feature-1 {
+
+}
+
+#feature-2 {
+    h2 {
+        font-size: 23pt;
+    }
+}
+
+#feature-3 {
+
+}
+
+
+.registration {
+
+    h2 {
+        font-size:140%;
+        font-weight: normal;
+    }
+    form {
+        line-height:80%;
+        input[type=text] {
+            border-radius: 4px;
+            width: 375px;
+            height:25px;
+            margin-bottom:0px;
+        }
+        #email-status-image {
+            position:relative;
+            right:35px;
+        }
+    }
+    #form-error{
+        background-color:rgba(185,74,72, .7);
+        border-radius:5px;
+        font-size:14px;
+        width: 385px;
+        ul{
+            font-weight:bold;
+            margin-left:5px;
+            list-style-type:none;
+        }
+    }
+}
+
+#bottom-bar {
+    z-index:100;
+    height:50px;
+    @include shadow(6px, #111);
+}
+
+#footer {
+    text-align:center;
+    margin-left:30px;
+}
+

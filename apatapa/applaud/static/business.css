@@ -1,0 +1,170 @@
+/************
+ * Variables
+ */
+/************
+ * Styles that apply to all pages
+ */
+form {
+  display: inline; }
+
+h3 {
+  font-size: 16pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #2c1e1e; }
+
+strong {
+  font-weight: bold; }
+
+#employees_listing li, #profiles_listing li ul li, .feed, .question {
+  margin: 5px;
+  background-color: #ffebfa;
+  padding: 5px; }
+
+.profile_image {
+  width: 64px;
+  height: 64px;
+  vertical-align: middle; }
+
+/* any form field/label pair */
+.formfield {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px; }
+  .formfield input, .formfield textarea {
+    margin-top: 5px;
+    width: 100%;
+    font-family: 'Lucida Grande';
+    font-size: 11px;
+    vertical-align: text-top; }
+
+/* iphone preview */
+#iphone_preview {
+  background-image: url("/static/iphoneTemplate.png");
+  width: 362px;
+  height: 710px;
+  float: right;
+  font-family: "Helvetica", sans-serif; }
+  #iphone_preview #iphone_screen {
+    position: relative;
+    left: 21px;
+    top: 135px;
+    background-color: cyan;
+    width: 320px;
+    height: 411px;
+    overflow: hidden; }
+    #iphone_preview #iphone_screen .navbar {
+      position: relative;
+      left: 0px;
+      top: 0px;
+      text-align: center;
+      height: 44px;
+      background-color: orange; }
+      #iphone_preview #iphone_screen .navbar p {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        position: relative;
+        top: 12px; }
+    #iphone_preview #iphone_screen .listitem {
+      height: 44px;
+      width: 100%;
+      display: block;
+      border-top: 1px solid #e0e0e0; }
+      #iphone_preview #iphone_screen .listitem .heading {
+        position: relative;
+        top: 6px;
+        left: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: block; }
+      #iphone_preview #iphone_screen .listitem .subtitle {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        color: #7d7d7d;
+        font-size: 14px; }
+
+/************
+ * Newsfeed
+ */
+.feed {
+  padding: 10px;
+  /* the title in summary view */
+  /* the date created in summary view */
+  /* last time edited in summaryview */
+  /* edit and delete buttons together */
+  /* The date paragraph. */
+  /* Textareas look better when they match text field inputs. */
+  /* the image input with image preview */ }
+  .feed .nftitle {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px; }
+  .feed .nfdate {
+    margin-right: 10px; }
+  .feed .deleteedit {
+    width: 180px;
+    text-align: right;
+    float: right; }
+  .feed .nf_cancel_button, .feed .nf_edit_button {
+    display: inline; }
+  .feed p {
+    margin: 5px auto; }
+  .feed .image_input {
+    float: left; }
+  .feed .imagediv {
+    height: 68px;
+    display: block;
+    /* the image input */ }
+    .feed .imagediv img {
+      float: left;
+      vertical-align: text-center;
+      width: 64px;
+      height: 64px;
+      margin-right: 10px; }
+    .feed .imagediv .imgfield input {
+      width: 80%;
+      margin-top: 5px;
+      font-family: 'Lucida Grande';
+      font-size: 11px;
+      vertical-align: text-top; }
+
+/************
+ * Questions
+ */
+.question_visible_div textarea {
+  width: 90%; }
+.question_visible_div .expand_button, .question_visible_div .contract_button {
+  float: right; }
+
+/* option list for a question */
+.question_optionlist {
+  padding-top: 10px; }
+  .question_optionlist label {
+    padding-right: 5px; }
+  .question_optionlist .question_item {
+    padding-left: 20px;
+    padding-top: 5px; }
+
+/************
+ * Employee management
+ */
+/* #newemployeeform { */
+/*     margin: { */
+/* 	top: 30px; */
+/* 	bottom: 30px; */
+/*     } */
+/*     display:block; */
+/* } */
+/* .profile_title { */
+/*     margin-right: 15px; */
+/*     display: inline; */
+/* } */
+/* .employee_name { */
+/*     padding-left:10px; */
+/* } */
+/* .del_emp_button { */
+/*     background-color:$deletecolor; */
+/*     margin-left:10px; */
+/* } */

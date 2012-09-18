@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}employee.css" />
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}employee.js"></script>
+{% endblock %}
+
+{% block title %}{{ user.first_name }} apatapa{% endblock %}
+
+{% block navigation_links %}
+<ul>
+  <li><a href="{% url employee_profile %}">Edit Profile</a></li>
+  <li><a href="{% url employee_analytics %}">Stats</a></li>
+</ul>
+{% endblock %}
