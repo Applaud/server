@@ -31,8 +31,11 @@ footer, header, hgroup, menu, nav, section {
 body {
   line-height: 1;
   background-image: url("/static/SmallTile.png");
-  background-color: rbga(255, 255, 255, 0.5);
-  background-size: 1100px; }
+  background-size: 100%;
+  background-height: 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: rbga(255, 255, 255, 0.5); }
 
 ol, ul {
   list-style: none; }
@@ -54,9 +57,8 @@ table {
  ******************************/
 /******** variables ********/
 /***************************/
-html, body {
-  font-family: "Helvetica", sans-serif;
-  min-height: 100%; }
+body {
+  font-family: "Helvetica", sans-serif; }
 
 #main {
   margin-top: 60px;
@@ -65,15 +67,13 @@ html, body {
   margin-right: auto; }
 
 #footer {
-  position: relative;
+  position: absolute;
   bottom: 0px;
   display: block; }
 
 .navbar-inner li {
   margin-bottom: -10px;
   font-size: 12px; }
-.navbar-inner .brand {
-  margin-bottom: -10px; }
 
 #logout {
   font-size: 12px; }
@@ -81,19 +81,6 @@ html, body {
     color: white;
     border-bottom-color: #fff;
     border-top-color: #fff; }
-
-#overview {
-  margin: 100px;
-  width: 100%; }
-  #overview #overview_content {
-    margin-left: 70px;
-    background-color: #fff;
-    -moz-box-shadow: 0px 0px 2px #cccccc;
-    -webkit-box-shadow: 0px 0px 2px #cccccc;
-    box-shadow: 0px 0px 2px #cccccc;
-    padding: 30px;
-    border-radius: 5px;
-    height: 100%; }
 
 html {
   font-family: "Helvetica", sans-serif; }
