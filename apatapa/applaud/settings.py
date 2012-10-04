@@ -35,6 +35,13 @@ MANAGERS = ADMINS
 
 CWD=os.path.dirname(__file__)
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+AWS_ACCESS_KEY_ID = "AKIAIGEENOHHRIBDOHMA"
+AWS_SECRET_ACCESS_KEY = "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"
+
+AWS_STORAGE_BUCKET_NAME = 'apatapa-staging'
+
 if 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
         'default': {
@@ -91,7 +98,9 @@ MEDIA_ROOT = CWD+'/../media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = 'http://s3.amazonaws.com/%s/%s/' % (
+    AWS_STORAGE_BUCKET_NAME,
+    'media')
 
 # Path to the default profile picture
 DEFAULT_PROFILE_IMAGE = 'default.jpg'
@@ -183,6 +192,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'applaud',
+    'storages',
     'registration',
 )
 
