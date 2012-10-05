@@ -4,8 +4,9 @@ CURDIR=`pwd`
 
 rm ${CURDIR}/applaud/test.db
 python manage.py syncdb --noinput
-python populate.py
-python seed_content.py
+# python populate.py
+# python seed_content.py
+python oberlin.py
 
 # If we're on a server, make sure permissions are OK
 if [ `pwd | cut -c1-9` = "/var/www/" ]; then

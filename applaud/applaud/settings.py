@@ -12,7 +12,7 @@ TEMPLATE_DEBUG = DEBUG
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Default colors for businesses.
-DEFAULT_PRIMARY_COLOR = "#640096"
+DEFAULT_PRIMARY_COLOR = "#3B5998"
 DEFAULT_SECONDARY_COLOR = "#f0f0f0"
 
 # How long a user has to activate their account

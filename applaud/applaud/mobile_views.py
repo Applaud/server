@@ -62,8 +62,8 @@ def whereami(request):
 	# return render_to_response('error.html',{"error":error})
         return HttpResponse(get_token(request))
 
-    lat = request.GET["latitude"]
-    lon = request.GET["longitude"]	
+    lat = float(request.GET["latitude"])
+    lon = float(request.GET["longitude"])	
 
     business_list = []
 
@@ -87,11 +87,11 @@ def whereami(request):
     # Retrieve all apatapa places (i.e. those which google doesn't have) which are close to here
     for entry in get_apatapa_places( lat, lon ):
         business_list.append({
-                "name":entry["name"],
-                "types":entry["types"],
-                "goog_id":entry["id"],
-                "latitude":entry["latitude"],
-                "longitude":entry["longitude"]
+                "name":entry.business_name,
+                "types":[""],
+                "goog_id":entry.goog_id,
+                "latitude":entry.latitude,
+                "longitude":entry.longitude
                 })
 
     # Making the omnipresent entries
@@ -113,13 +113,14 @@ def get_apatapa_places( lat, lon ):
     # This is the return array
     nearby_places = []
 
+    print "before the query"
     # For the apatapa places, goog_id will be the same as the pk
     for biz in [i for i in models.BusinessProfile.objects.filter(isGoog=0)]:
         biz_lat = biz.latitude
         biz_lon = biz.longitude
-        if abs( haversine( biz_lon, lon, biz_lat, lat ) ) < settings.GOOGLE_PLACES_RADIUS:
+        dist = haversine( biz_lon, biz_lat, lon, lat )
+        if abs( dist ) < settings.GOOGLE_PLACES_RADIUS:
             nearby_places.append( biz )
-
     return nearby_places
 
 # This is used to calculate the distance between any two latitude, longitudes ('as the crow flies')
