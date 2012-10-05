@@ -7,3 +7,4 @@ applaud/applaud/test.db
 applaud/static/*
 static/*
 media/*
+.elasticbeanstalk/

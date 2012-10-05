@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+<title>{% block title %}Apatapa | Overview{% endblock %}</title>
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}apatapa.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}overview.css" />    
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-hashchange.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap-collapse.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}overview.js"></script>
+{% endblock %}
+
+{% block content %}    
+
+<!-- Nav Bar Start -->
+<div class="span2">
+  <ul class="nav nav-list">
+    <li class="content-link" id="about-content-link"><a href="#">About</a></li>
+    <li class="content-link" id="team-content-link"><a href="#">Team</a></li>
+    <li class="content-link" id="features-content-link"><a href="#">Features</a></li>
+    <li class="content-link" id="terms-content-link"><a href="#">Terms & Conditions</a></li>
+    <li class="content-link" id="privacy-content-link"><a href="#">Privacy Policy</a></li>
+  </ul>
+</div>
+<!-- Nav Bar Stop -->
+
+<!-- Main Start -->
+<div class="span10">
+  <div id="main-content">
+
+    <!-- About Group -->
+    <div class="content-group" id="about-content-group">
+	  <h2>What is Apatapa?</h2>
+	  <p>Apatapa is a mobile application and a website, designed to allow users to interact with their location.</p>
+    </div>
+    <!-- End About Group -->
+
+    <!-- Team Group -->
+    <div class="content-group" id="team-content-group">
+	  <h2>The Apatapa Team</h2>
+
+	  <!-- Wyatt Start -->
+      <div>
+	    <h3>Wyatt Hayman - CEO</h3>
+	    <p>At Oberlin, I had the opportunity to cultivate my leadership skills as the only captain of the Oberlin Men’s Varsity Soccer Team.  Having taken math through differential equations and a year of foundational computer science, I feel very comfortable solving technical problems.  Among other values, college was an entrepreneurial launchpad for me.  While at Oberlin I submitted four business ideas for funding.  After receiving $1500 to pursue a patent, I received $30,000 in seed funding from Oberlin to start Apatapa.  I selected Apatapa from an archive of over 600 business ideas that I developed throughout college.  After beginning work on Apatapa in September, I formed a diverse, highly technical, and extremely driven team.  My dream is to use entrepreneurial success to inspire large-scale, self-sustaining, social and environmental progress.  I continue working to establish a daily meditation practice as I explore the power of the brain; In 2010 I participated in a month-long silent meditation retreat that informs me every day.</p>
+	  </div>
+      <!-- End Wyatt -->
+      
+      <!-- Start Jack -->
+	  <div>
+	    <h3>Jack Kearney - CTO</h3>
+	    <p>I love building things. When I was little I used LEGOs; as I grew a bit older I started to use 2x4s and rope to make tree forts and zip lines; finally, in college I realized that this love extended beyond the purely tangible. I started a transportation service at Oberlin that took kids to and from New York. Even though this wasn’t strictly construction, creating something that a lot of people used was awesome! Around that same time, I took my first computer science class. From this I realized that starting a tech company was a perfect blend of hands-on building and entrepreneurship.</p>
+	  </div>
+      <!-- End Jack -->
+	  
+      <!-- Start Shahab -->
+	  <div>
+	    <h3>Shahab Raza - COO</h3>
+	    <p>Having found myself as an 18-year-old far, far away from home in such a drastically different culture, it’s not so surprising that my four years at Oberlin were incredibly formative. I have continued enjoying problem solving, but each problem is now accompanied by a broader pursuit of Objective Truth.</p>	  
+	    <p>Sport has always been a massive part of my life. Indeed a large part of who I am – in regards to my drive and ambition, sensitivity working with other people, and comfort dealing with highs and lows - can be attributed to my time spent watching and playing.  I am in love with the game of soccer, the history, the expression of culture, the paradoxical harmony in chaos. I have missed only a handful of Arsenal games in the last five years. And a painful five years at that, so spare a thought.</p>
+        
+	    <p>I don’t think we live in especially troubled times. We’re just more aware of injustices – wrongs that need to be righted. Here’s to that pursuit.</p>
+      </div>
+      <!-- End Shahab -->
+
+      </div>
+      <!-- End Team Group -->
+
+      <!-- Features Start -->
+      <div class="content-group" id="team-content-group">
+        <h2>Features</h2>
+	      <div class="feature" id="feature-1">
+            <div class="feature-image">
+              <img src="{{ STATIC_URL }}features/News.png" alt="Feature" />
+            </div>
+            <div class="feature-text">
+	          <h2>News</h2>
+	          <p>This is the business' newsfeed. Here you can find information about deals, specials, upcoming events. In the future you'll be able to share those with friends through facebook and twitter.</p>
+            </div>
+	      </div>
+
+	    
+	      <div class="feature" id="feature-2">
+            <div class="feature-image">
+              <img src="{{ STATIC_URL }}features/Polls.png" alt="Feature" />
+            </div>
+            <div class="feature-text">
+	          <h2>Polls</h2>
+	          <p>This is a description of Polls</p>
+            </div>
+	      </div>
+
+	      <div class="feature" id="feature-3">
+            <div class="feature-image">
+              <img src="{{ STATIC_URL }}features/Mingle.png" alt="Feature" />
+            </div>
+            <div class="feature-text">
+	          <h2>Mingle</h2>
+	          <p>This is a description of Mingle</p>
+            </div>
+	      </div>
+          
+          <div class="feature" id="feature-4">
+            <div class="feature-image feature-image-1">
+              <img src="{{ STATIC_URL }}features/Applaud.png" alt="Feature" />
+            </div>
+            <div class="feature-text">
+	          <h2>Applaud</h2>
+	          <p>This is a description of Applaud</p>
+            </div>
+	      </div>
+  
+	      <div class="feature" id="feature-5">
+            <div class="feature-image">
+              <img src="{{ STATIC_URL }}features/Photos.png" alt="Photo Feature" />
+            </div>
+            <div class="feature-text">
+	          <h2>Photos</h2>
+	          <p>This is a description of Photos</p>
+            </div>
+	      </div>
+
+
+
+      </div>
+      <!-- Features Stop -->
+
+      <!-- Terms Group -->
+      <div class="content-group" id="terms-content-group">
+	    <h2>End User License Agreement</h2>
+	    <p>PLEASE READ CAREFULLY THIS END USER LICENSE AGREEMENT (EULA) BEFORE DOWNLOADING, INSTALLING OR USING APATAPA.COM OR THE APATAPA MOBILE SOFTWARE OR APPLICATION FOR iOS OR ANY ACCOMPANYING DOCUMENTATION (COLLECTIVELY THE "APATAPA SERVICE"). BY CLICKING THE "ACCEPT" (OR “AGREE”) BUTTON OR DOWNLOADING OR USING THE APATAPA SERVICE, YOU ARE ENTERING INTO AND AGREEING TO BE BOUND BY THE TERMS AND CONDITIONS THIS EULA.IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS EULA, DO NOT CLICK THE "ACCEPT" (OR “AGREE”) BUTTON AND YOU MAY NOT USE THE APATAPA SERVICE TO WHICH THIS LICENSE APPLIES.</p>
+	    <h2> Terms & Conditions</h2>
+	    <ol>
+	      <li><h4>License to Software and Use</h4>
+	        <p>Subject to the terms and conditions of this EULA, Apatapa hereby grants to you a limited, non-exclusive, personal, non-sublicensable, non-transferable, non-assignable, revocable license to install and use the executable form of the Apatapa Service on a single mobile device solely for your personal use, provided that you use the Apatapa Service on a mobile devise owned or controlled by you. Apatapa reserves all rights in the Apatapa Service not expressly granted to you in this EULA. In addition, Apatapa reserves the right to (a) refuse service to anyone for any reason at any time. (b) alter this EULA at any time. If the alterations constitute a material change to this EULA, Apatapa will notify you via internet mail. Apatapa will determine what constitutes a "material change" at its sole discretion, in good faith and reasonable judgment. (c) deny the use of any username that becomes inactive, violates trademark, or may mislead other users. (d) remove content or accounts containing content that we determine in our sole discretion to be unlawful, offensive or objectionable, or content that violates any intellectual property rights or the terms and conditions of this EULA. Deleted content may be stored by Apatapa in order to comply with legal obligations and is not retrievable without a valid court order.</p>
+	      </li>
+	      <li><h4>License Agreement</h4>
+	        <p>Except as expressly specified in this EULA, you may not: (a) hack or modify the Apatapa Service; (B) crawl, scrape, cache, or save any content from Apatapa Service (c) transfer, sublicense, lease, lend, rent or otherwise distribute the Apatapa Service to any third party; or (d) use the Apatapa Service in any unlawful manner, for any unlawful purpose, or in any manner inconsistent with this EULA. (e) threaten, impersonate or cause harm to any other Apatapa users.(f) access Apatapa's private API by any other means other than the Apatapa application itself. (g) create or submit unwanted email, comments, or Content to any Apatapa members ("Spam"). (h) transmit any worms, viruses, trojans or any code of a destructive nature. (i) Post any content on or through the Apatapa Services that violate the privacy rights, publicity rights, copyrights, contract rights, intellectual property rights or any other rights of any person. (j) post any content on or through Apatapa Service that may result in breach of contract between you and a third party. (K) disassemble, decompile or otherwise reverse engineer any components of the Apatapa Service provided in object code or any other Apatapa  products or services, in whole or in part, or permit or authorize a third party to do so, except to the extent such activities are expressly permitted by law notwithstanding this prohibition.</p>
+	      </li>
+	      <li><h4>Proprietary Rights</h4>
+	        <p>The Apatapa Service is licensed, not sold to you. You agree that Apatapa owns all right, title and interest in and to the Apatapa Service, including but not limited to all intellectual property rights therein. The Apatapa Service is protected by ________ (and other countries) copyright, trademark, other statutory and common law and international treaties. You will not delete or in any manner alter the copyright, trademark, and other proprietary rights notices or markings appearing on the Apatapa Service as delivered to you.
+              You own the content posted by you on or through the Apatapa Services or otherwise have the right to grant the license set forth in this section. However, by publishing any content on or through Apatapa Service, you hereby grant Apatapa a royalty-free, worldwide, transferrable, sub-licensable, irrevocable license to use, modify, reproduce, publicly display and translate such content.</p>
+	      </li>
+	      <li><h4>Warranty Disclaimer</h4>
+	        <p>You expressly acknowledge and agree that you assume all the responsibility and risk for your use of the Apatapa Service and the results and performance thereof.
+              THE APATAPA SERVICE IS PROVIDED TO YOU ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT WARRANTY OF ANY KIND.  APATAPA DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, AND ANY WARRANTIES AND CONDITIONS ARISING OUT OF COURSE OF DEALING OR USAGE OF APATAPA SERVICE.  NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED FROM APATAPA OR ELSEWHERE WILL CREATE ANY WARRANTY OR CONDITION NOT EXPRESSLY STATED IN THIS AGREEMENT.  APATAPA DOES NOT REPRESENT OR WARRANT THAT: (I) THE APATAPA SERVICE WILL MEET YOUR REQUIREMENTS OR WILL BE ERROR FREE OR THAT ANY ERRORS WILL BE CORRECTED; (II) THE OPERATION OF THE APATAPA SERVICE OR ANY OF THIRD PARTY CONTENT WILL BE UNINTERRUPTED; OR (III) THE ACCURACY, TIMELINESS, COMPLETENESS, OR ADEQUACY OF THE APATAPA SERVICE, ANY THIRD PARTY CONTENT AND ANY DATA ACCESSED THEREFROM. Some jurisdictions do not allow the limitation or exclusion of liability for incidental or consequential damages, so the above limitation or exclusion may not apply to you.</p>
+	      </li>
+	      <li><h4>Limitation and Liability</h4>
+	        <p>IN NO EVENT WILL APATAPA, ITS AFFILIATED ENTITIES OR ANY OF THEIR RESPECTIVE OFFICERS, DIRECTORS, EMPLOYEES OR AUTHORIZED AGENTS (COLLECTIVELY, THE "APATAPA GROUP") AND APATAPA’S THIRD PARTY LICENSORS BE LIABLE TO YOU FOR ANY SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOST DATA, LOST PROFITS, LOSS OF GOODWILL, LOST REVENUE, SERVICE INTERRUPTION, MOBILE DEVICE DAMAGE OR SYSTEM FAILURE OR COSTS OF PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, ARISING OUT OF OR IN CONNECTION WITH THIS EULA OR THE INSTALLATION OR USE OF OR INABILITY TO USE THE APATAPA SERVICE UNDER ANY THEORY OF LIABILITY, INCLUDING BUT NOT LIMITED TO CONTRACT OR TORT (INCLUDING PRODUCTS LIABILITY, STRICT LIABILITY AND NEGLIGENCE), AND WHETHER OR NOT THE APATAPA GROUP OR ITS THIRD PARTY LICENSORS WERE OR SHOULD HAVE BEEN AWARE OR ADVISED OF THE POSSIBILITY OF SUCH DAMAGE AND NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY STATED HEREIN. NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, IN NO EVENT SHALL APATAPA’S AGGREGATE LIABILITY FOR ANY CLAIM ARISING OUT OF OR RELATED TO THIS EULA, TO THE FULLEST EXTENT POSSIBLE UNDER APPLICABLE LAW, EXCEED THE AMOUNT PAID, IF ANY, BY YOU FOR THE APATAPA SERVICE. Some jurisdictions do not allow the limitation or exclusion of liability for incidental or consequential damages, so the above limitation or exclusion may not apply to you.</p>
+	      </li>
+	      <li><h4>Indemnification</h4>
+	        <p>You agree to indemnify and hold the Apatapa Group harmless from and against any loss, liability, costs or expenses (including but not limited to reasonable attorney fees) arising from or incurred as a result of any third party claims, to the extent that such claims relate to or are based on your breach of this EULA or your use of the Apatapa Service. You agree to pay for all royalties, fees, and any other monies owing any person by reason of the content you post on or through the Apatapa Services.</p>
+	      </li>
+	      <li><h4>Term and Termination</h4>
+	        <p>Your license to use the Apatapa Service under this EULA shall continue until it is terminated by either party. You may terminate this EULA at any time, by discontinuing use of all or any of the Apatapa Service and by destroying all copies of the Apatapa Service in your possession and control. This EULA and the license granted to you under this EULA terminate automatically if you breach any term of this EULA. Upon termination, you must at Apatapa’s option either promptly destroy or return to Apatapa all copies of the Apatapa Service in your possession or control. </p>
+	      </li>
+	      <li><h4>Miscellaneous</h4>
+	        <p>(a) This EULA and all the policies referenced herein constitute the entire agreement between Apatapa and you concerning the subject matter hereof. (b) You accept the possibility of occasions where the Apatapa Service could be interrupted for maintenances, emergency repair or upgrades, or due to failures beyond the control of Apatapa. (c) This EULA shall be governed by and interpreted under the laws of the State of Washington, without regard to its conflicts of laws provisions. All actions relating to this EULA and the Apatapa Service shall be brought in the competent court in the State of Washington. (d) The failure of either party to enforce any rights granted hereunder or to take action against the other party in the event of any breach hereunder shall not be deemed a waiver by that party as to subsequent enforcement of rights or subsequent actions in the event of future breaches. (e) If for any reason a court of competent jurisdiction finds any provision of his EULA or portion thereof, to be unenforceable, that provision of this EULA shall be enforced to the maximum extent permissible so as to affect the intent of the parties, and the remainder of this EULA shall continue in full force and effect. (f) You may not assign your rights under this EULA to any party without Apatapa’s consent. (g) Nothing in this EULA will be construed as creating a joint venture, partnership, employment or agency relationship between you and Apatapa, and you do not have any authority to create any obligation or make any representation on Apatapa’s behalf.</p>
+	      </li>
+	      <li><h4>Third Party Beneficiaries</h4>
+	        <p>Please note that when accessing the Apatapa Service you may also be subject to the terms of use of other third parties. You acknowledge that third party application marketplaces (including but not limited to the Apple App Store, the Google Android Marketplace, the Microsoft Windows Phone 7 Marketplace) may be third party beneficiaries of this EULA and upon your acceptance of this EULA such stores or marketplaces may have the right to enforce this EULA against you as a third party beneficiary . You further acknowledge and agree that such parties are not parties to this EULA other than as third party beneficiaries and are not responsible for providing maintenance and support services with respect to the Software. </p>
+	      </li>
+	      <li><h4>Mobile Software Questions, Comments and Contact Information</h4>
+	        <p>	If you have any questions, complaints and/or claims, you may contact Apatapa at:
+              Address: 18 Leeward Rd, Belvedere CA 
+              E-mail: wyatthayman@gmail.com</p>
+	      </li>  
+      </div>
+      <!-- End Terms Group -->
+
+      <!-- Privacy Group -->
+      <div class="content-group" id="privacy-content-group">
+	    <h2>Privacy Policy</h2>
+	    <p>It is Apatapa’s policy to maintain our commitment to your privacy. The following Privacy Policy refers to our policies on any collection, use, retention, or disclosure of any information gathered or submitted through your use of our mobile application. Any use of this mobile application constitutes consent to our collection, use, retention, or disclosure of your information, as outlined in the Privacy Policy. The terms “we,” “us,” “our,” or “Apatapa” shall within this Privacy Policy refer to Apatapa, LLC.</p>
+	    <h4>Privacy and Security</h4>
+        <p>We will not disclose personal information submitted or collected without consent or court order, with the exception of user submitted feedback which will be directed to the businesses for which the feedback was written. No information either gathered or submitted will be given to a third party without user consent. At Apatapa, your privacy and the security of your personal information is important to us. We as a company endeavor to keep your information private and secure, except as otherwise outlined in the Privacy Policy. Unfortunately, it is important to note that no information transmitted through the use of mobile devices is 100% secure. However, we remain committed in the greatest security of your personal information, but cannot guarantee total security.</p>
+        <h4>Submitted Personal Information</h4>
+	    <p>We may retain any information you submit to or through the use of our mobile application. Any information retained may be used to provide businesses with your feedback, improve usability or quality of the mobile application, provide user support, allow us to back up our systems, place or improve any advertising, and comply with any legal obligations. </p>
+	    <h4>Collected Personal Information</h4>
+        <p>Apatapa, in addition to the information you submit through this mobile application, may gather or retain any personal information during the course of your usage of our mobile application. This information may be used to analyze user feedback, to calculate and analyze user statistics, personalize your mobile application experience, associate information collected with information previously retained about you or your usage, provide customized user support, improve usability or quality of the mobile application, and may be used to place or improve advertising. We may collect a variety of information to include, but not limited to your name, e-mail address, phone number, and personal reviews.
+          <ol><li>Location:  We may gather, use, or retain information about your location, to include actual location of your mobile device. </li>
+            <li> Activity: We may collect, use, or retain information related to you and your usage of this mobile application. This information is used to provide us with useful and relevant information to our mobile application users. Additionally, statistical information may be gathered and analyzed to be given as statistical data or feedback to businesses in which you as the user review. </li></ol>
+          <h4>Third Parties</h4>
+        <p>Apatapa does not disclose any personally identifiable information with third parties for their direct marketing purposes. Any information given to third parties will not be done without user consent or court order. </p>
+        <h4>Data Retention and Account Termination</h4>
+        <p>If you terminate your account, any publicly viewable content will be removed from the mobile application. However, the information we collect from you or about you may be retained for the necessary time period outlined within this Privacy Policy. Or, as may be required or permitted by law. </p>
+        <h4>Children</h4>
+        <p>We do not knowingly collect personal information from children under the age of 13. If it comes to our knowledge that personal information gathered or retained comes from a child under the age of 13, without parental consent, we will take appropriate measures to remove any related information and to terminate the account.  </p>
+        <h4>Cookies</h4>
+        <p>Apatapa’s mobile application and advertisements may use “cookies” or other similar technology. These cookies may transmit information related to you and your use of the mobile application, such as user preferences, identify and track users, or dates and times that mobile application is accessed. Some of these cookies, but not all, may be disabled.  However, doing so may affect your usage of the mobile application.  </p>
+        <h4>Modifications to This Privacy Policy</h4>
+        <p>Apatapa may occasionally revise its Privacy Policy, at Apatapa’s discretion. Accessing this mobile application after any changes are made to the Privacy Policy will constitute as your acceptance of any such changes. It is therefore encouraged for visitors to check the Privacy Policy</p>
+      </div>
+      <!-- End Privacy Group -->
+
+    </div>
+  </div>
+  <!-- Main Stop -->
+
+
+  <!-- <div id="overview_div" class="container-fluid"> -->
+  <!--   <div class="row-fluid"> -->
+  <!--     <div class="span2"> -->
+  <!--       <div class="well sidebar-nav"> -->
+  <!-- 	    <ul class="nav nav-list"> -->
+  <!-- 	      <li class="about"><a href="">About</a></li> -->
+  <!-- 	      <li class="team"> <a id="" href="">Team</a></li> -->
+  <!-- 	      <li class="terms"><a href="">Terms & Conditions</a></li> -->
+  <!-- 	      <li class="privacy"><a href="">Privacy Policy</a></li> -->
+  <!-- 	      <li class="features"><a href="">Features</a></li> -->
+  <!-- 	    </ul> -->
+  <!--       </div> -->
+  <!--     </div> -->
+  
+  
+  <!--     <div class="span6" id="overview_content"> -->
+  <!--       <div id="overview-about" class="overview-content"> -->
+  <!-- 	    <h2>What is Apatapa?</h2> -->
+  <!-- 	    <p>Apatapa is a mobile application and a website, designed to allow users to interact with their location.</p> -->
+  <!--       </div> -->
+
+  <!--       <div id="overview-features" class="overview-content"> -->
+  <!-- 	<h2>Features</h2> -->
+  <!-- 	<div id="features-accordion" class="accordion"> -->
+  <!-- 	  <div id="features-applaud" class="accordion-group"> -->
+  <!-- 	    <div class="accordion-heading"> -->
+  <!-- 	      <a class="accordion-toggle" data-toggle="collapse" data-target="#collapse-applaud">Applaud</a> -->
+  <!-- 	    </div> -->
+  <!-- 	    <div class="accordion-body in collapse" id="collapse-applaud"> -->
+  <!-- 	      <div class="accordion-inner"> -->
+  <!-- 		Applaud allows users to rate individual employees. -->
+  <!-- 	      </div> -->
+  <!-- 	    </div> -->
+  <!-- 	  </div> -->
+
+  <!-- 	  <div id="features-newsfeed" class="accordion-group"> -->
+  <!-- 	    <div class="accordion-heading"> -->
+  <!-- 	      <a class="accordion-toggle" data-toggle="collapse" data-target="#collapse-newsfeed">Newsfeed</a> -->
+  <!-- 	    </div> -->
+  <!-- 	    <div class="accordion-body in collapse" id="collapse-newsfeed"> -->
+  <!-- 	      <div class="accordion-inner"> -->
+  <!-- 		Newsfeed keeps you up to date with all the events, specials and promotional offers the business has to offer. -->
+  <!-- 	      </div> -->
+  <!-- 	    </div> -->
+  <!-- 	  </div> -->
+
+  <!-- 	  <div id="features-polls" class="accordion-group"> -->
+  <!-- 	    <div class="accordion-heading"> -->
+  <!-- 	      <a class="accordion-toggle" data-toggle="collapse" data-target="#collapse-polls">Polls</a> -->
+  <!-- 	    </div> -->
+  <!-- 	    <div class="accordion-body in collapse" id="collapse-polls"> -->
+  <!-- 	      <div class="accordion-inner"> -->
+  <!-- 		Polls gives you the chance to compare your answers with what other people have provided in your current establishment. Have a burning question you want to ask? Polls also lets you create a poll and see what everyone else around you thinks. -->
+  <!-- 	      </div> -->
+  <!-- 	    </div> -->
+  <!-- 	  </div> -->
+
+  <!-- 	  <div id="features-mingle" class="accordion-group"> -->
+  <!-- 	    <div class="accordion-heading"> -->
+  <!-- 	      <a class="accordion-toggle" data-toggle="collapse" data-target="#collapse-mingle">Mingle</a> -->
+  <!-- 	    </div> -->
+  <!-- 	    <div class="accordion-body in collapse" id="collapse-mingle"> -->
+  <!-- 	      <div class="accordion-inner"> -->
+  <!-- 		Mingle lets you converse with everyone who's around you.  -->
+  <!-- 	      </div> -->
+  <!-- 	    </div> -->
+  <!-- 	  </div> -->
+
+  <!-- 	  <div id="features-relics" class="accordion-group"> -->
+  <!-- 	    <div class="accordion-heading"> -->
+  <!-- 	      <a class="accordion-toggle" data-toggle="collapse" data-target="#collapse-relics">Relics</a> -->
+  <!-- 	    </div> -->
+  <!-- 	    <div class="accordion-body in collapse" id="collapse-relics"> -->
+  <!-- 	      <div class="accordion-inner"> -->
+  <!-- 		    Photos lets you take snapshots tied to a particular location. You can also view, vote and comment on what other people have documented at the very same place. -->
+  <!-- 	      </div> -->
+  <!-- 	    </div> -->
+  <!-- 	  </div> -->
+
+  <!-- 	</div> -->
+  <!--       </div> -->
+
+  <!--       <div id="overview-team" class="overview-content"> -->
+  <!-- 	<h2>The Apatapa Team</h2> -->
+  <!-- 	<div id="wyatt" class="team-person"> -->
+  <!-- 	  <h3>Wyatt Hayman - CEO</h3> -->
+  <!-- 	  <p>At Oberlin, I had the opportunity to cultivate my leadership skills as the only captain of the Oberlin Men’s Varsity Soccer Team.  Having taken math through differential equations and a year of foundational computer science, I feel very comfortable solving technical problems.  Among other values, college was an entrepreneurial launchpad for me.  While at Oberlin I submitted four business ideas for funding.  After receiving $1500 to pursue a patent, I received $30,000 in seed funding from Oberlin to start Apatapa.  I selected Apatapa from an archive of over 600 business ideas that I developed throughout college.  After beginning work on Apatapa in September, I formed a diverse, highly technical, and extremely driven team.  My dream is to use entrepreneurial success to inspire large-scale, self-sustaining, social and environmental progress.  I continue working to establish a daily meditation practice as I explore the power of the brain; In 2010 I participated in a month-long silent meditation retreat that informs me every day.</p> -->
+  <!-- 	</div> -->
+  <!-- 	<div id="jack" class="team-person"> -->
+  <!-- 	  <h3>Jack Kearney - CTO</h3> -->
+  <!-- 	  <p>I love building things. When I was little I used LEGOs; as I grew a bit older I started to use 2x4s and rope to make tree forts and zip lines; finally, in college I realized that this love extended beyond the purely tangible. I started a transportation service at Oberlin that took kids to and from New York. Even though this wasn’t strictly construction, creating something that a lot of people used was awesome! Around that same time, I took my first computer science class. From this I realized that starting a tech company was a perfect blend of hands-on building and entrepreneurship.</p> -->
+  <!-- 	</div> -->
+  
+  <!-- 	<div id="shahab" class="team-person"> -->
+  <!-- 	  <h3>Shahab Raza - COO</h3> -->
+  <!-- 	  <p>Having found myself as an 18-year-old far, far away from home in such a drastically different culture, it’s not so surprising that my four years at Oberlin were incredibly formative. I have continued enjoying problem solving, but each problem is now accompanied by a broader pursuit of Objective Truth.</p>	   -->
+  <!-- 	  <p>Sport has always been a massive part of my life. Indeed a large part of who I am – in regards to my drive and ambition, sensitivity working with other people, and comfort dealing with highs and lows - can be attributed to my time spent watching and playing.  I am in love with the game of soccer, the history, the expression of culture, the paradoxical harmony in chaos. I have missed only a handful of Arsenal games in the last five years. And a painful five years at that, so spare a thought.</p> -->
+
+  <!-- 	  <p>I don’t think we live in especially troubled times. We’re just more aware of injustices – wrongs that need to be righted. Here’s to that pursuit.</p> -->
+  <!-- 	</div> -->
+  <!--       </div> -->
+  
+  <!--       <div id="overview-terms" class="overview-content"> -->
+  <!-- 	<h2>End User License Agreement</h2> -->
+  <!-- 	<p>PLEASE READ CAREFULLY THIS END USER LICENSE AGREEMENT (EULA) BEFORE DOWNLOADING, INSTALLING OR USING APATAPA.COM OR THE APATAPA MOBILE SOFTWARE OR APPLICATION FOR iOS OR ANY ACCOMPANYING DOCUMENTATION (COLLECTIVELY THE "APATAPA SERVICE"). BY CLICKING THE "ACCEPT" (OR “AGREE”) BUTTON OR DOWNLOADING OR USING THE APATAPA SERVICE, YOU ARE ENTERING INTO AND AGREEING TO BE BOUND BY THE TERMS AND CONDITIONS THIS EULA.IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS EULA, DO NOT CLICK THE "ACCEPT" (OR “AGREE”) BUTTON AND YOU MAY NOT USE THE APATAPA SERVICE TO WHICH THIS LICENSE APPLIES.</p> -->
+  <!-- 	<h2> Terms & Conditions</h2> -->
+  <!-- 	<ol> -->
+  <!-- 	  <li><h4>License to Software and Use</h4> -->
+  <!-- 	    <p>Subject to the terms and conditions of this EULA, Apatapa hereby grants to you a limited, non-exclusive, personal, non-sublicensable, non-transferable, non-assignable, revocable license to install and use the executable form of the Apatapa Service on a single mobile device solely for your personal use, provided that you use the Apatapa Service on a mobile devise owned or controlled by you. Apatapa reserves all rights in the Apatapa Service not expressly granted to you in this EULA. In addition, Apatapa reserves the right to (a) refuse service to anyone for any reason at any time. (b) alter this EULA at any time. If the alterations constitute a material change to this EULA, Apatapa will notify you via internet mail. Apatapa will determine what constitutes a "material change" at its sole discretion, in good faith and reasonable judgment. (c) deny the use of any username that becomes inactive, violates trademark, or may mislead other users. (d) remove content or accounts containing content that we determine in our sole discretion to be unlawful, offensive or objectionable, or content that violates any intellectual property rights or the terms and conditions of this EULA. Deleted content may be stored by Apatapa in order to comply with legal obligations and is not retrievable without a valid court order.</p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>License Agreement</h4> -->
+  <!-- 	    <p>Except as expressly specified in this EULA, you may not: (a) hack or modify the Apatapa Service; (B) crawl, scrape, cache, or save any content from Apatapa Service (c) transfer, sublicense, lease, lend, rent or otherwise distribute the Apatapa Service to any third party; or (d) use the Apatapa Service in any unlawful manner, for any unlawful purpose, or in any manner inconsistent with this EULA. (e) threaten, impersonate or cause harm to any other Apatapa users.(f) access Apatapa's private API by any other means other than the Apatapa application itself. (g) create or submit unwanted email, comments, or Content to any Apatapa members ("Spam"). (h) transmit any worms, viruses, trojans or any code of a destructive nature. (i) Post any content on or through the Apatapa Services that violate the privacy rights, publicity rights, copyrights, contract rights, intellectual property rights or any other rights of any person. (j) post any content on or through Apatapa Service that may result in breach of contract between you and a third party. (K) disassemble, decompile or otherwise reverse engineer any components of the Apatapa Service provided in object code or any other Apatapa  products or services, in whole or in part, or permit or authorize a third party to do so, except to the extent such activities are expressly permitted by law notwithstanding this prohibition.</p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Proprietary Rights</h4> -->
+  <!-- 	    <p>The Apatapa Service is licensed, not sold to you. You agree that Apatapa owns all right, title and interest in and to the Apatapa Service, including but not limited to all intellectual property rights therein. The Apatapa Service is protected by ________ (and other countries) copyright, trademark, other statutory and common law and international treaties. You will not delete or in any manner alter the copyright, trademark, and other proprietary rights notices or markings appearing on the Apatapa Service as delivered to you. -->
+  <!-- You own the content posted by you on or through the Apatapa Services or otherwise have the right to grant the license set forth in this section. However, by publishing any content on or through Apatapa Service, you hereby grant Apatapa a royalty-free, worldwide, transferrable, sub-licensable, irrevocable license to use, modify, reproduce, publicly display and translate such content.</p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Warranty Disclaimer</h4> -->
+  <!-- 	    <p>You expressly acknowledge and agree that you assume all the responsibility and risk for your use of the Apatapa Service and the results and performance thereof. -->
+  <!-- THE APATAPA SERVICE IS PROVIDED TO YOU ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT WARRANTY OF ANY KIND.  APATAPA DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, AND ANY WARRANTIES AND CONDITIONS ARISING OUT OF COURSE OF DEALING OR USAGE OF APATAPA SERVICE.  NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED FROM APATAPA OR ELSEWHERE WILL CREATE ANY WARRANTY OR CONDITION NOT EXPRESSLY STATED IN THIS AGREEMENT.  APATAPA DOES NOT REPRESENT OR WARRANT THAT: (I) THE APATAPA SERVICE WILL MEET YOUR REQUIREMENTS OR WILL BE ERROR FREE OR THAT ANY ERRORS WILL BE CORRECTED; (II) THE OPERATION OF THE APATAPA SERVICE OR ANY OF THIRD PARTY CONTENT WILL BE UNINTERRUPTED; OR (III) THE ACCURACY, TIMELINESS, COMPLETENESS, OR ADEQUACY OF THE APATAPA SERVICE, ANY THIRD PARTY CONTENT AND ANY DATA ACCESSED THEREFROM. Some jurisdictions do not allow the limitation or exclusion of liability for incidental or consequential damages, so the above limitation or exclusion may not apply to you.</p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Limitation and Liability</h4> -->
+  <!-- 	    <p>IN NO EVENT WILL APATAPA, ITS AFFILIATED ENTITIES OR ANY OF THEIR RESPECTIVE OFFICERS, DIRECTORS, EMPLOYEES OR AUTHORIZED AGENTS (COLLECTIVELY, THE "APATAPA GROUP") AND APATAPA’S THIRD PARTY LICENSORS BE LIABLE TO YOU FOR ANY SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOST DATA, LOST PROFITS, LOSS OF GOODWILL, LOST REVENUE, SERVICE INTERRUPTION, MOBILE DEVICE DAMAGE OR SYSTEM FAILURE OR COSTS OF PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, ARISING OUT OF OR IN CONNECTION WITH THIS EULA OR THE INSTALLATION OR USE OF OR INABILITY TO USE THE APATAPA SERVICE UNDER ANY THEORY OF LIABILITY, INCLUDING BUT NOT LIMITED TO CONTRACT OR TORT (INCLUDING PRODUCTS LIABILITY, STRICT LIABILITY AND NEGLIGENCE), AND WHETHER OR NOT THE APATAPA GROUP OR ITS THIRD PARTY LICENSORS WERE OR SHOULD HAVE BEEN AWARE OR ADVISED OF THE POSSIBILITY OF SUCH DAMAGE AND NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY STATED HEREIN. NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, IN NO EVENT SHALL APATAPA’S AGGREGATE LIABILITY FOR ANY CLAIM ARISING OUT OF OR RELATED TO THIS EULA, TO THE FULLEST EXTENT POSSIBLE UNDER APPLICABLE LAW, EXCEED THE AMOUNT PAID, IF ANY, BY YOU FOR THE APATAPA SERVICE. Some jurisdictions do not allow the limitation or exclusion of liability for incidental or consequential damages, so the above limitation or exclusion may not apply to you.</p> -->
+  <!-- 	    </li> -->
+  <!-- 	  <li><h4>Indemnification</h4> -->
+  <!-- 	    <p>You agree to indemnify and hold the Apatapa Group harmless from and against any loss, liability, costs or expenses (including but not limited to reasonable attorney fees) arising from or incurred as a result of any third party claims, to the extent that such claims relate to or are based on your breach of this EULA or your use of the Apatapa Service. You agree to pay for all royalties, fees, and any other monies owing any person by reason of the content you post on or through the Apatapa Services.</p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Term and Termination</h4> -->
+  <!-- 	    <p>Your license to use the Apatapa Service under this EULA shall continue until it is terminated by either party. You may terminate this EULA at any time, by discontinuing use of all or any of the Apatapa Service and by destroying all copies of the Apatapa Service in your possession and control. This EULA and the license granted to you under this EULA terminate automatically if you breach any term of this EULA. Upon termination, you must at Apatapa’s option either promptly destroy or return to Apatapa all copies of the Apatapa Service in your possession or control. </p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Miscellaneous</h4> -->
+  <!-- 	    <p>(a) This EULA and all the policies referenced herein constitute the entire agreement between Apatapa and you concerning the subject matter hereof. (b) You accept the possibility of occasions where the Apatapa Service could be interrupted for maintenances, emergency repair or upgrades, or due to failures beyond the control of Apatapa. (c) This EULA shall be governed by and interpreted under the laws of the State of Washington, without regard to its conflicts of laws provisions. All actions relating to this EULA and the Apatapa Service shall be brought in the competent court in the State of Washington. (d) The failure of either party to enforce any rights granted hereunder or to take action against the other party in the event of any breach hereunder shall not be deemed a waiver by that party as to subsequent enforcement of rights or subsequent actions in the event of future breaches. (e) If for any reason a court of competent jurisdiction finds any provision of his EULA or portion thereof, to be unenforceable, that provision of this EULA shall be enforced to the maximum extent permissible so as to affect the intent of the parties, and the remainder of this EULA shall continue in full force and effect. (f) You may not assign your rights under this EULA to any party without Apatapa’s consent. (g) Nothing in this EULA will be construed as creating a joint venture, partnership, employment or agency relationship between you and Apatapa, and you do not have any authority to create any obligation or make any representation on Apatapa’s behalf.</p> -->
+  <!-- 	    </li> -->
+  <!-- 	  <li><h4>Third Party Beneficiaries</h4> -->
+  <!-- 	    <p>Please note that when accessing the Apatapa Service you may also be subject to the terms of use of other third parties. You acknowledge that third party application marketplaces (including but not limited to the Apple App Store, the Google Android Marketplace, the Microsoft Windows Phone 7 Marketplace) may be third party beneficiaries of this EULA and upon your acceptance of this EULA such stores or marketplaces may have the right to enforce this EULA against you as a third party beneficiary . You further acknowledge and agree that such parties are not parties to this EULA other than as third party beneficiaries and are not responsible for providing maintenance and support services with respect to the Software. </p> -->
+  <!-- 	  </li> -->
+  <!-- 	  <li><h4>Mobile Software Questions, Comments and Contact Information</h4> -->
+  <!-- 	    <p>	If you have any questions, complaints and/or claims, you may contact Apatapa at: -->
+  <!-- Address: 18 Leeward Rd, Belvedere CA  -->
+  <!-- E-mail: wyatthayman@gmail.com</p> -->
+  <!-- 	  </li>   -->
+  <!--       </div> -->
+  <!--       <div id="overview-privacy" class="overview-content"> -->
+  <!-- 	<h2>Privacy Policy</h2> -->
+  <!-- 	<p>It is Apatapa’s policy to maintain our commitment to your privacy. The following Privacy Policy refers to our policies on any collection, use, retention, or disclosure of any information gathered or submitted through your use of our mobile application. Any use of this mobile application constitutes consent to our collection, use, retention, or disclosure of your information, as outlined in the Privacy Policy. The terms “we,” “us,” “our,” or “Apatapa” shall within this Privacy Policy refer to Apatapa, LLC.</p> -->
+  <!-- 	<h4>Privacy and Security</h4> -->
+  <!-- <p>We will not disclose personal information submitted or collected without consent or court order, with the exception of user submitted feedback which will be directed to the businesses for which the feedback was written. No information either gathered or submitted will be given to a third party without user consent. At Apatapa, your privacy and the security of your personal information is important to us. We as a company endeavor to keep your information private and secure, except as otherwise outlined in the Privacy Policy. Unfortunately, it is important to note that no information transmitted through the use of mobile devices is 100% secure. However, we remain committed in the greatest security of your personal information, but cannot guarantee total security.</p> -->
+  <!-- <h4>Submitted Personal Information</h4> -->
+  <!-- 	<p>We may retain any information you submit to or through the use of our mobile application. Any information retained may be used to provide businesses with your feedback, improve usability or quality of the mobile application, provide user support, allow us to back up our systems, place or improve any advertising, and comply with any legal obligations. </p> -->
+  <!-- 	<h4>Collected Personal Information</h4> -->
+  <!-- <p>Apatapa, in addition to the information you submit through this mobile application, may gather or retain any personal information during the course of your usage of our mobile application. This information may be used to analyze user feedback, to calculate and analyze user statistics, personalize your mobile application experience, associate information collected with information previously retained about you or your usage, provide customized user support, improve usability or quality of the mobile application, and may be used to place or improve advertising. We may collect a variety of information to include, but not limited to your name, e-mail address, phone number, and personal reviews. -->
+  <!--   <ol><li>Location:  We may gather, use, or retain information about your location, to include actual location of your mobile device. </li> -->
+  <!-- <li> Activity: We may collect, use, or retain information related to you and your usage of this mobile application. This information is used to provide us with useful and relevant information to our mobile application users. Additionally, statistical information may be gathered and analyzed to be given as statistical data or feedback to businesses in which you as the user review. </li></ol> -->
+  <!-- <h4>Third Parties</h4> -->
+  <!-- <p>Apatapa does not disclose any personally identifiable information with third parties for their direct marketing purposes. Any information given to third parties will not be done without user consent or court order. </p> -->
+  <!-- <h4>Data Retention and Account Termination</h4> -->
+  <!-- <p>If you terminate your account, any publicly viewable content will be removed from the mobile application. However, the information we collect from you or about you may be retained for the necessary time period outlined within this Privacy Policy. Or, as may be required or permitted by law. </p> -->
+  <!-- <h4>Children</h4> -->
+  <!-- <p>We do not knowingly collect personal information from children under the age of 13. If it comes to our knowledge that personal information gathered or retained comes from a child under the age of 13, without parental consent, we will take appropriate measures to remove any related information and to terminate the account.  </p> -->
+  <!-- <h4>Cookies</h4> -->
+  <!-- <p>Apatapa’s mobile application and advertisements may use “cookies” or other similar technology. These cookies may transmit information related to you and your use of the mobile application, such as user preferences, identify and track users, or dates and times that mobile application is accessed. Some of these cookies, but not all, may be disabled.  However, doing so may affect your usage of the mobile application.  </p> -->
+  <!-- <h4>Modifications to This Privacy Policy</h4> -->
+  <!-- <p>Apatapa may occasionally revise its Privacy Policy, at Apatapa’s discretion. Accessing this mobile application after any changes are made to the Privacy Policy will constitute as your acceptance of any such changes. It is therefore encouraged for visitors to check the Privacy Policy</p> -->
+  <!--       </div> -->
+  
+  <!--     </div> -->
+  
+  <!--   </div> -->
+  <!-- </div> -->
+  
+  {% endblock %}
+
+  {% block footer %}
+  {% endblock %}
