@@ -343,6 +343,9 @@ class BusinessProfile(models.Model):
     primary_color = models.CharField(default=settings.DEFAULT_PRIMARY_COLOR,max_length=7)
     secondary_color = models.CharField(default=settings.DEFAULT_SECONDARY_COLOR,max_length=7)
     
+    # Is this a google place, or just an apatapa one?
+    isGoog = models.BooleanField(default=1)
+
     # Which of the features are active for this business?
     isApplaud = models.BooleanField(default=1)
     isNewsfeed = models.BooleanField(default=1)

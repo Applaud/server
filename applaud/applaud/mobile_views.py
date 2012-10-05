@@ -20,6 +20,7 @@ from views import BusinessProfileEncoder, EmployeeEncoder, SurveyEncoder, Questi
 from business_views import save_image
 from django.utils.timezone import utc
 import random
+from math import radians, cos, sin, asin, sqrt
 
 # 'mobile_view' decorator.
 def mobile_view(view):
@@ -68,7 +69,7 @@ def whereami(request):
 
     to_parse = json.loads(from_goog.read())
     business_list = []
-
+    # Retrieve all google places which are close to here
     for entry in to_parse["results"]:
         business_list.append({
                 "name":entry["name"],
@@ -77,7 +78,17 @@ def whereami(request):
                 "latitude":entry["geometry"]["location"]["lat"],
                 "longitude":entry["geometry"]["location"]["lng"]
                 })
-        
+
+    # Retrieve all apatapa places (i.e. those which google doesn't have) which are close to here
+    for entry in get_apatapa_places( lat, lon ):
+        business_list.append({
+                "name":entry["name"],
+                "types":entry["types"],
+                "goog_id":entry["id"],
+                "latitude":entry["latitude"],
+                "longitude":entry["longitude"]
+                })
+
     # Making the omnipresent Apatapa HQ
     business_list.append({"name":"Apatapa HQ",
                           "types":["establishment"],
@@ -91,6 +102,33 @@ def whereami(request):
     print business_list
 
     return HttpResponse(ret)
+
+# Retrieve all the apatapa places (i.e. not google places) which are close to here
+def get_apatapa_places( lat, lon ):
+    # This is the return array
+    nearby_places = []
+
+    # For the apatapa places, goog_id will be the same as the pk
+    for biz in [i for i in models.BusinessProfile.objects.filter(isGoog=0)]:
+        biz_lat = biz.latitude
+        biz_lon = biz.longitude
+        if abs( haversine( biz_lon, lon, biz_lat, lat ) ) < settings.GOOGLE_PLACES_RADIUS:
+            nearby_places.append( biz )
+
+    return nearby_places
+
+# This is used to calculate the distance between any two latitude, longitudes ('as the crow flies')
+# It will return the distance between the two point in meters
+# This function is totally ripped off from a blog... Thanks!
+def haversine( lon1, lat1, lon2, lat2 ):
+    lon1, lat1, lon2, lat2 = map( radians, [lon1, lat1, lon2, lat2])
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    km = 6367 * c
+    m = 1000 * km
+    return m
 
 @mobile_view
 @csrf_protect
