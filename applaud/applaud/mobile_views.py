@@ -64,20 +64,25 @@ def whereami(request):
 
     lat = request.GET["latitude"]
     lon = request.GET["longitude"]	
-    goog_query = "https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY)
-    from_goog = urllib2.urlopen(goog_query)
 
-    to_parse = json.loads(from_goog.read())
     business_list = []
+
+    # For the Oberlin beta test, we're avoiding all generic places
+    #
+    # goog_query = "https://maps.googleapis.com/maps/api/place/search/json?location="+str(lat)+","+str(lon)+"&radius="+str(settings.GOOGLE_PLACES_RADIUS)+"&sensor=true&key="+str(settings.GOOGLE_API_KEY)
+    # from_goog = urllib2.urlopen(goog_query)
+
+    # to_parse = json.loads(from_goog.read())
+
     # Retrieve all google places which are close to here
-    for entry in to_parse["results"]:
-        business_list.append({
-                "name":entry["name"],
-                "types":entry["types"],
-                "goog_id":entry["id"],
-                "latitude":entry["geometry"]["location"]["lat"],
-                "longitude":entry["geometry"]["location"]["lng"]
-                })
+    # for entry in to_parse["results"]:
+    #     business_list.append({
+    #             "name":entry["name"],
+    #             "types":entry["types"],
+    #             "goog_id":entry["id"],
+    #             "latitude":entry["geometry"]["location"]["lat"],
+    #             "longitude":entry["geometry"]["location"]["lng"]
+    #             })
 
     # Retrieve all apatapa places (i.e. those which google doesn't have) which are close to here
     for entry in get_apatapa_places( lat, lon ):
@@ -89,8 +94,8 @@ def whereami(request):
                 "longitude":entry["longitude"]
                 })
 
-    # Making the omnipresent Apatapa HQ
-    business_list.append({"name":"Apatapa HQ",
+    # Making the omnipresent entries
+    business_list.append({"name":"Apatapa Feedback",
                           "types":["establishment"],
                           "goog_id":'8eaccc6443d4a16442baf5f3a0bd527594105436',
                           "latitude":'39.073778',
